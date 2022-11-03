@@ -1,1 +1,9 @@
-
+operations-app:
+  contactpoint: "https://ops-bk.sandbox.fynarfin.io"
+  username: "mifos"
+  password: "password"
+  endpoints:
+    auth: "/oauth/token"
+    batch-summary: "/api/v1/batch"
+    batch-details: "api/v1/batch/detail"
+    batch-transaction: "/api/v1/batch/transactions"
