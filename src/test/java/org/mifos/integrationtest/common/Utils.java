@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.common;
 
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
 
 public class Utils {
 
@@ -19,6 +21,18 @@ public class Utils {
             System.out.println("Unexpected InterruptedException" + e);
             throw new IllegalStateException("Unexpected InterruptedException", e);
         }
+    }
+
+    public static RequestSpecification getDefaultSpec() {
+        RequestSpecification requestSpec = new RequestSpecBuilder().build();
+        requestSpec.relaxedHTTPSValidation();
+        return requestSpec;
+    }
+
+    public static RequestSpecification getDefaultSpec(String tenant) {
+        RequestSpecification requestSpec = getDefaultSpec();
+        requestSpec.header(TENANT_PARAM_NAME, tenant);
+        return requestSpec;
     }
 
 }
