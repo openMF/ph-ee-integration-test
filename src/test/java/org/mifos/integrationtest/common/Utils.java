@@ -35,4 +35,9 @@ public class Utils {
         return requestSpec;
     }
 
+    public static String getAbsoluteFilePathToResource(String fileName) {
+        return "src/test/java/resources/" +
+                fileName;
+    }
+
 }
