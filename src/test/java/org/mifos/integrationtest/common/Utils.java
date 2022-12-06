@@ -3,7 +3,6 @@ package org.mifos.integrationtest.common;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-
 public class Utils {
 
 
@@ -13,6 +12,7 @@ public class Utils {
     public static final String X_CORRELATIONID = "X-CorrelationID";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_TYPE_VALUE = "application/json";
+    public static final String AMS_NAME = "amsName";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
