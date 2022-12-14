@@ -16,3 +16,10 @@ Feature: Batch Details API test
     Then I should get a valid token
     When I call the batch details API with expected status of 200
     Then I should get non empty response
+
+
+  Scenario: Batch transactions API Test
+    Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
+    And I have tenant as "gorilla"
+    When I call the batch transactions endpoint with expected status of 200
+    Then I should get non empty response

@@ -7,3 +7,8 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
+
+bulk-processor:
+  contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
+  endpoints:
+    bulk-transactions: "/batchtransactions"
