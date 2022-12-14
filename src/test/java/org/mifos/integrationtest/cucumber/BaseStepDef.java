@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,9 @@ public class BaseStepDef {
 
     @Autowired
     BulkProcessorConfig bulkProcessorConfig;
+
+    @Autowired
+    ChannelConnectorConfig channelConnectorConfig;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
