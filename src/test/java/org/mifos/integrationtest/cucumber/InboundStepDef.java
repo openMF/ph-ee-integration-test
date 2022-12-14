@@ -24,24 +24,23 @@ public class InboundStepDef extends BaseStepDef {
             assertThat(mockTransactionChannelRequestDTO).isNotNull();
             return;
         }
-        String json = "{\n" +
-                "    \"payer\": {\n" +
-                "        \"partyIdInfo\": {\n" +
-                "            \"partyIdType\": \"MSISDN\",\n" +
-                "            \"partyIdentifier\": \"27710101999\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"payee\": {\n" +
-                "        \"partyIdInfo\": {\n" +
-                "            \"partyIdType\": \"MSISDN\",\n" +
-                "            \"partyIdentifier\": \"27710102999\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "    \"amount\": {\n" +
-                "        \"amount\": 230,\n" +
-                "        \"currency\": \"TZS\"\n" +
-                "    }\n" +
-                "}";
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{")
+                .append("\"payer\": {")
+                .append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": \"27710101999\"")
+                .append("}},")
+                .append("\"payee\": {")
+                .append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": \"27710102999\"")
+                .append("}},")
+                .append("\"amount\": {")
+                .append("\"amount\": 230,")
+                .append("\"currency\": \"TZS\"")
+                .append("}}");
+        String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
     }
@@ -52,14 +51,14 @@ public class InboundStepDef extends BaseStepDef {
 
         BaseStepDef.response = RestAssured.given(requestSpec)
                 .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(mockTransactionChannelRequestDTO) // todo check if this is correct?
+                .body(mockTransactionChannelRequestDTO)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
                 .post(channelConnectorConfig.transferEndpoint)
                 .andReturn().asString();
 
-        logger.info("Inbound transfer Response: " + BaseStepDef.response);
+        logger.info("Inbound transfer Response: {}", BaseStepDef.response);
     }
 
     @And("I should be able to parse transactionId")
