@@ -14,6 +14,9 @@ public class ChannelConnectorConfig {
     @Value("${channel-connector.endpoints.transfer}")
     public String transferEndpoint;
 
+    @Value("${channel-connector.endpoints.international_remittance}")
+    public String internationalRemittanceEndpoint;
+
     public String transferUrl;
 
     @PostConstruct
