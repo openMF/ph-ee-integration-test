@@ -7,14 +7,14 @@ import io.restassured.specification.*;
 import org.mifos.connector.common.gsma.dto.*;
 import org.mifos.integrationtest.common.*;
 
-import static com.google.common.truth.Truth.assertThat;
 
 public class GSMAStepdef extends BaseStepDef{
 
-    GSMATransaction gsmaTransaction = new GSMATransaction();
+    GSMATransaction gsmaTransaction;
 
     @Given("I can create GSMATransactionDTO")
     public void iCanCreateGSMATransactionDTO() {
+        gsmaTransaction = new GSMATransaction();
         gsmaTransaction.setAmount("11.00");
         gsmaTransaction.setCurrency("USD");
         GsmaParty payer = new GsmaParty();
@@ -111,14 +111,13 @@ public class GSMAStepdef extends BaseStepDef{
     public void iCallTheGSMATransactionEndpointWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         logger.info("body: {}", gsmaTransaction.toString());
-        logger.info("url: {}", channelConnectorConfig.internationalRemittanceEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec)
+        logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
+        BaseStepDef.response = RestAssured.given(requestSpec).body(gsmaTransaction)
                 .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(gsmaTransaction)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
-                .post(channelConnectorConfig.internationalRemittanceEndpoint)
+                .post(channelConnectorConfig.gsmaP2PEndpoint)
                 .andReturn().asString();
 
         logger.info("GSMA transfer Response: {}", BaseStepDef.response);

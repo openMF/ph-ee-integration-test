@@ -14,7 +14,8 @@ bulk-processor:
     bulk-transactions: "/batchtransactions"
 
 channel-connector:
-  contactpoint: "http://localhost:5002"
+  contactpoint: "https://channel.sandbox.fynarfin.io/"
   endpoints:
     transfer: "/channel/transfer"
     international_remittance: "/channel/gsma/deposit"
+    gsma_p2p: "/channel/gsma/transfer"

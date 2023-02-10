@@ -14,8 +14,8 @@ public class ChannelConnectorConfig {
     @Value("${channel-connector.endpoints.transfer}")
     public String transferEndpoint;
 
-    @Value("${channel-connector.endpoints.international_remittance}")
-    public String internationalRemittanceEndpoint;
+    @Value("${channel-connector.endpoints.gsma_p2p}")
+    public String gsmaP2PEndpoint;
 
     public String transferUrl;
 
