@@ -26,6 +26,8 @@ public class TransactionRequest {
 
     private String externalId;
 
+    private String clientCorrelationId;
+
     public TransactionRequest() {
     }
 
@@ -211,5 +213,13 @@ public class TransactionRequest {
 
     public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+
+    public String getClientCorrelationId() {
+        return clientCorrelationId;
+    }
+
+    public void setClientCorrelationId(String clientCorrelationId) {
+        this.clientCorrelationId = clientCorrelationId;
     }
 }

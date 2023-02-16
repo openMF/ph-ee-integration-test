@@ -23,6 +23,12 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.auth}")
     public String authEndpoint;
 
+    @Value("${operations-app.endpoints.transfers}")
+    public String transfersEndpoint;
+
+    @Value("${operations-app.endpoints.transactionRequests}")
+    public String transactionRequestsEndpoint;
+
     @Value("${operations-app.username}")
     public String username;
 
@@ -35,6 +41,10 @@ public class OperationsAppConfig {
 
     public String batchDetailsUrl;
 
+    public String transfersUrl;
+
+    public String transactionRequestsUrl;
+
     public String authUrl;
 
     @PostConstruct
@@ -43,6 +53,8 @@ public class OperationsAppConfig {
         batchSummaryUrl = operationAppContactPoint + batchSummaryEndpoint;
         batchDetailsUrl = operationAppContactPoint + batchDetailsEndpoint;
         authUrl = operationAppContactPoint + authEndpoint;
+        transfersUrl = operationAppContactPoint + transfersEndpoint;
+        transactionRequestsUrl = operationAppContactPoint + transactionRequestsEndpoint;
     }
 
 }

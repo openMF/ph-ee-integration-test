@@ -16,6 +16,16 @@ public class ChannelConnectorConfig {
 
     public String transferUrl;
 
+    public String requestType;
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
+
     @PostConstruct
     private void setup() {
         transferUrl = channelConnectorContactPoint + transferEndpoint;

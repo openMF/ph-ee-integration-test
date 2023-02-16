@@ -30,5 +30,6 @@ public class BaseStepDef {
     protected static String response;
     protected static String accessToken;
     protected static String filename;
+    protected static String requestType;
 
 }
