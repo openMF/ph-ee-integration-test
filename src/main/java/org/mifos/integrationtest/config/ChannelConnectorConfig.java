@@ -14,6 +14,11 @@ public class ChannelConnectorConfig {
     @Value("${channel-connector.endpoints.transfer}")
     public String transferEndpoint;
 
+    @Value("${channel-connector.endpoints.gsma-p2p}")
+    public String gsmaP2PEndpoint;
+    @Value("${channel-connector.endpoints.collection}")
+    public String collectionEndpoint;
+
     public String transferUrl;
 
     public String requestType;
