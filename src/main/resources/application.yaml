@@ -9,6 +9,7 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
+
     transfers: "/api/v1/transfers?size=1&page=0"
     transactionRequests: "/api/v1/transactionRequests"
 
@@ -29,3 +30,26 @@ retry-interval: 15000
 
 defaults:
   tenant: "gorilla"
+
+
+channel:
+  base-url: http://localhost:5008
+  endpoint: "/api/v1/gsma/transaction"
+
+loan:
+  base-url: https://fynams.sandbox.fynarfin.io
+  endpoints:
+    product-endpoint: /fineract-provider/api/v1/loanproducts
+    account-endpoint: /fineract-provider/api/v1/loans
+    approve-endpoint: /fineract-provider/api/v1/loans/2
+    repayment-endpoint: /api/v1/interoperation/transactions/{accountId}/loanrepayment
+
+savings:
+  base-url: https://fynams.sandbox.fynarfin.io
+  endpoints:
+    product-endpoint: /savingsproducts
+    account-endpoint: /savingsaccounts
+    approve-endpoint: /savingsaccounts/{{savingsAccId}}
+    activate-endpoint: /savingsaccounts/{{savingsAccId}}
+    deposit-endpoint: /savingsaccounts/{{savingsAccId}}/transactions
+    client-endpoint: /fineract-provider/api/v1/clients
