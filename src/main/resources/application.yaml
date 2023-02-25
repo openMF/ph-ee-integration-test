@@ -42,7 +42,8 @@ loan:
     product-endpoint: /fineract-provider/api/v1/loanproducts
     account-endpoint: /fineract-provider/api/v1/loans
     approve-endpoint: /fineract-provider/api/v1/loans/2
-    repayment-endpoint: /api/v1/interoperation/transactions/{accountId}/loanrepayment
+    disburse-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
+    repayment-endpoint: /api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
 
 savings:
   base-url: https://fynams.sandbox.fynarfin.io

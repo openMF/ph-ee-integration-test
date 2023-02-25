@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.common.dto.loan;
+package org.mifos.integrationtest.common.dto.savings;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +11,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CreatePayerClientResponse {
-    public String officeId;
-    public String clientId;
-    public String resourceId;
+public class SavingsProductResponse {
+    private String resourceId;
 }

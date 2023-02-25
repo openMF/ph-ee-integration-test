@@ -8,11 +8,13 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class CreatePayerClientResponse {
-    public String officeId;
-    public String clientId;
-    public String resourceId;
+public class LoanDisburse {
+    public int paymentTypeId;
+    public int transactionAmount;
+    public String actualDisbursementDate;
+    public String locale;
+    public String dateFormat;
 }

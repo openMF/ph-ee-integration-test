@@ -35,4 +35,6 @@ public class GsmaConfig {
     public static String payerClientBaseUrl;
     @Value("${savings.endpoints.client-endpoint}")
     public static String payerClientEndpoint;
+    @Value("${savings.endpoints.disburse-endpoint}")
+    public static String loanDisburseEndpoint;
 }
