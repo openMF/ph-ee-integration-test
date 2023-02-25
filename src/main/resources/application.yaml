@@ -33,7 +33,7 @@ defaults:
 
 
 channel:
-  base-url: http://localhost:5008
+  base-url: http://channel.sandbox.fynarfin.io
   endpoint: "/api/v1/gsma/transaction"
 
 loan:

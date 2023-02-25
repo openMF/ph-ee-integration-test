@@ -41,7 +41,6 @@ public class GSMATransferStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = gsmaTransferDef.setHeadersClient(requestSpec);
         gsmaTransferDef.createPayerClientBody = gsmaTransferDef.setBodyPayerClient();
-        logger.info("Body : {}", gsmaTransferDef.createPayerClientBody);
         // Calling savings product endpoint
         gsmaTransferDef.responsePayerClient = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.payerClientBaseUrl)

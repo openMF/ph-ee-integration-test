@@ -182,7 +182,7 @@ public class GSMATransferDef {
 
     protected String setBodySavingsProduct() throws JsonProcessingException {
         // Generating product name and shortname
-        String name = new StringBuilder().append("product").append(getAlphaNumericString(3)).toString();
+        String name = new StringBuilder().append("product").append(getAlphaNumericString(1)).toString();
         String shortName = getAlphaNumericString(3);
 
         SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
