@@ -48,9 +48,9 @@ loan:
 savings:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:
+    client-endpoint: /fineract-provider/api/v1/clients
     product-endpoint: /savingsproducts
     account-endpoint: /savingsaccounts
     approve-endpoint: /savingsaccounts/{{savingsAccId}}
     activate-endpoint: /savingsaccounts/{{savingsAccId}}
     deposit-endpoint: /savingsaccounts/{{savingsAccId}}/transactions
-    client-endpoint: /fineract-provider/api/v1/clients

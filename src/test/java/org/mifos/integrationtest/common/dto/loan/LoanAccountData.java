@@ -1,6 +1,5 @@
 package org.mifos.integrationtest.common.dto.loan;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class LoanAccountData {
     public String clientId;
@@ -38,4 +36,31 @@ public class LoanAccountData {
     public String loanType;
     public String expectedDisbursementDate;
     public String submittedOnDate;
+
+    public LoanAccountData(String clientId, int productId, ArrayList<Object> disbursementData, int principal, int loanTermFrequency, int loanTermFrequencyType, int numberOfRepayments, int repaymentEvery, int repaymentFrequencyType, double interestRatePerPeriod, int amortizationType, boolean isEqualAmortization, int interestType, int interestCalculationPeriodType, boolean allowPartialPeriodInterestCalcualtion, int graceOnArrearsAgeing, String transactionProcessingStrategyCode, ArrayList<Object> rates, String repaymentsStartingFromDate, String locale, String dateFormat, String loanType, String expectedDisbursementDate, String submittedOnDate) {
+        this.clientId = clientId;
+        this.productId = productId;
+        this.disbursementData = disbursementData;
+        this.principal = principal;
+        this.loanTermFrequency = loanTermFrequency;
+        this.loanTermFrequencyType = loanTermFrequencyType;
+        this.numberOfRepayments = numberOfRepayments;
+        this.repaymentEvery = repaymentEvery;
+        this.repaymentFrequencyType = repaymentFrequencyType;
+        this.interestRatePerPeriod = interestRatePerPeriod;
+        this.amortizationType = amortizationType;
+        this.isEqualAmortization = isEqualAmortization;
+        this.interestType = interestType;
+        this.interestCalculationPeriodType = interestCalculationPeriodType;
+        this.allowPartialPeriodInterestCalcualtion = allowPartialPeriodInterestCalcualtion;
+        this.graceOnArrearsAgeing = graceOnArrearsAgeing;
+        this.transactionProcessingStrategyCode = transactionProcessingStrategyCode;
+        this.rates = rates;
+        this.repaymentsStartingFromDate = repaymentsStartingFromDate;
+        this.locale = locale;
+        this.dateFormat = dateFormat;
+        this.loanType = loanType;
+        this.expectedDisbursementDate = expectedDisbursementDate;
+        this.submittedOnDate = submittedOnDate;
+    }
 }

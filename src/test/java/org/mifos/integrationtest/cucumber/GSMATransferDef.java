@@ -32,65 +32,62 @@ import java.util.Date;
 
 @Component
 public class GSMATransferDef {
-    public static String gsmaTransferBody;
-    public static String loanProductBody;
-    public static String amsName;
-    public static int amount;
-    public static String accountId;
-    public static String acccountHoldingInstitutionId;
-
-    public static String gsmaTransactionResponse;
-    public static String responseLoanProduct;
-    public static String tenant;
-    public static String currentDate;
-    protected static String loanAccountBody;
-    protected static String responseLoanAccount;
-    protected static String loanApproveBody;
-    protected static String responseLoanApprove;
-    protected static String loanRepaymentBody;
-    protected static String responseLoanRepayment;
-    protected static String savingsProductBody;
-    protected static String responseSavingsProduct;
-    protected static String savingsApproveBody;
-    protected static String responseSavingsApprove;
-    protected static String savingsAccountBody;
-    protected static String responseSavingsAccount;
-    protected static String savingsActivateBody;
-    protected static String responseSavingsActivate;
-    protected static String savingsDepositAccountBody;
-    protected static String responseSavingsDepositAccount;
-    protected static String createPayerClientBody;
-    protected static String responsePayerClient;
-    protected static String payerClientBody;
-    protected static String loanDisburseBody;
-    protected static String responseLoanDisburse;
-    protected static String gsmaTransfer;
-
+    public String gsmaTransferBody;
+    public String loanProductBody;
+    public String amsName;
+    public int amount;
+    public String accountId;
+    public String acccountHoldingInstitutionId;
+    public String gsmaTransactionResponse;
+    public String responseLoanProduct;
+    public String tenant;
+    public String currentDate;
+    protected String loanAccountBody;
+    protected String responseLoanAccount;
+    protected String loanApproveBody;
+    protected String responseLoanApprove;
+    protected String loanRepaymentBody;
+    protected String responseLoanRepayment;
+    protected String savingsProductBody;
+    protected String responseSavingsProduct;
+    protected String savingsApproveBody;
+    protected String responseSavingsApprove;
+    protected String savingsAccountBody;
+    protected String responseSavingsAccount;
+    protected String savingsActivateBody;
+    protected String responseSavingsActivate;
+    protected String savingsDepositAccountBody;
+    protected String responseSavingsDepositAccount;
+    protected String createPayerClientBody;
+    protected String responsePayerClient;
+    protected String payerClientBody;
+    protected String loanDisburseBody;
+    protected String responseLoanDisburse;
+    protected String gsmaTransfer;
     @Autowired
-    static ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-    public static void setAccountId(String acId) {
+    public void setAccountId(String acId) {
         accountId = acId;
     }
 
-    public static void setHeadersMifos(String ams, String aHIId, int amnt) {
+    public void setHeadersMifos(String ams, String aHIId, int amnt) {
         amsName = ams;
         acccountHoldingInstitutionId = aHIId;
         amount = amnt;
     }
 
-    protected static void setTenant(String tenantName) {
+    protected void setTenant(String tenantName) {
         tenant = tenantName;
     }
 
-    protected static void setcurrentDate(String date) {
+    protected void setcurrentDate(String date) {
         currentDate = date;
     }
 
-    protected static RequestSpecification setHeadersLoan(RequestSpecification requestSpec) {
+    protected RequestSpecification setHeadersLoan(RequestSpecification requestSpec) {
         requestSpec.header("Fineract-Platform-TenantId", tenant);
         requestSpec.header("Accept", "application/json, text/plain, */*");
         requestSpec.header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
@@ -109,7 +106,7 @@ public class GSMATransferDef {
         return requestSpec;
     }
 
-    protected static String setBodyLoanProduct() {
+    protected String setBodyLoanProduct() throws JsonProcessingException {
         // Generating product name and shortname
         String name = new StringBuilder().append("loan").append(getAlphaNumericString(4)).toString();
         String shortName = getAlphaNumericString(4);
@@ -118,11 +115,11 @@ public class GSMATransferDef {
 
         LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 6, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "interest-principal-penalties-fees-order-strategy", allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
 
-        return loanProduct.toString();
+        return objectMapper.writeValueAsString(loanProduct);
     }
 
 
-    protected static String setBodyLoanAccount() throws JsonProcessingException {
+    protected String setBodyLoanAccount() throws JsonProcessingException {
 
         String date = getCurrentDate();
         setcurrentDate(date);
@@ -131,28 +128,30 @@ public class GSMATransferDef {
                 responsePayerClient, CreatePayerClientResponse.class);
         LoanProductResponse loanProductResponse = objectMapper.readValue(
                 responseLoanProduct, LoanProductResponse.class);
+        String clientId = createPayerClientResponse.getClientId();
+        int resourceId = Integer.parseInt(loanProductResponse.getResourceId());
 
-        LoanAccountData loanAccountData = new LoanAccountData(createPayerClientResponse.getClientId(), Integer.parseInt(loanProductResponse.getResourceId()), new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, "interest-principal-penalties-fees-order-strategy", new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
+        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, "interest-principal-penalties-fees-order-strategy", new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
 
-        return loanAccountData.toString();
+        return objectMapper.writeValueAsString(loanAccountData);
     }
 
-    private static String getCurrentDate() {
+    private String getCurrentDate() {
         Date date = new Date();
         return new SimpleDateFormat("dd MMMM yyyy").format(date);
     }
 
-    protected static String setBodyLoanApprove(int amount) {
+    protected String setBodyLoanApprove(int amount) throws JsonProcessingException {
         LoanApprove loanApprove = new LoanApprove(currentDate, amount, currentDate, new ArrayList<>(), "en", "dd MMMM yyyy");
-        return loanApprove.toString();
+        return objectMapper.writeValueAsString(loanApprove);
     }
 
-    protected static Object setBodyLoanRepayment(String amount) {
+    protected Object setBodyLoanRepayment(String amount) throws JsonProcessingException {
         LoanRepaymentDTO loanRepaymentDTO = new LoanRepaymentDTO(currentDate, "1", amount, "en", "dd MMMM yyyy");
-        return loanRepaymentDTO.toString();
+        return objectMapper.writeValueAsString(loanRepaymentDTO);
     }
 
-    protected static RequestSpecification setHeadersSavings(RequestSpecification requestSpec) {
+    protected RequestSpecification setHeadersSavings(RequestSpecification requestSpec) {
         requestSpec.header("fineract-platform-tenantid", tenant);
         requestSpec.header("accept", "application/json, text/plain, */*");
         requestSpec.header("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
@@ -169,7 +168,7 @@ public class GSMATransferDef {
         return requestSpec;
     }
 
-    static String getAlphaNumericString(int size) {
+    String getAlphaNumericString(int size) {
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"
                 + "abcdefghijklmnopqrstuvxyz";
@@ -181,22 +180,22 @@ public class GSMATransferDef {
         return sb.toString();
     }
 
-    protected static String setBodySavingsProduct() {
+    protected String setBodySavingsProduct() throws JsonProcessingException {
         // Generating product name and shortname
         String name = new StringBuilder().append("product").append(getAlphaNumericString(3)).toString();
         String shortName = getAlphaNumericString(3);
 
         SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
 
-        return savingsProduct.toString();
+        return objectMapper.writeValueAsString(savingsProduct);
     }
 
-    protected static String setBodySavingsApprove() {
+    protected String setBodySavingsApprove() throws JsonProcessingException {
         SavingsApprove savingsApprove = new SavingsApprove(currentDate, "en", "dd MMMM yyyy");
-        return savingsApprove.toString();
+        return objectMapper.writeValueAsString(savingsApprove);
     }
 
-    protected static String setBodySavingsAccount() throws JsonProcessingException {
+    protected String setBodySavingsAccount() throws JsonProcessingException {
         // Getting resourceId and clientId
         CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
                 responsePayerClient, CreatePayerClientResponse.class);
@@ -206,20 +205,20 @@ public class GSMATransferDef {
 
         SavingsAccount savingsAccount = new SavingsAccount(savingsProductResponse.getResourceId(), 5, false, false, false, false, false, 1, 4, 1, 365, currentDate, "en", "dd MMMM yyyy", "dd MMM", new ArrayList<>(), createPayerClientResponse.getClientId(), "");
 
-        return savingsAccount.toString();
+        return objectMapper.writeValueAsString(savingsAccount);
     }
 
-    protected static String setBodySavingsActivate() {
+    protected String setBodySavingsActivate() throws JsonProcessingException {
         SavingsActivate savingsActivate = new SavingsActivate(currentDate, "en", "dd MMMM yyyy");
-        return savingsActivate.toString();
+        return objectMapper.writeValueAsString(savingsActivate);
     }
 
-    protected static String setSavingsDepositAccount(int amount) {
+    protected String setSavingsDepositAccount(int amount) throws JsonProcessingException {
         SavingsAccountDeposit savingsAccountDeposit = new SavingsAccountDeposit("dd MMMM yyyy", "en", 1, amount, currentDate);
-        return savingsAccountDeposit.toString();
+        return objectMapper.writeValueAsString(savingsAccountDeposit);
     }
 
-    protected static RequestSpecification setHeadersClient(RequestSpecification requestSpec) {
+    protected RequestSpecification setHeadersClient(RequestSpecification requestSpec) {
         requestSpec.header("fineract-platform-tenantid", tenant);
         requestSpec.header("accept", "application/json, text/plain, */*");
         requestSpec.header("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
@@ -236,20 +235,20 @@ public class GSMATransferDef {
         return requestSpec;
     }
 
-    protected static String setBodyPayerClient() {
+    protected String setBodyPayerClient() throws JsonProcessingException {
         String date = getCurrentDate();
         CreatePayerClient createPayerClient = new CreatePayerClient(new ArrayList<>(), new ArrayList<>(), 1, 1, "John", "Wick", true, "en", "dd MMMM yyyy", date, date, null);
-        return createPayerClient.toString();
+        return objectMapper.writeValueAsString(createPayerClient);
     }
 
-    protected static String setBodyLoanDisburse(int amount) {
+    protected String setBodyLoanDisburse(int amount) throws JsonProcessingException {
         String date = getCurrentDate();
         setcurrentDate(date);
         LoanDisburse loanDisburse = new LoanDisburse(1, amount, date, "en", "dd MMMM yyyy");
-        return loanDisburse.toString();
+        return objectMapper.writeValueAsString(loanDisburse);
     }
 
-    protected static String setGsmaTransactionBody() {
+    protected String setGsmaTransactionBody() throws JsonProcessingException {
         ArrayList<CustomData> customData = new ArrayList<>();
         CustomData customDataObj = new CustomData();
         customData.add(customDataObj);
@@ -266,7 +265,10 @@ public class GSMATransferDef {
         payeeObject.setPartyIdIdentifier(accountId);
         payee.add(payeeObject);
 
-        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(GSMATransferDef.amount), "USD", "note", "2022-09-28T12:51:19.260+00:00", customData, payer, payee);
-        return gsmaTransfer.toString();
+        String dateFormatGiven = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+        String currentDate = new SimpleDateFormat(dateFormatGiven).format(new Date());
+
+        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "USD", "note", currentDate, customData, payer, payee);
+        return objectMapper.writeValueAsString(gsmaTransfer);
     }
 }

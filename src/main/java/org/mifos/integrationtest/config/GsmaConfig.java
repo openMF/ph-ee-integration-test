@@ -6,35 +6,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class GsmaConfig {
     @Value("${channel.base-url}")
-    public static String channelConnectorBaseUrl;
+    public String channelConnectorBaseUrl;
     @Value("${channel.endpoint}")
-    public static String gsmaEndpoint;
+    public String gsmaEndpoint;
     @Value("${loan.base-url}")
-    public static String loanBaseUrl;
+    public String loanBaseUrl;
     @Value("${loan.endpoints.product-endpoint}")
-    public static String loanProductEndpoint;
+    public String loanProductEndpoint;
     @Value("${loan.endpoints.account-endpoint}")
-    public static String loanAccountEndpoint;
+    public String loanAccountEndpoint;
     @Value("${loan.endpoints.approve-endpoint}")
-    public static String loanApproveEndpoint;
+    public String loanApproveEndpoint;
     @Value("${loan.endpoints.repayment-endpoint}")
-    public static String loanRepaymentEndpoint;
+    public String loanRepaymentEndpoint;
+    @Value("${loan.endpoints.disburse-endpoint}")
+    public String loanDisburseEndpoint;
     @Value("${savings.base-url}")
-    public static String savingsBaseUrl;
+    public String savingsBaseUrl;
     @Value("${savings.endpoints.product-endpoint}")
-    public static String savingsProductEndpoint;
+    public String savingsProductEndpoint;
     @Value("${savings.endpoints.approve-endpoint}")
-    public static String savingsApproveEndpoint;
+    public String savingsApproveEndpoint;
     @Value("${savings.endpoints.account-endpoint}")
-    public static String savingsAccountEndpoint;
+    public String savingsAccountEndpoint;
     @Value("${savings.endpoints.activate-endpoint}")
-    public static String savingsActivateEndpoint;
+    public String savingsActivateEndpoint;
     @Value("${savings.endpoints.deposit-endpoint}")
-    public static String savingsDepositAccountEndpoint;
+    public String savingsDepositAccountEndpoint;
     @Value("${savings.base-url}")
-    public static String payerClientBaseUrl;
+    public String payerClientBaseUrl;
     @Value("${savings.endpoints.client-endpoint}")
-    public static String payerClientEndpoint;
-    @Value("${savings.endpoints.disburse-endpoint}")
-    public static String loanDisburseEndpoint;
+    public String payerClientEndpoint;
 }
