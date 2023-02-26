@@ -180,8 +180,8 @@ public class GSMATransferDef {
 
     protected String setBodySavingsProduct() throws JsonProcessingException {
         // Generating product name and shortname
-        String name = new StringBuilder().append("product").append(getAlphaNumericString(1)).toString();
-        String shortName = getAlphaNumericString(3);
+        String name = new StringBuilder().append(getAlphaNumericString(4)).toString();
+        String shortName = getAlphaNumericString(4);
 
         SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
 
@@ -200,6 +200,8 @@ public class GSMATransferDef {
         SavingsProductResponse savingsProductResponse = objectMapper.readValue(
                 responseSavingsProduct, SavingsProductResponse.class
         );
+        String date = getCurrentDate();
+        setcurrentDate(date);
 
         SavingsAccount savingsAccount = new SavingsAccount(savingsProductResponse.getResourceId(), 5, false, false, false, false, false, 1, 4, 1, 365, currentDate, "en", "dd MMMM yyyy", "dd MMM", new ArrayList<>(), createPayerClientResponse.getClientId(), "");
 
