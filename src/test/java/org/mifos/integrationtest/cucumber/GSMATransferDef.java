@@ -93,8 +93,6 @@ public class GSMATransferDef {
         requestSpec.header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
         requestSpec.header("Accept-Encoding", "gzip, deflate, br");
         requestSpec.header("Authorization", "Basic bWlmb3M6cGFzc3dvcmQ=");
-        requestSpec.header("Origin", "https://65.0.42.17:8443");
-        requestSpec.header("Referer", "https://65.0.42.17:8443/");
         requestSpec.header("Sec-Fetch-Dest", "empty");
         requestSpec.header("Sec-Fetch-Mode", "cors");
         requestSpec.header("Sec-Fetch-Site", "cross-site");
