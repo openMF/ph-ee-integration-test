@@ -106,12 +106,12 @@ public class GSMATransferDef {
 
     protected String setBodyLoanProduct() throws JsonProcessingException {
         // Generating product name and shortname
-        String name = new StringBuilder().append("loan").append(getAlphaNumericString(4)).toString();
+        String name = new StringBuilder().append("loan_").append(tenant).toString();
         String shortName = getAlphaNumericString(4);
 
         AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true, "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
 
-        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 6, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "interest-principal-penalties-fees-order-strategy", allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
+        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "interest-principal-penalties-fees-order-strategy", allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
 
         return objectMapper.writeValueAsString(loanProduct);
     }

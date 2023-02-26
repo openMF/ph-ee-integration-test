@@ -177,6 +177,8 @@ public class GSMATransferStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
         gsmaTransferDef.loanProductBody = gsmaTransferDef.setBodyLoanProduct();
+        logger.info("Body :{}", gsmaTransferDef.loanProductBody);
+        logger.info("Endpoint :{}", gsmaConfig.loanProductEndpoint);
         // Calling loan product endpoint
         gsmaTransferDef.responseLoanProduct = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.loanBaseUrl)
