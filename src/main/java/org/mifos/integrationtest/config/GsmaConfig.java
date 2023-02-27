@@ -21,6 +21,8 @@ public class GsmaConfig {
     public String loanRepaymentEndpoint;
     @Value("${loan.endpoints.disburse-endpoint}")
     public String loanDisburseEndpoint;
+    @Value("${loan.endpoints.accountid-endpoint}")
+    public String loanGetAccountIdEndpoint;
     @Value("${savings.base-url}")
     public String savingsBaseUrl;
     @Value("${savings.endpoints.product-endpoint}")

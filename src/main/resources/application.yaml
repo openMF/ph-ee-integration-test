@@ -35,7 +35,7 @@ defaults:
 
 channel:
   base-url: http://channel.sandbox.fynarfin.io
-  endpoint: "/channel/gsma/transaction"
+  endpoint: /channel/gsma/transaction
 
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
@@ -45,6 +45,7 @@ loan:
     approve-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
     disburse-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
     repayment-endpoint: /fineract-provider/api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
+    accountid-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
 
 
 savings:

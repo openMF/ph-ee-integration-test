@@ -2,25 +2,33 @@ package org.mifos.integrationtest.cucumber;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.RestAssured;
+import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mifos.connector.common.ams.dto.LoanRepaymentDTO;
 import org.mifos.connector.common.gsma.dto.CustomData;
 import org.mifos.connector.common.gsma.dto.GsmaTransfer;
 import org.mifos.connector.common.gsma.dto.Party;
+import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.loan.AllowAttributeOverrides;
 import org.mifos.integrationtest.common.dto.loan.CreatePayerClient;
 import org.mifos.integrationtest.common.dto.loan.CreatePayerClientResponse;
 import org.mifos.integrationtest.common.dto.loan.LoanAccountData;
+import org.mifos.integrationtest.common.dto.loan.LoanAccountResponse;
 import org.mifos.integrationtest.common.dto.loan.LoanApprove;
 import org.mifos.integrationtest.common.dto.loan.LoanDisburse;
 import org.mifos.integrationtest.common.dto.loan.LoanProduct;
 import org.mifos.integrationtest.common.dto.loan.LoanProductResponse;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccount;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccountDeposit;
+import org.mifos.integrationtest.common.dto.savings.SavingsAccountResponse;
 import org.mifos.integrationtest.common.dto.savings.SavingsActivate;
 import org.mifos.integrationtest.common.dto.savings.SavingsApprove;
 import org.mifos.integrationtest.common.dto.savings.SavingsProduct;
 import org.mifos.integrationtest.common.dto.savings.SavingsProductResponse;
+import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Component
-public class GSMATransferDef {
+public class GSMATransferDef extends GsmaConfig {
     public String gsmaTransferBody;
     public String loanProductBody;
     public String amsName;
@@ -208,7 +216,8 @@ public class GSMATransferDef {
         return objectMapper.writeValueAsString(loanDisburse);
     }
 
-    protected String setGsmaTransactionBody() throws JsonProcessingException {
+    protected String setGsmaTransactionBody(String prefix) throws JsonProcessingException {
+        String accountId = getAccountId(prefix);
         ArrayList<CustomData> customData = new ArrayList<>();
         CustomData customDataObj = new CustomData();
         customData.add(customDataObj);
@@ -230,5 +239,52 @@ public class GSMATransferDef {
 
         GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "USD", "note", currentDate, customData, payer, payee);
         return objectMapper.writeValueAsString(gsmaTransfer);
+    }
+
+    private String getAccountId(String prefix) throws JsonProcessingException {
+        String accountNumber = "";
+        if (prefix.equalsIgnoreCase("S")) {
+            accountNumber = getSavingsAccountId();
+        } else {
+            accountNumber = getLoanAccountId();
+        }
+        String accountId = new StringBuilder().append(prefix).append(accountNumber).toString();
+        return accountId;
+    }
+
+    private String getSavingsAccountId() throws JsonProcessingException {
+        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
+                responseSavingsAccount, SavingsAccountResponse.class);
+        return savingsAccountResponse.getSavingsId();
+    }
+
+    private String getLoanAccountId() throws JsonProcessingException {
+        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
+                responseLoanAccount, LoanAccountResponse.class);
+        String loanId = Integer.toString(loanAccountResponse.getLoanId());
+        return getLoanIdFromFineract(loanId);
+    }
+
+    private String getLoanIdFromFineract(String loanId) {
+        RequestSpecification requestSpecification = Utils.getDefaultSpec();
+        requestSpecification = setHeaders(requestSpecification);
+        loanGetAccountIdEndpoint = loanGetAccountIdEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanId);
+        String response = RestAssured.given(requestSpecification)
+                .baseUri(loanBaseUrl)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                .when()
+                .get(loanGetAccountIdEndpoint)
+                .andReturn().asString();
+        String accountNp = "";
+
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+            accountNp = jsonResponse.getString("accountNo");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return accountNp;
+
     }
 }

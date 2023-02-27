@@ -18,12 +18,11 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     When I call the loan disburse endpoint with command "disburse" for amount 7800
     Then I call the loan repayment endpoint for amount 21
 
-  Scenario: Deposit Savings Worker Test
-    Given I have accountId "S000000031"
-    When I have amsName as "mifos" and acccountHoldingInstitutionId as "gorilla" and amount as 11
-    Then I call the channel connector API with expected status of 200
-
   Scenario: Loan repayment Worker Test
-    Given I have accountId "L000000015"
     When I have amsName as "mifos" and acccountHoldingInstitutionId as "gorilla" and amount as 11
-    Then I call the channel connector API with expected status of 200
+    Then I call the channel connector API for loan account with expected status of 200
+
+  Scenario: Deposit Savings Worker Test
+    When I have amsName as "mifos" and acccountHoldingInstitutionId as "gorilla" and amount as 11
+    Then I call the channel connector API for savings account with expected status of 200
+

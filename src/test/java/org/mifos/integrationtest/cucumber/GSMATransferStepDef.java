@@ -288,12 +288,6 @@ public class GSMATransferStepDef {
         assertThat(gsmaTransferDef.responseLoanRepayment).isNotEmpty();
     }
 
-    @Given("I have accountId {string}")
-    public void setGsmaTransferBody(String accountId) {
-        gsmaTransferDef.setAccountId(accountId);
-        assertThat(gsmaTransferDef.accountId).isNotEmpty();
-    }
-
     @When("I have amsName as {string} and acccountHoldingInstitutionId as {string} and amount as {int}")
     public void setHeaders(String amsName, String acccountHoldingInstitutionId, int amount) {
         gsmaTransferDef.setHeadersMifos(amsName, acccountHoldingInstitutionId, amount);
@@ -302,13 +296,34 @@ public class GSMATransferStepDef {
         assertThat(gsmaTransferDef.amount).isNotNull();
     }
 
-    @Then("I call the channel connector API with expected status of {int}")
-    public void sendRequestToGSMAEndpoint(int status) throws JsonProcessingException {
+    @Then("I call the channel connector API for savings account with expected status of {int}")
+    public void sendRequestToGSMAEndpointSavings(int status) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
 
-        gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody();
+        gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
+
+        gsmaTransferDef.gsmaTransactionResponse = RestAssured.given(requestSpec)
+                .baseUri(gsmaConfig.channelConnectorBaseUrl)
+                .body(gsmaTransferDef.gsmaTransferBody)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(status).build())
+                .when()
+                .post(gsmaConfig.gsmaEndpoint)
+                .andReturn().asString();
+
+        logger.info("GSMA Transaction Response: " + gsmaTransferDef.gsmaTransactionResponse);
+        assertThat(gsmaTransferDef.gsmaTransactionResponse).isNotEmpty();
+    }
+
+    @Then("I call the channel connector API for loan account with expected status of {int}")
+    public void sendRequestToGSMAEndpointLoan(int status) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec.header("amsName", gsmaTransferDef.amsName);
+        requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
+
+        gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("L");
 
         gsmaTransferDef.gsmaTransactionResponse = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.channelConnectorBaseUrl)
