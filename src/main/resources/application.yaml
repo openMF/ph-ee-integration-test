@@ -9,6 +9,7 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
+
     transfers: "/api/v1/transfers?size=1&page=0"
     transactionRequests: "/api/v1/transactionRequests"
 
@@ -29,3 +30,30 @@ retry-interval: 15000
 
 defaults:
   tenant: "gorilla"
+  authorization: "Basic bWlmb3M6cGFzc3dvcmQ="
+
+
+channel:
+  base-url: http://channel.sandbox.fynarfin.io
+  endpoint: /channel/gsma/transaction
+
+loan:
+  base-url: https://fynams.sandbox.fynarfin.io
+  endpoints:
+    product-endpoint: /fineract-provider/api/v1/loanproducts
+    account-endpoint: /fineract-provider/api/v1/loans
+    approve-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
+    disburse-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
+    repayment-endpoint: /fineract-provider/api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
+    accountid-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
+
+
+savings:
+  base-url: https://fynams.sandbox.fynarfin.io
+  endpoints:
+    client-endpoint: /fineract-provider/api/v1/clients
+    product-endpoint: /fineract-provider/api/v1/savingsproducts
+    account-endpoint: /fineract-provider/api/v1/savingsaccounts
+    approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
+    activate-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
+    deposit-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}/transactions
