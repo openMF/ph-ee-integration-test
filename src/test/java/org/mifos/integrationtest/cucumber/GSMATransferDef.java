@@ -24,6 +24,7 @@ import org.mifos.integrationtest.common.dto.savings.SavingsProductResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -63,9 +64,12 @@ public class GSMATransferDef {
     protected String payerClientBody;
     protected String loanDisburseBody;
     protected String responseLoanDisburse;
-    protected String gsmaTransfer;
     @Autowired
     ObjectMapper objectMapper;
+
+    @Value("${defaults.authorization}")
+    public String authorizationToken;
+
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -87,26 +91,16 @@ public class GSMATransferDef {
         currentDate = date;
     }
 
-    protected RequestSpecification setHeadersLoan(RequestSpecification requestSpec) {
+    protected RequestSpecification setHeaders(RequestSpecification requestSpec) {
         requestSpec.header("Fineract-Platform-TenantId", tenant);
-        requestSpec.header("Accept", "application/json, text/plain, */*");
-        requestSpec.header("Accept-Language", "en-GB,en-US;q=0.9,en;q=0.8");
-        requestSpec.header("Accept-Encoding", "gzip, deflate, br");
-        requestSpec.header("Authorization", "Basic bWlmb3M6cGFzc3dvcmQ=");
-        requestSpec.header("Sec-Fetch-Dest", "empty");
-        requestSpec.header("Sec-Fetch-Mode", "cors");
-        requestSpec.header("Sec-Fetch-Site", "cross-site");
-        requestSpec.header("sec-ch-ua-mobile", "?0");
-        requestSpec.header("sec-ch-ua-platform", "sec-ch-ua-platform");
-        requestSpec.header("sec-ch-ua", "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"");
-        requestSpec.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        requestSpec.header("Authorization", authorizationToken);
         requestSpec.header("Content-Type", "application/json;charset=UTF-8");
         return requestSpec;
     }
 
     protected String setBodyLoanProduct() throws JsonProcessingException {
         // Generating product name and shortname
-        String name = new StringBuilder().append("loan_").append(tenant).toString();
+        String name = new StringBuilder().append(getAlphaNumericString(4)).append(tenant).toString();
         String shortName = getAlphaNumericString(4);
 
         AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true, "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
@@ -144,26 +138,9 @@ public class GSMATransferDef {
         return objectMapper.writeValueAsString(loanApprove);
     }
 
-    protected Object setBodyLoanRepayment(String amount) throws JsonProcessingException {
+    protected String setBodyLoanRepayment(String amount) throws JsonProcessingException {
         LoanRepaymentDTO loanRepaymentDTO = new LoanRepaymentDTO(currentDate, "1", amount, "en", "dd MMMM yyyy");
         return objectMapper.writeValueAsString(loanRepaymentDTO);
-    }
-
-    protected RequestSpecification setHeadersSavings(RequestSpecification requestSpec) {
-        requestSpec.header("fineract-platform-tenantid", tenant);
-        requestSpec.header("accept", "application/json, text/plain, */*");
-        requestSpec.header("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
-        requestSpec.header("authorization", "Basic bWlmb3M6cGFzc3dvcmQ=");
-        requestSpec.header("authority", "fynams.mifos.g2pconnect.io");
-        requestSpec.header("sec-fetch-dest", "empty");
-        requestSpec.header("sec-fetch-mode", "cors");
-        requestSpec.header("sec-fetch-site", "cross-site");
-        requestSpec.header("sec-ch-ua-mobile", "?0");
-        requestSpec.header("sec-ch-ua-platform", "sec-ch-ua-platform");
-        requestSpec.header("sec-ch-ua", "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"");
-        requestSpec.header("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        requestSpec.header("content-type", "application/json;charset=UTF-8");
-        return requestSpec;
     }
 
     String getAlphaNumericString(int size) {
@@ -216,23 +193,6 @@ public class GSMATransferDef {
     protected String setSavingsDepositAccount(int amount) throws JsonProcessingException {
         SavingsAccountDeposit savingsAccountDeposit = new SavingsAccountDeposit("dd MMMM yyyy", "en", 1, amount, currentDate);
         return objectMapper.writeValueAsString(savingsAccountDeposit);
-    }
-
-    protected RequestSpecification setHeadersClient(RequestSpecification requestSpec) {
-        requestSpec.header("fineract-platform-tenantid", tenant);
-        requestSpec.header("accept", "application/json, text/plain, */*");
-        requestSpec.header("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
-        requestSpec.header("authorization", "Basic bWlmb3M6cGFzc3dvcmQ=");
-        requestSpec.header("authority", "fynams.mifos.g2pconnect.io");
-        requestSpec.header("sec-fetch-dest", "empty");
-        requestSpec.header("sec-fetch-mode", "cors");
-        requestSpec.header("sec-fetch-site", "cross-site");
-        requestSpec.header("sec-ch-ua-mobile", "?0");
-        requestSpec.header("sec-ch-ua-platform", "sec-ch-ua-platform");
-        requestSpec.header("sec-ch-ua", "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"");
-        requestSpec.header("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        requestSpec.header("content-type", "application/json;charset=UTF-8");
-        return requestSpec;
     }
 
     protected String setBodyPayerClient() throws JsonProcessingException {

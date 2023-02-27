@@ -30,20 +30,22 @@ retry-interval: 15000
 
 defaults:
   tenant: "gorilla"
+  authorization: "Basic bWlmb3M6cGFzc3dvcmQ="
 
 
 channel:
   base-url: http://channel.sandbox.fynarfin.io
-  endpoint: "/api/v1/gsma/transaction"
+  endpoint: "/channel/gsma/transaction"
 
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:
     product-endpoint: /fineract-provider/api/v1/loanproducts
     account-endpoint: /fineract-provider/api/v1/loans
-    approve-endpoint: /fineract-provider/api/v1/loans/2
+    approve-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
     disburse-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
-    repayment-endpoint: /api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
+    repayment-endpoint: /fineract-provider/api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
+
 
 savings:
   base-url: https://fynams.sandbox.fynarfin.io

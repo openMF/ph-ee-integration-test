@@ -39,7 +39,7 @@ public class GSMATransferStepDef {
     @When("I call the create payer client endpoint")
     public void callCreatePayerClientEndpoint() throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersClient(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.createPayerClientBody = gsmaTransferDef.setBodyPayerClient();
         // Calling savings product endpoint
         gsmaTransferDef.responsePayerClient = RestAssured.given(requestSpec)
@@ -59,7 +59,7 @@ public class GSMATransferStepDef {
     public void callCreateSavingsProductEndpoint() throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersSavings(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.savingsProductBody = gsmaTransferDef.setBodySavingsProduct();
         // Calling savings product endpoint
         gsmaTransferDef.responseSavingsProduct = RestAssured.given(requestSpec)
@@ -79,7 +79,7 @@ public class GSMATransferStepDef {
     public void callCreateSavingsAccountEndpoint() throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersSavings(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.savingsAccountBody = gsmaTransferDef.setBodySavingsAccount();
         // Calling savings product endpoint
         gsmaTransferDef.responseSavingsAccount = RestAssured.given(requestSpec)
@@ -99,7 +99,7 @@ public class GSMATransferStepDef {
     public void callApproveSavingsEndpoint(String command) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersSavings(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsApproveBody = gsmaTransferDef.setBodySavingsApprove();
         // Setting account ID in path
@@ -124,7 +124,7 @@ public class GSMATransferStepDef {
     public void callSavingsActivateEndpoint(String command) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersSavings(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsActivateBody = gsmaTransferDef.setBodySavingsActivate();
         //Setting account ID
@@ -149,7 +149,7 @@ public class GSMATransferStepDef {
     public void callDepositAccountEndpoint(String command, int amount) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersSavings(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsDepositAccountBody = gsmaTransferDef.setSavingsDepositAccount(amount);
         //Setting account ID
@@ -175,10 +175,8 @@ public class GSMATransferStepDef {
     public void callLoanProductEndpoint() throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.loanProductBody = gsmaTransferDef.setBodyLoanProduct();
-        logger.info("Body :{}", gsmaTransferDef.loanProductBody);
-        logger.info("Endpoint :{}", gsmaConfig.loanProductEndpoint);
         // Calling loan product endpoint
         gsmaTransferDef.responseLoanProduct = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.loanBaseUrl)
@@ -197,7 +195,7 @@ public class GSMATransferStepDef {
     public void callCreateLoanAccountEndpoint() throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.loanAccountBody = gsmaTransferDef.setBodyLoanAccount();
         // Calling create loan account endpoint
         gsmaTransferDef.responseLoanAccount = RestAssured.given(requestSpec)
@@ -217,7 +215,7 @@ public class GSMATransferStepDef {
     public void callApproveLoanEndpoint(String command, int amount) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanApproveBody = gsmaTransferDef.setBodyLoanApprove(amount);
         //Setting account ID
@@ -242,7 +240,7 @@ public class GSMATransferStepDef {
     @When("I call the loan disburse endpoint with command {string} for amount {int}")
     public void callLoanDisburseEndpoint(String command, int amount) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanDisburseBody = gsmaTransferDef.setBodyLoanDisburse(amount);
         //Setting account ID
@@ -268,13 +266,14 @@ public class GSMATransferStepDef {
     public void callLoanRepaymentEndpoint(int amount) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec = gsmaTransferDef.setHeadersLoan(requestSpec);
-        gsmaTransferDef.loanRepaymentBody = (String) gsmaTransferDef.setBodyLoanRepayment(String.valueOf(amount));
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
+        gsmaTransferDef.loanRepaymentBody = gsmaTransferDef.setBodyLoanRepayment(String.valueOf(amount));
         //Setting account ID
         LoanAccountResponse loanAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseLoanAccount, LoanAccountResponse.class);
-        String loanAccountId = String.valueOf(new StringBuilder().append("00000000").append(loanAccountResponse.getLoanId()));
-        gsmaConfig.loanDisburseEndpoint = gsmaConfig.loanDisburseEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
+        String loanId = Integer.toString(loanAccountResponse.getLoanId());
+        String loanAccountId = String.format("%0" + (9 - loanId.length()) + "d%s", 0, loanId);
+        gsmaConfig.loanRepaymentEndpoint = gsmaConfig.loanRepaymentEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
         gsmaTransferDef.responseLoanRepayment = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.loanBaseUrl)
@@ -309,11 +308,11 @@ public class GSMATransferStepDef {
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
 
-        gsmaTransferDef.gsmaTransfer = gsmaTransferDef.setGsmaTransactionBody();
+        gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody();
 
         gsmaTransferDef.gsmaTransactionResponse = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.channelConnectorBaseUrl)
-                .body(gsmaTransferDef.gsmaTransfer)
+                .body(gsmaTransferDef.gsmaTransferBody)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(status).build())
                 .when()
