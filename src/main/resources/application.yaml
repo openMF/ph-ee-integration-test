@@ -34,7 +34,7 @@ defaults:
 
 
 channel:
-  base-url: http://channel.sandbox.fynarfin.io
+  base-url: https://channel.sandbox.fynarfin.io
   endpoint: /channel/gsma/transaction
 
 loan:
