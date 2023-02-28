@@ -32,10 +32,10 @@ public class ErrorCodeStepDef extends BaseStepDef{
     public String transactionId;
     public static String randomTransactionId;
     public static GSMATransaction gsmaTransaction = null;
-    PhErrorDTO errorInformation = null;
+    public static PhErrorDTO errorInformation = null;
 
-    @When("I call the GSMATransaction endpoint with expected status of {int}")
-    public void iCallTheGSMATransactionEndpointWithExpectedStatusOf(int expectedStatus) {
+    @When("I call the GSMATransfer endpoint with expected status of {int}")
+    public void iCallTheGSMATransferEndpointWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         logger.info("body: {}", gsmaTransaction.toString());
         logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
@@ -77,7 +77,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilErrorInformationIsPopulatedForTheTransactionId() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint ;
-        requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        //requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
         requestSpec.queryParam("page",0);
         requestSpec.queryParam("transactionId", transactionId);
@@ -121,7 +121,6 @@ public class ErrorCodeStepDef extends BaseStepDef{
     }
     public void checkForCallback(){
         String responseError;
-        PhErrorDTO errorInformation = null;
         try {
             JSONObject jsonObject = new JSONObject(BaseStepDef.response);
             JSONArray content = jsonObject.getJSONArray("content");
@@ -164,7 +163,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
         assertThat(errorInformation.getErrorCode()).matches(errorCode);
     }
 
-    @Given("I can create GSMATransactionDTO with missing currency details")
+    @Given("I can create GSMATransferDTO with missing currency details")
     public void iCanCreateGSMATransactionDTOWithMissingCurrency() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
@@ -184,7 +183,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
         }
     }
 
-    @Given("I can create GSMATransactionDTO with same payer and payee")
+    @Given("I can create GSMATransferDTO with same payer and payee")
     public void iCanCreateGSMATransactionDTOWithSamePayerAndPayee() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
@@ -203,7 +202,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
             throw new RuntimeException(e);
         }
     }
-    @Given("I can create GSMATransactionDTO with Negative Amount")
+    @Given("I can create GSMATransferDTO with Negative Amount")
     public void iCanCreateGSMATransactionDTOWithNegativeAmount() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
@@ -224,7 +223,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
 
     }
 
-    @Given("I can create GSMATransactionDTO with invalid amount format")
+    @Given("I can create GSMATransferDTO with invalid amount format")
     public void iCanCreateGSMATransactionDTOWithInvalidAmountFormat() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
@@ -244,8 +243,8 @@ public class ErrorCodeStepDef extends BaseStepDef{
         }
     }
 
-    @Given("I can create GSMATransactionDTO with incorrect Payer")
-    public void iCanCreateGSMATransactionDTOWithIncorrectPayerHelper() {
+    @Given("I can create GSMATransferDTO with incorrect Payer")
+    public void iCanCreateGSMATransferDTOWithIncorrectPayerHelper() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999");
@@ -264,10 +263,10 @@ public class ErrorCodeStepDef extends BaseStepDef{
         }
     }
 
-    @Given("I can create GSMATransactionDTO with Payer Insufficient Balance")
-    public void iCanCreateGSMATransactionDTOWithPayerInsufficientBalance() {
+    @Given("I can create GSMATransferDTO with Payer Insufficient Balance")
+    public void iCanCreateGSMATransferDTOWithPayerInsufficientBalance() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("110", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
