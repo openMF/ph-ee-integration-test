@@ -7,6 +7,7 @@ import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
@@ -22,6 +23,9 @@ public class BaseStepDef {
 
     @Autowired
     ChannelConnectorConfig channelConnectorConfig;
+
+    @Value("${operations-app.auth.enabled}")
+    public Boolean authEnabled;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
