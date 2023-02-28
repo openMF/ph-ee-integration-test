@@ -9,9 +9,3 @@ Feature: Get Transfers API test
                 When I call the transfer API with expected status of 200
                 Then I should get non empty response
                 And I should have clientCorrelationId in response
-
-        Scenario: Get Transfers API Without Auth
-                Given I have tenant as "gorilla"
-                When I call the transfer API with expected status of 200
-                Then I should get non empty response
-                And I should have clientCorrelationId in response

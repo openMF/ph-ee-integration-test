@@ -4,6 +4,7 @@ operations-app:
   password: "password"
   auth:
     enabled: false
+    header: "Basic Y2xpZW50Og=="
   endpoints:
     auth: "/oauth/token"
     batch-summary: "/api/v1/batch"
