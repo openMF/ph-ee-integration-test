@@ -84,6 +84,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
         int retryCount=0;
+        errorInformation = null;
         while (errorInformation == null && retryCount<maxRetryCount ) {
             try {
                 iWillSleepForSecs(retryInterval);
@@ -248,7 +249,7 @@ public class ErrorCodeStepDef extends BaseStepDef{
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999");
-        GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
+        GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
         IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
         PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
@@ -267,8 +268,8 @@ public class ErrorCodeStepDef extends BaseStepDef{
     public void iCanCreateGSMATransferDTOWithPayerInsufficientBalance() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("110", "USD", "string");
-        GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999999");
-        GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
+        GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
+        GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "398714218");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
         IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
         PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
