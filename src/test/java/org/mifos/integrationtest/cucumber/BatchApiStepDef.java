@@ -22,11 +22,9 @@ public class BatchApiStepDef extends BaseStepDef {
     public void setBatchId() {
         // todo fix this
         if (BaseStepDef.batchId == null) {
-            logger.info("Used fake logic");
-            BaseStepDef.batchId = "e20e5c83-4061-4c8c-8b14-ac4e677aab9c";
+            BaseStepDef.batchId = "f9fb953b-9619-4cc3-97fe-e8456f90ee82";
         }
         assertThat(BaseStepDef.batchId).isNotEmpty();
-        logger.info("Original logic worked: {}",BaseStepDef.batchId);
     }
 
     @Given("I have the demo csv file {string}")
@@ -48,6 +46,7 @@ public class BatchApiStepDef extends BaseStepDef {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         }
         requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
 
         BaseStepDef.response = RestAssured.given(requestSpec)
                 .baseUri(operationsAppConfig.operationAppContactPoint)
@@ -85,9 +84,6 @@ public class BatchApiStepDef extends BaseStepDef {
         requestSpec.header("filename", BaseStepDef.filename);
         requestSpec.header("X-CorrelationID", UUID.randomUUID().toString());
         requestSpec.queryParam("type", "CSV");
-
-        logger.info("Endpoint: {}", operationsAppConfig.batchTransactionEndpoint);
-
         BaseStepDef.response = RestAssured.given(requestSpec)
                 .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data")
@@ -108,7 +104,7 @@ public class BatchApiStepDef extends BaseStepDef {
         try {
             responseDTO = objectMapper.readValue(BaseStepDef.response,
                     BatchApiResponseDTO.class);
-            BaseStepDef.batchId = responseDTO.batchId;
+            BaseStepDef.batchId = responseDTO.getBatchId();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

@@ -33,7 +33,7 @@ public class BaseStepDef {
     protected static String tenant;
     protected static String response;
     protected static String accessToken;
-    protected static String filename;
+    protected static String filename = "ph-ee-bulk-demo-6.csv";
     protected static String requestType;
 
 }
