@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.common.dto.loan;
 
+import io.cucumber.core.internal.com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,12 +8,13 @@ import lombok.ToString;
 
 import java.util.ArrayList;
 
-@Getter
 @Setter
 @NoArgsConstructor
 @ToString
 public class LoanAccountData {
+    @Getter
     public String clientId;
+    @Getter
     public int productId;
     public ArrayList<Object> disbursementData;
     public int principal;
@@ -23,6 +25,7 @@ public class LoanAccountData {
     public int repaymentFrequencyType;
     public double interestRatePerPeriod;
     public int amortizationType;
+    @JsonProperty(value = "isEqualAmortization")
     public boolean isEqualAmortization;
     public int interestType;
     public int interestCalculationPeriodType;
