@@ -13,7 +13,6 @@ public class BatchApiResponseDTO {
 
     @JsonProperty("request_id")
     private String requestId;
-
     @JsonProperty("status")
     private String status;
 
