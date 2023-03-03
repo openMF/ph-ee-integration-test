@@ -21,10 +21,10 @@ public class BatchApiStepDef extends BaseStepDef {
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
         // todo fix this
-        if (BaseStepDef.batchId == null) {
+        if (BaseStepDef.batchId == null || BaseStepDef.batchId.isEmpty()) {
             BaseStepDef.batchId = "f9fb953b-9619-4cc3-97fe-e8456f90ee82";
         }
-        assertThat(BaseStepDef.batchId).isNotEmpty();
+        assertThat(BaseStepDef.batchId).isNotNull();
     }
 
     @Given("I have the demo csv file {string}")
