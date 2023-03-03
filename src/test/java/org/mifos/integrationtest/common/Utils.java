@@ -12,6 +12,7 @@ public class Utils {
     public static final String REQUEST_TYPE_PARAM_NAME = "requestType";
     public static final String DEFAULT_TENANT = "gorilla";
     public static final String X_CORRELATIONID = "X-CorrelationID";
+    public static final String CONTENT_TYPE = "Content-Type";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
@@ -36,6 +37,8 @@ public class Utils {
     public static RequestSpecification getDefaultSpec(String tenant) {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(TENANT_PARAM_NAME, tenant);
+        requestSpec.header(X_CORRELATIONID, "123456789");
+        requestSpec.header(CONTENT_TYPE, "application/json");
         return requestSpec;
     }
 
