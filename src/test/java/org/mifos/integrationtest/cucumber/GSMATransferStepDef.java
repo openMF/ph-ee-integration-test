@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
 
 public class GSMATransferStepDef {
 
@@ -301,6 +304,8 @@ public class GSMATransferStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
+        requestSpec.header(X_CORRELATIONID, "123456789");
+        requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
 
@@ -322,6 +327,8 @@ public class GSMATransferStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
+        requestSpec.header(X_CORRELATIONID, "123456789");
+        requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("L");
 
