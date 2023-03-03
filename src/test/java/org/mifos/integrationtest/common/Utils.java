@@ -3,7 +3,6 @@ package org.mifos.integrationtest.common;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.springframework.beans.factory.annotation.Value;
 
 public class Utils {
 
@@ -13,6 +12,7 @@ public class Utils {
     public static final String DEFAULT_TENANT = "gorilla";
     public static final String X_CORRELATIONID = "X-CorrelationID";
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_TYPE_VALUE = "application/json";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
@@ -47,7 +47,7 @@ public class Utils {
                 fileName;
     }
 
-    public static RequestSpecification getRequestType(String requestType){
+    public static RequestSpecification getRequestType(String requestType) {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(REQUEST_TYPE_PARAM_NAME, requestType);
         return requestSpec;
