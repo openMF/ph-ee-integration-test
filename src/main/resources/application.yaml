@@ -58,3 +58,6 @@ savings:
     approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     activate-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     deposit-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}/transactions
+
+mock-server:
+  port: 53013
