@@ -1,8 +1,9 @@
-package org.mifos.integrationtest.cucumber;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
+import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,9 @@ public class BaseStepDef {
 
     @Autowired
     ChannelConnectorConfig channelConnectorConfig;
+
+    @Autowired
+    MockServer mockServer;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;

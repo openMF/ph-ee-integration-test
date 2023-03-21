@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.cucumber;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.Then;

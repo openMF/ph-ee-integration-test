@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.cucumber;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
