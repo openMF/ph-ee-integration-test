@@ -23,5 +23,10 @@ public class MockServerConfig implements MockServer {
         return MockServerConfig.singleInstance;
     }
 
+    @Override
+    public String getBaseUri() {
+        return "http://localhost:"+getMockServer().port();
+    }
+
 
 }
