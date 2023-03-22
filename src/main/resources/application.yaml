@@ -61,3 +61,17 @@ savings:
 
 mock-server:
   port: 53013
+
+kafka:
+  brokers: "kafka:9092"
+  topic: "zeebe-export"
+
+zeebe-operations:
+  contactpoint: "https://zeebeops.sandbox.fynarfin.io"
+  endpoints:
+    workflow: "/channel/workflow/"
+    upload-bpmn: "/zeebe/upload"
+  no-of-workflows : 100
+
+zeebe-test:
+  enabled: true

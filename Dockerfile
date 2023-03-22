@@ -1,5 +1,5 @@
 FROM openjdk:17
-COPY . ph-ee-connector-integration-test
-WORKDIR /ph-ee-connector-integration-test
+WORKDIR /app
+COPY . .
 
-RUN ./gradlew cucumberCli
+CMD ./gradlew cucumberCli
