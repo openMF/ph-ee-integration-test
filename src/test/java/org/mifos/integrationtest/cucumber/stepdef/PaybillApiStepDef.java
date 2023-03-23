@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.cucumber;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -21,7 +21,7 @@ import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
 
 public class PaybillApiStepDef {
     @Autowired
-    org.mifos.integrationtest.cucumber.PaybillStepDef paybillStepDef;
+    PaybillStepDef paybillStepDef;
     @Autowired
     PaybillConfig paybillConfig;
     Logger logger = LoggerFactory.getLogger(this.getClass());

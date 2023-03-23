@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.cucumber;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import org.mifos.integrationtest.common.dto.paybill.PayBillRequestDTO;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ public class PaybillStepDef {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected PayBillRequestDTO setPaybillRequestDTO() {
+    public PayBillRequestDTO setPaybillRequestDTO() {
         PayBillRequestDTO payBillRequestDTO = new PayBillRequestDTO("Pay Bill", transactionId, "20191122063845", amount, businessShortCode, billRefNo, "", "49197.00", "", msisdn, "John");
         return payBillRequestDTO;
     }
