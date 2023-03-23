@@ -16,10 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
 
 public class PaybillApiStepDef {
     @Autowired
-    PaybillStepDef paybillStepDef;
+    org.mifos.integrationtest.cucumber.PaybillStepDef paybillStepDef;
     @Autowired
     PaybillConfig paybillConfig;
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -60,7 +62,7 @@ public class PaybillApiStepDef {
         // Paybill Request DTO for Validation
         PayBillRequestDTO payBillRequestDTO = paybillStepDef.setPaybillRequestDTO();
         requestSpecification.body(payBillRequestDTO);
-        requestSpecification.header("Content-Type", "application/json");
+        requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
         paybillStepDef.response = RestAssured.given(requestSpecification)
                 .contentType("application/json")
                 .expect()
@@ -77,7 +79,7 @@ public class PaybillApiStepDef {
         // Paybill Request DTO for Settlement
         PayBillRequestDTO payBillRequestDTO = paybillStepDef.setPaybillRequestDTO();
         requestSpecification.body(payBillRequestDTO);
-        requestSpecification.header("Content-Type", "application/json");
+        requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         paybillStepDef.response = RestAssured.given(requestSpecification)
                 .contentType("application/json")

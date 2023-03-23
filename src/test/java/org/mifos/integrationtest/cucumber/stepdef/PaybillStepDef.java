@@ -10,7 +10,7 @@ public class PaybillStepDef {
     public String msisdn;
     public String transactionId;
     public String amount;
-    String response;
+    public String response;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
