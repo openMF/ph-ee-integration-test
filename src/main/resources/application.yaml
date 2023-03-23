@@ -10,18 +10,16 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
+
+    transfers: "/api/v1/transfers?size=1&page=0"
+    transactionRequests: "/api/v1/transactionRequests"
+
 paybill:
   mpesa-connector:
     contactpoint: https://mpesa.sandbox.fynarfin.io
     endpoints:
       validation: "/validation"
       settlement: "/confirmation"
-  zeebe-operations:
-    contactpoint: "https://zeebeops.sandbox.fynarfin.io"
-    endpoint:
-      uploadbpmn: "/zeebe/upload"
-    transfers: "/api/v1/transfers?size=1&page=0"
-    transactionRequests: "/api/v1/transactionRequests"
 
 bulk-processor:
   contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
