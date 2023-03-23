@@ -64,7 +64,7 @@ public class PaybillApiStepDef {
         requestSpecification.body(payBillRequestDTO);
         requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
         paybillStepDef.response = RestAssured.given(requestSpecification)
-                .contentType("application/json")
+                .contentType(CONTENT_TYPE_VALUE)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
@@ -82,7 +82,7 @@ public class PaybillApiStepDef {
         requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         paybillStepDef.response = RestAssured.given(requestSpecification)
-                .contentType("application/json")
+                .contentType(CONTENT_TYPE_VALUE)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
