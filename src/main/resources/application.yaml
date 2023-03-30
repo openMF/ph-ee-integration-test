@@ -14,6 +14,13 @@ operations-app:
     transfers: "/api/v1/transfers?size=1&page=0"
     transactionRequests: "/api/v1/transactionRequests"
 
+paybill:
+  mpesa-connector:
+    contactpoint: https://mpesa.sandbox.fynarfin.io
+    endpoints:
+      validation: "/validation"
+      settlement: "/confirmation"
+
 bulk-processor:
   contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
   endpoints:
@@ -33,7 +40,6 @@ defaults:
   tenant: "gorilla"
   authorization: "Basic bWlmb3M6cGFzc3dvcmQ="
 
-
 channel:
   base-url: https://channel.sandbox.fynarfin.io
   endpoint: /channel/gsma/transaction
@@ -47,7 +53,6 @@ loan:
     disburse-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
     repayment-endpoint: /fineract-provider/api/v1/interoperation/transactions/{{loanAccId}}/loanrepayment
     accountid-endpoint: /fineract-provider/api/v1/loans/{{loanAccId}}
-
 
 savings:
   base-url: https://fynams.sandbox.fynarfin.io
