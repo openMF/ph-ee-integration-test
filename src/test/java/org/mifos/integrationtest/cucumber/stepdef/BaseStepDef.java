@@ -10,6 +10,7 @@ import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
+import org.mifos.integrationtest.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class BaseStepDef {
 
     @Autowired
     ChannelConnectorConfig channelConnectorConfig;
+    @Autowired
+    AmsConnectorConfig amsConnectorConfig;
 
     @Autowired
     MockServer mockServer;
@@ -46,6 +49,7 @@ public class BaseStepDef {
     protected static String tenant;
     protected static String response;
     protected static Integer statusCode;
+    protected static String msisdn;
     protected static String accessToken;
     protected static String filename = "ph-ee-bulk-demo-6.csv";
     protected static String requestType;
