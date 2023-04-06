@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
@@ -48,5 +50,17 @@ public class BaseStepDef {
     protected static String clientCorrelationId;
     protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
+
+    protected static String randomData;
+    protected static String encryptedData;
+    protected static String decryptedData;
+    protected static String privateKeyString;
+    protected static String publicKeyString;
+    protected static String newPublicKeyString;
+    protected static PublicKey publicKey;
+    protected static String certificateString;
+    protected static X509Certificate x509Certificate;
+    protected static String jwsDataSeparator = ":";
+    protected static String signature;
 
 }
