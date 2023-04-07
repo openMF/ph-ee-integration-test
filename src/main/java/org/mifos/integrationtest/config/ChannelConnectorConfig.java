@@ -18,6 +18,8 @@ public class ChannelConnectorConfig {
     public String gsmaP2PEndpoint;
     @Value("${channel-connector.endpoints.collection}")
     public String collectionEndpoint;
+    @Value("${channel-connector.endpoints.transferReq}")
+    public String transferReqEndpoint;
 
     public String transferUrl;
 
