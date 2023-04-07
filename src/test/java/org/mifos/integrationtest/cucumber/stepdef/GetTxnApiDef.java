@@ -89,5 +89,5 @@ public class GetTxnApiDef extends BaseStepDef {
                     .andReturn().asString();
             CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
             assertThat(response.getTransactionId()).isNotEmpty();
-        }
     }
+}
