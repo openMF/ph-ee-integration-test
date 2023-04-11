@@ -29,6 +29,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -42,7 +44,7 @@ public class ZeebeStepDef extends BaseStepDef{
     public static int endEventCount;
 
     private static final String CONTENT_TYPE = "Content-Type";
-    private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebe-test.bpmn";
+    private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -57,38 +59,43 @@ public class ZeebeStepDef extends BaseStepDef{
     public void iCanStartTestWorkflowNTimesWithMessage(String message) {
         logger.info("Test workflow started");
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
-        String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebe-test";
+        String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
         logger.info("Endpoint: {}", endpoint);
         logger.info("Request Body: {}", requestBody);
+        ExecutorService executorService = Executors.newCachedThreadPool();
 
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
-            BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
-            logger.info("Workflow Response {}: {}", i, BaseStepDef.response);
-        }
+            final int workflowNumber = i;
+            executorService.execute(()->{
+                BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
+                logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
+            });
 
+        }
+        executorService.shutdown();
         logger.info("Test workflow ended");
     }
 
     @Then("I listen on kafka topic")
     public void listen() throws UnknownHostException {
+        logger.info("Starting listening to kafka topic.");
+        KafkaConsumer<String, String> consumer = createKafkaConsumer();
         int counter = 0;
-        logger.info("counter: {}", startEventCount);
         if(zeebeOperationsConfig.zeebeTest) {
-            logger.info("kafka broker: {}", kafkaConfig.kafkaBroker);
-            KafkaConsumer<String, String> consumer = createKafkaConsumer();
             while (counter < zeebeOperationsConfig.noOfWorkflows) {
                 logger.info("iteration {}", counter);
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                if(!records.isEmpty()){
+                if (!records.isEmpty()) {
+                    logger.info("Records available. Processing kafka records.");
                     processKafkaRecords(records);
-                }
-                else{
-                    logger.info("No records available");
+                } else {
+                    logger.info("No records available.");
                 }
                 counter++;
             }
-            consumer.close();
         }
+        consumer.close();
+        logger.info("Ending listening to kafka topic");
     }
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
@@ -164,10 +171,10 @@ public class ZeebeStepDef extends BaseStepDef{
             System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
             logger.info("value {}", record.value());
 
-            if(bpmnElementType.matches("START_EVENT") && bpmnProcessId.matches("zeebe-test"))
+            if(bpmnElementType.matches("START_EVENT") && bpmnProcessId.matches("zeebetest"))
                 startEventCount++;
 
-            if(bpmnElementType.matches("END_EVENT") && bpmnProcessId.matches("zeebe-test"))
+            if(bpmnElementType.matches("END_EVENT") && bpmnProcessId.matches("zeebetest"))
                 endEventCount++;
         }
     }
