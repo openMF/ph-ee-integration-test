@@ -11,7 +11,6 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.MultiPartSpecification;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -43,7 +42,6 @@ public class ZeebeStepDef extends BaseStepDef{
     public static int startEventCount;
     public static int endEventCount;
 
-    private static final String CONTENT_TYPE = "Content-Type";
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -67,8 +65,12 @@ public class ZeebeStepDef extends BaseStepDef{
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
             executorService.execute(()->{
+
+                BaseStepDef.response = "<empty>>";
+                logger.info("checking if response is getting updated: " + BaseStepDef.response);
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
+                logger.info("executed by thread: " + Thread.currentThread().getName());
             });
 
         }
