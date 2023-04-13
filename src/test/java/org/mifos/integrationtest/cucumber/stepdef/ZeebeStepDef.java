@@ -75,6 +75,8 @@ public class ZeebeStepDef extends BaseStepDef{
 
         }
         executorService.shutdown();
+        while(!executorService.isShutdown()){
+        }
         logger.info("Test workflow ended");
     }
 
@@ -82,6 +84,7 @@ public class ZeebeStepDef extends BaseStepDef{
     public void listen() throws UnknownHostException {
         logger.info("Starting listening to kafka topic.");
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
+        logger.info("consumer subscriptions: " + consumer.subscription().toString());
         int counter = 0;
         if(zeebeOperationsConfig.zeebeTest) {
             while (counter < zeebeOperationsConfig.noOfWorkflows) {
