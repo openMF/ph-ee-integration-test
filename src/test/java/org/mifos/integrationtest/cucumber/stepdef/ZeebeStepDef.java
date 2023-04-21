@@ -22,6 +22,7 @@ import org.mifos.integrationtest.config.ZeebeOperationsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 
 import java.io.IOException;
 import java.net.*;
@@ -81,27 +82,32 @@ public class ZeebeStepDef extends BaseStepDef{
     }
 
     @Then("I listen on kafka topic")
-    public void listen() throws UnknownHostException {
-        logger.info("Starting listening to kafka topic.");
-        KafkaConsumer<String, String> consumer = createKafkaConsumer();
-        logger.info("consumer subscriptions: " + consumer.subscription().toString());
-        int counter = 0;
-        if(zeebeOperationsConfig.zeebeTest) {
-            while (counter < zeebeOperationsConfig.noOfWorkflows) {
-                logger.info("iteration {}", counter);
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                if (!records.isEmpty()) {
-                    logger.info("Records available. Processing kafka records.");
-                    processKafkaRecords(records);
-                } else {
-                    logger.info("No records available.");
-                }
-                counter++;
-            }
-        }
-        consumer.close();
-        logger.info("Ending listening to kafka topic");
+    @KafkaListener(topics = "$kafka.topic", groupId = "consumer-1")
+    public void listener(String message) {
+        logger.info("Received message: {}", message);
     }
+
+//    public void listener() throws UnknownHostException {
+//        logger.info("Starting listening to kafka topic.");
+//        KafkaConsumer<String, String> consumer = createKafkaConsumer();
+//        logger.info("consumer subscriptions: " + consumer.subscription().toString());
+//        int counter = 0;
+//        if(zeebeOperationsConfig.zeebeTest) {
+//            while (counter < zeebeOperationsConfig.noOfWorkflows) {
+//                logger.info("iteration {}", counter);
+//                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+//                if (!records.isEmpty()) {
+//                    logger.info("Records available. Processing kafka records.");
+//                    processKafkaRecords(records);
+//                } else {
+//                    logger.info("No records available.");
+//                }
+//                counter++;
+//            }
+//        }
+//        consumer.close();
+//        logger.info("Ending listening to kafka topic");
+//    }
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {

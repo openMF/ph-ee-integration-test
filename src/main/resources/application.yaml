@@ -27,11 +27,12 @@ bulk-processor:
     bulk-transactions: "/batchtransactions"
 
 channel-connector:
-  contactpoint: "https://channel.sandbox.fynarfin.io"
+  contactpoint: "https://channel2.sandbox.fynarfin.io"
   endpoints:
     transfer: "/channel/transfer"
     gsma-p2p: "/channel/gsma/transfer"
     collection: "/channel/collection"
+    international-remittance: "/channel/gsma/deposit"
 
 mock-server:
   port: 53013
