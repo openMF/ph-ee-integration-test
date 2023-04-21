@@ -82,7 +82,7 @@ public class ZeebeStepDef extends BaseStepDef{
     }
 
     @Then("I listen on kafka topic")
-    @KafkaListener(topics = "$kafka.topic", groupId = "consumer-1")
+    @KafkaListener(topics = "$kafka.topic")
     public void listener(String message) {
         logger.info("Received message: {}", message);
     }
