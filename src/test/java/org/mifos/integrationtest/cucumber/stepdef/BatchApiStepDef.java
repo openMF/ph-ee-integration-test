@@ -22,7 +22,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void setBatchId() {
         // todo fix this
         if (BaseStepDef.batchId == null || BaseStepDef.batchId.isEmpty()) {
-            BaseStepDef.batchId = "f9fb953b-9619-4cc3-97fe-e8456f90ee82";
+            BaseStepDef.batchId = UUID.randomUUID().toString();
         }
         assertThat(BaseStepDef.batchId).isNotNull();
     }
