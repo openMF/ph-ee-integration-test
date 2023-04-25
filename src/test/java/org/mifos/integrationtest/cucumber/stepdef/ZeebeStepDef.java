@@ -67,12 +67,8 @@ public class ZeebeStepDef extends BaseStepDef{
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
             executorService.execute(()->{
-
-                BaseStepDef.response = "<empty>>";
-                logger.info("checking if response is getting updated: " + BaseStepDef.response);
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
-                logger.info("executed by thread: " + Thread.currentThread().getName());
             });
 
         }
@@ -87,7 +83,12 @@ public class ZeebeStepDef extends BaseStepDef{
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
         for(int i=0; i<10; i++){
-            ConsumerRecords<String, String> records = consumer.poll(1000);
+            try {
+                Thread.sleep(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
         }
     }
@@ -119,7 +120,7 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
-        assertThat(zeebeOperationsConfig.noOfWorkflows).isEqualTo(startEventCount);
+        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
         assertThat(startEventCount).isEqualTo(endEventCount);
     }
 
@@ -186,7 +187,7 @@ public class ZeebeStepDef extends BaseStepDef{
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.kafkaBroker);
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, hostname);
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, hostname);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "group-1");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         return new KafkaConsumer<>(properties);
