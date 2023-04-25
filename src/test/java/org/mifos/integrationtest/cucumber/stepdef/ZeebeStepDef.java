@@ -11,6 +11,7 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.MultiPartSpecification;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.io.IOUtils;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -39,9 +40,6 @@ public class ZeebeStepDef extends BaseStepDef{
     ZeebeOperationsConfig zeebeOperationsConfig;
     @Autowired
     KafkaConfig kafkaConfig;
-
-    @Autowired
-    KafkaConsumer<String, String> consumer;
 
     public static int startEventCount;
     public static int endEventCount;
@@ -86,6 +84,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @Then("I listen on kafka topic")
     public void listen() {
+        KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
         for(int i=0; i<10; i++){
             ConsumerRecords<String, String> records = consumer.poll(1000);
@@ -164,19 +163,33 @@ public class ZeebeStepDef extends BaseStepDef{
                 .andReturn().asString();
     }
 
-    private KafkaConsumer<String, String> createKafkaConsumer() throws UnknownHostException {
-        logger.info("inside create kafka consumer");
-        Properties properties = new Properties();
-        properties.put("bootstrap.servers", kafkaConfig.kafkaBroker);
-        properties.put("client.id", InetAddress.getLocalHost().getHostName());
-        properties.put("group.id", InetAddress.getLocalHost().getHostName());
-        properties.put("key.deserializer", StringDeserializer.class.getName());
-        properties.put("value.deserializer", StringDeserializer.class.getName());
-        logger.info("properties initialzed");
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
-        logger.info("consumer created");
-        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
-        return consumer;
+    private KafkaConsumer<String, String> createKafkaConsumer() {
+//        logger.info("inside create kafka consumer");
+//        Properties properties = new Properties();
+//        properties.put("bootstrap.servers", kafkaConfig.kafkaBroker);
+//        properties.put("client.id", InetAddress.getLocalHost().getHostName());
+//        properties.put("group.id", InetAddress.getLocalHost().getHostName());
+//        properties.put("key.deserializer", StringDeserializer.class.getName());
+//        properties.put("value.deserializer", StringDeserializer.class.getName());
+//        logger.info("properties initialzed");
+//        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+//        logger.info("consumer created");
+//        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
+//        return consumer;
+        String hostname = null;
+        try {
+            hostname = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            logger.error("failed to resolve local hostname, picking random clientId");
+            hostname = UUID.randomUUID().toString();
+        }
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.kafkaBroker);
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, hostname);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, hostname);
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        return new KafkaConsumer<>(properties);
     }
 
     private void processKafkaRecords(ConsumerRecords<String, String> records){
