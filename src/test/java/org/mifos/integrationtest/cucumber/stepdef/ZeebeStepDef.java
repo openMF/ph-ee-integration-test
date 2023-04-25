@@ -40,6 +40,9 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
+    @Autowired
+    KafkaConsumer<String, String> consumer;
+
     public static int startEventCount;
     public static int endEventCount;
 
@@ -82,9 +85,12 @@ public class ZeebeStepDef extends BaseStepDef{
     }
 
     @Then("I listen on kafka topic")
-    @KafkaListener(topics = "$kafka.topic")
-    public void listener(String message) {
-        logger.info("Received message: {}", message);
+    public void listen() {
+        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
+        for(int i=0; i<10; i++){
+            ConsumerRecords<String, String> records = consumer.poll(1000);
+            logger.info("No. of records received: {}", records.count());
+        }
     }
 
 //    public void listener() throws UnknownHostException {

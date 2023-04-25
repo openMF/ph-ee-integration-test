@@ -34,22 +34,7 @@ public class KafkaConfig {
     public String kafkaTopic;
 
     @Bean
-    KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(3);  // TODO externalize
-        factory.getContainerProperties().setPollTimeout(3000); // TODO externalize
-
-        return factory;
-    }
-
-    @Bean
     public ConsumerFactory<String, String> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
-    }
-
-    @Bean
-    public Map<String, Object> consumerConfigs() {
         String hostname = null;
         try {
             hostname = InetAddress.getLocalHost().getHostName();
@@ -57,33 +42,12 @@ public class KafkaConfig {
             logger.error("failed to resolve local hostname, picking random clientId");
             hostname = UUID.randomUUID().toString();
         }
-
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker);
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, hostname);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, hostname);
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        return properties;
+        return new DefaultKafkaConsumerFactory<>(properties);
     }
-
-//    @Bean
-//    public ConsumerFactory<String, String> consumerFactory() throws UnknownHostException {
-//        Map<String, Object> map = new HashMap<>();
-//
-//        map.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker);
-//        map.put(ConsumerConfig.GROUP_ID_CONFIG, "consumer-1");
-//        map.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-//        map.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-//
-//        return new DefaultKafkaConsumerFactory<>(map);
-//    }
-//
-//    @Bean
-//    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListner() throws UnknownHostException {
-//        ConcurrentKafkaListenerContainerFactory<String, String> containerFactory =
-//                new ConcurrentKafkaListenerContainerFactory<>();
-//        containerFactory.setConsumerFactory(consumerFactory());
-//        return containerFactory;
-//    }
 }
