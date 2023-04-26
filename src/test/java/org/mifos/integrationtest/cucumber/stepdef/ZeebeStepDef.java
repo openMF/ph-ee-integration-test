@@ -58,42 +58,34 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("I can start test workflow n times with message {string}")
     public void iCanStartTestWorkflowNTimesWithMessage(String message) {
+        logger.info("Test workflow started");
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
         String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
-
-        ExecutorService apiExecutorService = Executors.newCachedThreadPool();
-        ExecutorService kafkaExecutorService = Executors.newSingleThreadExecutor();
-
+        logger.info("Endpoint: {}", endpoint);
+        logger.info("Request Body: {}", requestBody);
+        ExecutorService executorService = Executors.newCachedThreadPool();
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
 
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
-
-            apiExecutorService.execute(()->{
+            executorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
-            });
 
-            kafkaExecutorService.execute(()->{
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
-                logger.info("No. of records received: {}", records.count());
-                if(!records.isEmpty()){
-                    for(ConsumerRecord<String, String> record: records){
-                        logger.info("key: {} ====== value: {}", record.key(), record.value());
-                    }
-                }
             });
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            logger.info("No. of records received: {}", records.count());
+
+            if(!records.isEmpty()){
+                for(ConsumerRecord<String, String> record: records){
+                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
+                }
+            }
         }
 
-        apiExecutorService.shutdown();
-        kafkaExecutorService.shutdown();
-
-        try {
-            apiExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            kafkaExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        executorService.shutdown();
+        while(!executorService.isShutdown()){
         }
         logger.info("Test workflow ended");
     }
