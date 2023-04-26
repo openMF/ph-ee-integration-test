@@ -63,15 +63,20 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("Endpoint: {}", endpoint);
         logger.info("Request Body: {}", requestBody);
         ExecutorService executorService = Executors.newCachedThreadPool();
+        KafkaConsumer<String, String> consumer = createKafkaConsumer();
+        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
 
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
             executorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
-            });
 
+            });
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            logger.info("No. of records received: {}", records.count());
         }
+
         executorService.shutdown();
         while(!executorService.isShutdown()){
         }
