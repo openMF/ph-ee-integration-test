@@ -32,6 +32,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -57,28 +58,42 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("I can start test workflow n times with message {string}")
     public void iCanStartTestWorkflowNTimesWithMessage(String message) {
-        logger.info("Test workflow started");
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
         String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
-        logger.info("Endpoint: {}", endpoint);
-        logger.info("Request Body: {}", requestBody);
-        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        ExecutorService apiExecutorService = Executors.newCachedThreadPool();
+        ExecutorService kafkaExecutorService = Executors.newSingleThreadExecutor();
+
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
 
         for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
-            executorService.execute(()->{
+
+            apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
-
             });
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            logger.info("No. of records received: {}", records.count());
+
+            kafkaExecutorService.execute(()->{
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
+                logger.info("No. of records received: {}", records.count());
+                if(!records.isEmpty()){
+                    for(ConsumerRecord<String, String> record: records){
+                        logger.info("key: {} ====== value: {}", record.key(), record.value());
+                    }
+                }
+            });
         }
 
-        executorService.shutdown();
-        while(!executorService.isShutdown()){
+        apiExecutorService.shutdown();
+        kafkaExecutorService.shutdown();
+
+        try {
+            apiExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            kafkaExecutorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         logger.info("Test workflow ended");
     }
