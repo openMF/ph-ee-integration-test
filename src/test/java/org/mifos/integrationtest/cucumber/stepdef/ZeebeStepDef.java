@@ -71,7 +71,7 @@ public class ZeebeStepDef extends BaseStepDef{
         List<JsonObject> recordValues = new ArrayList<>();
 
 
-        for (int i=0; i<1000;i++) {
+        for (int i=0; i<10000;i++) {
             final int workflowNumber = i;
             apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
@@ -83,7 +83,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
             if(!records.isEmpty()){
                 for(ConsumerRecord<String, String> record: records){
-                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
+//                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
                     JsonObject value = payload.get("value").getAsJsonObject();
                     recordValues.add(value);
@@ -98,7 +98,6 @@ public class ZeebeStepDef extends BaseStepDef{
 
             if(!records.isEmpty()){
                 for(ConsumerRecord<String, String> record: records){
-                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
                     JsonObject value = payload.get("value").getAsJsonObject();
                     recordValues.add(value);
@@ -111,22 +110,6 @@ public class ZeebeStepDef extends BaseStepDef{
             apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-
-        logger.info("TEST WITH MORE POLLS");
-        for(int i=0; i<30; i++){
-            logger.info("Additional consumer polls");
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            logger.info("No. of records received: {}", records.count());
-
-            if(!records.isEmpty()){
-                for(ConsumerRecord<String, String> record: records){
-                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
-                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-                    JsonObject value = payload.get("value").getAsJsonObject();
-                    recordValues.add(value);
-                }
-            }
         }
 
         for(JsonObject recordValue: recordValues){
@@ -154,7 +137,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
-        int workflowCount = 1000;
+        int workflowCount = 10000;
         logger.info("No of workflows started: {}", workflowCount);
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
