@@ -91,7 +91,7 @@ public class ZeebeStepDef extends BaseStepDef{
             }
         }
 
-        for(int i=0; i<50; i++){
+        for(int i=0; i<30; i++){
             logger.info("Additional consumer polls");
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
@@ -111,6 +111,22 @@ public class ZeebeStepDef extends BaseStepDef{
             apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+
+        logger.info("TEST WITH MORE POLLS");
+        for(int i=0; i<30; i++){
+            logger.info("Additional consumer polls");
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            logger.info("No. of records received: {}", records.count());
+
+            if(!records.isEmpty()){
+                for(ConsumerRecord<String, String> record: records){
+                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
+                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
+                    JsonObject value = payload.get("value").getAsJsonObject();
+                    recordValues.add(value);
+                }
+            }
         }
 
         for(JsonObject recordValue: recordValues){
