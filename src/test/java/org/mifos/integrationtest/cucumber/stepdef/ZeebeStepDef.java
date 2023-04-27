@@ -71,7 +71,7 @@ public class ZeebeStepDef extends BaseStepDef{
         List<JsonObject> recordValues = new ArrayList<>();
 
 
-        for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
+        for (int i=0; i<100;i++) {
             final int workflowNumber = i;
             apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
