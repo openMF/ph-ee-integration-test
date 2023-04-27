@@ -86,16 +86,16 @@ public class ZeebeStepDef extends BaseStepDef{
                     String processInstanceKey = value.get("processInstanceKey")==null ? "check": value.get("processInstanceKey").getAsString();
                     if(!processInstanceKeySet.contains(processInstanceKey)){
                         processInstanceKeySet.add(processInstanceKey);
-                        String bpmnElementType = value.get("bpmnElementType")==null ? "check": value.get("bpmnElementType").getAsString();
+                        String elementId = value.get("elementId")==null ? "check": value.get("elementId").getAsString();
                         String bpmnProcessId = value.get("bpmnProcessId")==null ? "check": value.get("bpmnProcessId").getAsString();
                         logger.info("process instance key = {}", processInstanceKey);
-                        logger.info("bpmn element type = {}", bpmnElementType);
+                        logger.info("bpmn element type = {}", elementId);
                         logger.info("bpmn process id = {}", bpmnProcessId);
 
-                        if(bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest"))
+                        if(elementId.equals("StartEvent_1") && bpmnProcessId.equals("zeebetest"))
                             startEventCount++;
 
-                        if(bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest"))
+                        if(elementId.equals("Event_1bh40y1") && bpmnProcessId.equals("zeebetest"))
                             endEventCount++;
                     }
                 }
