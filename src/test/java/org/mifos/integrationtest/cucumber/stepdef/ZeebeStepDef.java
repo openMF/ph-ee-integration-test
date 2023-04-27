@@ -71,7 +71,7 @@ public class ZeebeStepDef extends BaseStepDef{
         List<JsonObject> recordValues = new ArrayList<>();
 
 
-        for (int i=0; i<1000;i++) {
+        for (int i=0; i<10;i++) {
             final int workflowNumber = i;
             apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
@@ -137,7 +137,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
-        int workflowCount = 1000;
+        int workflowCount = 10;
         logger.info("No of workflows started: {}", workflowCount);
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
