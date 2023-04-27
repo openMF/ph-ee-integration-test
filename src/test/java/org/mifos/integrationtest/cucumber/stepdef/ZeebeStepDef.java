@@ -82,19 +82,20 @@ public class ZeebeStepDef extends BaseStepDef{
                 for(ConsumerRecord<String, String> record: records){
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-                    logger.info("Record Payload: {}", payload.toString());
                     JsonObject value = payload.get("value").getAsJsonObject();
-                    logger.info("Record Value: {}", value.toString());
                     String processInstanceKey = value.get("processInstanceKey")==null ? "": value.get("processInstanceKey").getAsString();
                     if(!processInstanceKeySet.contains(processInstanceKey)){
                         processInstanceKeySet.add(processInstanceKey);
                         String bpmnElementType = value.get("bpmnElementType")==null ? "": value.get("bpmnElementType").getAsString();
                         String bpmnProcessId = value.get("bpmnProcessId")==null ? "": value.get("bpmnProcessId").getAsString();
+                        logger.info("process instance key = {}", processInstanceKey);
+                        logger.info("bpmn element type = {}", bpmnElementType);
+                        logger.info("bpmn process id = {}", bpmnProcessId);
 
-                        if(bpmnElementType.matches("START_EVENT") && bpmnProcessId.matches("zeebetest"))
+                        if(bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest"))
                             startEventCount++;
 
-                        if(bpmnElementType.matches("END_EVENT") && bpmnProcessId.matches("zeebetest"))
+                        if(bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest"))
                             endEventCount++;
                     }
                 }
