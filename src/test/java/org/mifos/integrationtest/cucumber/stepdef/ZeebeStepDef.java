@@ -85,7 +85,7 @@ public class ZeebeStepDef extends BaseStepDef{
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
                     JsonObject value = payload.get("value").getAsJsonObject();
-                    String bpmnElementType = value.get("bpmnElementType").getAsString();
+                    String bpmnElementType = value.get("bpmnElementType")==null ? "" : value.get("bpmnElementType").getAsString();
                     String bpmnProcessId = value.get("bpmnProcessId").getAsString();
                     String processInstanceKey = value.get("processInstanceKey").getAsString();
 
