@@ -66,7 +66,9 @@ public class ZeebeStepDef extends BaseStepDef{
         ExecutorService apiExecutorService = Executors.newCachedThreadPool();
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
-        Set<String> processInstanceKeySet = new HashSet<>();
+        Set<String> startProcessInstanceKeySet = new HashSet<>();
+        Set<String> endProcessInstanceKeySet = new HashSet<>();
+
 
         for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
@@ -83,20 +85,22 @@ public class ZeebeStepDef extends BaseStepDef{
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
                     JsonObject value = payload.get("value").getAsJsonObject();
-                    String processInstanceKey = value.get("processInstanceKey")==null ? "check": value.get("processInstanceKey").getAsString();
-                    if(!processInstanceKeySet.contains(processInstanceKey)){
-                        processInstanceKeySet.add(processInstanceKey);
-                        String elementId = value.get("elementId")==null ? "check": value.get("elementId").getAsString();
-                        String bpmnProcessId = value.get("bpmnProcessId")==null ? "check": value.get("bpmnProcessId").getAsString();
-                        logger.info("process instance key = {}", processInstanceKey);
-                        logger.info("bpmn element type = {}", elementId);
-                        logger.info("bpmn process id = {}", bpmnProcessId);
+                    String bpmnElementType = value.get("bpmnElementType").getAsString();
+                    String bpmnProcessId = value.get("bpmnProcessId").getAsString();
+                    String processInstanceKey = value.get("processInstanceKey").getAsString();
 
-                        if(elementId.equals("StartEvent_1") && bpmnProcessId.equals("zeebetest"))
+                    if(bpmnElementType.equals("START_EVENT")){
+                        if(!startProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
                             startEventCount++;
+                            startProcessInstanceKeySet.add(processInstanceKey);
+                        }
+                    }
 
-                        if(elementId.equals("Event_1bh40y1") && bpmnProcessId.equals("zeebetest"))
+                    if(bpmnElementType.equals("END_EVENT")){
+                        if(!endProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
                             endEventCount++;
+                            endProcessInstanceKeySet.add(processInstanceKey);
+                        }
                     }
                 }
             }
