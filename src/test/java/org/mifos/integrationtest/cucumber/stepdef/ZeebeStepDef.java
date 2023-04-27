@@ -82,9 +82,9 @@ public class ZeebeStepDef extends BaseStepDef{
                 for(ConsumerRecord<String, String> record: records){
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-                    logger.info("Record Payload: {}", payload.getAsString());
+                    logger.info("Record Payload: {}", payload.toString());
                     JsonObject value = payload.get("value").getAsJsonObject();
-                    logger.info("Record Value: {}", value.getAsString());
+                    logger.info("Record Value: {}", value.toString());
                     String processInstanceKey = value.get("processInstanceKey")==null ? "": value.get("processInstanceKey").getAsString();
                     if(!processInstanceKeySet.contains(processInstanceKey)){
                         processInstanceKeySet.add(processInstanceKey);
