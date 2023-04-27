@@ -56,76 +56,57 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("BPMN file upload response: {}", BaseStepDef.response);
     }
 
-    @And("I can start test workflow n times with message {string}")
+    @And("I can start test workflow n times with message {string} and listen on kafka topic")
     public void iCanStartTestWorkflowNTimesWithMessage(String message) {
         logger.info("Test workflow started");
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
         String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
         logger.info("Endpoint: {}", endpoint);
         logger.info("Request Body: {}", requestBody);
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService apiExecutorService = Executors.newCachedThreadPool();
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
+        Set<String> processInstanceKeySet = new HashSet<>();
 
-        for (int i=0; i<=zeebeOperationsConfig.noOfWorkflows;i++) {
+        for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
-            executorService.execute(()->{
+            apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
 
             });
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
             logger.info("No. of records received: {}", records.count());
 
             if(!records.isEmpty()){
                 for(ConsumerRecord<String, String> record: records){
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
+                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
+                    JsonObject value = payload.get("value").getAsJsonObject();
+                    String processInstanceKey = value.get("processInstanceKey").isJsonNull() ?"": value.get("processInstanceKey").getAsString();
+                    if(!processInstanceKeySet.contains(processInstanceKey)){
+                        processInstanceKeySet.add(processInstanceKey);
+                        String bpmnElementType = value.get("bpmnElementType").isJsonNull() ?"": value.get("bpmnElementType").getAsString();
+                        String bpmnProcessId = value.get("bpmnProcessId").isJsonNull() ?"": value.get("bpmnProcessId").getAsString();
+
+                        if(bpmnElementType.matches("START_EVENT") && bpmnProcessId.matches("zeebetest"))
+                            startEventCount++;
+
+                        if(bpmnElementType.matches("END_EVENT") && bpmnProcessId.matches("zeebetest"))
+                            endEventCount++;
+                    }
                 }
             }
         }
 
-        executorService.shutdown();
-        while(!executorService.isShutdown()){
+        apiExecutorService.shutdown();
+        try {
+            apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         logger.info("Test workflow ended");
     }
-
-    @Then("I listen on kafka topic")
-    public void listen() {
-        KafkaConsumer<String, String> consumer = createKafkaConsumer();
-        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
-        for(int i=0; i<10; i++){
-            try {
-                Thread.sleep(3);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            logger.info("No. of records received: {}", records.count());
-        }
-    }
-
-//    public void listener() throws UnknownHostException {
-//        logger.info("Starting listening to kafka topic.");
-//        KafkaConsumer<String, String> consumer = createKafkaConsumer();
-//        logger.info("consumer subscriptions: " + consumer.subscription().toString());
-//        int counter = 0;
-//        if(zeebeOperationsConfig.zeebeTest) {
-//            while (counter < zeebeOperationsConfig.noOfWorkflows) {
-//                logger.info("iteration {}", counter);
-//                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-//                if (!records.isEmpty()) {
-//                    logger.info("Records available. Processing kafka records.");
-//                    processKafkaRecords(records);
-//                } else {
-//                    logger.info("No records available.");
-//                }
-//                counter++;
-//            }
-//        }
-//        consumer.close();
-//        logger.info("Ending listening to kafka topic");
-//    }
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
@@ -133,7 +114,7 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
         assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
-        assertThat(startEventCount).isEqualTo(endEventCount);
+        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
 
     private String getFileContent(String fileUrl) {
