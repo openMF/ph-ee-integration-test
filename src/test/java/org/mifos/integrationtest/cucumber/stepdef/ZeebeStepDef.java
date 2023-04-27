@@ -91,13 +91,6 @@ public class ZeebeStepDef extends BaseStepDef{
             }
         }
 
-        apiExecutorService.shutdown();
-        try {
-            apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         for(int i=0; i<5; i++){
             logger.info("Additional consumer polls");
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
@@ -113,6 +106,12 @@ public class ZeebeStepDef extends BaseStepDef{
             }
         }
 
+        apiExecutorService.shutdown();
+        try {
+            apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         for(JsonObject recordValue: recordValues){
             String bpmnElementType = recordValue.get("bpmnElementType") == null ? "" : recordValue.get("bpmnElementType").getAsString();
