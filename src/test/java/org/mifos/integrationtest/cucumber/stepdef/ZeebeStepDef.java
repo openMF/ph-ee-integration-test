@@ -91,7 +91,7 @@ public class ZeebeStepDef extends BaseStepDef{
             }
         }
 
-        for(int i=0; i<5; i++){
+        for(int i=0; i<10; i++){
             logger.info("Additional consumer polls");
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
