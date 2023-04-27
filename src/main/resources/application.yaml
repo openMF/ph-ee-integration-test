@@ -46,7 +46,7 @@ zeebe-operations:
   endpoints:
     workflow: "/channel/workflow/"
     upload-bpmn: "/zeebe/upload"
-  no-of-workflows : 10
+  no-of-workflows : 100
 
 max-retry-count: 5
 retry-interval: 15000
