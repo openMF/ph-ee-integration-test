@@ -71,7 +71,7 @@ public class ZeebeStepDef extends BaseStepDef{
         List<JsonObject> recordValues = new ArrayList<>();
 
 
-        for (int i=0; i<100;i++) {
+        for (int i=0; i<1000;i++) {
             final int workflowNumber = i;
             apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
@@ -154,11 +154,12 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
-        logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
+        int workflowCount = 1000;
+        logger.info("No of workflows started: {}", workflowCount);
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
-        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
-        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
+        assertThat(startEventCount).isEqualTo(workflowCount);
+        assertThat(startEventCount).isEqualTo(workflowCount);
     }
 
     private String getFileContent(String fileUrl) {
