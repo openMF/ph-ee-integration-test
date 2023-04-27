@@ -68,6 +68,7 @@ public class ZeebeStepDef extends BaseStepDef{
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
         Set<String> startProcessInstanceKeySet = new HashSet<>();
         Set<String> endProcessInstanceKeySet = new HashSet<>();
+        List<JsonObject> recordValues = new ArrayList<>();
 
 
         for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
@@ -77,7 +78,7 @@ public class ZeebeStepDef extends BaseStepDef{
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
 
             });
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
 
             if(!records.isEmpty()){
@@ -85,23 +86,7 @@ public class ZeebeStepDef extends BaseStepDef{
                     logger.info("Key: {} ===== Value: {}", record.key(), record.value());
                     JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
                     JsonObject value = payload.get("value").getAsJsonObject();
-                    String bpmnElementType = value.get("bpmnElementType")==null ? "" : value.get("bpmnElementType").getAsString();
-                    String bpmnProcessId = value.get("bpmnProcessId").getAsString();
-                    String processInstanceKey = value.get("processInstanceKey").getAsString();
-
-                    if(bpmnElementType.equals("START_EVENT")){
-                        if(!startProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
-                            startEventCount++;
-                            startProcessInstanceKeySet.add(processInstanceKey);
-                        }
-                    }
-
-                    if(bpmnElementType.equals("END_EVENT")){
-                        if(!endProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
-                            endEventCount++;
-                            endProcessInstanceKeySet.add(processInstanceKey);
-                        }
-                    }
+                    recordValues.add(value);
                 }
             }
         }
@@ -112,6 +97,43 @@ public class ZeebeStepDef extends BaseStepDef{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        for(int i=0; i<5; i++){
+            logger.info("Additional consumer polls");
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            logger.info("No. of records received: {}", records.count());
+
+            if(!records.isEmpty()){
+                for(ConsumerRecord<String, String> record: records){
+                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
+                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
+                    JsonObject value = payload.get("value").getAsJsonObject();
+                    recordValues.add(value);
+                }
+            }
+        }
+
+
+        for(JsonObject recordValue: recordValues){
+            String bpmnElementType = recordValue.get("bpmnElementType") == null ? "" : recordValue.get("bpmnElementType").getAsString();
+            String bpmnProcessId = recordValue.get("bpmnProcessId").getAsString();
+            String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
+
+            if(bpmnElementType.equals("START_EVENT")){
+                if(!startProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
+                    startEventCount++;
+                    startProcessInstanceKeySet.add(processInstanceKey);
+                }
+            }
+
+            if(bpmnElementType.equals("END_EVENT")){
+                if(!endProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
+                    endEventCount++;
+                    endProcessInstanceKeySet.add(processInstanceKey);
+                }
+            }
+        }
+
         logger.info("Test workflow ended");
     }
 
