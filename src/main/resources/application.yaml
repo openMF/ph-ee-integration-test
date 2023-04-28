@@ -3,7 +3,7 @@ operations-app:
   username: "mifos"
   password: "password"
   auth:
-    enabled: false
+    enabled: true
     header: "Basic Y2xpZW50Og=="
   endpoints:
     auth: "/oauth/token"
