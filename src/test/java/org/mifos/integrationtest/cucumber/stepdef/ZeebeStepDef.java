@@ -61,8 +61,7 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("Test workflow started");
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
         String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
-        logger.info("Endpoint: {}", endpoint);
-        logger.info("Request Body: {}", requestBody);
+
         ExecutorService apiExecutorService = Executors.newCachedThreadPool();
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
@@ -70,8 +69,7 @@ public class ZeebeStepDef extends BaseStepDef{
         Set<String> endProcessInstanceKeySet = new HashSet<>();
         List<JsonObject> recordValues = new ArrayList<>();
 
-
-        for (int i=0; i<10;i++) {
+        for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
             apiExecutorService.execute(()->{
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
@@ -137,12 +135,11 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @And("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
-        int workflowCount = 10;
-        logger.info("No of workflows started: {}", workflowCount);
+        logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("No of records consumed: {}", startEventCount);
         logger.info("No of records exported: {}", endEventCount);
-        assertThat(startEventCount).isEqualTo(workflowCount);
-        assertThat(startEventCount).isEqualTo(workflowCount);
+        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
+        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
 
     private String getFileContent(String fileUrl) {
