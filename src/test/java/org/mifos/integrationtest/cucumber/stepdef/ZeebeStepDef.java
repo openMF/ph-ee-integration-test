@@ -51,6 +51,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @When("I upload the BPMN file to zeebe")
     public void uploadBpmnFileToZeebe() throws MalformedURLException {
+        logger.info("no of workflows: {}", zeebeOperationsConfig.noOfWorkflows);
         String fileContent = getFileContent(BPMN_FILE_URL);
         BaseStepDef.response = uploadBPMNFile(fileContent);
         logger.info("BPMN file upload response: {}", BaseStepDef.response);
