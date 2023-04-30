@@ -29,7 +29,7 @@ public class KafkaConfig {
     public String kafkaTopic;
 
     @Value("${kafka.consumerTimeoutMs}")
-    public String consumerTimeout;
+    public long consumerTimeout;
 
     @Bean
     public KafkaConsumer<String, String> kafkaConsumer() {
