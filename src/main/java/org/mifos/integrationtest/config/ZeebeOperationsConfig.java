@@ -18,8 +18,8 @@ public class ZeebeOperationsConfig {
     public int noOfWorkflows;
 
     @Value("${zeebe-test.enabled}")
-    public boolean zeebeTest;
+    public boolean enabled;
 
-    @Value("${zeebe-test.threadCount}")
+    @Value("${zeebe-operations.thread-count}")
     public int threadCount;
 }

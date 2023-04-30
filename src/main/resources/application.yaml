@@ -48,6 +48,7 @@ zeebe-operations:
     workflow: "/channel/workflow/"
     upload-bpmn: "/zeebe/upload"
   no-of-workflows : 10
+  thread-count: 5
 
 max-retry-count: 5
 retry-interval: 15000
@@ -82,4 +83,3 @@ savings:
 
 zeebe-test:
   enabled: true
-  thread-count: 5
