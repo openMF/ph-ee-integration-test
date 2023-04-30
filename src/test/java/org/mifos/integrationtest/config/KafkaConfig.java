@@ -28,6 +28,9 @@ public class KafkaConfig {
     @Value("${kafka.topic}")
     public String kafkaTopic;
 
+    @Value("${kafka.consumerTimeoutMs}")
+    public String consumerTimeout;
+
     @Bean
     public KafkaConsumer<String, String> kafkaConsumer() {
         String hostname = null;

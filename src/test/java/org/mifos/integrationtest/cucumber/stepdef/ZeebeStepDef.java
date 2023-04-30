@@ -23,7 +23,6 @@ import org.mifos.integrationtest.config.ZeebeOperationsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
 
 import java.io.IOException;
 import java.net.*;
@@ -42,8 +41,8 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
-    public static int startEventCount;
-    public static int endEventCount;
+    private Set<String> startProcessInstanceKeySet = new HashSet<>();
+    private Set<String> endProcessInstanceKeySet = new HashSet<>();
 
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
@@ -63,44 +62,38 @@ public class ZeebeStepDef extends BaseStepDef{
         String requestBody = String.format("{ \"message\": \"%s\" }", message);
         String endpoint= zeebeOperationsConfig.workflowEndpoint +"zeebetest";
 
-        ExecutorService apiExecutorService = Executors.newCachedThreadPool();
+        ExecutorService apiExecutorService = Executors.newFixedThreadPool(zeebeOperationsConfig.threadCount);
         KafkaConsumer<String, String> consumer = createKafkaConsumer();
         consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
-        Set<String> startProcessInstanceKeySet = new HashSet<>();
-        Set<String> endProcessInstanceKeySet = new HashSet<>();
-        List<JsonObject> recordValues = new ArrayList<>();
 
         for (int i=0; i<zeebeOperationsConfig.noOfWorkflows;i++) {
             final int workflowNumber = i;
-            apiExecutorService.execute(()->{
+            apiExecutorService.execute(() -> {
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
-
             });
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
 
-            if(!records.isEmpty()){
-                for(ConsumerRecord<String, String> record: records){
-//                    logger.info("Key: {} ===== Value: {}", record.key(), record.value());
-                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-                    JsonObject value = payload.get("value").getAsJsonObject();
-                    recordValues.add(value);
-                }
+            if (!records.isEmpty()) {
+                processKafkaRecords(records);
             }
         }
 
-        for(int i=0; i<30; i++){
-            logger.info("Additional consumer polls");
+        logger.info("Additional consumer polls");
+        long startTime = System.currentTimeMillis();
+        long timeout = Long.parseLong(kafkaConfig.consumerTimeout);
+        while(endProcessInstanceKeySet.size()< zeebeOperationsConfig.noOfWorkflows){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
 
             if(!records.isEmpty()){
-                for(ConsumerRecord<String, String> record: records){
-                    JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-                    JsonObject value = payload.get("value").getAsJsonObject();
-                    recordValues.add(value);
-                }
+                processKafkaRecords(records);
+            }
+
+            if (System.currentTimeMillis() - startTime >= timeout) {
+                logger.info("Timeout reached. Exiting loop.");
+                break;
             }
         }
 
@@ -111,34 +104,16 @@ public class ZeebeStepDef extends BaseStepDef{
             e.printStackTrace();
         }
 
-        for(JsonObject recordValue: recordValues){
-            String bpmnElementType = recordValue.get("bpmnElementType") == null ? "" : recordValue.get("bpmnElementType").getAsString();
-            String bpmnProcessId = recordValue.get("bpmnProcessId").getAsString();
-            String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
-
-            if(bpmnElementType.equals("START_EVENT")){
-                if(!startProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
-                    startEventCount++;
-                    startProcessInstanceKeySet.add(processInstanceKey);
-                }
-            }
-
-            if(bpmnElementType.equals("END_EVENT")){
-                if(!endProcessInstanceKeySet.contains(processInstanceKey) && bpmnProcessId.equals("zeebetest")){
-                    endEventCount++;
-                    endProcessInstanceKeySet.add(processInstanceKey);
-                }
-            }
-        }
-
         logger.info("Test workflow ended");
     }
 
-    @And("The number of workflows started should be equal to number of message consumed on kafka topic")
+    @Then("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
+        int startEventCount = startProcessInstanceKeySet.size();
+        int endEventCount = endProcessInstanceKeySet.size();
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
-        logger.info("No of records consumed: {}", startEventCount);
-        logger.info("No of records exported: {}", endEventCount);
+        logger.info("Start event count: {}", startEventCount);
+        logger.info("Start event count: {}", endEventCount);
         assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
         assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
@@ -184,25 +159,7 @@ public class ZeebeStepDef extends BaseStepDef{
     }
 
     private KafkaConsumer<String, String> createKafkaConsumer() {
-//        logger.info("inside create kafka consumer");
-//        Properties properties = new Properties();
-//        properties.put("bootstrap.servers", kafkaConfig.kafkaBroker);
-//        properties.put("client.id", InetAddress.getLocalHost().getHostName());
-//        properties.put("group.id", InetAddress.getLocalHost().getHostName());
-//        properties.put("key.deserializer", StringDeserializer.class.getName());
-//        properties.put("value.deserializer", StringDeserializer.class.getName());
-//        logger.info("properties initialzed");
-//        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
-//        logger.info("consumer created");
-//        consumer.subscribe(Collections.singletonList(kafkaConfig.kafkaTopic));
-//        return consumer;
-        String hostname = null;
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            logger.error("failed to resolve local hostname, picking random clientId");
-            hostname = UUID.randomUUID().toString();
-        }
+        String hostname = UUID.randomUUID().toString();
         Map<String, Object> properties = new HashMap<>();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.kafkaBroker);
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, hostname);
@@ -213,19 +170,28 @@ public class ZeebeStepDef extends BaseStepDef{
     }
 
     private void processKafkaRecords(ConsumerRecords<String, String> records){
-        for (ConsumerRecord<String, String> record : records) {
+        if(records.isEmpty()){
+            return;
+        }
+
+        for(ConsumerRecord<String, String> record: records){
             JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
-            JsonObject value = payload.get("value").getAsJsonObject();
-            String bpmnElementType = value.get("bpmnElementType").isJsonNull() ?"": value.get("bpmnElementType").getAsString();
-            String bpmnProcessId =value.get("bpmnProcessId").isJsonNull() ?"": value.get("bpmnProcessId").getAsString();
-            System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
-            logger.info("value {}", record.value());
+            JsonObject recordValue = payload.get("value").getAsJsonObject();
+            String bpmnElementType = recordValue.get("bpmnElementType") == null ? "" : recordValue.get("bpmnElementType").getAsString();
+            String bpmnProcessId = recordValue.get("bpmnProcessId").getAsString();
+            String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
 
-            if(bpmnElementType.matches("START_EVENT") && bpmnProcessId.matches("zeebetest"))
-                startEventCount++;
+            boolean isStartEvent = bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest");
+            boolean isEndEvent = bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest");
+            boolean isNewProcessInstance = !startProcessInstanceKeySet.contains(processInstanceKey);
 
-            if(bpmnElementType.matches("END_EVENT") && bpmnProcessId.matches("zeebetest"))
-                endEventCount++;
+            if(isNewProcessInstance && isStartEvent){
+                startProcessInstanceKeySet.add(processInstanceKey);
+            }
+
+            if(isNewProcessInstance && isEndEvent){
+                endProcessInstanceKeySet.add(processInstanceKey);
+            }
         }
     }
 }
