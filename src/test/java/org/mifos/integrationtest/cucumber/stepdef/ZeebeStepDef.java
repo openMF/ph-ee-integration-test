@@ -99,10 +99,9 @@ public class ZeebeStepDef extends BaseStepDef{
 
         while(processInstanceKeySet.size() > 0){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            logger.info("No. of additional records received: {}", records.count());
-            logger.info("Time elapsed: {}", System.currentTimeMillis() - startTime);
-
             if(!records.isEmpty()){
+                logger.info("No. of additional records received: {}", records.count());
+                logger.info("Time elapsed: {}", System.currentTimeMillis() - startTime);
                 processKafkaRecords(records);
             }
 
@@ -119,6 +118,7 @@ public class ZeebeStepDef extends BaseStepDef{
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("Process Instance Key count: {}", processInstanceKeySet.size());
+        logger.info("Process instance key set result: {}", processInstanceKeySet);
         assertThat(processInstanceKeySet.size()).isEqualTo(0);
     }
 
