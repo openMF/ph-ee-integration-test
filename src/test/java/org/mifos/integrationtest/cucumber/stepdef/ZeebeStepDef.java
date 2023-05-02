@@ -42,7 +42,7 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
-    private Set<String> processInstanceKeySet = new HashSet<>();
+    private Set<String> processInstanceKeySet = Collections.synchronizedSet(new HashSet<>());
 
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
