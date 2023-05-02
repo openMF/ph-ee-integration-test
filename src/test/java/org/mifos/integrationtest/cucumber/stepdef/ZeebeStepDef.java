@@ -42,9 +42,6 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
-    private Set<String> startProcessInstanceKeySet = new HashSet<>();
-    private Set<String> endProcessInstanceKeySet = new HashSet<>();
-
     private Set<String> processInstanceKeySet = new HashSet<>();
 
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
@@ -89,7 +86,7 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("Additional consumer polls");
         long startTime = System.currentTimeMillis();
         long timeout = Long.parseLong(kafkaConfig.consumerTimeoutMs);
-        while(endProcessInstanceKeySet.size()< zeebeOperationsConfig.noOfWorkflows){
+        while(processInstanceKeySet.size() > 0){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
 
@@ -115,13 +112,9 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @Then("The number of workflows started should be equal to number of message consumed on kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
-        int startEventCount = startProcessInstanceKeySet.size();
-        int endEventCount = endProcessInstanceKeySet.size();
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("Process Instance Key count: {}", processInstanceKeySet.size());
-//        logger.info("End event count: {}", endEventCount);
         assertThat(processInstanceKeySet.size()).isEqualTo(0);
-//        assertThat(endEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
 
     private String getFileContent(String fileUrl) {
@@ -183,26 +176,8 @@ public class ZeebeStepDef extends BaseStepDef{
         for(ConsumerRecord<String, String> record: records){
             JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
             JsonObject recordValue = payload.get("value").getAsJsonObject();
-//            String bpmnElementType = recordValue.get("bpmnElementType") == null ? "" : recordValue.get("bpmnElementType").getAsString();
-//            String bpmnProcessId = recordValue.get("bpmnProcessId").getAsString();
             String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
-
-//            boolean isStartEvent = bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest");
-//            boolean isEndEvent = bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest");
-//            boolean isNewProcessInstanceForStartEvent = !startProcessInstanceKeySet.contains(processInstanceKey);
-//            boolean isNewProcessInstanceForEndEvent = !endProcessInstanceKeySet.contains(processInstanceKey);
-//
-//            if(isNewProcessInstanceForStartEvent && isStartEvent){
-//                startProcessInstanceKeySet.add(processInstanceKey);
-//            }
-//
-//            if(isNewProcessInstanceForEndEvent && isEndEvent){
-//                endProcessInstanceKeySet.add(processInstanceKey);
-//            }
-
-            if(processInstanceKeySet.contains(processInstanceKey)){
-                processInstanceKeySet.remove(processInstanceKey);
-            }
+            processInstanceKeySet.remove(processInstanceKey);
         }
     }
 }
