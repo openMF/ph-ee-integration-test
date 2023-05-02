@@ -82,7 +82,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
         logger.info("Additional consumer polls");
         long startTime = System.currentTimeMillis();
-        long timeout = 30000;   //kafkaConfig.consumerTimeout;
+        long timeout = Long.parseLong(kafkaConfig.consumerTimeoutMs);
         while(endProcessInstanceKeySet.size()< zeebeOperationsConfig.noOfWorkflows){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
@@ -183,14 +183,14 @@ public class ZeebeStepDef extends BaseStepDef{
 
             boolean isStartEvent = bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest");
             boolean isEndEvent = bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest");
-            boolean isNewProcessInstanceStart = !startProcessInstanceKeySet.contains(processInstanceKey);
-            boolean isNewProcessInstanceEnd = !endProcessInstanceKeySet.contains(processInstanceKey);
+            boolean isNewProcessInstanceForStartEvent = !startProcessInstanceKeySet.contains(processInstanceKey);
+            boolean isNewProcessInstanceForEndEvent = !endProcessInstanceKeySet.contains(processInstanceKey);
 
-            if(isNewProcessInstanceStart && isStartEvent){
+            if(isNewProcessInstanceForStartEvent && isStartEvent){
                 startProcessInstanceKeySet.add(processInstanceKey);
             }
 
-            if(isNewProcessInstanceEnd && isEndEvent){
+            if(isNewProcessInstanceForEndEvent && isEndEvent){
                 endProcessInstanceKeySet.add(processInstanceKey);
             }
         }
