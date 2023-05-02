@@ -43,6 +43,7 @@ public class InboundStepDef extends BaseStepDef {
         String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
+        BaseStepDef.inboundTransferMockReq = mockTransactionChannelRequestDTO;
     }
 
     @When("I call the inbound transfer endpoint with expected status of {int}")
