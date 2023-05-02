@@ -182,6 +182,7 @@ public class ZeebeStepDef extends BaseStepDef{
             JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
             JsonObject recordValue = payload.get("value").getAsJsonObject();
             String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
+            logger.info("Process Instance key is {}", processInstanceKey);
 
             if(processInstanceKeySet.contains(processInstanceKey)){
                 processInstanceKeySet.remove(processInstanceKey);
