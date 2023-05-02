@@ -84,12 +84,6 @@ public class ZeebeStepDef extends BaseStepDef{
             }
         }
 
-        logger.info("Additional consumer polls");
-        long startTime = System.currentTimeMillis();
-        long timeout = Long.parseLong(kafkaConfig.consumerTimeoutMs);
-        logger.info("Timeout : {}", timeout);
-        logger.info("Is Process Instance key set empty? : {}", processInstanceKeySet.size());
-
         apiExecutorService.shutdown();
         try {
             apiExecutorService.awaitTermination(Integer.MAX_VALUE, TimeUnit.MICROSECONDS);
@@ -97,18 +91,25 @@ public class ZeebeStepDef extends BaseStepDef{
             e.printStackTrace();
         }
 
+        logger.info("Additional consumer polls");
+        long timeout = Long.parseLong(kafkaConfig.consumerTimeoutMs);
+        logger.info("Timeout : {}", timeout);
+        logger.info("Is Process Instance key set empty? : {}", processInstanceKeySet.size());
+        long startTime = System.currentTimeMillis();
+
         while(processInstanceKeySet.size() > 0){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of additional records received: {}", records.count());
+            logger.info("Time elapsed: {}", System.currentTimeMillis() - startTime);
 
             if(!records.isEmpty()){
                 processKafkaRecords(records);
             }
 
-//            if (System.currentTimeMillis() - startTime >= timeout) {
-//                logger.info("Timeout reached. Exiting loop.");
-//                break;
-//            }
+            if (System.currentTimeMillis() - startTime >= timeout) {
+                logger.info("Timeout reached. Exiting loop.");
+                break;
+            }
         }
 
         logger.info("Test workflow ended");
