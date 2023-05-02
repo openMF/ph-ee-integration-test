@@ -30,22 +30,4 @@ public class KafkaConfig {
 
     @Value("${kafka.consumerTimeoutMs}")
     public String consumerTimeoutMs;
-
-    @Bean
-    public KafkaConsumer<String, String> kafkaConsumer() {
-        String hostname = null;
-        try {
-            hostname = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            logger.error("failed to resolve local hostname, picking random clientId");
-            hostname = UUID.randomUUID().toString();
-        }
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker);
-        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, hostname);
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, hostname);
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        return new KafkaConsumer<>(properties);
-    }
 }

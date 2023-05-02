@@ -10,4 +10,7 @@ public class KafkaConfig {
 
     @Value("${kafka.topic}")
     public String kafkaTopic;
+
+    @Value("${kafka.consumerTimeoutMs}")
+    public String consumerTimeoutMs;
 }
