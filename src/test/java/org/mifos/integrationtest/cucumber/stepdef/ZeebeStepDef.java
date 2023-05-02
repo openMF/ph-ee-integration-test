@@ -52,7 +52,6 @@ public class ZeebeStepDef extends BaseStepDef{
 
     @When("I upload the BPMN file to zeebe")
     public void uploadBpmnFileToZeebe() throws MalformedURLException {
-        logger.info("no of workflows: {}", zeebeOperationsConfig.noOfWorkflows);
         String fileContent = getFileContent(BPMN_FILE_URL);
         BaseStepDef.response = uploadBPMNFile(fileContent);
         logger.info("BPMN file upload response: {}", BaseStepDef.response);
@@ -94,15 +93,12 @@ public class ZeebeStepDef extends BaseStepDef{
 
         logger.info("Additional consumer polls");
         long timeout = Long.parseLong(kafkaConfig.consumerTimeoutMs);
-        logger.info("Timeout : {}", timeout);
-        logger.info("Is Process Instance key set empty? : {}", processInstanceKeySet.size());
         long startTime = System.currentTimeMillis();
 
         while(processInstanceKeySet.size() > 0){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             if(!records.isEmpty()){
                 logger.info("No. of additional records received: {}", records.count());
-                logger.info("Time elapsed: {}", System.currentTimeMillis() - startTime);
                 processKafkaRecords(records);
             }
 
@@ -115,11 +111,9 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("Test workflow ended");
     }
 
-    @Then("The number of workflows started should be equal to number of message consumed on kafka topic")
+    @Then("The number of workflows started should be equal to number of message consumed from kafka topic")
     public void verifyNumberOfWorkflowsStartedEqualsNumberOfMessagesConsumed() {
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
-        logger.info("Process Instance Key count: {}", processInstanceKeySet.size());
-        logger.info("Process instance key set result: {}", processInstanceKeySet);
         int count = 0;
         for(String processInstanceKey : processInstanceKeySet){
             if(kafkaPollProcessInstanceKeySet.contains(processInstanceKey)){
