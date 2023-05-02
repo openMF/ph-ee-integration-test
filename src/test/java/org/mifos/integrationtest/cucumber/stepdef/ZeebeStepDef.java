@@ -113,9 +113,9 @@ public class ZeebeStepDef extends BaseStepDef{
         int endEventCount = endProcessInstanceKeySet.size();
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("Start event count: {}", startEventCount);
-        logger.info("Start event count: {}", endEventCount);
+        logger.info("End event count: {}", endEventCount);
         assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
-        assertThat(startEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
+        assertThat(endEventCount).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
 
     private String getFileContent(String fileUrl) {
