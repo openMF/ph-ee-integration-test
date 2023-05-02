@@ -32,6 +32,7 @@ channel-connector:
     transfer: "/channel/transfer"
     gsma-p2p: "/channel/gsma/transfer"
     collection: "/channel/collection"
+    transferReq: "/channel/transactionRequest"
     international-remittance: "/channel/gsma/deposit"
 
 mock-server:

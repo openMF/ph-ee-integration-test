@@ -22,7 +22,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void setBatchId() {
         // todo fix this
         if (BaseStepDef.batchId == null || BaseStepDef.batchId.isEmpty()) {
-            BaseStepDef.batchId = "f9fb953b-9619-4cc3-97fe-e8456f90ee82";
+            BaseStepDef.batchId = UUID.randomUUID().toString();
         }
         assertThat(BaseStepDef.batchId).isNotNull();
     }
@@ -100,15 +100,6 @@ public class BatchApiStepDef extends BaseStepDef {
     @Then("I should get non empty response")
     public void nonEmptyResponseCheck() {
         assertThat(BaseStepDef.response).isNotNull();
-        BatchApiResponseDTO responseDTO = null;
-        try {
-            responseDTO = objectMapper.readValue(BaseStepDef.response,
-                    BatchApiResponseDTO.class);
-            BaseStepDef.batchId = responseDTO.getBatchId();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        assertThat(responseDTO).isNotNull();
     }
 
     public static void main(String[] args) {
@@ -117,4 +108,10 @@ public class BatchApiStepDef extends BaseStepDef {
         System.out.println(file.exists());
     }
 
+    @And("I should have {string} and {string} in response")
+    public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {
+        assertThat(BaseStepDef.response).contains(pollingpath);
+        assertThat(BaseStepDef.response).contains(suggestedcallback);
+
+    }
 }
