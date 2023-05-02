@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.cucumber.java.en.And;
@@ -44,6 +45,8 @@ public class ZeebeStepDef extends BaseStepDef{
     private Set<String> startProcessInstanceKeySet = new HashSet<>();
     private Set<String> endProcessInstanceKeySet = new HashSet<>();
 
+    private Set<String> processInstanceKeySet = new HashSet<>();
+
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -70,7 +73,9 @@ public class ZeebeStepDef extends BaseStepDef{
             final int workflowNumber = i;
             apiExecutorService.execute(() -> {
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
-                logger.info("Workflow Response {}: {}", workflowNumber, BaseStepDef.response);
+                JsonObject payload = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
+                String processInstanceKey = payload.get("ProcessInstanceKey").getAsString();
+                logger.info("Workflow Response {}: {}", workflowNumber, processInstanceKey);
             });
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
