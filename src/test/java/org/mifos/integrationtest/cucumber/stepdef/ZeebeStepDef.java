@@ -30,7 +30,6 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +73,7 @@ public class ZeebeStepDef extends BaseStepDef{
             apiExecutorService.execute(() -> {
                 BaseStepDef.response = sendWorkflowRequest(endpoint, requestBody);
                 JsonObject payload = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
-                String processInstanceKey = payload.get("ProcessInstanceKey").getAsString();
+                String processInstanceKey = payload.get("processInstanceKey").getAsString();
                 processInstanceKeySet.add(processInstanceKey);
                 logger.info("Workflow Response {}: {}", workflowNumber, processInstanceKey);
             });
