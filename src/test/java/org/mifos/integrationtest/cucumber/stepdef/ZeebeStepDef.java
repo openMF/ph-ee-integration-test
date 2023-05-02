@@ -30,6 +30,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,7 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
-    private Set<String> processInstanceKeySet = Collections.synchronizedSet(new HashSet<>());
+    private Set<String> processInstanceKeySet = ConcurrentHashMap.newKeySet();
 
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
