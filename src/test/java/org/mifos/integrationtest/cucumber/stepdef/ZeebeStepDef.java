@@ -183,13 +183,14 @@ public class ZeebeStepDef extends BaseStepDef{
 
             boolean isStartEvent = bpmnElementType.equals("START_EVENT") && bpmnProcessId.equals("zeebetest");
             boolean isEndEvent = bpmnElementType.equals("END_EVENT") && bpmnProcessId.equals("zeebetest");
-            boolean isNewProcessInstance = !startProcessInstanceKeySet.contains(processInstanceKey);
+            boolean isNewProcessInstanceStart = !startProcessInstanceKeySet.contains(processInstanceKey);
+            boolean isNewProcessInstanceEnd = !endProcessInstanceKeySet.contains(processInstanceKey);
 
-            if(isNewProcessInstance && isStartEvent){
+            if(isNewProcessInstanceStart && isStartEvent){
                 startProcessInstanceKeySet.add(processInstanceKey);
             }
 
-            if(isNewProcessInstance && isEndEvent){
+            if(isNewProcessInstanceEnd && isEndEvent){
                 endProcessInstanceKeySet.add(processInstanceKey);
             }
         }
