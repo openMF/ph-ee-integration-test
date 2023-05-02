@@ -82,7 +82,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
         logger.info("Additional consumer polls");
         long startTime = System.currentTimeMillis();
-        long timeout = kafkaConfig.consumerTimeout;
+        long timeout = 30000;   //kafkaConfig.consumerTimeout;
         while(endProcessInstanceKeySet.size()< zeebeOperationsConfig.noOfWorkflows){
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             logger.info("No. of records received: {}", records.count());
