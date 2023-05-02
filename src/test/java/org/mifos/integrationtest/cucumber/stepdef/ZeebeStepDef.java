@@ -43,7 +43,9 @@ public class ZeebeStepDef extends BaseStepDef{
     @Autowired
     KafkaConfig kafkaConfig;
 
-    private Set<String> processInstanceKeySet = ConcurrentHashMap.newKeySet();
+    private Set<String> processInstanceKeySet = new HashSet<>();
+
+    private Set<String> kafkaPollProcessInstanceKeySet = new HashSet<>();
 
     private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
 
@@ -119,7 +121,13 @@ public class ZeebeStepDef extends BaseStepDef{
         logger.info("No of workflows started: {}", zeebeOperationsConfig.noOfWorkflows);
         logger.info("Process Instance Key count: {}", processInstanceKeySet.size());
         logger.info("Process instance key set result: {}", processInstanceKeySet);
-        assertThat(processInstanceKeySet.size()).isEqualTo(0);
+        int count = 0;
+        for(String processInstanceKey : processInstanceKeySet){
+            if(kafkaPollProcessInstanceKeySet.contains(processInstanceKey)){
+                count++;
+            }
+        }
+        assertThat(count).isEqualTo(zeebeOperationsConfig.noOfWorkflows);
     }
 
     private String getFileContent(String fileUrl) {
@@ -182,11 +190,7 @@ public class ZeebeStepDef extends BaseStepDef{
             JsonObject payload = JsonParser.parseString(record.value()).getAsJsonObject();
             JsonObject recordValue = payload.get("value").getAsJsonObject();
             String processInstanceKey = recordValue.get("processInstanceKey").getAsString();
-
-            if(processInstanceKeySet.contains(processInstanceKey)){
-                logger.info("Removing Process Instance key: {}", processInstanceKey);
-                processInstanceKeySet.remove(processInstanceKey);
-            }
+            kafkaPollProcessInstanceKeySet.add(processInstanceKey);
         }
     }
 }
