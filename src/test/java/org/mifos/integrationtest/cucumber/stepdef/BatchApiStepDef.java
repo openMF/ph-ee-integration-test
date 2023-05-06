@@ -1,12 +1,14 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.http.Header;
+import io.restassured.http.Headers;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -152,12 +154,10 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @Then("I should get non empty response with failure and success percentage")
-    public void iShouldGetNonEmptyResponseWithFailureAndSuccessPercentage() throws JsonProcessingException {
+    public void iShouldGetNonEmptyResponseWithFailureAndSuccessPercentage() {
         assertThat(BaseStepDef.response).isNotNull();
         assertThat(BaseStepDef.response.contains("failurePercentage")).isTrue();
         assertThat(BaseStepDef.response.contains("successPercentage")).isTrue();
-
-
     }
 
     @When("I call the batch transactions endpoint with expected status of {int}")
@@ -165,7 +165,6 @@ public class BatchApiStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
         requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
-        requestSpec.header(X_CORRELATIONID, BaseStepDef.clientCorrelationId);
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
         if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
@@ -173,9 +172,7 @@ public class BatchApiStepDef extends BaseStepDef {
         }
 
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
-
-        logger.info("Test: {}", BaseStepDef.clientCorrelationId);
-        BaseStepDef.response = RestAssured.given(requestSpec)
+        Response resp = RestAssured.given(requestSpec)
                 .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data")
                 .multiPart("data", f)
@@ -183,8 +180,17 @@ public class BatchApiStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint)
-                .andReturn().asString();
+                .then().extract().response();
 
+        BaseStepDef.response = resp.andReturn().asString();
+        BaseStepDef.restResponseObject = resp;
+
+        Headers allHeaders = resp.getHeaders();
+        for(Header header : allHeaders)
+        {
+            System.out.print(header.getName() +" : ");
+            System.out.println(header.getValue());
+        }
         logger.info("Batch Details Response: " + BaseStepDef.response);
     }
 

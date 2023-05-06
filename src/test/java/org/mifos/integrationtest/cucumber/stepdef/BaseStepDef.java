@@ -6,6 +6,8 @@ import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
+import io.restassured.response.Response;
+import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,5 +64,6 @@ public class BaseStepDef {
     protected static X509Certificate x509Certificate;
     protected static String jwsDataSeparator = ":";
     protected static String signature;
+    protected static Response restResponseObject;
 
 }

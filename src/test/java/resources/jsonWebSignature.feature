@@ -9,7 +9,7 @@ Feature: Json Web Signature test
     When I call the batch transactions endpoint with expected status of 200
     Then I should get non empty response
 
-  Scenario: Test the jws for batchTransactions
+  Scenario: Test the jws in response for batchTransactions
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "gorilla"
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
@@ -19,5 +19,3 @@ Feature: Json Web Signature test
     Then I should get non empty response
     And The response should have non empty header X-SIGNATURE
     And The signature should be able successfully validated against certificate "MIIDvDCCAqQCCQDZK/l5vKIt7jANBgkqhkiG9w0BAQsFADCBnzELMAkGA1UEBhMCSU4xEjAQBgNVBAgMCUtBUk5BVEFLQTETMBEGA1UEBwwKRE9NQVNBTkRSQTERMA8GA1UECgwIRllOQVJGSU4xFDASBgNVBAsMC0RFVkVMT1BNRU5UMR0wGwYDVQQDDBRodHRwczovL2Z5bmFyZmluLmlvLzEfMB0GCSqGSIb3DQEJARYQYXZpa0BmeW5hcmZpbi5pbzAeFw0yMzA0MDUwNjExMDNaFw0yMzA1MDUwNjExMDNaMIGfMQswCQYDVQQGEwJJTjESMBAGA1UECAwJS0FSTkFUQUtBMRMwEQYDVQQHDApET01BU0FORFJBMREwDwYDVQQKDAhGWU5BUkZJTjEUMBIGA1UECwwLREVWRUxPUE1FTlQxHTAbBgNVBAMMFGh0dHBzOi8vZnluYXJmaW4uaW8vMR8wHQYJKoZIhvcNAQkBFhBhdmlrQGZ5bmFyZmluLmlvMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtO38XREJbL1r4IAYK6K5ONNXHcmfTKlehRf0YF+vjptt4D/6zBObBOf/zqButSlN3RI/aYXBx/OOU7sjRMnOFYasXtYM5eFSGZDo/v9qsWLwrD9Ur97cE7Pnw3xb+TQNWV6orME5YI0di6X9bXrxUBDswfVmLx/wbvZIK9gJRzD1evm+4HCYo/+1tYZ3YgpNmoW4u6F44zgxeMhFPcjQIaKYm3uM8zF/hTuHhWKVJq40ucL7+mgGp36HiDE8IRfNRo/Vd6x3+FLA91RMe+96uxj7l5WUi8oja1Anb8SE4fnVvGPSArgk8t2xW6dfx86D3c5JFJczzSi5S4ldsOBHMQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBPhTd+DhzbUGqAvsU6T34Iu3k+6Br4N6m90dkvBeMgYL8J7J6Fa7hm7f6xEeDqM+RTPhuFXNlS5swjqUYg/j85jKqVtgYAB6IE7z7BTwBAtF4tJ+jVOV4PfS/lSqvfxwo/qThqU1iXFz9xU38zlqxH5JuWZjeV58uUP/vZC8Ys44RDhU4X1qDbt51Vs8E+DeV1A4aweoEVc/txEdShbxnR2MVpPpca1NOElYW2cTAWjJypgw5bJZX4G0gZmHCZhQtgXSIMC1KSqMM7DK+HA7xTfKNJ+vnD08FOzBAb6nl2cHVb/zySdNWwsPu6w3FmzgFit9Hq2zE2F41167GvRBEL"
-
-
