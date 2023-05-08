@@ -29,12 +29,12 @@ public class PaybillApiStepDef {
     ObjectMapper objectMapper;
 
     @Given("The mpesaValidateUrl is not null")
-    public void nonEmptyUrl() {
+    public void nonEmptympesaValidateUrl() {
         assertThat(paybillConfig.mpesaValidateUrl).isNotNull();
     }
 
-    @When("The mpesaSettlementUrl is not null")
-    public void nonEmptyMpesaUrls() {
+    @Given("The mpesaSettlementUrl is not null")
+    public void nonEmptympesaSettlementUrl() {
         assertThat(paybillConfig.mpesaSettlementUrl).isNotNull();
     }
 
@@ -56,7 +56,7 @@ public class PaybillApiStepDef {
         assertThat(paybillStepDef.amount).isNotEmpty();
     }
 
-    @And("I call the mpesa-connector validate webhook api with expected status code of {int}")
+    @When("I call the mpesa-connector validate webhook api with expected status code of {int}")
     public void callMpesaConnector(int expectedStatus) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         // Paybill Request DTO for Validation
