@@ -6,6 +6,8 @@ Cucumber is a test writing framework which is used to achieve the idea of BDD(Be
 
 ## Run test suite
 ./gradlew cucumberCli
+OR
+helm test <Extended Chart of PH-EE-Engine>
 
 ## Three main components of cucumber
 1. Ghrekin feature file
