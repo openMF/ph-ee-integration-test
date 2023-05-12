@@ -4,6 +4,9 @@
 <br>
 Cucumber is a test writing framework which is used to achieve the idea of BDD(Behaviour Driven Development). To know more about BDD and why it is considered [read this article](https://www.tutorialspoint.com/behavior_driven_development/behavior_test_driven_development.htm).
 
+## Run test suite
+./gradlew cucumberCli
+
 ## Three main components of cucumber
 1. Ghrekin feature file
     Its is a human readable domain specific language, to deffine a behaviour.
