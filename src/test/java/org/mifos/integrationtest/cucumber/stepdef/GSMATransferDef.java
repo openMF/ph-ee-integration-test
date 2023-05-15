@@ -113,7 +113,7 @@ public class GSMATransferDef extends GsmaConfig {
 
         AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true, "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
 
-        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "interest-principal-penalties-fees-order-strategy", allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
+        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 1, allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
 
         return objectMapper.writeValueAsString(loanProduct);
     }
@@ -123,7 +123,6 @@ public class GSMATransferDef extends GsmaConfig {
 
         String date = getCurrentDate();
         setcurrentDate(date);
-
         CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
                 responsePayerClient, CreatePayerClientResponse.class);
         LoanProductResponse loanProductResponse = objectMapper.readValue(
@@ -131,7 +130,7 @@ public class GSMATransferDef extends GsmaConfig {
         String clientId = createPayerClientResponse.getClientId();
         int resourceId = Integer.parseInt(loanProductResponse.getResourceId());
 
-        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, "interest-principal-penalties-fees-order-strategy", new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
+        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, 1, new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
 
         return objectMapper.writeValueAsString(loanAccountData);
     }
@@ -220,6 +219,8 @@ public class GSMATransferDef extends GsmaConfig {
         String accountId = getAccountId(prefix);
         ArrayList<CustomData> customData = new ArrayList<>();
         CustomData customDataObj = new CustomData();
+        customDataObj.setKey("key");
+        customDataObj.setValue("value");
         customData.add(customDataObj);
 
         ArrayList<Party> payer = new ArrayList<>();
