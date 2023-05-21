@@ -61,4 +61,6 @@ jobs:
 workflows:
   build:
     jobs:
-      - build
+      - build:
+          context: 
+            - slack
