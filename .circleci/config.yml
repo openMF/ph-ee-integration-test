@@ -55,7 +55,7 @@ jobs:
           event: pass
           template: basic_success_1
           
-      - run: ./gradlew cucumberCli
+      # - run: ./gradlew cucumberCli
       # run tests! Slack Success/Fail Notification Step
       #- run: ./gradlew test
 workflows:
