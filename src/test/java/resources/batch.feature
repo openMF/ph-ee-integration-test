@@ -11,7 +11,7 @@ Feature: Batch Details API test
     And I have tenant as "gorilla"
     When I call the batch transactions endpoint with expected status of 200
     Then I should get non empty response
-    And I should have "PollingPath" and "SuggestedcallbackSeconds" in response
+    And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
 
   Scenario: Batch summary API Test
