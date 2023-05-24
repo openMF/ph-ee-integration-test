@@ -343,6 +343,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
         // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+
         requestSpec.queryParam("size", 10);
         requestSpec.queryParam("page", 0);
         requestSpec.queryParam("transactionId", transactionId);
@@ -358,6 +359,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
             }
             BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
+
 
             logger.info("Transfer query Response: {}", BaseStepDef.response);
             checkForCallback();
