@@ -6,6 +6,7 @@ import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
+import org.mifos.integrationtest.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class BaseStepDef {
 
     @Autowired
     MockServer mockServer;
+
+    @Autowired
+    IdentityMapperConfig identityMapperConfig;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
