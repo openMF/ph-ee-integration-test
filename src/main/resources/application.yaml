@@ -70,7 +70,7 @@ savings:
 mock-server:
   port: 53013
 
-<<<<<<< HEAD
+
 callback_url: ${CALLBACK_URL:localhost}
 
 identity-account-mapper:
@@ -84,3 +84,4 @@ mifos-connector:
   contactpoint: "https://amsmifos.sandbox.fynarfin.io"
   endpoints:
     account_status: "/ams/accounts/{identifierType}/{identifierId}/status"
+

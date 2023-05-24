@@ -40,3 +40,4 @@ Feature: Identity Account Mapper Api Test
     And I make the "PUT" request to "/accountLookup" endpoint with expected status of 200
     Then I should be able to verify that the "PUT" method to "/accountLookup" endpoint received 10 request
     And I can stop mock server
+

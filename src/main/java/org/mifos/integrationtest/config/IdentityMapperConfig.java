@@ -19,4 +19,5 @@ public class IdentityMapperConfig {
     public String accountLookupEndpoint;
     @Value("${callback_url}")
     public String callbackURL;
+
 }

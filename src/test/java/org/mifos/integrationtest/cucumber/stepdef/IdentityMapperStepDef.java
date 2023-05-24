@@ -3,6 +3,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
 
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -24,6 +25,7 @@ import org.mifos.integrationtest.common.Utils;
 
 public class IdentityMapperStepDef extends BaseStepDef {
 
+
     private static String identityMapperBody = null;
     private static AccountMapperRequestDTO registerBeneficiaryBody = null;
     private static AccountMapperRequestDTO addPaymentModalityBody = null;
@@ -34,6 +36,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static String fieldValue = "0";
     private static String requstId;
     private static final String payeeIdentityAccountLookup = "003001003873110196";
+
     private static TransactionChannelRequestDTO transactionChannelRequestDTO = new TransactionChannelRequestDTO();
     private static String transactionId;
     private static String tenant;
@@ -48,6 +51,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
+
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
 
@@ -58,6 +62,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(addPaymentModalityBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.addPaymentModalityEndpoint).andReturn().asString();
+
 
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
@@ -82,6 +87,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         requstId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
 
+
     }
 
     @And("I create an IdentityMapperDTO for Add Payment Modality")
@@ -93,6 +99,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         requstId = generateUniqueNumber(10);
         addPaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
 
+
     }
 
     @And("I create an IdentityMapperDTO for Update Payment Modality")
@@ -103,6 +110,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         beneficiaryDTOList.add(beneficiaryDTO);
         requstId = generateUniqueNumber(10);
         updatePaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
+
     }
 
     @Then("I call the account lookup API with expected status of {int} and stub {string}")
@@ -114,6 +122,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
+
 
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
@@ -131,6 +140,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .queryParam("sourceBBID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
+
 
         }
     }
@@ -163,6 +173,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
+
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
 
@@ -178,6 +189,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, "SocialWelfare", beneficiaryDTOList);
     }
 
+
     @Then("I can call ops app transfer api with expected status of {int}")
     public void iCanCallOpsAppTransferApiWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(tenant);
@@ -185,6 +197,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(BaseStepDef.inboundTransferMockReq).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+
 
         logger.info("Inbound transfer Response: {}", BaseStepDef.response);
     }
@@ -248,5 +261,6 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .get(operationsAppConfig.batchDetailsEndpoint).andReturn().asString();
 
         logger.info("Batch Details Response: " + BaseStepDef.response);
+
     }
 }
