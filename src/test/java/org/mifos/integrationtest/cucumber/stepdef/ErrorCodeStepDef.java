@@ -283,6 +283,56 @@ public class ErrorCodeStepDef extends BaseStepDef{
             throw new RuntimeException(e);
         }
     }
+    @Given("I can create GSMATransferDTO with invalid payer information")
+    public void iCanCreateGSMATransferDTOWithInvalidData() {
+        GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
+        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999hhhhdsda");
+        GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416ffgg");
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        try {
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
+                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
+    @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
+    public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        String endPoint = operationsAppConfig.transfersEndpoint;
+        //requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        requestSpec.queryParam("size", 10);
+        requestSpec.queryParam("page", 0);
+        requestSpec.queryParam("transactionId", transactionId);
+        logger.info("Transfer query Response: {}", endPoint);
+        logger.info("TxnId : {}", transactionId);
+        int retryCount = 0;
+        String status = null;
+        while (status == null && retryCount < maxRetryCount) {
+            try {
+                iWillSleepForSecs(retryInterval);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            BaseStepDef.response = RestAssured.given(requestSpec)
+                    .baseUri(operationsAppConfig.operationAppContactPoint)
+                    .expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                    .when()
+                    .get(endPoint)
+                    .andReturn().asString();
+
+            logger.info("Transfer query Response: {}", BaseStepDef.response);
+            checkForCallback();
+            retryCount++;
+        }
+    }
 }
