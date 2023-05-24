@@ -3,7 +3,9 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import org.mifos.integrationtest.common.dto.paybill.PayBillRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PaybillStepDef {
     public String businessShortCode;
     public String billRefNo;

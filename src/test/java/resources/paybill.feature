@@ -2,7 +2,7 @@ Feature: Paybill API Tests
 
   Scenario: Paybill Config Test
     Given The mpesaValidateUrl is not null
-    When  The mpesaSettlementUrl is not null
+    Given The mpesaSettlementUrl is not null
 
   Scenario: MPESA Connector Validate Webhook API Test for paygops
     Given I have businessShortCode "24322607" with transactionId "8335b60090979AvUefSR"

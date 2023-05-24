@@ -31,7 +31,7 @@ public class LoanAccountData {
     public int interestCalculationPeriodType;
     public boolean allowPartialPeriodInterestCalcualtion;
     public int graceOnArrearsAgeing;
-    public String transactionProcessingStrategyCode;
+    public Integer transactionProcessingStrategyId;
     public ArrayList<Object> rates;
     public String repaymentsStartingFromDate;
     public String locale;
@@ -40,7 +40,7 @@ public class LoanAccountData {
     public String expectedDisbursementDate;
     public String submittedOnDate;
 
-    public LoanAccountData(String clientId, int productId, ArrayList<Object> disbursementData, int principal, int loanTermFrequency, int loanTermFrequencyType, int numberOfRepayments, int repaymentEvery, int repaymentFrequencyType, double interestRatePerPeriod, int amortizationType, boolean isEqualAmortization, int interestType, int interestCalculationPeriodType, boolean allowPartialPeriodInterestCalcualtion, int graceOnArrearsAgeing, String transactionProcessingStrategyCode, ArrayList<Object> rates, String repaymentsStartingFromDate, String locale, String dateFormat, String loanType, String expectedDisbursementDate, String submittedOnDate) {
+    public LoanAccountData(String clientId, int productId, ArrayList<Object> disbursementData, int principal, int loanTermFrequency, int loanTermFrequencyType, int numberOfRepayments, int repaymentEvery, int repaymentFrequencyType, double interestRatePerPeriod, int amortizationType, boolean isEqualAmortization, int interestType, int interestCalculationPeriodType, boolean allowPartialPeriodInterestCalcualtion, int graceOnArrearsAgeing, Integer transactionProcessingStrategyId, ArrayList<Object> rates, String repaymentsStartingFromDate, String locale, String dateFormat, String loanType, String expectedDisbursementDate, String submittedOnDate) {
         this.clientId = clientId;
         this.productId = productId;
         this.disbursementData = disbursementData;
@@ -57,7 +57,7 @@ public class LoanAccountData {
         this.interestCalculationPeriodType = interestCalculationPeriodType;
         this.allowPartialPeriodInterestCalcualtion = allowPartialPeriodInterestCalcualtion;
         this.graceOnArrearsAgeing = graceOnArrearsAgeing;
-        this.transactionProcessingStrategyCode = transactionProcessingStrategyCode;
+        this.transactionProcessingStrategyId = transactionProcessingStrategyId;
         this.rates = rates;
         this.repaymentsStartingFromDate = repaymentsStartingFromDate;
         this.locale = locale;

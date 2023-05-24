@@ -36,7 +36,7 @@ public class LoanProduct {
     @JsonProperty(value = "isLinkedToFloatingInterestRates")
     public boolean isLinkedToFloatingInterestRates;
 
-    public LoanProduct(String currencyCode, String includeInBorrowerCycle, boolean useBorrowerCycle, String digitsAfterDecimal, String inMultiplesOf, int repaymentFrequencyType, int interestRateFrequencyType, int amortizationType, int interestType, int interestCalculationPeriodType, ArrayList<Object> principalVariationsForBorrowerCycle, ArrayList<Object> interestRateVariationsForBorrowerCycle, ArrayList<Object> numberOfRepaymentVariationsForBorrowerCycle, boolean multiDisburseLoan, String accountingRule, int daysInYearType, int daysInMonthType, boolean isInterestRecalculationEnabled, int interestRecalculationCompoundingMethod, int rescheduleStrategyMethod, int preClosureInterestCalculationStrategy, boolean isLinkedToFloatingInterestRates, boolean allowVariableInstallments, String name, String shortName, String installmentAmountInMultiplesOf, String minPrincipal, String principal, String maxPrincipal, String minNumberOfRepayments, String numberOfRepayments, String maxNumberOfRepayments, String minInterestRatePerPeriod, int interestRatePerPeriod, String maxInterestRatePerPeriod, String repaymentEvery, boolean canDefineInstallmentAmount, boolean canUseForTopup, String graceOnArrearsAgeing, String overdueDaysForNPA, int recalculationRestFrequencyType, ArrayList<Object> paymentChannelToFundSourceMappings, ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges, String transactionProcessingStrategyCode, AllowAttributeOverrides allowAttributeOverridesObject, String locale, String dateFormat, ArrayList<Object> rates, boolean allowPartialPeriodInterestCalcualtion, String fixedPrincipalPercentagePerInstallment) {
+    public LoanProduct(String currencyCode, String includeInBorrowerCycle, boolean useBorrowerCycle, String digitsAfterDecimal, String inMultiplesOf, int repaymentFrequencyType, int interestRateFrequencyType, int amortizationType, int interestType, int interestCalculationPeriodType, ArrayList<Object> principalVariationsForBorrowerCycle, ArrayList<Object> interestRateVariationsForBorrowerCycle, ArrayList<Object> numberOfRepaymentVariationsForBorrowerCycle, boolean multiDisburseLoan, String accountingRule, int daysInYearType, int daysInMonthType, boolean isInterestRecalculationEnabled, int interestRecalculationCompoundingMethod, int rescheduleStrategyMethod, int preClosureInterestCalculationStrategy, boolean isLinkedToFloatingInterestRates, boolean allowVariableInstallments, String name, String shortName, String installmentAmountInMultiplesOf, String minPrincipal, String principal, String maxPrincipal, String minNumberOfRepayments, String numberOfRepayments, String maxNumberOfRepayments, String minInterestRatePerPeriod, int interestRatePerPeriod, String maxInterestRatePerPeriod, String repaymentEvery, boolean canDefineInstallmentAmount, boolean canUseForTopup, String graceOnArrearsAgeing, String overdueDaysForNPA, int recalculationRestFrequencyType, ArrayList<Object> paymentChannelToFundSourceMappings, ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges, Integer transactionProcessingStrategyId, AllowAttributeOverrides allowAttributeOverridesObject, String locale, String dateFormat, ArrayList<Object> rates, boolean allowPartialPeriodInterestCalcualtion, String fixedPrincipalPercentagePerInstallment) {
         this.currencyCode = currencyCode;
         this.includeInBorrowerCycle = includeInBorrowerCycle;
         this.useBorrowerCycle = useBorrowerCycle;
@@ -82,7 +82,7 @@ public class LoanProduct {
         this.feeToIncomeAccountMappings = feeToIncomeAccountMappings;
         this.penaltyToIncomeAccountMappings = penaltyToIncomeAccountMappings;
         this.charges = charges;
-        this.transactionProcessingStrategyCode = transactionProcessingStrategyCode;
+        this.transactionProcessingStrategyId = transactionProcessingStrategyId;
         AllowAttributeOverridesObject = allowAttributeOverridesObject;
         this.locale = locale;
         this.dateFormat = dateFormat;
@@ -114,7 +114,7 @@ public class LoanProduct {
     ArrayList<Object> feeToIncomeAccountMappings;
     ArrayList<Object> penaltyToIncomeAccountMappings;
     ArrayList<Object> charges;
-    public String transactionProcessingStrategyCode;
+    public Integer transactionProcessingStrategyId;
     AllowAttributeOverrides AllowAttributeOverridesObject;
     public String locale;
     public String dateFormat;
