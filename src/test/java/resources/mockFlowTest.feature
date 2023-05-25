@@ -1,4 +1,4 @@
-@cucumberCli
+@gov
 Feature: Mock Flow Test
 
 
