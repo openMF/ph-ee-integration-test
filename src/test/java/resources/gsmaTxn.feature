@@ -1,3 +1,4 @@
+@gov
 Feature: GSMA Transfer API Test for Account Identifier Worker
 
   Scenario: Savings account Creation Test
