@@ -114,9 +114,6 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I should have {string} and {string} in response")
     public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {
-        System.out.println(pollingpath);
-        System.out.println(suggestedcallback);
-        System.out.println(BaseStepDef.response);
         assertThat(BaseStepDef.response).contains(pollingpath);
         assertThat(BaseStepDef.response).contains(suggestedcallback);
 
