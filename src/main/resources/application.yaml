@@ -67,3 +67,6 @@ savings:
 
 mock-server:
   port: 53013
+
+callback_url: "http://localhost:5001/simulate"
+
