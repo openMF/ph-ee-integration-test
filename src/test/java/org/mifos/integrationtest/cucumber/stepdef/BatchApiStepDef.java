@@ -186,4 +186,13 @@ public class BatchApiStepDef extends BaseStepDef {
             assertThat(retryCount).isNotNull();
             bulkProcessorConfig.setRetryCount(retryCount);
         }
+
+        @Then("I should get non empty response with failure and success percentage")
+        public void iShouldGetNonEmptyResponseWithFailureAndSuccessPercentage () throws JsonProcessingException {
+            assertThat(BaseStepDef.response).isNotNull();
+            assertThat(BaseStepDef.response.contains("failurePercentage")).isTrue();
+            assertThat(BaseStepDef.response.contains("successPercentage")).isTrue();
+
+
+        }
     }
