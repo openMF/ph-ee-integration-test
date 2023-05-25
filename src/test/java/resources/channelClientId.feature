@@ -1,4 +1,4 @@
-@cucumberCli
+@gov
 Feature: New Channel API test
 
 
