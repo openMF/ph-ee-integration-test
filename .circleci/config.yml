@@ -69,7 +69,7 @@ workflows:
           extra-build-args: '--compress'
           push-image: true
           region: ap-south-1
-#           registry-id: AWS_ECR_REGISTRY_ID
+          registry-id: AWS_REGISTRY_ID
           repo: phee-integration-test
 #           repo-policy-path: repo-policy.json
           repo-scan-on-push: true
