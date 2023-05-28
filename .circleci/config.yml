@@ -42,8 +42,9 @@ jobs:
       - helm/upgrade-helm-chart:
           chart: "https://fynarfin.io/images/ph-ee-engine-1.7.2-SNAPSHOT.tgz"
           release-name: g2p-sandbox
-          namespace: ph-test
+          namespace: paymenthub
           recreate-pods: true
+          add-repo: "https://fynarfin.io/images/"
             # reset-values: true
             # dry-run: true
       # - helm/install-helm-chart:
