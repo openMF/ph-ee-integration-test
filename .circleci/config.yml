@@ -38,18 +38,6 @@ jobs:
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: sit
-      - helm/install-helm-chart:
-          chart: "https://fynarfin.io/images/ph-ee-engine-1.7.2-SNAPSHOT.tgz"
-          release-name: g2p-sandbox
-          namespace: ph-test
-          #kubectl config use-context arn:aws:eks:us-east-2:419830066942:cluster/sit
-      # - helm/upgrade-helm-chart:
-      #     chart: "https://fynarfin.io/images/ph-ee-engine-1.7.2-SNAPSHOT.tgz"
-      #     release-name: g2p-sandbox
-      #     namespace: ph-test
-            # recreate-pods: true
-            # reset-values: true
-            # dry-run: true
 workflows:
   build:
     jobs:
