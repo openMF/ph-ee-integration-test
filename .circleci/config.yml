@@ -63,8 +63,8 @@ workflows:
   build:
     jobs:
       - aws-ecr/build-and-push-image:
-          aws-access-key-id: ACCESS_KEY_ID
-          aws-secret-access-key: SECRET_ACCESS_KEY
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           context: aws
           extra-build-args: '--compress'
           push-image: true
