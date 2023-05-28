@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   slack: circleci/slack@4.12.5
+  aws-ecr: circleci/aws-ecr@8.2.1
 jobs:
   build:
     docker:
@@ -37,23 +38,23 @@ jobs:
           command: |
             mkdir -p /caches
             docker save -o /caches/app.tar app
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/app.tar
+#       - save_cache:
+#           key: v1-{{ .Branch }}-{{ epoch }}
+#           paths:
+#             - /caches/app.tar
       
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+#       - save_cache:
+#           paths:
+#             - ~/.gradle
+#           key: v1-dependencies-{{ checksum "build.gradle" }}
           
-      - slack/notify:
-          event: fail
-          mentions: '@here'
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: basic_success_1
+#       - slack/notify:
+#           event: fail
+#           mentions: '@here'
+#           template: basic_fail_1
+#       - slack/notify:
+#           event: pass
+#           template: basic_success_1
           
       # - run: ./gradlew cucumberCli
       # run tests! Slack Success/Fail Notification Step
@@ -61,6 +62,20 @@ jobs:
 workflows:
   build:
     jobs:
+      - aws-ecr/build-and-push-image:
+          aws-access-key-id: ACCESS_KEY_ID
+          aws-secret-access-key: SECRET_ACCESS_KEY
+          context: aws
+          extra-build-args: '--compress'
+          push-image: true
+          region: ap-south-1
+#           registry-id: AWS_ECR_REGISTRY_ID
+          repo: phee-integration-test
+#           repo-policy-path: repo-policy.json
+          repo-scan-on-push: true
+          role-arn: arn:aws:iam::419830066942:role/CustomAdmin
+          tag: latest
       - build:
           context: 
             - slack
+            - aws
