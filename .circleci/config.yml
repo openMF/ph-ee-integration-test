@@ -20,7 +20,6 @@ jobs:
       - aws-ecr/build-and-push-image:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          context: AWS
           extra-build-args: '--compress'
           push-image: true
           region: ap-south-1
@@ -29,29 +28,43 @@ jobs:
           repo-scan-on-push: true
           role-arn: arn:aws:iam::419830066942:role/CustomAdmin
           tag: latest
-  install-helm-chart:
-    executor: aws-eks/python
+  upgrade-helm-chart:
+    docker:
+      - image: cimg/python:3.10
     parameters:
       cluster-name:
-        description: sit
-        type: sit
+        description: "sit"
+        type: string
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: sit
+          cluster-name: "sit"
+          aws-region: "us-east-2"
+      - helm/upgrade-helm-chart:
+          chart: "https://fynarfin.io/images/ph-ee-engine-1.7.2-SNAPSHOT.tgz"
+          release-name: g2p-sandbox
+          namespace: ph-test
+          recreate-pods: true
+            # reset-values: true
+            # dry-run: true
+      # - helm/install-helm-chart:
+      #     add-repo: "https://fynarfin.io/images/"
+      #     chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.2.0.tgz"
+      #     release-name: g2p-sandbox
+      #     namespace: ph-test
 workflows:
   build:
     jobs:
       - build:
           context: 
-            - slack
             - AWS
+            - slack
   deploy:
     jobs:
-      - install-helm-chart:
+      - upgrade-helm-chart:
           cluster-name: sit
-          requires:
-            - aws-eks/create-cluster
-      - delete-helm-release:
-          cluster-name: sit
-          requires:
-            - install-helm-chart
+      # - install-helm-chart:
+      #     cluster-name: sit
+      # - delete-helm-release:
+      #     cluster-name: sit
+      #     requires:
+      #       - install-helm-chart
