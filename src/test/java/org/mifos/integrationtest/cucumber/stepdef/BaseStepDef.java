@@ -42,6 +42,7 @@ public class BaseStepDef {
     protected static String filename = "ph-ee-bulk-demo-6.csv";
     protected static String requestType;
     protected static String clientCorrelationId;
+    protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
 
 }
