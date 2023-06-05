@@ -41,10 +41,12 @@ public class BaseStepDef {
     protected static String batchId;
     protected static String tenant;
     protected static String response;
+    protected static Integer statusCode;
     protected static String accessToken;
     protected static String filename = "ph-ee-bulk-demo-6.csv";
     protected static String requestType;
     protected static String clientCorrelationId;
+    protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
 
 }
