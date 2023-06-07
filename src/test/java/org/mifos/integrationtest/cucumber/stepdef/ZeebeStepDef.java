@@ -45,7 +45,7 @@ public class ZeebeStepDef extends BaseStepDef{
 
     private Set<String> kafkaPollProcessInstanceKeySet = new HashSet<>();
 
-    private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade/orchestration/feel/zeebetest.bpmn";
+    private static final String BPMN_FILE_URL = "https://raw.githubusercontent.com/arkadasfynarfin/ph-ee-env-labs/zeebe-upgrade-2/orchestration/feel/zeebetest.bpmn";
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
