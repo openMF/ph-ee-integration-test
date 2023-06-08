@@ -12,6 +12,10 @@ public class Utils {
     public static final String X_CORRELATIONID = "X-CorrelationID";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_TYPE_VALUE = "application/json";
+    public static final String HEADER_JWS_SIGNATURE = "X-SIGNATURE";
+    public static final String HEADER_FILENAME = "filename";
+    public static final String HEADER_PURPOSE = "purpose";
+    public static final String QUERY_PARAM_TYPE = "type";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
@@ -30,6 +34,14 @@ public class Utils {
     public static RequestSpecification getDefaultSpec() {
         RequestSpecification requestSpec = new RequestSpecBuilder().build();
         requestSpec.relaxedHTTPSValidation();
+        return requestSpec;
+    }
+
+    public static RequestSpecification getDefaultSpec(String tenant, String clientCorrelationId) {
+        RequestSpecification requestSpec = getDefaultSpec();
+        requestSpec.header(TENANT_PARAM_NAME, tenant);
+        requestSpec.header(X_CORRELATIONID, clientCorrelationId);
+        requestSpec.header(CONTENT_TYPE, "application/json");
         return requestSpec;
     }
 
