@@ -70,3 +70,10 @@ mock-server:
 
 callback_url: "http://localhost:5001/simulate"
 
+identity-account-mapper:
+  contactpoint: "https://identity.sandbox.fynarfin.io"
+  endpoints:
+    register-beneficiary: /identityAccountMapper/registerBeneficiary
+    add-payment-modality: /identityAccountMapper/addPaymentModality
+    update-payment-modality: /identityAccountMapper/updatePaymentModality
+    account-lookup: /identityAccountMapper/accountLookup
