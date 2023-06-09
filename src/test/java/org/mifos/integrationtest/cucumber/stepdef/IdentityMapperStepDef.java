@@ -1,7 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,17 +13,14 @@ import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
-import org.mifos.connector.common.mojaloop.dto.MoneyData;
-import org.mifos.connector.common.mojaloop.dto.Party;
-import org.mifos.connector.common.mojaloop.dto.PartyIdInfo;
-import org.mifos.connector.common.mojaloop.type.IdentifierType;
-import org.mifos.integrationtest.common.HttpMethod;
-import org.mifos.integrationtest.common.HttpMethod;
 import org.mifos.integrationtest.common.Utils;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -41,12 +37,13 @@ public class IdentityMapperStepDef extends BaseStepDef{
     private static int getApiCount = 0;
     private static String fieldName = "numberFailedCases";
     private static String fieldValue = "0";
-    private static final String requstId = "915251236706";
-    private static final String payeeIdentityAccountLookup = "76032553265657618183";
+    private static String requstId;
+    private static final String payeeIdentityAccountLookup = "003001003873110196";
     private static TransactionChannelRequestDTO transactionChannelRequestDTO = new TransactionChannelRequestDTO();
     private static String transactionId;
     private static String tenant;
     private static String payeeDfspId;
+    private static String sourceBBID = "SocialWelfare";
 
     @When("I call the register beneficiary API with expected status of {int} and stub {string}")
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
@@ -69,7 +66,7 @@ public class IdentityMapperStepDef extends BaseStepDef{
     public void iCallTheAddPaymentModalityAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         BaseStepDef.response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri()+"/test")
+                .header("X-CallbackURL", mockServer.getBaseUri()+stub)
                 .baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(addPaymentModalityBody)
                 .expect()
@@ -105,7 +102,8 @@ public class IdentityMapperStepDef extends BaseStepDef{
 
         BeneficiaryDTO beneficiaryDTO =new BeneficiaryDTO("94049169714828912115",null, null, null);
         beneficiaryDTOList.add(beneficiaryDTO);
-        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, "467028349179", beneficiaryDTOList);
+        requstId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
 
     }
 
@@ -115,7 +113,8 @@ public class IdentityMapperStepDef extends BaseStepDef{
 
         BeneficiaryDTO beneficiaryDTO =new BeneficiaryDTO("94049169714828912114","00", "12345678", null);
         beneficiaryDTOList.add(beneficiaryDTO);
-        addPaymentModalityBody = new AccountMapperRequestDTO(requstId, "467028349179", beneficiaryDTOList);
+        requstId = generateUniqueNumber(10);
+        addPaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
 
     }
 
@@ -125,7 +124,8 @@ public class IdentityMapperStepDef extends BaseStepDef{
 
         BeneficiaryDTO beneficiaryDTO =new BeneficiaryDTO("94049169714828912115","00", "LB28369763644714781256435714", null);
         beneficiaryDTOList.add(beneficiaryDTO);
-        updatePaymentModalityBody = new AccountMapperRequestDTO(requstId, "467028349179", beneficiaryDTOList);
+        requstId = generateUniqueNumber(10);
+        updatePaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
     }
 
     @Then("I call the account lookup API with expected status of {int} and stub {string}")
@@ -133,8 +133,9 @@ public class IdentityMapperStepDef extends BaseStepDef{
         BaseStepDef.response = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .header("X-CallbackURL", mockServer.getBaseUri()+stub)
-                .queryParam("payeeIdentity", payeeIdentity)
+                .queryParam("payeeIdentity", "94049169714828912115")
                 .queryParam("paymentModality","00")
+                .queryParam("requestId", generateUniqueNumber(10))
                 .baseUri(identityMapperConfig.identityMapperContactPoint)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
@@ -155,8 +156,10 @@ public class IdentityMapperStepDef extends BaseStepDef{
             BaseStepDef.response = RestAssured.given()
                     .header("Content-Type", "application/json")
                     .header("X-CallbackURL", mockServer.getBaseUri() + endpoint)
-                    .queryParam("payeeIdentity", payeeIdentity)
+                    .queryParam("payeeIdentity", "94049169714828912115")
                     .queryParam("paymentModality", "00")
+                    .queryParam("requestId", generateUniqueNumber(10))
+                    .queryParam("sourceBBID", sourceBBID)
                     .baseUri(identityMapperConfig.identityMapperContactPoint)
                     .expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
@@ -174,13 +177,22 @@ public class IdentityMapperStepDef extends BaseStepDef{
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
-    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String arg0, String endpoint) {
+    public void  iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         verify(postRequestedFor(urlEqualTo(endpoint))
-                .withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                .withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo("94049169714828912115"))));
     }
 
-    @When("I call the register beneficiary API with a MSISDN and DFSPID as {string} with expected status of 200")
-    public void iCallTheRegisterBeneficiaryAPIWithAMSISDNAndDFSPIDAs(String dfspId, Integer expectedStatus) {
+
+
+    public static String generateUniqueNumber(int length) {
+        Random rand = new Random();
+        long timestamp = System.currentTimeMillis();
+        long randomLong = rand.nextLong(100000000);
+        String uniqueNumber = timestamp + "" + randomLong;
+        return uniqueNumber.substring(0, length);
+    }
+    @When("I call the register beneficiary API with expected status of {int}")
+    public void iCallTheRegisterBeneficiaryAPIWithAMSISDNAndDFSPIDAs(int expectedStatus) {
         BaseStepDef.response = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .header("X-CallbackURL", mockServer.getBaseUri()+"/registerBeneficiary")
@@ -199,59 +211,15 @@ public class IdentityMapperStepDef extends BaseStepDef{
 
     @When("I create an IdentityMapperDTO for registering beneficiary with {string} as DFSPID")
     public void iCreateAnIdentityMapperDTOForRegisteringBeneficiaryWithAsDFSPID(String dfspId) {
-        tenant = dfspId;
+        payeeDfspId = dfspId;
 
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
 
         BeneficiaryDTO beneficiaryDTO =new BeneficiaryDTO(payeeIdentityAccountLookup,"01", "12345678", dfspId);
         beneficiaryDTOList.add(beneficiaryDTO);
-        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, "467028349179", beneficiaryDTOList);
+        requstId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, "SocialWelfare", beneficiaryDTOList);
     }
-
-    @Then("I create an Channel Transfer DTO with same payee Identity i registered in account mapper")
-    public void iCreateAnChannelTransferDTOWithSamePayeeIdentityIRegisteredInAccountMapper() {
-
-        PartyIdInfo payerPartyId = new PartyIdInfo(IdentifierType.MSISDN, "27710101999");
-        PartyIdInfo payeePartyId = new PartyIdInfo(IdentifierType.MSISDN, payeeIdentityAccountLookup);
-        Party payer = new Party(payerPartyId);
-        Party payee = new Party(payeePartyId);
-        MoneyData moneyData = new MoneyData("100", "USD");
-
-        transactionChannelRequestDTO.setPayee(payee);
-        transactionChannelRequestDTO.setPayer(payer);
-        transactionChannelRequestDTO.setAmount(moneyData);
-    }
-
-    @And("I will call the channel transfer API with expected status of {int}")
-    public void iWillCallTheChannelTransferAPIWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(tenant);
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(transactionChannelRequestDTO)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(channelConnectorConfig.transferEndpoint)
-                .andReturn().asString();
-
-        logger.info("Inbound transfer Response: {}", BaseStepDef.response);
-    }
-
-    @And("I should be able to parse transactionId from transfer response")
-    public void iShouldBeAbleToParseTransactionIdFromTransferResponse() {
-
-        try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
-            transactionId = jsonObject.getString("transactionId");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            assertThat(false).isTrue();
-            return;
-        }
-        assertThat(transactionId).isNotNull();
-        assertThat(transactionId).isNotEmpty();
-    }
-
 
     @Then("I can call ops app transfer api with expected status of {int}")
     public void iCanCallOpsAppTransferApiWithExpectedStatusOf(int expectedStatus) {
@@ -271,16 +239,69 @@ public class IdentityMapperStepDef extends BaseStepDef{
 
     @And("I can assert the payee DFSPID is same as used to register beneficiary id type from response")
     public void iCanAssertThePayeePartyIdTypeFromResponse() {
+        String payeeDfsp = null;
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
-            JSONArray content = jsonObject.getJSONArray("content");
-            JSONObject transfer = (JSONObject) content.get(0);
-            payeeDfspId = transfer.getString("payeeDfspId");
-        } catch (JSONException e) {
+            JSONArray jsonArray = new JSONArray(BaseStepDef.response);
+            JSONObject transactionStatus = jsonArray.getJSONObject(0);
+            payeeDfsp = transactionStatus.get("payeeDfspId").toString();
+
+        } catch (Exception e) {
             e.printStackTrace();
-            assertThat(false).isTrue();
-            return;
         }
-        assertThat(payeeDfspId.equals(tenant));
+        assertThat(payeeDfspId).isEqualTo(payeeDfsp);
+    }
+    @When("I call the batch transactions endpoint with expected response status of {int}")
+    public void callBatchTransactionsEndpoint ( int expectedStatus){
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        requestSpec.header("filename", BaseStepDef.filename);
+        requestSpec.header("X-CorrelationID", UUID.randomUUID().toString());
+        requestSpec.queryParam("type", "CSV");
+        BaseStepDef.response = RestAssured.given(requestSpec)
+                .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .contentType("multipart/form-data")
+                .multiPart("file", new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename)))
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .post(bulkProcessorConfig.bulkTransactionEndpoint)
+                .andReturn().asString();
+
+        logger.info("Batch Transactions API Response: " + BaseStepDef.response);
+    }
+
+    @Then("I should be able to parse batch id from response")
+    public void iShouldBeAbleToParseBatchIdFromResponse() {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(BaseStepDef.response);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        String pollingPath = null;
+        try {
+            pollingPath = jsonObject.getString("PollingPath");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        // Extract the batch ID
+        batchId = pollingPath.substring(pollingPath.lastIndexOf("/") + 1);
+    }
+    @When("I call the batch details API with expected response status of {int}")
+    public void callBatchDetailsAPI ( int expectedStatus){
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        requestSpec.queryParam("batchId", batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec)
+                .baseUri(operationsAppConfig.operationAppContactPoint)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .get(operationsAppConfig.batchDetailsEndpoint)
+                .andReturn().asString();
+
+        logger.info("Batch Details Response: " + BaseStepDef.response);
     }
 }

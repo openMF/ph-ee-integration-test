@@ -39,23 +39,23 @@ Feature: Identity Account Mapper Api Test
     Then I should be able to verify that the "POST" method to "/accountLookupTest" endpoint received a request with same payeeIdentity
     And I can stop mock server
 
-    Scenario: Account Lookup Api Consistency Test
-      When I can inject MockServer
-      And I can start mock server
-      Then I call the account lookup API 100 times with expected status of 200 and stub "/accountLookup"
-      And I can register the stub with "/accountLookup" endpoint for "POST" request with status of 200
-      When I make the "POST" request to "/accountLookup" endpoint with expected status of 200
-      Then I should be able to verify that the "POST" method to "/accountLookup" endpoint received 100 request
-      And I can stop mock server
+  Scenario: Account Lookup Api Consistency Test
+    When I can inject MockServer
+    And I can start mock server
+    Then I call the account lookup API 100 times with expected status of 200 and stub "/accountLookup"
+    And I can register the stub with "/accountLookup" endpoint for "POST" request with status of 200
+    When I make the "POST" request to "/accountLookup" endpoint with expected status of 200
+    Then I should be able to verify that the "POST" method to "/accountLookup" endpoint received 100 request
+    And I can stop mock server
 
   Scenario: Bulk Processor Inbound Integration Test
     When I create an IdentityMapperDTO for registering beneficiary with "gorilla" as DFSPID
     Then I can inject MockServer
     And I can start mock server
-    When I call the register beneficiary API with a MSISDN and DFSPID as "gorilla" with expected status of 200
-    And I create an Channel Transfer DTO with same payee Identity i registered in account mapper
-    And I will call the channel transfer API with expected status of 200
-    Then I should get non empty response
-    And I should be able to parse transactionId from transfer response
-    Then I can call ops app transfer api with expected status of 200
+    When I call the register beneficiary API with expected status of 200
+    Given I have the demo csv file "ph-ee-bulk-demo-7.csv"
+    And I have tenant as "rhino"
+    When I call the batch transactions endpoint with expected response status of 200
+    Then I should be able to parse batch id from response
+    When I call the batch details API with expected response status of 200
     And I can assert the payee DFSPID is same as used to register beneficiary id type from response

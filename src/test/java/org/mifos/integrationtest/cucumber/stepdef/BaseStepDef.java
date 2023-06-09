@@ -4,6 +4,7 @@ import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
+import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import io.restassured.response.Response;
