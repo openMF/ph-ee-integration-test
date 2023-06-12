@@ -71,32 +71,37 @@ Now we can run respective feature file directly form the intellij.
 <br>
 <img width="515" alt="Screenshot 2022-10-26 at 6 58 19 PM" src="https://user-images.githubusercontent.com/31315800/198042079-3964389a-df08-4c05-8951-52905c9fce04.png">
 
-## Adding gradle configuration 
-Adding gradle configuration will allow us to run all the cucumber feature file at using using a CLI.
-
-```gradle
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-}
-
-task cucumberCli() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = [
-                    '--plugin', 'pretty',
-                    '--plugin', 'html:target/cucumber-report.html',
-                    '--glue', 'org.mifos.connector.slcb.cucumber',
-                    'src/test/java/resources']
+## Adding runner configuration
+Below java class will make sure to run cucumber test using JUnit test command.
+Where the `glue` property is for defining the package which contains the step definitions, `feature` refers to the path where feature file is located and `plugin` is for providing different plugin configuration supported by cucumber. 
+```java
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        features = {"src/test/java/resources"},
+        glue = {"org.mifos.integrationtest.cucumber"},
+        plugin = {
+            "html:cucumber-report",
+            "json:cucumber.json",
+            "pretty",
+            "html:build/cucumber-report.html",
+            "json:build/cucumber-report.json"
         }
-    }
+)
+public class TestRunner {
 }
 ```
-Where the `--glue` arg is for defining the package which contains the step definitions. And the last arg is the path which contains all the feature file. After making this configuration run the command `./gradlew cucumberCli` in terminal to make sure the newly added tasks is working.
+Adding below configuration will allow us to wire the CLI arguments be passed in the actual runner configuration while running the cucumber test using JUnit.
+```groovy
+test {
+    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+}
+```
+## Running an integration test
+Use below command to execute the integration test.
+```shell
+./gradlew test -Dcucumber.filter.tags="<cucumber tag>"
+```
+Where `<cucumber tag>` has to be replaced with valid tag, for example if you are willing to run test cases related to g2p scenario then pass the tag `@gov`. If `-Dcucumber.filter.tags` flag is omitted then all the test cases would be triggered independent of the tag.
 
 ## FAQs
 1. How to make step def reusable?
