@@ -11,8 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @CucumberContextConfiguration
 @CucumberOptions(publish = true)
-@RunWith(Cucumber.class)
-@SpringBootTest(classes = IntegrationTestApplication.class)
+@SpringBootTest
 public class CucumberContext {
 
     @Test
