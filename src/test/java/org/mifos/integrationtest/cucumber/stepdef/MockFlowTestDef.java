@@ -26,7 +26,6 @@ public class MockFlowTestDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         logger.info("X-CorrelationId: {}", BaseStepDef.clientCorrelationId);
         requestSpec.header(Utils.X_CORRELATIONID, BaseStepDef.clientCorrelationId);
-        ;
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(BaseStepDef.inboundTransferMockReq).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
@@ -51,7 +50,9 @@ public class MockFlowTestDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
         requestSpec.queryParam("size", "10");
-        if (authEnabled) requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)

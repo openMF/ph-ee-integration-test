@@ -25,7 +25,9 @@ public class GetTxnApiDef extends BaseStepDef {
     @When("I call the get txn API with expected status of {int}")
     public void callTxnReqApi(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        if (authEnabled) requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -42,7 +44,9 @@ public class GetTxnApiDef extends BaseStepDef {
     @When("I call the get txn API with date {string} and {string} expected status of {int}")
     public void callTxnReqApiwithParams(String startDate, String endDate, int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        if (authEnabled) requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
         requestSpec.queryParam("startFrom", startDate);
         requestSpec.queryParam("startTo", endDate);
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()

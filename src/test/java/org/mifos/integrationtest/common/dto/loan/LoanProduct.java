@@ -1,11 +1,10 @@
 package org.mifos.integrationtest.common.dto.loan;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 @Setter
 @NoArgsConstructor

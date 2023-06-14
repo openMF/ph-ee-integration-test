@@ -73,7 +73,7 @@ Now we can run respective feature file directly form the intellij.
 
 ## Adding runner configuration
 Below java class will make sure to run cucumber test using JUnit test command.
-Where the `glue` property is for defining the package which contains the step definitions, `feature` refers to the path where feature file is located and `plugin` is for providing different plugin configuration supported by cucumber. 
+Where the `glue` property is for defining the package which contains the step definitions, `feature` refers to the path where feature file is located and `plugin` is for providing different plugin configuration supported by cucumber.
 ```java
 @RunWith(Cucumber.class)
 @CucumberOptions(

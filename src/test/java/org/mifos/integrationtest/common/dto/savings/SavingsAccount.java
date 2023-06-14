@@ -1,9 +1,8 @@
 package org.mifos.integrationtest.common.dto.savings;
 
+import java.util.ArrayList;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 @NoArgsConstructor
 @ToString

@@ -1,7 +1,9 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.*;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
 
 import com.google.gson.Gson;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;

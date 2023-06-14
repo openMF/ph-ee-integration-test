@@ -1,14 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import io.cucumber.java.en.And;
-import org.mifos.connector.common.util.CertificateUtil;
-import org.mifos.connector.common.util.Constant;
-import org.mifos.connector.common.util.SecurityUtil;
-import org.mifos.integrationtest.common.Utils;
+import static com.google.common.truth.Truth.assertThat;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import io.cucumber.java.en.And;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,8 +10,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-
-import static com.google.common.truth.Truth.assertThat;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.mifos.connector.common.util.CertificateUtil;
+import org.mifos.connector.common.util.Constant;
+import org.mifos.connector.common.util.SecurityUtil;
+import org.mifos.integrationtest.common.Utils;
 
 public class JWSStepDef extends BaseStepDef {
 

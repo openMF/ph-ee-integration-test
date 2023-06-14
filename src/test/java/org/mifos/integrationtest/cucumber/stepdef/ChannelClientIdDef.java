@@ -37,7 +37,9 @@ public class ChannelClientIdDef extends BaseStepDef {
     @When("I call the transfer API with expected status of {int}")
     public void iCallTheTransferAPIWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        if (authEnabled) requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
@@ -49,7 +51,9 @@ public class ChannelClientIdDef extends BaseStepDef {
     @When("I call the txn State with client correlation id as {int} expected status of {int}")
     public void iCallTheTxnStateWithClientCorrelationIdAsExpectedStatusOf(int XClientCorrelationId, int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        if (authEnabled) requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
         requestSpec.header(Utils.REQUEST_TYPE_PARAM_NAME, channelConnectorConfig.getRequestType());
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()

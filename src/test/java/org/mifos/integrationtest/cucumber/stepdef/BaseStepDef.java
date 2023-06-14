@@ -5,7 +5,6 @@ import io.restassured.response.Response;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
-import org.mifos.integrationtest.config.*;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
