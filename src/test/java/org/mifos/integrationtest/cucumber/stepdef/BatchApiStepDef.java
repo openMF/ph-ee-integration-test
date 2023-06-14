@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.*;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,15 +13,13 @@ import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.io.File;
+import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.File;
-import java.util.UUID;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.*;
 
 public class BatchApiStepDef extends BaseStepDef {
 
@@ -61,13 +62,9 @@ public class BatchApiStepDef extends BaseStepDef {
         // requestSpec.queryParam("batchId", BaseStepDef.batchId);
         logger.info("Calling with batch id: {}", BaseStepDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(operationsAppConfig.batchSummaryEndpoint + "?batchId=" + BaseStepDef.batchId)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchSummaryEndpoint + "?batchId=" + BaseStepDef.batchId).andReturn().asString();
 
         logger.info("Batch Summary Response: " + BaseStepDef.response);
     }
@@ -80,13 +77,9 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         requestSpec.queryParam("batchId", BaseStepDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(operationsAppConfig.batchDetailsEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchDetailsEndpoint).andReturn().asString();
 
         logger.info("Batch Details Response: " + BaseStepDef.response);
     }
@@ -97,13 +90,9 @@ public class BatchApiStepDef extends BaseStepDef {
         requestSpec.header("filename", BaseStepDef.filename);
         requestSpec.header("X-CorrelationID", UUID.randomUUID().toString());
         requestSpec.queryParam("type", "CSV");
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(bulkProcessorConfig.bulkTransactionEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
         logger.info("Batch Transactions without payload Response: " + BaseStepDef.response);
     }
@@ -124,10 +113,8 @@ public class BatchApiStepDef extends BaseStepDef {
         String callbackReq = new String("The Batch Aggregation API was complete");
         logger.info(callbackReq);
 
-        BaseStepDef.statusCode = RestAssured.given(requestSpec)
-                .body(callbackReq)
-                .post(bulkProcessorConfig.getCallbackUrl())
-                .andReturn().getStatusCode();
+        BaseStepDef.statusCode = RestAssured.given(requestSpec).body(callbackReq).post(bulkProcessorConfig.getCallbackUrl()).andReturn()
+                .getStatusCode();
     }
 
     @And("I have callbackUrl as {string}")
@@ -172,23 +159,17 @@ public class BatchApiStepDef extends BaseStepDef {
         }
 
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
-        Response resp = RestAssured.given(requestSpec)
-                .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .contentType("multipart/form-data")
-                .multiPart("data", f)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(bulkProcessorConfig.bulkTransactionEndpoint)
-                .then().extract().response();
+        Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .contentType("multipart/form-data").multiPart("data", f).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
         BaseStepDef.response = resp.andReturn().asString();
         BaseStepDef.restResponseObject = resp;
 
         Headers allHeaders = resp.getHeaders();
-        for(Header header : allHeaders)
-        {
-            System.out.print(header.getName() +" : ");
+        for (Header header : allHeaders) {
+            System.out.print(header.getName() + " : ");
             System.out.println(header.getValue());
         }
         logger.info("Batch Details Response: " + BaseStepDef.response);
@@ -198,7 +179,6 @@ public class BatchApiStepDef extends BaseStepDef {
     public void nonEmptyResponseCheck() {
         assertThat(BaseStepDef.response).isNotNull();
     }
-
 
     @And("I should have {string} and {string} in response")
     public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {

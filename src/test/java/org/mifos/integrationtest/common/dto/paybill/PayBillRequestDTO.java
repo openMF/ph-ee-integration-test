@@ -23,6 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PayBillRequestDTO {
+
     public String TransactionType;
     public String TransID;
     public String TransTime;

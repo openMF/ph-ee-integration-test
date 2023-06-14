@@ -11,6 +11,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @ToString
 public class LoanProduct {
+
     public String currencyCode;
     public String includeInBorrowerCycle;
     public boolean useBorrowerCycle;
@@ -36,7 +37,22 @@ public class LoanProduct {
     @JsonProperty(value = "isLinkedToFloatingInterestRates")
     public boolean isLinkedToFloatingInterestRates;
 
-    public LoanProduct(String currencyCode, String includeInBorrowerCycle, boolean useBorrowerCycle, String digitsAfterDecimal, String inMultiplesOf, int repaymentFrequencyType, int interestRateFrequencyType, int amortizationType, int interestType, int interestCalculationPeriodType, ArrayList<Object> principalVariationsForBorrowerCycle, ArrayList<Object> interestRateVariationsForBorrowerCycle, ArrayList<Object> numberOfRepaymentVariationsForBorrowerCycle, boolean multiDisburseLoan, String accountingRule, int daysInYearType, int daysInMonthType, boolean isInterestRecalculationEnabled, int interestRecalculationCompoundingMethod, int rescheduleStrategyMethod, int preClosureInterestCalculationStrategy, boolean isLinkedToFloatingInterestRates, boolean allowVariableInstallments, String name, String shortName, String installmentAmountInMultiplesOf, String minPrincipal, String principal, String maxPrincipal, String minNumberOfRepayments, String numberOfRepayments, String maxNumberOfRepayments, String minInterestRatePerPeriod, int interestRatePerPeriod, String maxInterestRatePerPeriod, String repaymentEvery, boolean canDefineInstallmentAmount, boolean canUseForTopup, String graceOnArrearsAgeing, String overdueDaysForNPA, int recalculationRestFrequencyType, ArrayList<Object> paymentChannelToFundSourceMappings, ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges, Integer transactionProcessingStrategyId, AllowAttributeOverrides allowAttributeOverridesObject, String locale, String dateFormat, ArrayList<Object> rates, boolean allowPartialPeriodInterestCalcualtion, String fixedPrincipalPercentagePerInstallment) {
+    public LoanProduct(String currencyCode, String includeInBorrowerCycle, boolean useBorrowerCycle, String digitsAfterDecimal,
+            String inMultiplesOf, int repaymentFrequencyType, int interestRateFrequencyType, int amortizationType, int interestType,
+            int interestCalculationPeriodType, ArrayList<Object> principalVariationsForBorrowerCycle,
+            ArrayList<Object> interestRateVariationsForBorrowerCycle, ArrayList<Object> numberOfRepaymentVariationsForBorrowerCycle,
+            boolean multiDisburseLoan, String accountingRule, int daysInYearType, int daysInMonthType,
+            boolean isInterestRecalculationEnabled, int interestRecalculationCompoundingMethod, int rescheduleStrategyMethod,
+            int preClosureInterestCalculationStrategy, boolean isLinkedToFloatingInterestRates, boolean allowVariableInstallments,
+            String name, String shortName, String installmentAmountInMultiplesOf, String minPrincipal, String principal,
+            String maxPrincipal, String minNumberOfRepayments, String numberOfRepayments, String maxNumberOfRepayments,
+            String minInterestRatePerPeriod, int interestRatePerPeriod, String maxInterestRatePerPeriod, String repaymentEvery,
+            boolean canDefineInstallmentAmount, boolean canUseForTopup, String graceOnArrearsAgeing, String overdueDaysForNPA,
+            int recalculationRestFrequencyType, ArrayList<Object> paymentChannelToFundSourceMappings,
+            ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges,
+            Integer transactionProcessingStrategyId, AllowAttributeOverrides allowAttributeOverridesObject, String locale,
+            String dateFormat, ArrayList<Object> rates, boolean allowPartialPeriodInterestCalcualtion,
+            String fixedPrincipalPercentagePerInstallment) {
         this.currencyCode = currencyCode;
         this.includeInBorrowerCycle = includeInBorrowerCycle;
         this.useBorrowerCycle = useBorrowerCycle;

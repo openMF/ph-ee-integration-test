@@ -23,28 +23,23 @@ public class AuthStepDef extends BaseStepDef {
 
     @When("I call the auth endpoint with username: {string} and password: {string}")
     public void authenticateWithUsernameAndPassword(String username, String password) {
-        if(authEnabled) {
+        if (authEnabled) {
             RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
             requestSpec.header("Authorization", authHeader);
             requestSpec.queryParam("username", username);
             requestSpec.queryParam("password", password);
             requestSpec.queryParam("grant_type", "password");
 
-            BaseStepDef.response = RestAssured.given(requestSpec)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .body("{}")
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                    .when()
-                    .post(operationsAppConfig.authEndpoint)
-                    .andReturn().asString();
+            BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}").expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint).andReturn()
+                    .asString();
         }
 
     }
 
     @Then("I should get a valid token")
     public void checkToken() {
-        if(authEnabled) {
+        if (authEnabled) {
             HashMap<String, Object> authResponse = new Gson().fromJson(BaseStepDef.response, HashMap.class);
             String token;
             try {
@@ -66,13 +61,8 @@ public class AuthStepDef extends BaseStepDef {
         requestSpec.queryParam("password", operationsAppConfig.password);
         requestSpec.queryParam("grant_type", "password");
 
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .body("{}")
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(operationsAppConfig.authEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}").expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint).andReturn()
+                .asString();
     }
 }

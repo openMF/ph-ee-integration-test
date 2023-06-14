@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @ToString
 public class LoanAccountData {
+
     @Getter
     public String clientId;
     @Getter
@@ -40,7 +41,12 @@ public class LoanAccountData {
     public String expectedDisbursementDate;
     public String submittedOnDate;
 
-    public LoanAccountData(String clientId, int productId, ArrayList<Object> disbursementData, int principal, int loanTermFrequency, int loanTermFrequencyType, int numberOfRepayments, int repaymentEvery, int repaymentFrequencyType, double interestRatePerPeriod, int amortizationType, boolean isEqualAmortization, int interestType, int interestCalculationPeriodType, boolean allowPartialPeriodInterestCalcualtion, int graceOnArrearsAgeing, Integer transactionProcessingStrategyId, ArrayList<Object> rates, String repaymentsStartingFromDate, String locale, String dateFormat, String loanType, String expectedDisbursementDate, String submittedOnDate) {
+    public LoanAccountData(String clientId, int productId, ArrayList<Object> disbursementData, int principal, int loanTermFrequency,
+            int loanTermFrequencyType, int numberOfRepayments, int repaymentEvery, int repaymentFrequencyType, double interestRatePerPeriod,
+            int amortizationType, boolean isEqualAmortization, int interestType, int interestCalculationPeriodType,
+            boolean allowPartialPeriodInterestCalcualtion, int graceOnArrearsAgeing, Integer transactionProcessingStrategyId,
+            ArrayList<Object> rates, String repaymentsStartingFromDate, String locale, String dateFormat, String loanType,
+            String expectedDisbursementDate, String submittedOnDate) {
         this.clientId = clientId;
         this.productId = productId;
         this.disbursementData = disbursementData;

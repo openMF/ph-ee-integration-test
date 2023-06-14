@@ -10,17 +10,16 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class IntegrationTestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IntegrationTestApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(IntegrationTestApplication.class, args);
+    }
 
-	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper
-				.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-				.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
 }

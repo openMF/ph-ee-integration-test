@@ -1,21 +1,20 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.Response;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
+import org.mifos.integrationtest.config.*;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
-import io.restassured.response.Response;
-import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
-import org.mifos.integrationtest.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {

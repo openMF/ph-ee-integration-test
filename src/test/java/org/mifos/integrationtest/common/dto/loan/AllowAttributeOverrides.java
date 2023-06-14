@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class AllowAttributeOverrides {
+
     private boolean amortizationType;
     private boolean interestType;
     private String transactionProcessingStrategyCode;
@@ -19,7 +20,9 @@ public class AllowAttributeOverrides {
     private boolean graceOnPrincipalAndInterestPayment;
     private boolean graceOnArrearsAgeing;
 
-    public AllowAttributeOverrides(boolean amortizationType, boolean interestType, String transactionProcessingStrategyCode, boolean interestCalculationPeriodType, boolean inArrearsTolerance, boolean repaymentEvery, boolean graceOnPrincipalAndInterestPayment, boolean graceOnArrearsAgeing) {
+    public AllowAttributeOverrides(boolean amortizationType, boolean interestType, String transactionProcessingStrategyCode,
+            boolean interestCalculationPeriodType, boolean inArrearsTolerance, boolean repaymentEvery,
+            boolean graceOnPrincipalAndInterestPayment, boolean graceOnArrearsAgeing) {
         this.amortizationType = amortizationType;
         this.interestType = interestType;
         this.transactionProcessingStrategyCode = transactionProcessingStrategyCode;

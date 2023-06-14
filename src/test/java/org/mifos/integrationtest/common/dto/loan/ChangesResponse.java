@@ -14,6 +14,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @ToString
 public class ChangesResponse {
+
     public StatusResponse status;
     public int approvedLoanAmount;
     public int principal;

@@ -12,7 +12,7 @@ helm test <Extended Chart of PH-EE-Engine>
 ## Three main components of cucumber
 1. Ghrekin feature file
     Its is a human readable domain specific language, to deffine a behaviour.
-2. Step definition 
+2. Step definition
     Its the actual definition or implementation of each of the steps/ behaviour deffined in the feature file.
 3. Context configuration
     Integration test can be spefcific to spring applicaiton, camel specific or any other environment. So cucmber can be configured with different context within which each of the step definition will be executed.
@@ -43,7 +43,7 @@ Feature: SLCB integration test
 ```
 
 ## 2. Adding step definition
-The step definition can be created in a simple plain java class. Inside the java class you can use all the design patterns specific to the context it is run in. So for example you want to use `@Autowire` for any bean then make sure you are using the `SpringBootTest` context and that bean is present in that context. 
+The step definition can be created in a simple plain java class. Inside the java class you can use all the design patterns specific to the context it is run in. So for example you want to use `@Autowire` for any bean then make sure you are using the `SpringBootTest` context and that bean is present in that context.
 Each of the step definition need to match with the phrase mentioned in the feature file with proper annotation. A sample step definition for the `Given I have a batchId: "123-123-123", requestId: "3af-567-dfr", purpose: "integration test"` expression is added below. Where {string} is the placeholder for the variable. To find more about variables data type [refer this](https://cucumber.io/docs/cucumber/step-definitions/?lang=java).
 ```java
 @Given("I have a batchId: {string}, requestId: {string}, purpose: {string}")
@@ -85,6 +85,27 @@ Where the `glue` property is for defining the package which contains the step de
             "pretty",
             "html:build/cucumber-report.html",
             "json:build/cucumber-report.json"
+## Adding gradle configuration
+Adding gradle configuration will allow us to run all the cucumber feature file at using using a CLI.
+
+```gradle
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task cucumberCli() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--plugin', 'html:target/cucumber-report.html',
+                    '--glue', 'org.mifos.connector.slcb.cucumber',
+                    'src/test/java/resources']
         }
 )
 public class TestRunner {

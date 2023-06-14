@@ -3,32 +3,14 @@ package org.mifos.integrationtest.common;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * {
- *     "payer": [
- *         {
- *             "key": "MSISDN",
- *             "value": "254708374149"
- *         },
- *         {
- *             "key": "ACCOUNTID",
- *             "value": "24450523"
- *         }
- *     ],
- *     "amount": {
- *         "amount": "1",
- *         "currency": "USD"
- *     },
- *     "transactionType": {
- *         "scenario": "MPESA",
- *         "subScenario": "BUYGOODS",
- *         "initiator": "PAYEE",
- *         "initiatorType": "BUSINESS"
- *     }
- * }
+ * { "payer": [ { "key": "MSISDN", "value": "254708374149" }, { "key": "ACCOUNTID", "value": "24450523" } ], "amount": {
+ * "amount": "1", "currency": "USD" }, "transactionType": { "scenario": "MPESA", "subScenario": "BUYGOODS", "initiator":
+ * "PAYEE", "initiatorType": "BUSINESS" } }
  */
 public class CollectionHelper {
 
@@ -46,7 +28,7 @@ public class CollectionHelper {
 
     private static JSONArray getPayerArray(List<Pair<String, String>> payers) {
         JSONArray payerArray = new JSONArray();
-        payers.forEach( payer -> {
+        payers.forEach(payer -> {
             try {
                 payerArray.put(getPayerObject(payer.getKey(), payer.getValue()));
             } catch (JSONException e) {

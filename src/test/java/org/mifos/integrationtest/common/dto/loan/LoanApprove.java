@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @ToString
 public class LoanApprove {
+
     public String approvedOnDate;
     public int approvedLoanAmount;
     public String expectedDisbursementDate;
@@ -19,7 +20,8 @@ public class LoanApprove {
     public String locale;
     public String dateFormat;
 
-    public LoanApprove(String approvedOnDate, int approvedLoanAmount, String expectedDisbursementDate, ArrayList<Object> disbursementData, String locale, String dateFormat) {
+    public LoanApprove(String approvedOnDate, int approvedLoanAmount, String expectedDisbursementDate, ArrayList<Object> disbursementData,
+            String locale, String dateFormat) {
         this.approvedOnDate = approvedOnDate;
         this.approvedLoanAmount = approvedLoanAmount;
         this.expectedDisbursementDate = expectedDisbursementDate;

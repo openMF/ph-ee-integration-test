@@ -1,5 +1,7 @@
 package org.mifos.integrationtest;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -23,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.google.common.truth.Truth.assertThat;
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ClientCorrelationIdTest {
 
@@ -39,7 +39,7 @@ public class ClientCorrelationIdTest {
     @BeforeAll
     public void setup() {
         this.requestSpec = new RequestSpecBuilder().setContentType(ContentType.JSON).build();
-        this.requestSpec.header(Utils.TENANT_PARAM_NAME,Utils.DEFAULT_TENANT);
+        this.requestSpec.header(Utils.TENANT_PARAM_NAME, Utils.DEFAULT_TENANT);
         this.statusOkResponseSpec = new ResponseSpecBuilder().expectStatusCode(200).build();
     }
 
@@ -52,17 +52,11 @@ public class ClientCorrelationIdTest {
     @Test
     public void testSendCollectionRequest() throws JSONException {
         requestSpec.header(Utils.X_CORRELATIONID, clientCorrelationId);
-        JSONObject collectionRequestBody =
-                CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
+        JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
         logger.info(String.valueOf(collectionRequestBody));
-        String json = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(collectionRequestBody.toString())
-                .expect()
-                .spec(statusOkResponseSpec)
-                .when()
-                .post("/channel/collection")
-                .andReturn().asString();
+        String json = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(collectionRequestBody.toString()).expect().spec(statusOkResponseSpec).when().post("/channel/collection").andReturn()
+                .asString();
         CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
         assertThat(response.getTransactionId()).isNotEmpty();
         System.out.println(response.getTransactionId());
@@ -75,19 +69,12 @@ public class ClientCorrelationIdTest {
         logger.info("Getting transactionRequestObject with transactionId {} ", this.transactionId);
         RequestSpecification localSpec = requestSpec;
         localSpec.queryParam("transactionId", this.transactionId);
-        String json = RestAssured.given(localSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(statusOkResponseSpec)
-                .when()
-                .get("/api/v1/transactionRequests")
-                .andReturn().asString();
-        GetTransactionRequestResponse transactionRequestResponse = (new Gson())
-                .fromJson(json, GetTransactionRequestResponse.class);
+        String json = RestAssured.given(localSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect().spec(statusOkResponseSpec)
+                .when().get("/api/v1/transactionRequests").andReturn().asString();
+        GetTransactionRequestResponse transactionRequestResponse = (new Gson()).fromJson(json, GetTransactionRequestResponse.class);
         assertThat(transactionRequestResponse.getContent().size()).isEqualTo(1);
         TransactionRequest transactionRequest = transactionRequestResponse.getContent().get(0);
         this.clientCorrelationId = transactionRequest.getClientCorrelationId();
     }
-
 
 }

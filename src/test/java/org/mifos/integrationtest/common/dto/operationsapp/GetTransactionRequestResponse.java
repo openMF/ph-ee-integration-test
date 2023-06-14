@@ -14,8 +14,7 @@ public class GetTransactionRequestResponse {
     private int size;
     private int number;
 
-    public GetTransactionRequestResponse() {
-    }
+    public GetTransactionRequestResponse() {}
 
     public ArrayList<TransactionRequest> getContent() {
         return content;

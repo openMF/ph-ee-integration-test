@@ -8,6 +8,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class LoanAccountResponse {
+
     public int getOfficeId() {
         return officeId;
     }

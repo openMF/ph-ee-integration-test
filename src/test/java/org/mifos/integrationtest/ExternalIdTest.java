@@ -1,5 +1,7 @@
 package org.mifos.integrationtest;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -18,7 +20,6 @@ import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.mifos.integrationtest.common.dto.OperationsHelper;
 import org.mifos.integrationtest.common.dto.operationsapp.GetTransactionRequestResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.TransactionRequest;
-import static com.google.common.truth.Truth.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExternalIdTest {
@@ -40,14 +41,8 @@ public class ExternalIdTest {
     public void testSendCollectionRequest() throws JSONException {
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
         System.out.println(collectionRequestBody);
-        String json = RestAssured.given(requestSpec)
-                .baseUri("http://localhost:5002")
-                .body(collectionRequestBody.toString())
-                .expect()
-                .spec(statusOkResponseSpec)
-                .when()
-                .post("/channel/collection")
-                .andReturn().asString();
+        String json = RestAssured.given(requestSpec).baseUri("http://localhost:5002").body(collectionRequestBody.toString()).expect()
+                .spec(statusOkResponseSpec).when().post("/channel/collection").andReturn().asString();
         CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
         assertThat(response.getTransactionId()).isNotEmpty();
         System.out.println(response.getTransactionId());
@@ -60,15 +55,9 @@ public class ExternalIdTest {
         System.out.println("Getting transactionRequestObject with transactionId " + this.transactionId);
         RequestSpecification localSpec = requestSpec;
         localSpec.queryParam("transactionId", this.transactionId);
-        String json = RestAssured.given(localSpec)
-                .baseUri("http://localhost:5000")
-                .expect()
-                .spec(statusOkResponseSpec)
-                .when()
-                .get("/api/v1/transactionRequests")
-                .andReturn().asString();
-        GetTransactionRequestResponse transactionRequestResponse = (new Gson())
-                .fromJson(json, GetTransactionRequestResponse.class);
+        String json = RestAssured.given(localSpec).baseUri("http://localhost:5000").expect().spec(statusOkResponseSpec).when()
+                .get("/api/v1/transactionRequests").andReturn().asString();
+        GetTransactionRequestResponse transactionRequestResponse = (new Gson()).fromJson(json, GetTransactionRequestResponse.class);
         assertThat(transactionRequestResponse.getContent().size()).isEqualTo(1);
         TransactionRequest transactionRequest = transactionRequestResponse.getContent().get(0);
         this.externalId = transactionRequest.getExternalId();
@@ -80,17 +69,10 @@ public class ExternalIdTest {
         System.out.println("Executing bulk filter api using externalId " + this.externalId);
         JSONObject bulkFilterRequestBody = OperationsHelper.getBulkFilterRequestBodyForExternalId(this.externalId);
         System.out.println(bulkFilterRequestBody);
-        String json = RestAssured.given(requestSpec)
-                .baseUri("http://localhost:5000")
-                .body(bulkFilterRequestBody.toString())
-                .expect()
-                .spec(statusOkResponseSpec)
-                .when()
-                .post("/api/v1/transactionRequests/export")
-                .andReturn().asString();
+        String json = RestAssured.given(requestSpec).baseUri("http://localhost:5000").body(bulkFilterRequestBody.toString()).expect()
+                .spec(statusOkResponseSpec).when().post("/api/v1/transactionRequests/export").andReturn().asString();
         System.out.println(json);
         assertThat(json.split("\n").length).isEqualTo(2);
     }
-
 
 }

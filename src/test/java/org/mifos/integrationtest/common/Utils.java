@@ -3,8 +3,8 @@ package org.mifos.integrationtest.common;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-public class Utils {
 
+public class Utils {
 
     public static final String TENANT_PARAM_NAME = "Platform-TenantId";
     public static final String REQUEST_TYPE_PARAM_NAME = "requestType";
@@ -48,14 +48,13 @@ public class Utils {
     public static RequestSpecification getDefaultSpec(String tenant) {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(TENANT_PARAM_NAME, tenant);
-        //requestSpec.header(X_CORRELATIONID, "123456789");
+        // requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(CONTENT_TYPE, "application/json");
         return requestSpec;
     }
 
     public static String getAbsoluteFilePathToResource(String fileName) {
-        return "src/test/java/resources/" +
-                fileName;
+        return "src/test/java/resources/" + fileName;
     }
 
     public static RequestSpecification getRequestType(String requestType) {

@@ -12,6 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class StatusResponse {
+
     public int id;
     public String code;
     public String value;

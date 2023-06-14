@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonMappingException;
 import io.cucumber.java.en.And;
@@ -20,9 +22,7 @@ import org.mifos.integrationtest.common.GSMATransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.springframework.beans.factory.annotation.Value;
 
-import static com.google.common.truth.Truth.assertThat;
-
-public class ErrorCodeStepDef extends BaseStepDef{
+public class ErrorCodeStepDef extends BaseStepDef {
 
     @Value("${max-retry-count}")
     private int maxRetryCount;
@@ -39,15 +39,9 @@ public class ErrorCodeStepDef extends BaseStepDef{
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         logger.info("body: {}", gsmaTransaction.toString());
         logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(gsmaTransaction)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(channelConnectorConfig.gsmaP2PEndpoint)
-                .andReturn().asString();
-
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(gsmaTransaction).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.gsmaP2PEndpoint).andReturn().asString();
 
         logger.info("GSMA transfer Response: {}", BaseStepDef.response);
     }
@@ -55,20 +49,15 @@ public class ErrorCodeStepDef extends BaseStepDef{
     @When("I call the transfer query endpoint with transactionId and expected status of {int}")
     public void iCallTheTransferQueryEndpointWithTransactionIdAndExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        String endPoint = operationsAppConfig.transfersEndpoint ;
+        String endPoint = operationsAppConfig.transfersEndpoint;
         requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
-        requestSpec.queryParam("page",0);
+        requestSpec.queryParam("page", 0);
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(endPoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endPoint).andReturn().asString();
 
         logger.info("Transfer query Response: {}", BaseStepDef.response);
     }
@@ -76,35 +65,29 @@ public class ErrorCodeStepDef extends BaseStepDef{
     @Then("I should poll the transfer query endpoint with transactionId until errorInformation is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilErrorInformationIsPopulatedForTheTransactionId() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        String endPoint = operationsAppConfig.transfersEndpoint ;
-        //requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        String endPoint = operationsAppConfig.transfersEndpoint;
+        // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
-        requestSpec.queryParam("page",0);
+        requestSpec.queryParam("page", 0);
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
-        int retryCount=0;
+        int retryCount = 0;
         errorInformation = null;
-        while (errorInformation == null && retryCount<maxRetryCount ) {
+        while (errorInformation == null && retryCount < maxRetryCount) {
             try {
                 iWillSleepForSecs(retryInterval);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            BaseStepDef.response = RestAssured.given(requestSpec)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                    .when()
-                    .get(endPoint)
-                    .andReturn().asString();
+            BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
             logger.info("Transfer query Response: {}", BaseStepDef.response);
             checkForCallback();
             retryCount++;
         }
     }
-
 
     @And("I should be able to parse transactionId from response")
     public void parseTransactionId() {
@@ -120,7 +103,8 @@ public class ErrorCodeStepDef extends BaseStepDef{
         assertThat(transactionId).isNotNull();
         assertThat(transactionId).isNotEmpty();
     }
-    public void checkForCallback(){
+
+    public void checkForCallback() {
         String responseError;
         try {
             JSONObject jsonObject = new JSONObject(BaseStepDef.response);
@@ -170,15 +154,21 @@ public class ErrorCodeStepDef extends BaseStepDef{
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11",debitParty, creditParty, "", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -190,34 +180,47 @@ public class ErrorCodeStepDef extends BaseStepDef{
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
+
     @Given("I can create GSMATransferDTO with Negative Amount")
     public void iCanCreateGSMATransactionDTOWithNegativeAmount() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("-11",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("-11", debitParty, creditParty, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -230,15 +233,21 @@ public class ErrorCodeStepDef extends BaseStepDef{
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("ab",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("ab", debitParty, creditParty, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -250,15 +259,21 @@ public class ErrorCodeStepDef extends BaseStepDef{
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -270,45 +285,57 @@ public class ErrorCodeStepDef extends BaseStepDef{
         Fee fee = gsmaTransferHelper.feeHelper("110", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "398714218");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11000",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11000", debitParty, creditParty, "USD", "string",
+                    "string", "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string",
+                    receiverKyc, senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
+
     @Given("I can create GSMATransferDTO with invalid payer information")
     public void iCanCreateGSMATransferDTOWithInvalidData() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999hhhhdsda");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416ffgg");
-        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper.internationalTransferInformationHelper("string","string", "directtoaccount", "USA", "USA","USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport","string", "USA","2022-09-28T12:51:19.260+00:00","2022-09-28T12:51:19.260+00:00","string","string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string","string","string","string","USA","string","string");
-        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string","string","string","string","string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA","2000-11-20", "string", "string", "string", 'm', idDocument,"USA","string", postalAddress, subjectName);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11",debitParty, creditParty, "USD", "string","string", "string", "transfer","string",fee,"37.423825,-122.082900",
-                    internationalTransferInformation,"string",receiverKyc,senderKyc,"string","2023-01-12T12:51:19.260+00:00");
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-
     @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
-        //requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
         requestSpec.queryParam("page", 0);
         requestSpec.queryParam("transactionId", transactionId);
@@ -322,13 +349,8 @@ public class ErrorCodeStepDef extends BaseStepDef{
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            BaseStepDef.response = RestAssured.given(requestSpec)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                    .when()
-                    .get(endPoint)
-                    .andReturn().asString();
+            BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
             logger.info("Transfer query Response: {}", BaseStepDef.response);
             checkForCallback();

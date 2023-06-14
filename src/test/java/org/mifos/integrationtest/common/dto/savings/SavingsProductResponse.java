@@ -8,6 +8,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class SavingsProductResponse {
+
     private String resourceId;
 
     public String getResourceId() {

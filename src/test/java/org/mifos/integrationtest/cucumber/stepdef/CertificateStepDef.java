@@ -1,16 +1,16 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mifos.connector.common.util.CertificateUtil;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import org.mifos.connector.common.util.CertificateUtil;
 
-import static com.google.common.truth.Truth.assertThat;
-
-public class CertificateStepDef  extends BaseStepDef {
+public class CertificateStepDef extends BaseStepDef {
 
     @Given("I have X509 certificate {string}")
     public void setX509CertificateString(String certificate) {

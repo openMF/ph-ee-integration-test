@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 @Component
 public class PaybillConfig {
+
     @Value("${paybill.mpesa-connector.contactpoint}")
     public String mpesaContactPoint;
     @Value("${paybill.mpesa-connector.endpoints.validation}")

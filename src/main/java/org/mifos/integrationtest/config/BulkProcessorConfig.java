@@ -18,7 +18,7 @@ public class BulkProcessorConfig {
 
     public String callbackUrl;
 
-   public int retryCount;
+    public int retryCount;
 
     public int getRetryCount() {
         return retryCount;
@@ -32,7 +32,6 @@ public class BulkProcessorConfig {
     private void setup() {
         bulkTransactionUrl = bulkProcessorContactPoint + bulkTransactionEndpoint;
     }
-
 
     public String getCallbackUrl() {
         return callbackUrl;
