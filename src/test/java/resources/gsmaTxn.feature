@@ -6,6 +6,7 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
+    Then I call the interop identifier endpoint
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint with command "deposit" for amount 11
