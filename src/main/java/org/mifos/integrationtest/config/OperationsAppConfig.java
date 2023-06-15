@@ -29,6 +29,9 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.transactionRequests}")
     public String transactionRequestsEndpoint;
 
+    @Value("${operations-app.endpoints.batch-aggregation}")
+    public String batchAggregationEndpoint;
+
     @Value("${operations-app.username}")
     public String username;
 

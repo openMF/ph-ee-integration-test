@@ -52,6 +52,26 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.tenant).isNotEmpty();
     }
 
+    @When("I call the batch aggregate API with expected status of {int}")
+    public void callBatchAggregateAPI(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec)
+                .baseUri(operationsAppConfig.operationAppContactPoint)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .get(operationsAppConfig.batchAggregationEndpoint + BaseStepDef.batchId + "?command=aggregate")
+                .andReturn().asString();
+
+        logger.info("Batch Aggregate Response: " + BaseStepDef.response);
+    }
+
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
