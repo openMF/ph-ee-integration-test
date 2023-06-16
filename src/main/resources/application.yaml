@@ -132,3 +132,14 @@ netflix-conductor:
       home: "/"
       health: "/health"
       workflow: "/api/workflow"
+
+keycloak:
+  contactpoint: http://keycloak.sandbox.fynarfin.io
+  endpoint:
+    token: /auth/realms/Kong/protocol/openid-connect/token
+  config:
+    client:
+      id: "kong-oidc"
+      secret: "HQ9bjbPDPVwhUy65llyUO7b5S1iiGZa1"
+    grant_type: "password"
+

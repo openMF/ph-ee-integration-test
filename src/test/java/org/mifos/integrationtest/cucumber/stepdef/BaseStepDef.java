@@ -34,6 +34,7 @@ import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
+import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -94,7 +95,7 @@ public class BaseStepDef {
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
     protected static String paymentStatusCheckReqDto;
     protected static String callbackUrl;
-
+    protected static KeycloakTokenResponse keycloakTokenResponse;
     protected static String randomData;
     protected static String encryptedData;
     protected static String decryptedData;
