@@ -10,8 +10,8 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
-import org.mifos.integrationtest.common.dto.loan.LoanAccountResponse;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccountResponse;
+import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,8 +247,8 @@ public class GSMATransferStepDef {
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanApproveBody = gsmaTransferDef.setBodyLoanApprove(amount);
         //Setting account ID
-        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, LoanAccountResponse.class);
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
+                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
         gsmaConfig.loanApproveEndpoint = gsmaConfig.loanApproveEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
@@ -272,8 +272,8 @@ public class GSMATransferStepDef {
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanDisburseBody = gsmaTransferDef.setBodyLoanDisburse(amount);
         //Setting account ID
-        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, LoanAccountResponse.class);
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
+                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
         gsmaConfig.loanDisburseEndpoint = gsmaConfig.loanDisburseEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
@@ -297,8 +297,8 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.loanRepaymentBody = gsmaTransferDef.setBodyLoanRepayment(String.valueOf(amount));
         //Setting account ID
-        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, LoanAccountResponse.class);
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
+                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
         String loanId = Integer.toString(loanAccountResponse.getLoanId());
         String loanAccountId = String.format("%0" + (9 - loanId.length()) + "d%s", 0, loanId);
         gsmaConfig.loanRepaymentEndpoint = gsmaConfig.loanRepaymentEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);

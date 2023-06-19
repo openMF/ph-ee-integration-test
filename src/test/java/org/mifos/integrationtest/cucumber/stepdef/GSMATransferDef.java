@@ -6,22 +6,22 @@ import io.cucumber.java.sl.In;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.apache.fineract.client.models.PostClientsResponse;
+import org.apache.fineract.client.models.PostLoanProductsRequest;
+import org.apache.fineract.client.models.PostLoanProductsResponse;
+import org.apache.fineract.client.models.PostLoansLoanIdTransactionsTransactionIdRequest;
+import org.apache.fineract.client.models.PostSelfLoansLoanIdApprove;
+import org.apache.fineract.client.models.PostSelfLoansLoanIdDisburse;
+import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
+import org.apache.fineract.client.models.PostSelfLoansRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mifos.connector.common.ams.dto.LoanRepaymentDTO;
 import org.mifos.connector.common.gsma.dto.CustomData;
 import org.mifos.connector.common.gsma.dto.GsmaTransfer;
 import org.mifos.connector.common.gsma.dto.Party;
 import org.mifos.integrationtest.common.Utils;
-import org.mifos.integrationtest.common.dto.loan.AllowAttributeOverrides;
 import org.mifos.integrationtest.common.dto.loan.CreatePayerClient;
 import org.mifos.integrationtest.common.dto.loan.CreatePayerClientResponse;
-import org.mifos.integrationtest.common.dto.loan.LoanAccountData;
-import org.mifos.integrationtest.common.dto.loan.LoanAccountResponse;
-import org.mifos.integrationtest.common.dto.loan.LoanApprove;
-import org.mifos.integrationtest.common.dto.loan.LoanDisburse;
-import org.mifos.integrationtest.common.dto.loan.LoanProduct;
-import org.mifos.integrationtest.common.dto.loan.LoanProductResponse;
 import org.mifos.integrationtest.common.dto.savings.InteropIdentifier;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccount;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccountDeposit;
@@ -116,12 +116,31 @@ public class GSMATransferDef extends GsmaConfig {
         // Generating product name and shortname
         String name = new StringBuilder().append(getAlphaNumericString(4)).append(tenant).toString();
         String shortName = getAlphaNumericString(4);
+        PostLoanProductsRequest loanProductsRequest = new PostLoanProductsRequest();
+        loanProductsRequest.setCurrencyCode("USD");
+        loanProductsRequest.setInMultiplesOf(2);
+        loanProductsRequest.setDigitsAfterDecimal(2);
+        loanProductsRequest.setDaysInYearType(1);
+        loanProductsRequest.setInterestCalculationPeriodType(0);
+        loanProductsRequest.setIsInterestRecalculationEnabled(false);
+        loanProductsRequest.setName(name);
+        loanProductsRequest.setShortName(shortName);
+        loanProductsRequest.setInMultiplesOf(12);
+        loanProductsRequest.setPrincipal((double)3000);
+        loanProductsRequest.setNumberOfRepayments(36);
+        loanProductsRequest.setRepaymentFrequencyType(2);
+        loanProductsRequest.setInterestType(1);
+        loanProductsRequest.setInterestRatePerPeriod(19.0);
+        loanProductsRequest.setRepaymentEvery(1);
+        loanProductsRequest.setTransactionProcessingStrategyId(1);
+        loanProductsRequest.setAmortizationType(1);
+        loanProductsRequest.setAccountingRule(1);
+        loanProductsRequest.setInterestRateFrequencyType(2);
+        loanProductsRequest.setDaysInMonthType(1);
+        loanProductsRequest.setLocale("en");
+        loanProductsRequest.setDateFormat("dd MMMM yyyy");
 
-        AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true, "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
-
-        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 1, allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
-
-        return objectMapper.writeValueAsString(loanProduct);
+        return objectMapper.writeValueAsString(loanProductsRequest);
     }
 
 
@@ -129,15 +148,33 @@ public class GSMATransferDef extends GsmaConfig {
 
         String date = getCurrentDate();
         setcurrentDate(date);
-        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
-                responsePayerClient, CreatePayerClientResponse.class);
-        LoanProductResponse loanProductResponse = objectMapper.readValue(
-                responseLoanProduct, LoanProductResponse.class);
-        String clientId = createPayerClientResponse.getClientId();
-        int resourceId = Integer.parseInt(loanProductResponse.getResourceId());
+        PostClientsResponse createPayerClientResponse = objectMapper.readValue(
+                responsePayerClient, PostClientsResponse.class);
+        PostLoanProductsResponse loanProductResponse = objectMapper.readValue(
+                responseLoanProduct, PostLoanProductsResponse.class);
+        Integer clientId = createPayerClientResponse.getClientId();
+        Integer resourceId = loanProductResponse.getResourceId();
 
-        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, 1, new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
-
+        PostSelfLoansRequest loanAccountData  = new PostSelfLoansRequest();
+        loanAccountData.setClientId(clientId);
+        loanAccountData.setProductId(resourceId);
+        loanAccountData.setDisbursementData(null);
+        loanAccountData.setPrincipal(7800.00);
+        loanAccountData.setLoanTermFrequency(12);
+        loanAccountData.setLoanTermFrequencyType(2);
+        loanAccountData.setNumberOfRepayments(12);
+        loanAccountData.setRepaymentEvery(1);
+        loanAccountData.setRepaymentFrequencyType(2);
+        loanAccountData.setInterestRatePerPeriod(8.9);
+        loanAccountData.setAmortizationType(1);
+        loanAccountData.setInterestType(0);
+        loanAccountData.setInterestCalculationPeriodType(0);
+        loanAccountData.setTransactionProcessingStrategyId(1);
+        loanAccountData.setLocale("en");
+        loanAccountData.setDateFormat("dd MMMM yyyy");
+        loanAccountData.setLoanType("individual");
+        loanAccountData.setExpectedDisbursementDate(currentDate);
+        loanAccountData.setSubmittedOnDate(currentDate);
         return objectMapper.writeValueAsString(loanAccountData);
     }
 
@@ -147,13 +184,22 @@ public class GSMATransferDef extends GsmaConfig {
     }
 
     protected String setBodyLoanApprove(int amount) throws JsonProcessingException {
-        LoanApprove loanApprove = new LoanApprove(currentDate, amount, currentDate, new ArrayList<>(), "en", "dd MMMM yyyy");
+        PostSelfLoansLoanIdApprove loanApprove = new PostSelfLoansLoanIdApprove();
+        loanApprove.setApprovedOnDate(currentDate);
+        loanApprove.setApprovedLoanAmount(amount);
+        loanApprove.setLocale("en");
+        loanApprove.setDateFormat("dd MMMM yyyy");
         return objectMapper.writeValueAsString(loanApprove);
     }
 
     protected String setBodyLoanRepayment(String amount) throws JsonProcessingException {
-        LoanRepaymentDTO loanRepaymentDTO = new LoanRepaymentDTO(currentDate, "1", amount, "en", "dd MMMM yyyy");
-        return objectMapper.writeValueAsString(loanRepaymentDTO);
+        PostLoansLoanIdTransactionsTransactionIdRequest loanRepayment = new PostLoansLoanIdTransactionsTransactionIdRequest();
+        loanRepayment.setTransactionDate(currentDate);
+        loanRepayment.setPaymentTypeId(1);
+        loanRepayment.setTransactionAmount(Double.valueOf(amount));
+        loanRepayment.setLocale("en");
+        loanRepayment.setDateFormat("dd MMMM yyyy");
+        return objectMapper.writeValueAsString(loanRepayment);
     }
 
     String getAlphaNumericString(int size) {
@@ -228,7 +274,12 @@ public class GSMATransferDef extends GsmaConfig {
     protected String setBodyLoanDisburse(int amount) throws JsonProcessingException {
         String date = getCurrentDate();
         setcurrentDate(date);
-        LoanDisburse loanDisburse = new LoanDisburse(1, amount, date, "en", "dd MMMM yyyy");
+        PostSelfLoansLoanIdDisburse loanDisburse = new PostSelfLoansLoanIdDisburse();
+        loanDisburse.setPaymentTypeId(1);
+        loanDisburse.setTransactionAmount(amount);
+        loanDisburse.setActualDisbursementDate(currentDate);
+        loanDisburse.setLocale("en");
+        loanDisburse.setDateFormat("dd MMMM yyyy");
         return objectMapper.writeValueAsString(loanDisburse);
     }
 
@@ -277,9 +328,9 @@ public class GSMATransferDef extends GsmaConfig {
     }
 
     private String getLoanAccountId() throws JsonProcessingException {
-        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
-                responseLoanAccount, LoanAccountResponse.class);
-        String loanId = Integer.toString(loanAccountResponse.getLoanId());
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
+                responseLoanAccount, PostSelfLoansLoanIdResponse.class);
+        String loanId = loanAccountResponse.getLoanId().toString();
         return getLoanIdFromFineract(loanId);
     }
 
