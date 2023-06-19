@@ -33,6 +33,8 @@ public class GsmaConfig {
     public String savingsAccountEndpoint;
     @Value("${savings.endpoints.activate-endpoint}")
     public String savingsActivateEndpoint;
+    @Value("${savings.endpoints.interop-identifier-endpoint}")
+    public String interopIdentifierEndpoint;
     @Value("${savings.endpoints.deposit-endpoint}")
     public String savingsDepositAccountEndpoint;
     @Value("${savings.base-url}")

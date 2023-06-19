@@ -97,6 +97,31 @@ public class GSMATransferStepDef {
         logger.info("Savings Account Response: " + gsmaTransferDef.responseSavingsAccount);
         assertThat(gsmaTransferDef.responseSavingsAccount).isNotEmpty();
     }
+    @Then("I call the interop identifier endpoint")
+    public void callCreateInteropIdentifierEndpoint() throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
+        gsmaTransferDef.interopIdentifierBody = gsmaTransferDef.setBodyInteropIdentifier();
+        // Setting account ID in path
+        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
+                gsmaTransferDef.responseSavingsAccount, SavingsAccountResponse.class);
+        String payer_identifier = "SA"+savingsAccountResponse.savingsId;
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+        // Calling Interop Identifier endpoint
+        gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
+                .baseUri(gsmaConfig.savingsBaseUrl)
+                .body(gsmaTransferDef.interopIdentifierBody)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                .when()
+                .post(gsmaConfig.interopIdentifierEndpoint)
+                .andReturn().asString();
+
+        logger.info("Interop Identifier Response: " + gsmaTransferDef.responseInteropIdentifier);
+        assertThat(gsmaTransferDef.responseInteropIdentifier).isNotEmpty();
+    }
 
     @Then("I approve the deposit with command {string}")
     public void callApproveSavingsEndpoint(String command) throws JsonProcessingException {

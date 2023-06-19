@@ -64,6 +64,7 @@ savings:
     approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     activate-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     deposit-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}/transactions
+    interop-identifier-endpoint: /fineract-provider/api/v1/interoperation/parties/{{payer_identifierType}}/{{payer_identifier}}
 
 mock-server:
   port: 53013

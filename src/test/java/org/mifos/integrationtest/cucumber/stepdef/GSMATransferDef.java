@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.sl.In;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -21,6 +22,7 @@ import org.mifos.integrationtest.common.dto.loan.LoanApprove;
 import org.mifos.integrationtest.common.dto.loan.LoanDisburse;
 import org.mifos.integrationtest.common.dto.loan.LoanProduct;
 import org.mifos.integrationtest.common.dto.loan.LoanProductResponse;
+import org.mifos.integrationtest.common.dto.savings.InteropIdentifier;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccount;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccountDeposit;
 import org.mifos.integrationtest.common.dto.savings.SavingsAccountResponse;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class GSMATransferDef extends GsmaConfig {
@@ -62,7 +65,9 @@ public class GSMATransferDef extends GsmaConfig {
     protected String savingsApproveBody;
     protected String responseSavingsApprove;
     protected String savingsAccountBody;
+    protected String interopIdentifierBody;
     protected String responseSavingsAccount;
+    protected String responseInteropIdentifier;
     protected String savingsActivateBody;
     protected String responseSavingsActivate;
     protected String savingsDepositAccountBody;
@@ -72,6 +77,7 @@ public class GSMATransferDef extends GsmaConfig {
     protected String payerClientBody;
     protected String loanDisburseBody;
     protected String responseLoanDisburse;
+    protected String externalId;
     @Autowired
     ObjectMapper objectMapper;
 
@@ -186,10 +192,21 @@ public class GSMATransferDef extends GsmaConfig {
         );
         String date = getCurrentDate();
         setcurrentDate(date);
-
-        SavingsAccount savingsAccount = new SavingsAccount(savingsProductResponse.getResourceId(), 5, false, false, false, false, false, 1, 4, 1, 365, currentDate, "en", "dd MMMM yyyy", "dd MMM", new ArrayList<>(), createPayerClientResponse.getClientId(), "");
+        externalId = UUID.randomUUID().toString();
+        SavingsAccount savingsAccount = new SavingsAccount(savingsProductResponse.getResourceId(), 5, false, false, false, false, false, 1, 4, 1, 365, currentDate, "en", "dd MMMM yyyy", "dd MMM", new ArrayList<>(), createPayerClientResponse.getClientId(), externalId);
 
         return objectMapper.writeValueAsString(savingsAccount);
+    }
+    protected String setBodyInteropIdentifier() throws  JsonProcessingException {
+        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
+                responseSavingsProduct, SavingsAccountResponse.class
+        );
+        String date = getCurrentDate();
+        setcurrentDate(date);
+
+        InteropIdentifier interopIdentifier = new InteropIdentifier(externalId);
+
+        return objectMapper.writeValueAsString(interopIdentifier);
     }
 
     protected String setBodySavingsActivate() throws JsonProcessingException {
