@@ -37,6 +37,7 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit:7.8.1'
 
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+    implementation 'org.mifos.fineract-client:openapi-java-client:4.0.2-SNAPSHOT'
 }
 
 tasks.named('test') {

@@ -2,10 +2,18 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
-import io.cucumber.java.sl.In;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.apache.fineract.client.models.InteropIdentifierRequestData;
+import org.apache.fineract.client.models.PostClientsRequest;
+import org.apache.fineract.client.models.PostClientsResponse;
+import org.apache.fineract.client.models.PostRecurringDepositAccountsRecurringDepositAccountIdTransactionsRequest;
+import org.apache.fineract.client.models.PostSavingsAccountsAccountIdRequest;
+import org.apache.fineract.client.models.PostSavingsAccountsRequest;
+import org.apache.fineract.client.models.PostSavingsAccountsResponse;
+import org.apache.fineract.client.models.PostSavingsProductsRequest;
+import org.apache.fineract.client.models.PostSavingsProductsResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.ams.dto.LoanRepaymentDTO;
@@ -14,22 +22,12 @@ import org.mifos.connector.common.gsma.dto.GsmaTransfer;
 import org.mifos.connector.common.gsma.dto.Party;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.loan.AllowAttributeOverrides;
-import org.mifos.integrationtest.common.dto.loan.CreatePayerClient;
-import org.mifos.integrationtest.common.dto.loan.CreatePayerClientResponse;
 import org.mifos.integrationtest.common.dto.loan.LoanAccountData;
 import org.mifos.integrationtest.common.dto.loan.LoanAccountResponse;
 import org.mifos.integrationtest.common.dto.loan.LoanApprove;
 import org.mifos.integrationtest.common.dto.loan.LoanDisburse;
 import org.mifos.integrationtest.common.dto.loan.LoanProduct;
 import org.mifos.integrationtest.common.dto.loan.LoanProductResponse;
-import org.mifos.integrationtest.common.dto.savings.InteropIdentifier;
-import org.mifos.integrationtest.common.dto.savings.SavingsAccount;
-import org.mifos.integrationtest.common.dto.savings.SavingsAccountDeposit;
-import org.mifos.integrationtest.common.dto.savings.SavingsAccountResponse;
-import org.mifos.integrationtest.common.dto.savings.SavingsActivate;
-import org.mifos.integrationtest.common.dto.savings.SavingsApprove;
-import org.mifos.integrationtest.common.dto.savings.SavingsProduct;
-import org.mifos.integrationtest.common.dto.savings.SavingsProductResponse;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,11 +127,11 @@ public class GSMATransferDef extends GsmaConfig {
 
         String date = getCurrentDate();
         setcurrentDate(date);
-        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
-                responsePayerClient, CreatePayerClientResponse.class);
+        PostClientsResponse createPayerClientResponse = objectMapper.readValue(
+                responsePayerClient, PostClientsResponse.class);
         LoanProductResponse loanProductResponse = objectMapper.readValue(
                 responseLoanProduct, LoanProductResponse.class);
-        String clientId = createPayerClientResponse.getClientId();
+        String clientId = createPayerClientResponse.getClientId().toString();
         int resourceId = Integer.parseInt(loanProductResponse.getResourceId());
 
         LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, 1, new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
@@ -173,56 +171,94 @@ public class GSMATransferDef extends GsmaConfig {
         String name = new StringBuilder().append(getAlphaNumericString(4)).toString();
         String shortName = getAlphaNumericString(4);
 
-        SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
+        PostSavingsProductsRequest savingsProductsRequest = new PostSavingsProductsRequest();
+        savingsProductsRequest.setCurrencyCode("USD");
+        savingsProductsRequest.setDigitsAfterDecimal(2);
+        savingsProductsRequest.setInterestCompoundingPeriodType(1);
+        savingsProductsRequest.setInterestPostingPeriodType(4);
+        savingsProductsRequest.setInterestCalculationType(1);
+        savingsProductsRequest.setInterestCalculationDaysInYearType(365);
+        savingsProductsRequest.setAccountingRule(1);
+        savingsProductsRequest.setName(name);
+        savingsProductsRequest.setShortName(shortName);
+        savingsProductsRequest.setInMultiplesOf(1);
+        savingsProductsRequest.setNominalAnnualInterestRate(5.0);
+        savingsProductsRequest.setLocale("en");
 
-        return objectMapper.writeValueAsString(savingsProduct);
+        return objectMapper.writeValueAsString(savingsProductsRequest);
     }
 
     protected String setBodySavingsApprove() throws JsonProcessingException {
-        SavingsApprove savingsApprove = new SavingsApprove(currentDate, "en", "dd MMMM yyyy");
+        PostSavingsAccountsAccountIdRequest savingsApprove = new PostSavingsAccountsAccountIdRequest();
+        savingsApprove.setApprovedOnDate(currentDate);
+        savingsApprove.setLocale("en");
+        savingsApprove.setDateFormat("dd MMMM yyyy");
         return objectMapper.writeValueAsString(savingsApprove);
     }
 
     protected String setBodySavingsAccount() throws JsonProcessingException {
         // Getting resourceId and clientId
-        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
-                responsePayerClient, CreatePayerClientResponse.class);
-        SavingsProductResponse savingsProductResponse = objectMapper.readValue(
-                responseSavingsProduct, SavingsProductResponse.class
+        PostClientsResponse createPayerClientResponse = objectMapper.readValue(
+                responsePayerClient, PostClientsResponse.class);
+        PostSavingsProductsResponse savingsProductResponse = objectMapper.readValue(
+                responseSavingsProduct, PostSavingsProductsResponse.class
         );
         String date = getCurrentDate();
         setcurrentDate(date);
-        externalId = UUID.randomUUID().toString();
-        SavingsAccount savingsAccount = new SavingsAccount(savingsProductResponse.getResourceId(), 5, false, false, false, false, false, 1, 4, 1, 365, currentDate, "en", "dd MMMM yyyy", "dd MMM", new ArrayList<>(), createPayerClientResponse.getClientId(), externalId);
+        PostSavingsAccountsRequest savingsAccountsRequest = new PostSavingsAccountsRequest();
+        savingsAccountsRequest.setClientId(createPayerClientResponse.getClientId());
+        savingsAccountsRequest.setProductId(savingsProductResponse.getResourceId());
+        savingsAccountsRequest.setDateFormat("dd MMMM yyyy");
+        savingsAccountsRequest.setLocale("en");
+        savingsAccountsRequest.setSubmittedOnDate(currentDate);
 
-        return objectMapper.writeValueAsString(savingsAccount);
+        return objectMapper.writeValueAsString(savingsAccountsRequest);
     }
     protected String setBodyInteropIdentifier() throws  JsonProcessingException {
-        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
-                responseSavingsProduct, SavingsAccountResponse.class
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
+                responseSavingsProduct, PostSavingsAccountsResponse.class
         );
         String date = getCurrentDate();
         setcurrentDate(date);
 
-        InteropIdentifier interopIdentifier = new InteropIdentifier(externalId);
+        InteropIdentifierRequestData interopIdentifier = new InteropIdentifierRequestData();
+        interopIdentifier.setAccountId(externalId);
 
         return objectMapper.writeValueAsString(interopIdentifier);
     }
 
     protected String setBodySavingsActivate() throws JsonProcessingException {
-        SavingsActivate savingsActivate = new SavingsActivate(currentDate, "en", "dd MMMM yyyy");
+        PostSavingsAccountsAccountIdRequest savingsActivate = new PostSavingsAccountsAccountIdRequest();
+        savingsActivate.setActivatedOnDate(currentDate);
+        savingsActivate.setLocale("en");
+        savingsActivate.setDateFormat("dd MMMM yyyy");
         return objectMapper.writeValueAsString(savingsActivate);
     }
 
     protected String setSavingsDepositAccount(int amount) throws JsonProcessingException {
-        SavingsAccountDeposit savingsAccountDeposit = new SavingsAccountDeposit("dd MMMM yyyy", "en", 1, amount, currentDate);
+        PostRecurringDepositAccountsRecurringDepositAccountIdTransactionsRequest savingsAccountDeposit = new PostRecurringDepositAccountsRecurringDepositAccountIdTransactionsRequest();
+        savingsAccountDeposit.setLocale("en");
+        savingsAccountDeposit.setDateFormat("dd MMMM yyyy");
+        savingsAccountDeposit.setPaymentTypeId(1);
+        savingsAccountDeposit.setTransactionAmount((double) amount);
+        savingsAccountDeposit.setTransactionDate(currentDate);
+
         return objectMapper.writeValueAsString(savingsAccountDeposit);
     }
 
     protected String setBodyPayerClient() throws JsonProcessingException {
         String date = getCurrentDate();
-        CreatePayerClient createPayerClient = new CreatePayerClient(new ArrayList<>(), new ArrayList<>(), 1, 1, "John", "Wick", true, "en", "dd MMMM yyyy", date, date, null);
-        return objectMapper.writeValueAsString(createPayerClient);
+        PostClientsRequest postClientsRequest = new PostClientsRequest();
+        postClientsRequest.setOfficeId(1);
+        postClientsRequest.setLegalFormId(1);
+        postClientsRequest.setFirstname("John");
+        postClientsRequest.setLastname("Wick");
+        postClientsRequest.setActive(true);
+        postClientsRequest.setLocale("en");
+        postClientsRequest.setDateFormat("dd MMMM yyyy");
+        postClientsRequest.setActivationDate(date);
+        postClientsRequest.setSubmittedOnDate(date);
+        return objectMapper.writeValueAsString(postClientsRequest);
     }
 
     protected String setBodyLoanDisburse(int amount) throws JsonProcessingException {
@@ -271,9 +307,9 @@ public class GSMATransferDef extends GsmaConfig {
     }
 
     private String getSavingsAccountId() throws JsonProcessingException {
-        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
-                responseSavingsAccount, SavingsAccountResponse.class);
-        return savingsAccountResponse.getSavingsId();
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
+                responseSavingsAccount, PostSavingsAccountsResponse.class);
+        return savingsAccountResponse.getSavingsId().toString();
     }
 
     private String getLoanAccountId() throws JsonProcessingException {
