@@ -40,12 +40,12 @@ jobs:
           cluster-name: "sit"
           aws-region: "us-east-2"
       - helm/upgrade-helm-chart:
-          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-1.0.1/ph-ee-g2psandbox-1.0.1.tgz"
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.0.0/ph-ee-g2psandbox-0.2.0.tgz"
           release-name: g2p-sandbox
           namespace: paymenthub
           recreate-pods: true
-          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-1.0.1"
-      - run: helm test g2p-sandbox --namespace=paymenthub 
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-0.0.0"
+      #- run: helm test g2p-sandbox --namespace=paymenthub 
             # reset-values: true
             # dry-run: true
       # - helm/install-helm-chart:
@@ -53,6 +53,14 @@ jobs:
       #     chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.2.0.tgz"
       #     release-name: g2p-sandbox
       #     namespace: ph-test
+  test-chart:
+    docker:
+      - image: cimg/openjdk:17.0.0
+    steps:
+      - run: git clone https://github.com/openmf/ph-ee-integration-test
+      - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags=“@gov” 
+      - store_test_results:
+          path: ph-ee-integration-test/build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
 workflows:
   build:
     jobs:
@@ -70,3 +78,10 @@ workflows:
       #     cluster-name: sit
       #     requires:
       #       - install-helm-chart
+      - test-chart:
+          requires:
+            - upgrade-helm-chart
+          context: 
+            - AWS
+            - Helm
+            - slack
