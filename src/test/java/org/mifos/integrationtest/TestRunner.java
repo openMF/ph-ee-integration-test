@@ -13,7 +13,8 @@ import org.junit.runner.RunWith;
             "json:cucumber.json",
             "pretty",
             "html:build/cucumber-report.html",
-            "json:build/cucumber-report.json"
+            "json:build/cucumber-report.json",
+            "junit:build/cucumber.xml"
         }
 )
 public class TestRunner {
