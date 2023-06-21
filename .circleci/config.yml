@@ -40,11 +40,11 @@ jobs:
           cluster-name: "sit"
           aws-region: "us-east-2"
       - helm/upgrade-helm-chart:
-          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin-0.0.0/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
           namespace: paymenthub
           recreate-pods: true
-          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin-0.0.0"
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
           wait: true
           timeout: "300s"
       #- run: helm test g2p-sandbox --namespace=paymenthub
