@@ -40,11 +40,13 @@ jobs:
           cluster-name: "sit"
           aws-region: "us-east-2"
       - helm/upgrade-helm-chart:
-          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.0.0/ph-ee-g2psandbox-0.2.0.tgz"
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin-0.0.0/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
           namespace: paymenthub
           recreate-pods: true
-          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-0.0.0"
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin-0.0.0"
+          wait: true
+          timeout: "300s"
       #- run: helm test g2p-sandbox --namespace=paymenthub
             # reset-values: true
             # dry-run: true
@@ -62,16 +64,16 @@ jobs:
       - store_test_results:
           path: ph-ee-integration-test/build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
 workflows:
-  build:
+  deploy:
     jobs:
       - build:
           context:
             - AWS
             - slack
-  deploy:
-    jobs:
       - upgrade-helm-chart:
           cluster-name: sit
+          requires:
+            - build
       # - install-helm-chart:
       #     cluster-name: sit
       # - delete-helm-release:
