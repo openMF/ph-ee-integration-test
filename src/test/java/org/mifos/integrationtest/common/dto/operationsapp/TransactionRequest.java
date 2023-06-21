@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
 public class TransactionRequest {
+
     private int id;
     private String workflowInstanceKey;
     private String transactionId;
@@ -28,8 +29,7 @@ public class TransactionRequest {
 
     private String clientCorrelationId;
 
-    public TransactionRequest() {
-    }
+    public TransactionRequest() {}
 
     public int getId() {
         return id;

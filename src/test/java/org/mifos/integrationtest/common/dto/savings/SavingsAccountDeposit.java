@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class SavingsAccountDeposit {
+
     public String dateFormat;
     public String locale;
     public int paymentTypeId;

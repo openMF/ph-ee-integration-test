@@ -1,17 +1,17 @@
 package org.mifos.integrationtest.common.dto.savings;
 
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 public class SavingsProduct {
+
     public String currencyCode;
     public int digitsAfterDecimal;
     public int interestCompoundingPeriodType;
@@ -29,7 +29,11 @@ public class SavingsProduct {
     public ArrayList<Object> charges;
     public String locale;
 
-    public SavingsProduct(String currencyCode, int digitsAfterDecimal, int interestCompoundingPeriodType, int interestPostingPeriodType, int interestCalculationType, int interestCalculationDaysInYearType, String accountingRule, String name, String shortName, String inMultiplesOf, int nominalAnnualInterestRate, ArrayList<Object> paymentChannelToFundSourceMappings, ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges, String locale) {
+    public SavingsProduct(String currencyCode, int digitsAfterDecimal, int interestCompoundingPeriodType, int interestPostingPeriodType,
+            int interestCalculationType, int interestCalculationDaysInYearType, String accountingRule, String name, String shortName,
+            String inMultiplesOf, int nominalAnnualInterestRate, ArrayList<Object> paymentChannelToFundSourceMappings,
+            ArrayList<Object> feeToIncomeAccountMappings, ArrayList<Object> penaltyToIncomeAccountMappings, ArrayList<Object> charges,
+            String locale) {
         this.currencyCode = currencyCode;
         this.digitsAfterDecimal = digitsAfterDecimal;
         this.interestCompoundingPeriodType = interestCompoundingPeriodType;

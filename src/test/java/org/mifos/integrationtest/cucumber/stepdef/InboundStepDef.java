@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -12,8 +14,6 @@ import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
 
-import static com.google.common.truth.Truth.assertThat;
-
 public class InboundStepDef extends BaseStepDef {
 
     public static TransactionChannelRequestDTO mockTransactionChannelRequestDTO = null;
@@ -25,21 +25,10 @@ public class InboundStepDef extends BaseStepDef {
             return;
         }
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{")
-                .append("\"payer\": {")
-                .append("\"partyIdInfo\": {")
-                .append("\"partyIdType\": \"MSISDN\",")
-                .append("\"partyIdentifier\": \"27710101999\"")
-                .append("}},")
-                .append("\"payee\": {")
-                .append("\"partyIdInfo\": {")
-                .append("\"partyIdType\": \"MSISDN\",")
-                .append("\"partyIdentifier\": \"27710102999\"")
-                .append("}},")
-                .append("\"amount\": {")
-                .append("\"amount\": 230,")
-                .append("\"currency\": \"TZS\"")
-                .append("}}");
+        jsonBuilder.append("{").append("\"payer\": {").append("\"partyIdInfo\": {").append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": \"27710101999\"").append("}},").append("\"payee\": {").append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",").append("\"partyIdentifier\": \"27710102999\"").append("}},").append("\"amount\": {")
+                .append("\"amount\": 230,").append("\"currency\": \"TZS\"").append("}}");
         String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
@@ -50,14 +39,9 @@ public class InboundStepDef extends BaseStepDef {
     public void callBatchSummaryAPI(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
 
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(mockTransactionChannelRequestDTO)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(channelConnectorConfig.transferEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
         logger.info("Inbound transfer Response: {}", BaseStepDef.response);
     }

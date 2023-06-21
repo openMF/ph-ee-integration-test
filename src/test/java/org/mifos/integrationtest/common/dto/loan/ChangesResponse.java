@@ -1,12 +1,11 @@
 package org.mifos.integrationtest.common.dto.loan;
 
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 @NoArgsConstructor
 @ToString
 public class ChangesResponse {
+
     public StatusResponse status;
     public int approvedLoanAmount;
     public int principal;

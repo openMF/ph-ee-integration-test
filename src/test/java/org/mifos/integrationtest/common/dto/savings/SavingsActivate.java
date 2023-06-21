@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class SavingsActivate {
+
     public String activatedOnDate;
     public String locale;
     public String dateFormat;

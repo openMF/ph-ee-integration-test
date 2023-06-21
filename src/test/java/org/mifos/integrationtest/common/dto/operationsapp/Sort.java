@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
-public class Sort{
+public class Sort {
+
     private String direction;
     private String property;
     private boolean ignoreCase;
@@ -8,8 +9,7 @@ public class Sort{
     private boolean descending;
     private boolean ascending;
 
-    public Sort() {
-    }
+    public Sort() {}
 
     public String getDirection() {
         return direction;

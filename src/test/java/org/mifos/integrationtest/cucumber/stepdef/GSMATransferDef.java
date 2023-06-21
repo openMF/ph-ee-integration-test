@@ -6,6 +6,9 @@ import io.cucumber.java.sl.In;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.ams.dto.LoanRepaymentDTO;
@@ -44,6 +47,7 @@ import java.util.UUID;
 
 @Component
 public class GSMATransferDef extends GsmaConfig {
+
     public String gsmaTransferBody;
     public String loanProductBody;
     public String amsName;
@@ -84,7 +88,6 @@ public class GSMATransferDef extends GsmaConfig {
     @Value("${defaults.authorization}")
     public String authorizationToken;
 
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public void setAccountId(String acId) {
@@ -117,26 +120,28 @@ public class GSMATransferDef extends GsmaConfig {
         String name = new StringBuilder().append(getAlphaNumericString(4)).append(tenant).toString();
         String shortName = getAlphaNumericString(4);
 
-        AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true, "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
+        AllowAttributeOverrides allowAttributeOverrides = new AllowAttributeOverrides(true, true,
+                "interest-principal-penalties-fees-order-strategy", true, true, true, true, true);
 
-        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36", "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), 1, allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
+        LoanProduct loanProduct = new LoanProduct("USD", "false", false, "2", "2", 2, 3, 1, 0, 0, new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), false, "1", 1, 1, true, 0, 2, 1, false, false, name, shortName, "12", "100", "3000", "21000", "3", "36",
+                "60", "5.9", 19, "35.9", "1", true, true, "7", "90", 1, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), 1, allowAttributeOverrides, "en", "dd MMMM yyyy", new ArrayList<>(), false, null);
 
         return objectMapper.writeValueAsString(loanProduct);
     }
-
 
     protected String setBodyLoanAccount() throws JsonProcessingException {
 
         String date = getCurrentDate();
         setcurrentDate(date);
-        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
-                responsePayerClient, CreatePayerClientResponse.class);
-        LoanProductResponse loanProductResponse = objectMapper.readValue(
-                responseLoanProduct, LoanProductResponse.class);
+        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(responsePayerClient, CreatePayerClientResponse.class);
+        LoanProductResponse loanProductResponse = objectMapper.readValue(responseLoanProduct, LoanProductResponse.class);
         String clientId = createPayerClientResponse.getClientId();
         int resourceId = Integer.parseInt(loanProductResponse.getResourceId());
 
-        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false, 0, 0, false, 7, 1, new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
+        LoanAccountData loanAccountData = new LoanAccountData(clientId, resourceId, new ArrayList<>(), 7800, 12, 2, 12, 1, 2, 8.9, 1, false,
+                0, 0, false, 7, 1, new ArrayList<>(), currentDate, "en", "dd MMMM yyyy", "individual", currentDate, currentDate);
 
         return objectMapper.writeValueAsString(loanAccountData);
     }
@@ -157,9 +162,7 @@ public class GSMATransferDef extends GsmaConfig {
     }
 
     String getAlphaNumericString(int size) {
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "0123456789"
-                + "abcdefghijklmnopqrstuvxyz";
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
         StringBuilder sb = new StringBuilder(size);
         for (int i = 0; i < size; i++) {
             int index = (int) (AlphaNumericString.length() * Math.random());
@@ -173,7 +176,8 @@ public class GSMATransferDef extends GsmaConfig {
         String name = new StringBuilder().append(getAlphaNumericString(4)).toString();
         String shortName = getAlphaNumericString(4);
 
-        SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
+        SavingsProduct savingsProduct = new SavingsProduct("USD", 2, 1, 4, 1, 365, "1", name, shortName, "1", 5, new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "en");
 
         return objectMapper.writeValueAsString(savingsProduct);
     }
@@ -185,11 +189,8 @@ public class GSMATransferDef extends GsmaConfig {
 
     protected String setBodySavingsAccount() throws JsonProcessingException {
         // Getting resourceId and clientId
-        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(
-                responsePayerClient, CreatePayerClientResponse.class);
-        SavingsProductResponse savingsProductResponse = objectMapper.readValue(
-                responseSavingsProduct, SavingsProductResponse.class
-        );
+        CreatePayerClientResponse createPayerClientResponse = objectMapper.readValue(responsePayerClient, CreatePayerClientResponse.class);
+        SavingsProductResponse savingsProductResponse = objectMapper.readValue(responseSavingsProduct, SavingsProductResponse.class);
         String date = getCurrentDate();
         setcurrentDate(date);
         externalId = UUID.randomUUID().toString();
@@ -221,7 +222,8 @@ public class GSMATransferDef extends GsmaConfig {
 
     protected String setBodyPayerClient() throws JsonProcessingException {
         String date = getCurrentDate();
-        CreatePayerClient createPayerClient = new CreatePayerClient(new ArrayList<>(), new ArrayList<>(), 1, 1, "John", "Wick", true, "en", "dd MMMM yyyy", date, date, null);
+        CreatePayerClient createPayerClient = new CreatePayerClient(new ArrayList<>(), new ArrayList<>(), 1, 1, "John", "Wick", true, "en",
+                "dd MMMM yyyy", date, date, null);
         return objectMapper.writeValueAsString(createPayerClient);
     }
 
@@ -255,7 +257,8 @@ public class GSMATransferDef extends GsmaConfig {
         String dateFormatGiven = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
         String currentDate = new SimpleDateFormat(dateFormatGiven).format(new Date());
 
-        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "USD", "note", currentDate, customData, payer, payee);
+        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "USD", "note",
+                currentDate, customData, payer, payee);
         return objectMapper.writeValueAsString(gsmaTransfer);
     }
 
@@ -271,14 +274,12 @@ public class GSMATransferDef extends GsmaConfig {
     }
 
     private String getSavingsAccountId() throws JsonProcessingException {
-        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(
-                responseSavingsAccount, SavingsAccountResponse.class);
+        SavingsAccountResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount, SavingsAccountResponse.class);
         return savingsAccountResponse.getSavingsId();
     }
 
     private String getLoanAccountId() throws JsonProcessingException {
-        LoanAccountResponse loanAccountResponse = objectMapper.readValue(
-                responseLoanAccount, LoanAccountResponse.class);
+        LoanAccountResponse loanAccountResponse = objectMapper.readValue(responseLoanAccount, LoanAccountResponse.class);
         String loanId = Integer.toString(loanAccountResponse.getLoanId());
         return getLoanIdFromFineract(loanId);
     }
@@ -287,13 +288,8 @@ public class GSMATransferDef extends GsmaConfig {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification = setHeaders(requestSpecification);
         loanGetAccountIdEndpoint = loanGetAccountIdEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanId);
-        String response = RestAssured.given(requestSpecification)
-                .baseUri(loanBaseUrl)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .get(loanGetAccountIdEndpoint)
-                .andReturn().asString();
+        String response = RestAssured.given(requestSpecification).baseUri(loanBaseUrl).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(loanGetAccountIdEndpoint).andReturn().asString();
         String accountNp = "";
 
         try {

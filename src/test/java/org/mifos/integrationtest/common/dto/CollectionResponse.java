@@ -8,8 +8,7 @@ public class CollectionResponse {
         this.transactionId = transactionId;
     }
 
-    public CollectionResponse() {
-    }
+    public CollectionResponse() {}
 
     public String getTransactionId() {
         return transactionId;

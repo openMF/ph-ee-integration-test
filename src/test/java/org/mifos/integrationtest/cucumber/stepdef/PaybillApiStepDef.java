@@ -1,5 +1,9 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -15,11 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
-
 public class PaybillApiStepDef {
+
     @Autowired
     PaybillStepDef paybillStepDef;
     @Autowired
@@ -63,12 +64,8 @@ public class PaybillApiStepDef {
         PayBillRequestDTO payBillRequestDTO = paybillStepDef.setPaybillRequestDTO();
         requestSpecification.body(payBillRequestDTO);
         requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
-        paybillStepDef.response = RestAssured.given(requestSpecification)
-                .contentType(CONTENT_TYPE_VALUE)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(paybillConfig.mpesaValidateUrl)
+        paybillStepDef.response = RestAssured.given(requestSpecification).contentType(CONTENT_TYPE_VALUE).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().post(paybillConfig.mpesaValidateUrl)
                 .andReturn().asString();
         logger.info("Mpesa Validation Response : {}", paybillStepDef.response);
     }
@@ -81,12 +78,8 @@ public class PaybillApiStepDef {
         requestSpecification.body(payBillRequestDTO);
         requestSpecification.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
-        paybillStepDef.response = RestAssured.given(requestSpecification)
-                .contentType(CONTENT_TYPE_VALUE)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(paybillConfig.mpesaSettlementUrl)
+        paybillStepDef.response = RestAssured.given(requestSpecification).contentType(CONTENT_TYPE_VALUE).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().post(paybillConfig.mpesaSettlementUrl)
                 .andReturn().asString();
         logger.info("Paybill Settlement Response: {}", paybillStepDef.response);
     }

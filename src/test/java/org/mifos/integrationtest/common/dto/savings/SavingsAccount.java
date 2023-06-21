@@ -1,13 +1,13 @@
 package org.mifos.integrationtest.common.dto.savings;
 
+import java.util.ArrayList;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.ArrayList;
 
 @NoArgsConstructor
 @ToString
 public class SavingsAccount {
+
     public String productId;
     public int nominalAnnualInterestRate;
     public boolean withdrawalFeeForTransfers;
@@ -26,7 +26,10 @@ public class SavingsAccount {
     public ArrayList<Object> charges;
     public String clientId;
 
-    public SavingsAccount(String productId, int nominalAnnualInterestRate, boolean withdrawalFeeForTransfers, boolean allowOverdraft, boolean lienAllowed, boolean enforceMinRequiredBalance, boolean withHoldTax, int interestCompoundingPeriodType, int interestPostingPeriodType, int interestCalculationType, int interestCalculationDaysInYearType, String submittedOnDate, String locale, String dateFormat, String monthDayFormat, ArrayList<Object> charges, String clientId, String externalId) {
+    public SavingsAccount(String productId, int nominalAnnualInterestRate, boolean withdrawalFeeForTransfers, boolean allowOverdraft,
+            boolean lienAllowed, boolean enforceMinRequiredBalance, boolean withHoldTax, int interestCompoundingPeriodType,
+            int interestPostingPeriodType, int interestCalculationType, int interestCalculationDaysInYearType, String submittedOnDate,
+            String locale, String dateFormat, String monthDayFormat, ArrayList<Object> charges, String clientId, String externalId) {
         this.productId = productId;
         this.nominalAnnualInterestRate = nominalAnnualInterestRate;
         this.withdrawalFeeForTransfers = withdrawalFeeForTransfers;

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GsmaConfig {
+
     @Value("${channel.base-url}")
     public String channelConnectorBaseUrl;
     @Value("${channel.endpoint}")

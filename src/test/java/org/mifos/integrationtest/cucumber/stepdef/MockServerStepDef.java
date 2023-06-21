@@ -1,5 +1,20 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
@@ -11,9 +26,6 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 public class MockServerStepDef extends BaseStepDef {
 
@@ -34,7 +46,7 @@ public class MockServerStepDef extends BaseStepDef {
     @ParameterType(name = "httpMethod", value = ".*")
     public HttpMethod httpMethod(String httpMethod) {
         httpMethod = httpMethod.replace("\"", "");
-        System.out.println("HTTPMETHOD: $$$$$$: " + httpMethod);
+        logger.debug("HTTP METHOD: $$$$$$: {}", httpMethod);
         return HttpMethod.valueOf(httpMethod);
     }
 
@@ -58,17 +70,22 @@ public class MockServerStepDef extends BaseStepDef {
 
     @When("I make the {httpMethod} request to {string} endpoint with expected status of {int}")
     public void hitStubEndpoint(HttpMethod httpMethod, String endpoint, int expectedStatus) {
-        RequestSender requestSender = RestAssured.given(getDefaultSpec())
-                .baseUri(mockServer.getBaseUri())
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when();
+        RequestSender requestSender = RestAssured.given(getDefaultSpec()).baseUri(mockServer.getBaseUri()).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when();
 
         switch (httpMethod) {
-            case GET -> { requestSender.get(endpoint); }
-            case POST -> { requestSender.post(endpoint).andReturn().asString(); }
-            case PUT -> { requestSender.put(endpoint); }
-            case DELETE -> { requestSender.delete(endpoint); }
+            case GET -> {
+                requestSender.get(endpoint);
+            }
+            case POST -> {
+                requestSender.post(endpoint).andReturn().asString();
+            }
+            case PUT -> {
+                requestSender.put(endpoint);
+            }
+            case DELETE -> {
+                requestSender.delete(endpoint);
+            }
         }
         try {
             Thread.sleep(5000);
@@ -80,10 +97,18 @@ public class MockServerStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {httpMethod} method to {string} endpoint received {int} request")
     public void verifyStub(HttpMethod httpMethod, String endpoint, int numberOfRequest) {
         switch (httpMethod) {
-            case GET -> { verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint))); }
-            case POST -> { verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint))); }
-            case PUT -> { verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint))); }
-            case DELETE -> { verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint))); }
+            case GET -> {
+                verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+            }
+            case POST -> {
+                verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+            }
+            case PUT -> {
+                verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+            }
+            case DELETE -> {
+                verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+            }
         }
     }
 

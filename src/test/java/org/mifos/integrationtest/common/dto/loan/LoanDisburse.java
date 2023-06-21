@@ -10,6 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class LoanDisburse {
+
     public int paymentTypeId;
     public int transactionAmount;
     public String actualDisbursementDate;

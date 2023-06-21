@@ -8,6 +8,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class CreatePayerClientResponse {
+
     public String officeId;
     public String clientId;
     public String resourceId;

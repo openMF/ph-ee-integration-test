@@ -1,9 +1,8 @@
 package org.mifos.integrationtest.config;
 
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class BulkProcessorConfig {
@@ -18,7 +17,7 @@ public class BulkProcessorConfig {
 
     public String callbackUrl;
 
-   public int retryCount;
+    public int retryCount;
 
     public int getRetryCount() {
         return retryCount;
@@ -32,7 +31,6 @@ public class BulkProcessorConfig {
     private void setup() {
         bulkTransactionUrl = bulkProcessorContactPoint + bulkTransactionEndpoint;
     }
-
 
     public String getCallbackUrl() {
         return callbackUrl;

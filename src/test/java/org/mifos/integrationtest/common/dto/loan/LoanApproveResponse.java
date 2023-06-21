@@ -12,10 +12,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class LoanApproveResponse {
+
     public int officeId;
     public int clientId;
     public int loanId;
     public int resourceId;
     public ChangesResponse changes;
 }
-

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class IdentityMapperConfig {
+
     @Value("${identity-account-mapper.contactpoint}")
     public String identityMapperContactPoint;
 

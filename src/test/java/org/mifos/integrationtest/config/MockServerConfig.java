@@ -1,10 +1,10 @@
 package org.mifos.integrationtest.config;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @Configuration
 public class MockServerConfig implements MockServer {
@@ -25,8 +25,7 @@ public class MockServerConfig implements MockServer {
 
     @Override
     public String getBaseUri() {
-        return "http://localhost:"+getMockServer().port();
+        return "http://localhost:" + getMockServer().port();
     }
-
 
 }

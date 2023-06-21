@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 
 public interface MockServer {
 
-    public WireMockServer getMockServer();
+    WireMockServer getMockServer();
 
-    public String getBaseUri();
+    String getBaseUri();
 }
