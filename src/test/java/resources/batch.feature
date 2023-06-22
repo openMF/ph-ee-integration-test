@@ -65,7 +65,7 @@ Feature: Batch Details API test
   Scenario: Batch Phased Callback API Test Success
     Given I have a batch id from previous scenario
     And I have tenant as "gorilla"
-    And I have callbackUrl as "https://bulk-connector.sandbox.fynarfin.io/simulate"
+    And I have callbackUrl as simulated url
     When I call the batch transactions endpoint with expected status of 200
     Then I should get non empty response
     And I have retry count as 2

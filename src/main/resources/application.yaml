@@ -25,6 +25,7 @@ bulk-processor:
   contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
   endpoints:
     bulk-transactions: "/batchtransactions"
+    simulate: "/simulate"
 
 channel-connector:
   contactpoint: "https://channel.sandbox.fynarfin.io"
