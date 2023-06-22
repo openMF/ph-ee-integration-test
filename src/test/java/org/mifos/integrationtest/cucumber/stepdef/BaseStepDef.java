@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
 
+
     @Autowired
     ObjectMapper objectMapper;
 
@@ -51,6 +52,7 @@ public class BaseStepDef {
     protected static String clientCorrelationId;
     protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
+    protected static String callbackUrl;
 
     protected static String randomData;
     protected static String encryptedData;

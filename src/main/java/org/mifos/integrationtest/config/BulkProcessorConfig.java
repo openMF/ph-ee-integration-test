@@ -13,6 +13,9 @@ public class BulkProcessorConfig {
     @Value("${bulk-processor.endpoints.bulk-transactions}")
     public String bulkTransactionEndpoint;
 
+    @Value("${bulk-processor.endpoints.simulate}")
+    public String simulateEndpoint;
+
     public String bulkTransactionUrl;
 
     public String callbackUrl;
@@ -30,6 +33,7 @@ public class BulkProcessorConfig {
     @PostConstruct
     private void setup() {
         bulkTransactionUrl = bulkProcessorContactPoint + bulkTransactionEndpoint;
+        simulateEndpoint = bulkProcessorContactPoint + simulateEndpoint;
     }
 
     public String getCallbackUrl() {

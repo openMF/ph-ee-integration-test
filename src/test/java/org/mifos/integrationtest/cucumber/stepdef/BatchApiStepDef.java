@@ -124,6 +124,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void iHaveCallbackUrlAs(String callBackUrl) {
         assertThat(callBackUrl).isNotEmpty();
         bulkProcessorConfig.setCallbackUrl(callBackUrl);
+        BaseStepDef.callbackUrl = callBackUrl;
     }
 
     @Then("I should get expected status of {int}")
@@ -188,5 +189,11 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.response).contains(pollingpath);
         assertThat(BaseStepDef.response).contains(suggestedcallback);
 
+    }
+
+    @And("I have callbackUrl as simulated url")
+    public void iHaveCallbackUrlAsSimulatedUrl() {
+        bulkProcessorConfig.setCallbackUrl(bulkProcessorConfig.simulateEndpoint);
+        BaseStepDef.callbackUrl = bulkProcessorConfig.getCallbackUrl();
     }
 }
