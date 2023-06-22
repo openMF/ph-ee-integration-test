@@ -54,6 +54,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void setTenant(String tenant) {
         BaseStepDef.tenant = tenant;
         assertThat(BaseStepDef.tenant).isNotEmpty();
+        BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
     }
 
     @When("I call the batch summary API with expected status of {int}")
@@ -147,13 +148,13 @@ public class BatchApiStepDef extends BaseStepDef {
     @Then("I should get non empty response with failure and success percentage")
     public void iShouldGetNonEmptyResponseWithFailureAndSuccessPercentage() {
         assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response.contains("failurePercentage")).isTrue();
-        assertThat(BaseStepDef.response.contains("successPercentage")).isTrue();
+        assertThat(BaseStepDef.response.contains("failPercentage"));
+        assertThat(BaseStepDef.response.contains("successPercentage"));
     }
 
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
         requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");

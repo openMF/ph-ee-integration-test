@@ -48,7 +48,7 @@ public class Utils {
     public static RequestSpecification getDefaultSpec(String tenant) {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(TENANT_PARAM_NAME, tenant);
-        // requestSpec.header(X_CORRELATIONID, "123456789");
+//         requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(CONTENT_TYPE, "application/json");
         return requestSpec;
     }
