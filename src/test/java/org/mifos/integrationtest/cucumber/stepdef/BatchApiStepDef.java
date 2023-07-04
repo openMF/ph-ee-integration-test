@@ -63,7 +63,7 @@ public class BatchApiStepDef extends BaseStepDef {
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         }
-        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
+
         logger.info("Calling with batch id: {}", BaseStepDef.batchId);
 
         BaseStepDef.response = RestAssured.given(requestSpec)
