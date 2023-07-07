@@ -2,6 +2,7 @@
 Feature: Get Txn Req API test
 
 
+
   Scenario: Get Txn Req API Test With Auth
     Given I have tenant as "gorilla"
     When I call the auth endpoint with username: "mifos" and password: "password"
