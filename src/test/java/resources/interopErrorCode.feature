@@ -1,4 +1,4 @@
-@gov
+@amsintegrationtest
 Feature: Interop Error Code Test
 
   Scenario: GSMA Transfer Api PayerNotFound Test

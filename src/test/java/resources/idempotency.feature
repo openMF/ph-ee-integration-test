@@ -1,4 +1,3 @@
-@gov
 Feature: Client Correlation Id Idempotency Test
 
 @application.yaml
