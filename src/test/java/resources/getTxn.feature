@@ -1,4 +1,3 @@
-@gov
 Feature: Get Txn Req API test
 
 
