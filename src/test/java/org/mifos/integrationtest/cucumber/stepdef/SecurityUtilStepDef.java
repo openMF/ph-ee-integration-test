@@ -1,21 +1,22 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.mifos.connector.common.util.SecurityUtil;
+import org.mifos.integrationtest.config.JWSKeyConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import org.mifos.connector.common.util.SecurityUtil;
-import org.mifos.integrationtest.config.JWSKeyConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class SecurityUtilStepDef extends BaseStepDef {
 

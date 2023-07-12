@@ -85,3 +85,19 @@ identity-account-mapper:
     account-lookup: /beneficiary
     batch-account-lookup: /accountLookup
 
+kong:
+  admin-contactpoint: "http://kong-admin.sandbox.fynarfin.io"
+  endpoint:
+    consumers: /consumers
+    createKey: /consumers/{username}/key-auth
+    services: /services
+    createRoute: /services/{serviceId}/routes
+    createPlugin: /services/{serviceId}/plugins
+    routes: /routes
+    plugins: /plugins
+  header:
+    apikey: "X-API-KEY"
+  service:
+    host: "security-hello-world.dev1.8080.svc"
+  route:
+    host: "hello-world.sandbox.fynarfin.io"

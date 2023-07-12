@@ -1,0 +1,54 @@
+package org.mifos.integrationtest.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+
+@Component
+public class KongConfig {
+
+    @Value("${kong.service.host}")
+    public String serviceHost;
+
+    @Value("${kong.route.host}")
+    public String routeHost;
+
+    @Value("${kong.admin-contactpoint}")
+    public String adminContactPoint;
+
+    @Value("${kong.endpoint.consumers}")
+    public String consumerEndpoint;
+
+    @Value("${kong.endpoint.createKey}")
+    public String createKeyEndpoint;
+
+    @Value("${kong.endpoint.services}")
+    public String servicesEndpoint;
+
+    @Value("${kong.endpoint.createRoute}")
+    public String createRouteEndpoint;
+
+    @Value("${kong.endpoint.createPlugin}")
+    public String createPluginEndpoint;
+
+    @Value("${kong.endpoint.routes}")
+    public String routesEndpoint;
+
+    @Value("${kong.endpoint.plugins}")
+    public String pluginsEndpoint;
+
+    @Value("${kong.header.apikey}")
+    public String apiKeyHeader;
+
+    public String serviceUrl;
+
+    @PostConstruct
+    private void setup() {
+        serviceUrl = new StringBuilder()
+                .append("http://")
+                .append(serviceHost)
+                .append("/").toString();
+    }
+
+}

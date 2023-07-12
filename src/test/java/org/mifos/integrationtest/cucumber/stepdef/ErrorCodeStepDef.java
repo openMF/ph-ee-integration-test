@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonMappingException;
 import io.cucumber.java.en.And;
@@ -28,6 +26,8 @@ import org.mifos.connector.common.gsma.dto.SubjectName;
 import org.mifos.integrationtest.common.GSMATransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ErrorCodeStepDef extends BaseStepDef {
 

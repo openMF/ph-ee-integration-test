@@ -1,10 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
-import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -15,12 +10,15 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
-import org.mifos.integrationtest.common.Utils;
 import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
+import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.*;
 
 public class GSMATransferStepDef {
 
