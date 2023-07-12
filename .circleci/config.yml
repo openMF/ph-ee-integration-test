@@ -60,7 +60,8 @@ jobs:
       - image: cimg/openjdk:17.0.0
     steps:
       - run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags="@gov"
+      - run: ./gradlew test -Dcucumber.filter.tags="@amsintegrationtest"
       - store_test_results:
           path: ph-ee-integration-test/build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
 workflows:
