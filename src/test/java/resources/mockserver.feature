@@ -1,3 +1,4 @@
+@gov
 Feature: Testing the startup and working of mockserver
 
   Scenario: Mockserver config test
