@@ -91,7 +91,7 @@ public class GSMATransferStepDef {
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        String payer_identifier = "SA"+savingsAccountResponse.getSavingsId();
+        String payer_identifier = savingsAccountResponse.getSavingsId().toString();
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
         // Calling Interop Identifier endpoint
