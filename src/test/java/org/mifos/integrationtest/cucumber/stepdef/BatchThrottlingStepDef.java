@@ -1,42 +1,38 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import java.net.URL;
 
 import static com.google.common.truth.Truth.assertThat;
 
 public class BatchThrottlingStepDef extends BaseStepDef {
 
-    private int throttleTime;
+    private int throttleTimeInSeconds;
     private long startTimeOfSecondSubbatch;
 
-    @Given("the system has a configured throttle time of {int} seconds")
-    public void setThrottleTime(int throttleTime) {
-        this.throttleTime = throttleTime;
+    @And("the system has a configured throttle time of {int} seconds")
+    public void theSystemHasAConfiguredThrottleTimeOfSeconds(int throttleTimeInSeconds) {
+        this.throttleTimeInSeconds = throttleTimeInSeconds;
+        assertThat(this.throttleTimeInSeconds).isGreaterThan(0);
     }
 
-    @When("the second subbatch is being processed")
-    public void processSecondSubbatch() {
-        // Logic to process the batch and retrieve the start time of the second subbatch
-        startTimeOfSecondSubbatch = getStartTimeOfSecondSubbatch();
+    @And("the first transactions are fetched from consecutive sub batches based on sub batch size of {int} transactions")
+    public void theFirstTransactionsAreFetchedFromConsecutiveSubBatchesBasedOnSubBatchSizeOfTransactions(int batchSize) {
+
     }
 
-    @Then("the system should wait for at least {int} seconds before processing the second subbatch")
-    public void assertThrottleTime(int throttleTime) {
-        long elapsedTime = getCurrentTime() - startTimeOfSecondSubbatch;
-        int elapsedTimeInSeconds = 0;
-        // Assertion logic to check if the elapsed time is at least equal to the throttle time
-        // You can use an assertion library like JUnit or AssertJ for the assertions
-        assertThat(elapsedTimeInSeconds).isLessThan(throttleTime);
+    @Then("the start time for the consecutive sub batch IDs are retrieved")
+    public void theStartTimeForTheConsecutiveSubBatchIDsAreRetrieved() {
+
     }
 
-    @Then("the start time of the second subbatch or the first transaction from the second subbatch should be later than the throttle time")
-    public void assertStartTimeLaterThanThrottleTime() {
-        long startTimeOfFirstTransaction = getStartTimeOfFirstTransactionFromSecondSubbatch();
-        // Assertion logic to check if the start time of the second subbatch or the first transaction
-        // from the second subbatch is later than the throttle time
-        // Example: assertThat(startTimeOfFirstTransaction).isGreaterThan(throttleTime);
+    @And("the difference between start time of first sub batch and second sub batch should be greater than or equal to throttle configuration")
+    public void theDifferenceBetweenStartTimeOfFirstSubBatchAndSecondSubBatchShouldBeGreaterThanOrEqualToThrottleConfiguration() {
+
     }
 
     // Helper method to get the current time in milliseconds
@@ -58,9 +54,5 @@ public class BatchThrottlingStepDef extends BaseStepDef {
         // This can be done by accessing the data or the processing logic used to handle transactions
         // Return the corresponding start time
         return 0L; // Replace with actual implementation
-    }
-
-    @Then("the system should wait for at least \\{throttleTime} seconds before processing the second subbatch")
-    public void theSystemShouldWaitForAtLeastThrottleTimeSecondsBeforeProcessingTheSecondSubbatch() {
     }
 }

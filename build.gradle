@@ -166,6 +166,8 @@ dependencies {
     implementation 'com.diffplug.gradle.spotless:spotless:2.4.1'
     implementation 'com.diffplug.spotless:spotless-plugin-gradle:6.17.0'
     implementation 'org.mifos:openapi-java-client:2.0.3-SNAPSHOT'
+
+    testImplementation 'org.apache.commons:commons-csv:1.5'
 }
 
 tasks.named('test') {
