@@ -32,6 +32,10 @@ public class BatchSplittingStepDef extends BaseStepDef {
     private String firstTransactionSubbatchId;
     private String lastTransactionSubbatchId;
 
+    private String firstTxnRequestId;
+
+    private String lastTxnRequestId;
+
     @Given("the csv file {string} is available")
     public void theCsvFileIsAvailable(String fileName) {
         BaseStepDef.filename = fileName;
@@ -49,6 +53,11 @@ public class BatchSplittingStepDef extends BaseStepDef {
     public void theFirstAndLastTransactionsFromTheCSVFileAreFetched() {
         String fileContent = getFileContent(filename);
         logger.info(fileContent);
+        String[] firstAndLastTxnRequestIds = fetchRequestIdFromCsvString(fileContent);
+        firstTxnRequestId = firstAndLastTxnRequestIds[0];
+        lastTxnRequestId = firstAndLastTxnRequestIds[1];
+        assertThat(firstTxnRequestId).isNotEmpty();
+        assertThat(lastTxnRequestId).isNotEmpty();
     }
 
     @When("the batch transaction API is initiated with the uploaded file")
@@ -84,6 +93,17 @@ public class BatchSplittingStepDef extends BaseStepDef {
     @And("the sub batch IDs for the first and last transactions should be different")
     public void theSubBatchIDsForTheFirstAndLastTransactionsShouldBeDifferent() {
         assertThat(firstTransactionSubbatchId).isNotEqualTo(lastTransactionSubbatchId);
+    }
+
+    private String[] fetchRequestIdFromCsvString(String fileContent) {
+        String[] csvRecords = fileContent.split("\n");
+        String firstCsvRecord = csvRecords[1];
+        String lastCsvRecord = csvRecords[csvRecords.length-1];
+        String[] firstCsvRecordValues = firstCsvRecord.split(",");
+        String[] secondCsvRecordValues = lastCsvRecord.split(",");
+        String firstTxnRequestId =  firstCsvRecordValues[1];
+        String lastTxnRequestId = secondCsvRecordValues[1];
+        return new String[]{firstTxnRequestId, lastTxnRequestId};
     }
 
     private MultiPartSpecification getMultiPart(String fileContent) {
