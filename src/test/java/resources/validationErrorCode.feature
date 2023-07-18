@@ -1,4 +1,4 @@
-@govtodo
+@gov
 Feature: Validation Error Code Test
 
   Scenario: GSMA Transfer Api NegativeValue Test
