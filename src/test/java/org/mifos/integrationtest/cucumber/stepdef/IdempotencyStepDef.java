@@ -122,7 +122,7 @@ public class IdempotencyStepDef extends BaseStepDef {
         logger.info("Inbound transfer Response: {}", BaseStepDef.response);
     }
 
-    @When("I call Inbound Transfer Req api with client correlation id expected status {int}")
+    @When("I call Inbound transaction Req api with client correlation id expected status {int}")
     public void iCallInboundTransferReqApiWithClientCorrelationIdExpectedStatus(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         requestSpec.header(Utils.X_CORRELATIONID, BaseStepDef.clientCorrelationId);
