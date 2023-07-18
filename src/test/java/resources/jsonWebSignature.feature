@@ -1,4 +1,4 @@
-@gov
+@govtodo
 Feature: Json Web Signature test
 
   Scenario: Test the jws for batchTransactions
