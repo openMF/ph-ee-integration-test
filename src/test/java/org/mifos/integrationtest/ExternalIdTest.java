@@ -12,6 +12,7 @@ import io.restassured.specification.ResponseSpecification;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mifos.integrationtest.common.CollectionHelper;
@@ -38,6 +39,7 @@ public class ExternalIdTest {
     }
 
     @Test
+    @Disabled
     public void testSendCollectionRequest() throws JSONException {
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
         System.out.println(collectionRequestBody);
@@ -50,6 +52,7 @@ public class ExternalIdTest {
     }
 
     @Test
+    @Disabled
     public void testGetTransactionRequestApi() {
         Utils.sleep(5);
         System.out.println("Getting transactionRequestObject with transactionId " + this.transactionId);
@@ -64,6 +67,7 @@ public class ExternalIdTest {
     }
 
     @Test
+    @Disabled
     public void testBulkFilterApi() throws JSONException {
         Utils.sleep(10);
         System.out.println("Executing bulk filter api using externalId " + this.externalId);

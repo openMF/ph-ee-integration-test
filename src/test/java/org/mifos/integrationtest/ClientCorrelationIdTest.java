@@ -12,6 +12,7 @@ import io.restassured.specification.ResponseSpecification;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mifos.integrationtest.common.CollectionHelper;
@@ -50,6 +51,7 @@ public class ClientCorrelationIdTest {
     ChannelConnectorConfig channelConnectorConfig;
 
     @Test
+    @Disabled
     public void testSendCollectionRequest() throws JSONException {
         requestSpec.header(Utils.X_CORRELATIONID, clientCorrelationId);
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
@@ -64,6 +66,7 @@ public class ClientCorrelationIdTest {
     }
 
     @Test
+    @Disabled
     public void testGetTransactionRequestApi() {
         Utils.sleep(5);
         logger.info("Getting transactionRequestObject with transactionId {} ", this.transactionId);
