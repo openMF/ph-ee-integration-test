@@ -1,4 +1,4 @@
-@govtodo
+@gov
 Feature: Mock Flow Test
 
 
