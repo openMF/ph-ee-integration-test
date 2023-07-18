@@ -1,4 +1,4 @@
-@gov
+@govtodo
 Feature: Batch Details API test
 
   Scenario: Batch transactions API Test
