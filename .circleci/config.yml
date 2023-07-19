@@ -61,7 +61,7 @@ jobs:
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - run: ./gradlew test -Dcucumber.filter.tags="@gov" --info
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
@@ -70,7 +70,7 @@ jobs:
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: ./gradlew test -Dcucumber.filter.tags="@amsIntegration"
+      - run: ./gradlew test -Dcucumber.filter.tags="@amsIntegration" --info
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
 workflows:
