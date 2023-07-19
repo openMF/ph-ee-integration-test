@@ -61,9 +61,9 @@ jobs:
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - run: ./gradlew test -Dcucumber.filter.tags="@gov" 
       - store_test_results:
-          path: ph-ee-integration-test/build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
 workflows:
   deploy:
     jobs:
