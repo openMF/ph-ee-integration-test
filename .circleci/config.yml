@@ -59,6 +59,7 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0.0
     steps:
+      - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
       - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags="@gov" 
       - store_test_results:
