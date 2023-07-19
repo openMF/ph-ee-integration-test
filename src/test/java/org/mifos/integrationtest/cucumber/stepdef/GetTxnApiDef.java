@@ -60,7 +60,9 @@ public class GetTxnApiDef extends BaseStepDef {
     @And("I should have startedAt and completedAt in response")
     public void checkDate() {
         assertThat(BaseStepDef.response).containsMatch("startedAt");
+        logger.info("started at : {}");
         assertThat(BaseStepDef.response).containsMatch("completedAt");
+        logger.info("completed at : {}");
     }
 
     @And("I call collection api with expected status {int}")
