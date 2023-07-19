@@ -37,9 +37,14 @@ public class MockFlowTestDef extends BaseStepDef {
 
     @And("I should have PayerFspId as not null")
     public void iShouldHavePayerFspIdAsNotNull() throws JSONException {
+        logger.info("1");
         assert BaseStepDef.response.contains("payerFspId");
+        logger.info("2");
         JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+        logger.info("3");
         JSONArray jsonArray = (JSONArray) jsonObject.get("content");
+        logger.info("4");
+
         JSONObject content = (JSONObject) jsonArray.get(0);
         String value = content.get("payerDfspId").toString();
         assert value != null;
