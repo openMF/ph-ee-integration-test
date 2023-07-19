@@ -13,6 +13,8 @@ import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import static com.google.common.truth.Truth.assertThat;
+
 public class MockFlowTestDef extends BaseStepDef {
 
     @Value("${operations-app.auth.enabled}")
@@ -38,7 +40,8 @@ public class MockFlowTestDef extends BaseStepDef {
     @And("I should have PayerFspId as not null")
     public void iShouldHavePayerFspIdAsNotNull() throws JSONException {
         logger.info("1");
-        assert BaseStepDef.response.contains("payerFspId");
+//        assert BaseStepDef.response.contains("payerFspId");
+        assertThat(BaseStepDef.response).contains("payerFspId");
         logger.info("2");
         JSONObject jsonObject = new JSONObject(BaseStepDef.response);
         logger.info("3");
@@ -47,7 +50,8 @@ public class MockFlowTestDef extends BaseStepDef {
 
         JSONObject content = (JSONObject) jsonArray.get(0);
         String value = content.get("payerDfspId").toString();
-        assert value != null;
+//        assert value != null;
+        assertThat(value).isNotNull();
     }
 
     @When("I call the get txn API with expected status of {int} and txnId")
