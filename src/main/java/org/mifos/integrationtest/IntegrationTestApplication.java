@@ -21,5 +21,6 @@ public class IntegrationTestApplication {
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
+    //test
 
 }
