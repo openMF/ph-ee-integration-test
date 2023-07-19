@@ -1,6 +1,5 @@
-@gov
+@govtodo
 Feature: Mock Flow Test
-
 
   Scenario: Test for minimal mock fund transfer flow
     Given I have tenant as "rhino"
