@@ -98,6 +98,6 @@ kong:
   header:
     apikey: "X-API-KEY"
   service:
-    host: "security-hello-world.dev1.8080.svc"
+    host: "ph-ee-connector-bulk.paymenthub.80.svc"
   route:
-    host: "hello-world.sandbox.fynarfin.io"
+    host: "bulk-connector.sandbox.fynarfin.io"

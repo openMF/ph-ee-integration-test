@@ -118,7 +118,7 @@ public class KongStepDef extends BaseStepDef {
         KongRoute route = new KongRoute();
         route.setId(UUID.randomUUID().toString());
         route.setName("name_"+route.getId());
-        route.setPaths(new ArrayList<>(){{ add("/"); }});
+        route.setPaths(new ArrayList<>(){{ add("/actuator/health/liveness"); }});
         route.setHosts(new ArrayList<>(){{ add(kongConfig.routeHost); }});
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
@@ -183,7 +183,7 @@ public class KongStepDef extends BaseStepDef {
                     .expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                     .when()
-                    .get().andReturn();
+                    .get("/actuator/health/liveness").andReturn();
             BaseStepDef.response = resp.asString();
 
             logger.debug("Status Code: {}", resp.getStatusCode());
