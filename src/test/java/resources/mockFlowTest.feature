@@ -1,4 +1,4 @@
-@govtodo
+@gov
 Feature: Mock Flow Test
 
   Scenario: Test for minimal mock fund transfer flow
