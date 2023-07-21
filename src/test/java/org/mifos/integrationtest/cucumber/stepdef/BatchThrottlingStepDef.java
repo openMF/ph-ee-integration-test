@@ -3,6 +3,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -14,8 +15,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.mifos.integrationtest.common.Batch;
+import org.mifos.integrationtest.common.BatchDTO;
 import org.mifos.integrationtest.common.BatchPage;
+import org.mifos.integrationtest.common.SubBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +31,7 @@ public class BatchThrottlingStepDef extends BaseStepDef {
 
     private boolean throttleConditionMet = true;
 
-    private List<Date> batchStartingTimes;
+    private List<SubBatchDetail> subBatchesDetailList;
 
     @Autowired
     private OperationsAppConfig operationsAppConfig;
@@ -37,34 +42,27 @@ public class BatchThrottlingStepDef extends BaseStepDef {
         assertThat(this.throttleTimeInSeconds).isGreaterThan(0);
     }
 
-    @Then("the start time for the sub batches are retrieved")
-    public void theStartTimeForTheSubBatchesAreRetrieved() {
-        List<Batch> batchList = null;
-        RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).
-                queryParam("batchId", batchId).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(operationsAppConfig.getAllBatchesEndpoint).andReturn().asString();
-
+    @And("I fetch sub batch details from the response")
+    public void iFetchSubBatchDetailsFromTheResponse() {
+        String response = BaseStepDef.response;
+        BatchDTO batchSummaryResponse;
         ObjectMapper objectMapper = new ObjectMapper();
+
         try {
-            BatchPage batchPage = objectMapper.readValue(response, new TypeReference<BatchPage>() {});
-            batchList = batchPage.getContent();
-        } catch (IOException e) {
+            batchSummaryResponse = objectMapper.readValue(response, BatchDTO.class);
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        batchStartingTimes = new ArrayList<>();
-        for (Batch batch : batchList) {
-            batchStartingTimes.add(batch.getStartedAt());
-        }
+        subBatchesDetailList = batchSummaryResponse.getSubBatchesDetail();
+        assertThat(subBatchesDetailList).isNotNull();
     }
 
     @And("the difference between start time of the consecutive sub batches should be greater than or equal to throttle configuration")
     public void theDifferenceBetweenStartTimeOfTheConsecutiveSubBatchesShouldBeGreaterThanOrEqualToThrottleConfiguration() {
-        for (int i = 0; i < batchStartingTimes.size() - 1; i++) {
-            Date currentBatchDate = batchStartingTimes.get(i);
-            Date nextBatchDate = batchStartingTimes.get(i + 1);
+        List<Date> subBatchStartedAtList = subBatchesDetailList.stream().map(SubBatchDetail::getStartedAt).toList();
+        for (int i = 0; i < subBatchesDetailList.size() - 1; i++) {
+            Date currentBatchDate = subBatchStartedAtList.get(i);
+            Date nextBatchDate = subBatchStartedAtList.get(i + 1);
 
             long differenceInSecs = findDifferenceBetweenDatesInSecs(currentBatchDate, nextBatchDate);
             throttleConditionMet = differenceInSecs < throttleTimeInSeconds;

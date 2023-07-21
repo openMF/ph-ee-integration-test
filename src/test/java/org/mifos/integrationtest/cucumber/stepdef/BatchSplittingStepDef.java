@@ -3,6 +3,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -27,7 +28,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mifos.integrationtest.common.Batch;
+import org.mifos.integrationtest.common.BatchDTO;
 import org.mifos.integrationtest.common.BatchPage;
+import org.mifos.integrationtest.common.SubBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,8 @@ public class BatchSplittingStepDef extends BaseStepDef {
 
     private int actualSubBatchCount;
 
+    private List<SubBatchDetail> subBatchesDetailList;
+
     @Autowired
     private BulkProcessorConfig bulkProcessorConfig;
 
@@ -54,12 +59,38 @@ public class BatchSplittingStepDef extends BaseStepDef {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource(filename);
         assertThat(filename).isNotEmpty();
-        logger.info("Successful");
     }
 
     @And("the system has a configured sub batch size of {int} transactions")
     public void setSubBatchSize(int subBatchSize) {
         this.subBatchSize = subBatchSize;
+    }
+
+    @And("I fetch batch ID from batch transaction API's response")
+    public void iFetchBatchIDFromBatchTransactionAPISResponse() {
+        BaseStepDef.batchId = fetchBatchId(BaseStepDef.response);
+        logger.info("batchId: {}", batchId);
+        assertThat(batchId).isNotEmpty();
+    }
+
+    @And("I fetch sub batch details from batch summary API response")
+    public void iFetchSubBatchDetailsFromBatchSummaryAPIResponse() {
+        String response = BaseStepDef.response;
+        BatchDTO batchSummaryResponse;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            batchSummaryResponse = objectMapper.readValue(response, BatchDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        subBatchesDetailList = batchSummaryResponse.getSubBatchesDetail();
+        assertThat(subBatchesDetailList).isNotNull();
+    }
+
+    @And("the expected sub batch count is equal to actual sub batch count")
+    public void theExpectedSubBatchCountIsEqualToActualSubBatchCount() {
+        assertThat(subBatchesDetailList.size()).isGreaterThan(1);
     }
 
     @When("the batch transaction API is initiated with the uploaded file")
