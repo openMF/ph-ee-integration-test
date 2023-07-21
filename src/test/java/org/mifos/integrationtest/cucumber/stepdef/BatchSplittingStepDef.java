@@ -33,13 +33,8 @@ import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 public class BatchSplittingStepDef extends BaseStepDef {
 
     private int subBatchSize;
+
     private int totalTransactionCount;
-    private String firstTransactionSubbatchId;
-    private String lastTransactionSubbatchId;
-
-    private String firstTxnRequestId;
-
-    private String lastTxnRequestId;
 
     private int expectedSubBatchCount;
 
@@ -49,7 +44,7 @@ public class BatchSplittingStepDef extends BaseStepDef {
     public void theCsvFileIsAvailable(String fileName) {
         BaseStepDef.filename = fileName;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL resource = classLoader.getResource(filename);
+//        URL resource = classLoader.getResource(filename);
         assertThat(filename).isNotEmpty();
     }
 

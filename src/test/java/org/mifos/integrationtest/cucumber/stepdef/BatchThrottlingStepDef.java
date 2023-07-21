@@ -7,20 +7,13 @@ import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.mifos.integrationtest.common.Batch;
 import org.mifos.integrationtest.common.BatchPage;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.StringJoiner;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
@@ -29,15 +22,7 @@ public class BatchThrottlingStepDef extends BaseStepDef {
 
     private int throttleTimeInSeconds;
 
-    private long startTimeOfSecondSubBatch;
-
-    private boolean fooBar = true;
-
-    private long startTimeOfFirstSubBatch;
-
-    private String firstBatchFirstTxn;
-
-    private String secondBatchFirstTxn;
+    private boolean throttleConditionMet = true;
 
     private List<Date> batchStartingTimes;
 
@@ -81,20 +66,19 @@ public class BatchThrottlingStepDef extends BaseStepDef {
             Date nextBatchDate = batchStartingTimes.get(i+1);
 
             long differenceInSecs = findDifferenceBetweenDatesInSecs(currentBatchDate, nextBatchDate);
+            throttleConditionMet = differenceInSecs < throttleTimeInSeconds;
 
-            if(differenceInSecs < throttleTimeInSeconds){
-                fooBar = false;
+            if(!throttleConditionMet){
                 break;
             }
         }
 
-        assertThat(fooBar).isTrue();
+        assertThat(throttleConditionMet).isTrue();
     }
 
     private long findDifferenceBetweenDatesInSecs(Date currentBatchDate, Date nextBatchDate) {
         long currentBatchTimeInMillis = currentBatchDate.getTime();
         long nextBatchTimeInMillis = nextBatchDate.getTime();
-
         return (nextBatchTimeInMillis - currentBatchTimeInMillis)/1000;
     }
 }
