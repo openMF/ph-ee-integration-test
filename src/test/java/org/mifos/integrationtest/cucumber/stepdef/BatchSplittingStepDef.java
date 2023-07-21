@@ -28,6 +28,9 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.mifos.integrationtest.common.Batch;
 import org.mifos.integrationtest.common.BatchPage;
+import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.OperationsAppConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BatchSplittingStepDef extends BaseStepDef {
 
@@ -38,6 +41,12 @@ public class BatchSplittingStepDef extends BaseStepDef {
     private int expectedSubBatchCount;
 
     private int actualSubBatchCount;
+
+    @Autowired
+    private BulkProcessorConfig bulkProcessorConfig;
+
+    @Autowired
+    private OperationsAppConfig operationsAppConfig;
 
     @Given("the csv file {string} is available")
     public void theCsvFileIsAvailable(String fileName) {
@@ -62,9 +71,9 @@ public class BatchSplittingStepDef extends BaseStepDef {
 
         String fileContent = getFileContent(filename);
         RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec).baseUri("http://localhost:5002").multiPart(getMultiPart(fileContent))
+        String response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).multiPart(getMultiPart(fileContent))
                 .queryParam("type", "csv").headers(headers).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post("/batchtransactions").andReturn().asString();
+                .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
         batchId = fetchBatchId(response);
         logger.info("Batch transaction API response: " + response);
@@ -83,8 +92,10 @@ public class BatchSplittingStepDef extends BaseStepDef {
         headers.put("batchId", batchId);
 
         RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec).baseUri("http://localhost:8080").queryParam("batchId", batchId).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get("/api/v1/batches").andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint)
+                .queryParam("batchId", batchId).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .get(operationsAppConfig.getAllBatchesEndpoint).andReturn().asString();
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {

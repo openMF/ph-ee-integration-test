@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.List;
 import org.mifos.integrationtest.common.Batch;
 import org.mifos.integrationtest.common.BatchPage;
+import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.OperationsAppConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class BatchThrottlingStepDef extends BaseStepDef {
 
@@ -24,6 +27,9 @@ public class BatchThrottlingStepDef extends BaseStepDef {
     private boolean throttleConditionMet = true;
 
     private List<Date> batchStartingTimes;
+
+    @Autowired
+    private OperationsAppConfig operationsAppConfig;
 
     @And("the system has a configured throttle time of {int} seconds")
     public void theSystemHasAConfiguredThrottleTimeOfSeconds(int throttleTimeInSeconds) {
@@ -35,8 +41,10 @@ public class BatchThrottlingStepDef extends BaseStepDef {
     public void theStartTimeForTheSubBatchesAreRetrieved() {
         List<Batch> batchList = null;
         RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec).baseUri("http://localhost:8080").queryParam("batchId", batchId).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get("/api/v1/batches").andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).
+                queryParam("batchId", batchId).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .get(operationsAppConfig.getAllBatchesEndpoint).andReturn().asString();
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -65,7 +73,6 @@ public class BatchThrottlingStepDef extends BaseStepDef {
                 break;
             }
         }
-
         assertThat(throttleConditionMet).isTrue();
     }
 
