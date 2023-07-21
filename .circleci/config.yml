@@ -61,7 +61,7 @@ jobs:
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
@@ -93,7 +93,7 @@ workflows:
       - test-chart-gov:
           requires:
             - upgrade-helm-chart
-          context: 
+          context:
             - AWS
             - Helm
             - slack

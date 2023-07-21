@@ -15,8 +15,8 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
-import org.mifos.integrationtest.common.Utils;
 import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
+import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +82,7 @@ public class GSMATransferStepDef {
         logger.info("Savings Account Response: " + gsmaTransferDef.responseSavingsAccount);
         assertThat(gsmaTransferDef.responseSavingsAccount).isNotEmpty();
     }
+
     @Then("I call the interop identifier endpoint")
     public void callCreateInteropIdentifierEndpoint() throws JsonProcessingException {
         // Setting headers and body
@@ -89,20 +90,17 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.interopIdentifierBody = gsmaTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
         String payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}",
+                "ACCOUNT_ID");
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}",
+                payer_identifier);
         // Calling Interop Identifier endpoint
-        gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
-                .baseUri(gsmaConfig.savingsBaseUrl)
-                .body(gsmaTransferDef.interopIdentifierBody)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(gsmaConfig.interopIdentifierEndpoint)
-                .andReturn().asString();
+        gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
+                .body(gsmaTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(gsmaConfig.interopIdentifierEndpoint).andReturn().asString();
 
         logger.info("Interop Identifier Response: " + gsmaTransferDef.responseInteropIdentifier);
         assertThat(gsmaTransferDef.responseInteropIdentifier).isNotEmpty();
@@ -116,9 +114,10 @@ public class GSMATransferStepDef {
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsApproveBody = gsmaTransferDef.setBodySavingsApprove();
         // Setting account ID in path
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsApprove = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -135,10 +134,11 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsActivateBody = gsmaTransferDef.setBodySavingsActivate();
-        //Setting account ID
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsActivateEndpoint = gsmaConfig.savingsActivateEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        // Setting account ID
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+        gsmaConfig.savingsActivateEndpoint = gsmaConfig.savingsActivateEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -155,10 +155,11 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.savingsDepositAccountBody = gsmaTransferDef.setSavingsDepositAccount(amount);
-        //Setting account ID
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsDepositAccountEndpoint = gsmaConfig.savingsDepositAccountEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        // Setting account ID
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+        gsmaConfig.savingsDepositAccountEndpoint = gsmaConfig.savingsDepositAccountEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
 
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsDepositAccount = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
@@ -206,9 +207,9 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanApproveBody = gsmaTransferDef.setBodyLoanApprove(amount);
-        //Setting account ID
-        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
+        // Setting account ID
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(gsmaTransferDef.responseLoanAccount,
+                PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
         gsmaConfig.loanApproveEndpoint = gsmaConfig.loanApproveEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
@@ -226,9 +227,9 @@ public class GSMATransferStepDef {
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         gsmaTransferDef.loanDisburseBody = gsmaTransferDef.setBodyLoanDisburse(amount);
-        //Setting account ID
-        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
+        // Setting account ID
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(gsmaTransferDef.responseLoanAccount,
+                PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
         gsmaConfig.loanDisburseEndpoint = gsmaConfig.loanDisburseEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
@@ -246,9 +247,9 @@ public class GSMATransferStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.loanRepaymentBody = gsmaTransferDef.setBodyLoanRepayment(String.valueOf(amount));
-        //Setting account ID
-        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseLoanAccount, PostSelfLoansLoanIdResponse.class);
+        // Setting account ID
+        PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(gsmaTransferDef.responseLoanAccount,
+                PostSelfLoansLoanIdResponse.class);
         String loanId = Integer.toString(loanAccountResponse.getLoanId());
         String loanAccountId = String.format("%0" + (9 - loanId.length()) + "d%s", 0, loanId);
         gsmaConfig.loanRepaymentEndpoint = gsmaConfig.loanRepaymentEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);

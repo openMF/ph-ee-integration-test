@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
 
-
     @Autowired
     ObjectMapper objectMapper;
 
