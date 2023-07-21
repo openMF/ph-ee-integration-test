@@ -1,23 +1,37 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import io.restassured.RestAssured;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.specification.RequestSpecification;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.mifos.integrationtest.common.Batch;
+import org.mifos.integrationtest.common.BatchPage;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.StringJoiner;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 public class BatchThrottlingStepDef extends BaseStepDef {
 
     private int throttleTimeInSeconds;
+
     private long startTimeOfSecondSubBatch;
+
+    private boolean fooBar = true;
 
     private long startTimeOfFirstSubBatch;
 
@@ -25,65 +39,62 @@ public class BatchThrottlingStepDef extends BaseStepDef {
 
     private String secondBatchFirstTxn;
 
+    private List<Date> batchStartingTimes;
+
     @And("the system has a configured throttle time of {int} seconds")
     public void theSystemHasAConfiguredThrottleTimeOfSeconds(int throttleTimeInSeconds) {
         this.throttleTimeInSeconds = throttleTimeInSeconds;
         assertThat(this.throttleTimeInSeconds).isGreaterThan(0);
     }
 
-    @And("the first transactions are fetched from consecutive sub batches based on sub batch size of {int} transactions")
-    public void theFirstTransactionsAreFetchedFromConsecutiveSubBatchesBasedOnSubBatchSizeOfTransactions(int batchSize) {
-        String fileContent = getFileContent(filename);
-        String[] firstTxnFromFirstAndSecondSubBatch = getFirstTxnFromFirstAndSecondSubBatch(fileContent, batchSize);
-        firstBatchFirstTxn = firstTxnFromFirstAndSecondSubBatch[0];
-        secondBatchFirstTxn = firstTxnFromFirstAndSecondSubBatch[1];
-    }
+    @Then("the start time for the sub batches are retrieved")
+    public void theStartTimeForTheSubBatchesAreRetrieved() {
+        List<Batch> batchList = null;
+        RequestSpecification requestSpec = getDefaultSpec();
+        String response = RestAssured.given(requestSpec)
+                .baseUri("http://localhost:8080")
+                .queryParam("batchId", batchId)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                .when()
+                .get("/api/v1/batches")
+                .andReturn().asString();
 
-    private String[] getFirstTxnFromFirstAndSecondSubBatch(String fileContent, int batchSize){
-        String[] csvRecords = fileContent.split("\n");
-
-        String firstBatchFirstTxnRecord = csvRecords[1];
-        String secondBatchFirstTxnRecord = csvRecords[1+batchSize];
-
-        String[] firstBatchFirstTxnRecordValues = firstBatchFirstTxnRecord.split(",");
-        String[] secondBatchFirstTxnRecordValues = secondBatchFirstTxnRecord.split(",");
-
-        return new String[]{firstBatchFirstTxnRecordValues[1], secondBatchFirstTxnRecordValues[1]};
-    }
-
-    @Then("the start time for the consecutive sub batch IDs are retrieved")
-    public void theStartTimeForTheConsecutiveSubBatchIDsAreRetrieved() {
-
-    }
-
-    @And("the difference between start time of first sub batch and second sub batch should be greater than or equal to throttle configuration")
-    public void theDifferenceBetweenStartTimeOfFirstSubBatchAndSecondSubBatchShouldBeGreaterThanOrEqualToThrottleConfiguration() {
-        long timeGapBetweenTwoSubBatches = startTimeOfSecondSubBatch - startTimeOfFirstSubBatch;
-        assertThat(timeGapBetweenTwoSubBatches).isGreaterThan(throttleTimeInSeconds*1000);
-    }
-
-    // Helper method to get the current time in milliseconds
-    private long getCurrentTime() {
-        return System.currentTimeMillis();
-    }
-
-    private String getFileContent(String filePath) {
-        File file = new File(filePath);
-        Reader reader;
-        CSVFormat csvFormat;
-        CSVParser csvParser = null;
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            reader = new FileReader(file);
-            csvFormat = CSVFormat.DEFAULT.withDelimiter(',');
-            csvParser = new CSVParser(reader, csvFormat);
+            BatchPage batchPage = objectMapper.readValue(response, new TypeReference<BatchPage>(){});
+            batchList = batchPage.getContent();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        StringJoiner stringJoiner = new StringJoiner("\n");
 
-        for (CSVRecord csvRecord : csvParser) {
-            stringJoiner.add(csvRecord.toString());
+        batchStartingTimes = new ArrayList<>();
+        for(Batch batch : batchList){
+            batchStartingTimes.add(batch.getStartedAt());
         }
-        return stringJoiner.toString();
+    }
+
+    @And("the difference between start time of the consecutive sub batches should be greater than or equal to throttle configuration")
+    public void theDifferenceBetweenStartTimeOfTheConsecutiveSubBatchesShouldBeGreaterThanOrEqualToThrottleConfiguration() {
+        for(int i =0; i<batchStartingTimes.size()-1; i++){
+            Date currentBatchDate = batchStartingTimes.get(i);
+            Date nextBatchDate = batchStartingTimes.get(i+1);
+
+            long differenceInSecs = findDifferenceBetweenDatesInSecs(currentBatchDate, nextBatchDate);
+
+            if(differenceInSecs < throttleTimeInSeconds){
+                fooBar = false;
+                break;
+            }
+        }
+
+        assertThat(fooBar).isTrue();
+    }
+
+    private long findDifferenceBetweenDatesInSecs(Date currentBatchDate, Date nextBatchDate) {
+        long currentBatchTimeInMillis = currentBatchDate.getTime();
+        long nextBatchTimeInMillis = nextBatchDate.getTime();
+
+        return (nextBatchTimeInMillis - currentBatchTimeInMillis)/1000;
     }
 }

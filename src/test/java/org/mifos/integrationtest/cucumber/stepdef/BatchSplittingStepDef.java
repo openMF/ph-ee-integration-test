@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,6 +14,8 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.mifos.integrationtest.common.Batch;
+import org.mifos.integrationtest.common.BatchPage;
 
 import java.io.File;
 import java.io.FileReader;
@@ -19,6 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -27,14 +32,18 @@ import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 public class BatchSplittingStepDef extends BaseStepDef {
 
-    private int subbatchSize;
-    private int totalTransactions;
+    private int subBatchSize;
+    private int totalTransactionCount;
     private String firstTransactionSubbatchId;
     private String lastTransactionSubbatchId;
 
     private String firstTxnRequestId;
 
     private String lastTxnRequestId;
+
+    private int expectedSubBatchCount;
+
+    private int actualSubBatchCount;
 
     @Given("the csv file {string} is available")
     public void theCsvFileIsAvailable(String fileName) {
@@ -44,20 +53,9 @@ public class BatchSplittingStepDef extends BaseStepDef {
         assertThat(filename).isNotEmpty();
     }
 
-    @And("the system has a configured subbatch size of {int} transactions")
-    public void setSubbatchSize(int subbatchSize) {
-        this.subbatchSize = subbatchSize;
-    }
-
-    @And("the first and last transactions from the CSV file are fetched")
-    public void theFirstAndLastTransactionsFromTheCSVFileAreFetched() {
-        String fileContent = getFileContent(filename);
-        logger.info(fileContent);
-        String[] firstAndLastTxnRequestIds = fetchRequestIdFromCsvString(fileContent);
-        firstTxnRequestId = firstAndLastTxnRequestIds[0];
-        lastTxnRequestId = firstAndLastTxnRequestIds[1];
-        assertThat(firstTxnRequestId).isNotEmpty();
-        assertThat(lastTxnRequestId).isNotEmpty();
+    @And("the system has a configured sub batch size of {int} transactions")
+    public void setSubBatchSize(int subBatchSize) {
+        this.subBatchSize = subBatchSize;
     }
 
     @When("the batch transaction API is initiated with the uploaded file")
@@ -70,7 +68,6 @@ public class BatchSplittingStepDef extends BaseStepDef {
 
         String fileContent = getFileContent(filename);
         RequestSpecification requestSpec = getDefaultSpec();
-
         String response = RestAssured.given(requestSpec)
                 .baseUri("http://localhost:5002")
                 .multiPart(getMultiPart(fileContent))
@@ -86,24 +83,42 @@ public class BatchSplittingStepDef extends BaseStepDef {
         logger.info("Batch transaction API response: " + response);
     }
 
-    @Then("the sub batch IDs for the given request ID are retrieved")
-    public void theSubBatchIDsForTheGivenRequestIDAreRetrieved() {
+    @And("the expected sub batch count is calculated")
+    public void theExpectedSubBatchCountIsCalculated() {
+        expectedSubBatchCount = totalTransactionCount % subBatchSize == 0 ?
+                totalTransactionCount/subBatchSize : (totalTransactionCount/subBatchSize) + 1;
     }
 
-    @And("the sub batch IDs for the first and last transactions should be different")
-    public void theSubBatchIDsForTheFirstAndLastTransactionsShouldBeDifferent() {
-        assertThat(firstTransactionSubbatchId).isNotEqualTo(lastTransactionSubbatchId);
+    @Then("the actual sub batch count is calculated from the response")
+    public void theActualSubBatchCountIsCalculatedFromTheResponse() {
+        List<Batch> batchList = null;
+        Map<String, String> headers = new HashMap<>();
+        headers.put("batchId", batchId);
+
+        RequestSpecification requestSpec = getDefaultSpec();
+        String response = RestAssured.given(requestSpec)
+                .baseUri("http://localhost:8080")
+                .queryParam("batchId", batchId)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                .when()
+                .get("/api/v1/batches")
+                .andReturn().asString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            BatchPage batchPage = objectMapper.readValue(response, new TypeReference<BatchPage>(){});
+            batchList = batchPage.getContent();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        actualSubBatchCount = batchList.size();
     }
 
-    private String[] fetchRequestIdFromCsvString(String fileContent) {
-        String[] csvRecords = fileContent.split("\n");
-        String firstCsvRecord = csvRecords[1];
-        String lastCsvRecord = csvRecords[csvRecords.length-1];
-        String[] firstCsvRecordValues = firstCsvRecord.split(",");
-        String[] secondCsvRecordValues = lastCsvRecord.split(",");
-        String firstTxnRequestId =  firstCsvRecordValues[1];
-        String lastTxnRequestId = secondCsvRecordValues[1];
-        return new String[]{firstTxnRequestId, lastTxnRequestId};
+    @And("the expected sub batch count and actual sub batch count should be equal")
+    public void theExpectedSubBatchCountAndActualSubBatchCountShouldBeEqual() {
+        assertThat(actualSubBatchCount).isEqualTo(expectedSubBatchCount);
     }
 
     private MultiPartSpecification getMultiPart(String fileContent) {
@@ -133,9 +148,12 @@ public class BatchSplittingStepDef extends BaseStepDef {
         }
         StringJoiner stringJoiner = new StringJoiner("\n");
 
+        int count = 0;
         for (CSVRecord csvRecord : csvParser) {
             stringJoiner.add(csvRecord.toString());
+            count++;
         }
+        totalTransactionCount = count;
         return stringJoiner.toString();
     }
 }

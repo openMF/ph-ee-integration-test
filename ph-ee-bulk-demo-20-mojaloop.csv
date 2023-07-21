@@ -1,0 +1,23 @@
+id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
+0,a1e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+1,a2e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+2,a3e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+3,a4e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+4,a5e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+5,a6e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+6,a7e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+7,a8e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+8,a9e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+9,b1e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+10,b2e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+11,b3e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+12,b4e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+13,b5e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+14,b6e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+15,b7e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+16,b8e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+17,b9e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+18,c1e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+19,c2e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+20,c3e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+21,c4e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
