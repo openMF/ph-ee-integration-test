@@ -54,6 +54,7 @@ public class BatchSplittingStepDef extends BaseStepDef {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource(filename);
         assertThat(filename).isNotEmpty();
+        logger.info("Successful");
     }
 
     @And("the system has a configured sub batch size of {int} transactions")

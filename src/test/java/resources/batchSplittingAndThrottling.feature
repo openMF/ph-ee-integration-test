@@ -2,7 +2,7 @@
 Feature: Batch splitting and throttling
 
   Scenario: Verify splitting of batch into sub batches based on transaction count
-    Given the csv file "ph-ee-bulk-demo-20.csv" is available
+    Given the csv file "ph-ee-bulk-demo-20-mojaloop.csv" is available
     And I have tenant as "gorilla"
     And the system has a configured sub batch size of 5 transactions
     When the batch transaction API is initiated with the uploaded file
