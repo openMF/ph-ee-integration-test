@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -11,12 +14,6 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.MultiPartSpecification;
 import io.restassured.specification.RequestSpecification;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.mifos.integrationtest.common.Batch;
-import org.mifos.integrationtest.common.BatchPage;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,9 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.mifos.integrationtest.common.Batch;
+import org.mifos.integrationtest.common.BatchPage;
 
 public class BatchSplittingStepDef extends BaseStepDef {
 
@@ -44,7 +43,7 @@ public class BatchSplittingStepDef extends BaseStepDef {
     public void theCsvFileIsAvailable(String fileName) {
         BaseStepDef.filename = fileName;
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//        URL resource = classLoader.getResource(filename);
+        URL resource = classLoader.getResource(filename);
         assertThat(filename).isNotEmpty();
     }
 
@@ -63,16 +62,9 @@ public class BatchSplittingStepDef extends BaseStepDef {
 
         String fileContent = getFileContent(filename);
         RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec)
-                .baseUri("http://localhost:5002")
-                .multiPart(getMultiPart(fileContent))
-                .queryParam("type", "csv")
-                .headers(headers)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post("/batchtransactions")
-                .andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri("http://localhost:5002").multiPart(getMultiPart(fileContent))
+                .queryParam("type", "csv").headers(headers).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post("/batchtransactions").andReturn().asString();
 
         batchId = fetchBatchId(response);
         logger.info("Batch transaction API response: " + response);
@@ -80,8 +72,8 @@ public class BatchSplittingStepDef extends BaseStepDef {
 
     @And("the expected sub batch count is calculated")
     public void theExpectedSubBatchCountIsCalculated() {
-        expectedSubBatchCount = totalTransactionCount % subBatchSize == 0 ?
-                totalTransactionCount/subBatchSize : (totalTransactionCount/subBatchSize) + 1;
+        expectedSubBatchCount = totalTransactionCount % subBatchSize == 0 ? totalTransactionCount / subBatchSize
+                : (totalTransactionCount / subBatchSize) + 1;
     }
 
     @Then("the actual sub batch count is calculated from the response")
@@ -91,18 +83,12 @@ public class BatchSplittingStepDef extends BaseStepDef {
         headers.put("batchId", batchId);
 
         RequestSpecification requestSpec = getDefaultSpec();
-        String response = RestAssured.given(requestSpec)
-                .baseUri("http://localhost:8080")
-                .queryParam("batchId", batchId)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .get("/api/v1/batches")
-                .andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri("http://localhost:8080").queryParam("batchId", batchId).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get("/api/v1/batches").andReturn().asString();
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            BatchPage batchPage = objectMapper.readValue(response, new TypeReference<BatchPage>(){});
+            BatchPage batchPage = objectMapper.readValue(response, new TypeReference<BatchPage>() {});
             batchList = batchPage.getContent();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -117,11 +103,7 @@ public class BatchSplittingStepDef extends BaseStepDef {
     }
 
     private MultiPartSpecification getMultiPart(String fileContent) {
-        return new MultiPartSpecBuilder(fileContent.getBytes()).
-                fileName("test.csv").
-                controlName("file").
-                mimeType("text/plain").
-                build();
+        return new MultiPartSpecBuilder(fileContent.getBytes()).fileName("test.csv").controlName("file").mimeType("text/plain").build();
     }
 
     private String fetchBatchId(String response) {

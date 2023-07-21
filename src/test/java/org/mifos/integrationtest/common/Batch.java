@@ -44,8 +44,7 @@ public class Batch {
 
     private String paymentMode;
 
-    public Batch() {
-    }
+    public Batch() {}
 
     public Batch(Long workflowInstanceKey) {
         this.workflowInstanceKey = workflowInstanceKey;
@@ -211,4 +210,3 @@ public class Batch {
         this.paymentMode = mode;
     }
 }
-
