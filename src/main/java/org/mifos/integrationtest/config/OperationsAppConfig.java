@@ -19,9 +19,6 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.batch-details}")
     public String batchDetailsEndpoint;
 
-    @Value("${operations-app.endpoints.get-all-batches}")
-    public String getAllBatchesEndpoint;
-
     @Value("${operations-app.endpoints.auth}")
     public String authEndpoint;
 

@@ -1,29 +1,16 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
-import io.restassured.RestAssured;
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.specification.RequestSpecification;
-import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.mifos.integrationtest.common.Batch;
 import org.mifos.integrationtest.common.BatchDTO;
-import org.mifos.integrationtest.common.BatchPage;
 import org.mifos.integrationtest.common.SubBatchDetail;
-import org.mifos.integrationtest.config.BulkProcessorConfig;
-import org.mifos.integrationtest.config.OperationsAppConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class BatchThrottlingStepDef extends BaseStepDef {
 
@@ -32,9 +19,6 @@ public class BatchThrottlingStepDef extends BaseStepDef {
     private boolean throttleConditionMet = true;
 
     private List<SubBatchDetail> subBatchesDetailList;
-
-    @Autowired
-    private OperationsAppConfig operationsAppConfig;
 
     @And("the system has a configured throttle time of {int} seconds")
     public void theSystemHasAConfiguredThrottleTimeOfSeconds(int throttleTimeInSeconds) {
