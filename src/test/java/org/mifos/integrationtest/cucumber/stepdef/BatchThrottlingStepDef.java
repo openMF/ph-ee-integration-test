@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,11 +45,12 @@ public class BatchThrottlingStepDef extends BaseStepDef {
 
     @And("the difference between start time of the consecutive sub batches should be greater than or equal to throttle configuration")
     public void theDifferenceBetweenStartTimeOfTheConsecutiveSubBatchesShouldBeGreaterThanOrEqualToThrottleConfiguration() {
-        List<Date> subBatchStartedAtList = subBatchesDetailList.stream().map(SubBatchDetail::getStartedAt).toList();
+        List<Date> subBatchStartedAtList = fetchStartingTimeOfAllSubBatches();
+        Collections.sort(subBatchStartedAtList);
+
         for (int i = 0; i < subBatchesDetailList.size() - 1; i++) {
             Date currentBatchDate = subBatchStartedAtList.get(i);
             Date nextBatchDate = subBatchStartedAtList.get(i + 1);
-
             long differenceInSecs = findDifferenceBetweenDatesInSecs(currentBatchDate, nextBatchDate);
             throttleConditionMet = differenceInSecs < throttleTimeInSeconds;
 
@@ -56,6 +59,10 @@ public class BatchThrottlingStepDef extends BaseStepDef {
             }
         }
         assertThat(throttleConditionMet).isTrue();
+    }
+
+    private List<Date> fetchStartingTimeOfAllSubBatches(){
+        return new ArrayList<>(subBatchesDetailList.stream().map(SubBatchDetail::getStartedAt).toList());
     }
 
     private long findDifferenceBetweenDatesInSecs(Date currentBatchDate, Date nextBatchDate) {

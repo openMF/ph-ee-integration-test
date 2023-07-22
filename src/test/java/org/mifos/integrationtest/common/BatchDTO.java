@@ -59,6 +59,8 @@ public class BatchDTO {
         this.successPercentage = successPercentage;
     }
 
+    public BatchDTO(){}
+
     public BatchDTO(String batchId, String requestId, Long totalTransactions, Long ongoing, Long failed, Long completed, BigDecimal total_amount, BigDecimal completed_amount, BigDecimal ongoing_amount, BigDecimal failed_amount, String result_file, String note, String failPercentage, String successPercentage, List<SubBatchDetail> subBatchesDetail) {
         this.batch_id = batchId;
         this.request_id = requestId;
