@@ -14,6 +14,7 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchSummaryResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.OperationsAppConfig;
@@ -110,11 +111,7 @@ public class BulkPaymentStepDef extends BaseStepDef {
             if(batchSummaryResponse.getTotal() != 0){
                 completionPercent = (int) (batchSummaryResponse.getSuccessful()/ batchSummaryResponse.getTotal() * 100);
             }
-            try {
-                Thread.sleep(intervalInSeconds * 1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            Utils.sleep(intervalInSeconds);
         }
     }
 

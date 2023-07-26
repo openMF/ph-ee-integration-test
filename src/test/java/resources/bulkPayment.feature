@@ -1,7 +1,6 @@
 @gov
 Feature: Test ability to make payment to individual with bank account
 
-
   Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given the CSV file is available
     When initiate the batch transaction API with the input CSV file with tenant as "gorilla"
