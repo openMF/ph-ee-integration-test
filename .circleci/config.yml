@@ -22,7 +22,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           extra-build-args: '--compress'
           push-image: true
-          region: ap-south-1
+          region: "$REGION"
           registry-id: AWS_REGISTRY_ID
           repo: phee-integration-test
           repo-scan-on-push: true
@@ -38,7 +38,7 @@ jobs:
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: "sit"
-          aws-region: "us-east-2"
+          aws-region: "$REGION"
       - helm/upgrade-helm-chart:
           chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
