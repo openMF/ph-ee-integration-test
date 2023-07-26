@@ -1,3 +1,4 @@
+@gov
 Feature: Batch Authorization Test
 
   Scenario: Batch Authorization API test
