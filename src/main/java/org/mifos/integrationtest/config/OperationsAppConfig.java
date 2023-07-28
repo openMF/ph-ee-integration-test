@@ -19,7 +19,7 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.batch-details}")
     public String batchDetailsEndpoint;
 
-    @Value("${operations-app.endpoints.batchAggregate}")
+    @Value("${operations-app.endpoints.batch-aggregate}")
     public String batchAggregateEndpoint;
 
     @Value("${operations-app.endpoints.auth}")
