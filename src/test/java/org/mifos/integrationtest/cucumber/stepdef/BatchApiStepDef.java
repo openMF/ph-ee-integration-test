@@ -377,6 +377,14 @@ public class BatchApiStepDef extends BaseStepDef {
         logger.info("Batch Aggregate Response: " + BaseStepDef.response);
     }
 
+    @And("I fetch batchId from response")
+    public void iFetchBatchIdFromResponse() {
+        assertThat(BaseStepDef.response).isNotEmpty();
+        BaseStepDef.batchId = fetchBatchId(BaseStepDef.response);
+        logger.info("batchId: {}", batchId);
+        assertThat(batchId).isNotEmpty();
+    }
+
     public void batchTearDown() {
         BaseStepDef.filename = null;
     }
@@ -402,5 +410,10 @@ public class BatchApiStepDef extends BaseStepDef {
         debitParties.add(new Party("accountNumber", "003001003879112168"));
         batchRequestDTO.setDebitParty(debitParties);
         return batchRequestDTO;
+    }
+
+    private String fetchBatchId(String response) {
+        String[] split = response.split(",");
+        return split[0].substring(31);
     }
 }
