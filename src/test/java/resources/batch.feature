@@ -15,10 +15,11 @@ Feature: Batch Details API test
     And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
   Scenario: Batch aggregate API Test
-    Given I have a batch id from previous scenario
+    Given I have the demo csv file "test.csv"
     And I have tenant as "gorilla"
     When I call the batch transactions endpoint with expected status of 200
     Then I should get non empty response
+    And I fetch batchId from response
     When I call the batch aggregate API with expected status of 200
     Then I should get non empty response
 

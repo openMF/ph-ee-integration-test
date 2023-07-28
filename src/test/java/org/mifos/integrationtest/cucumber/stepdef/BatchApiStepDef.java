@@ -208,4 +208,17 @@ public class BatchApiStepDef extends BaseStepDef {
                 .get(operationsAppConfig.batchAggregateEndpoint + BaseStepDef.batchId).andReturn().asString();
         logger.info("Batch Aggregate Response: " + BaseStepDef.response);
     }
+
+    @And("I fetch batchId from response")
+    public void iFetchBatchIdFromResponse() {
+        assertThat(BaseStepDef.response).isNotEmpty();
+        BaseStepDef.batchId = fetchBatchId(BaseStepDef.response);
+        logger.info("batchId: {}", batchId);
+        assertThat(batchId).isNotEmpty();
+    }
+
+    private String fetchBatchId(String response) {
+        String[] split = response.split(",");
+        return split[0].substring(31);
+    }
 }
