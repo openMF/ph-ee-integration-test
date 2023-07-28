@@ -366,6 +366,17 @@ public class BatchApiStepDef extends BaseStepDef {
         batchTearDown();
     }
 
+    @When("I call the batch aggregate API with expected status of {int}")
+    public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchAggregateEndpoint + BaseStepDef.batchId).andReturn().asString();
+        logger.info("Batch Aggregate Response: " + BaseStepDef.response);
+    }
+
     public void batchTearDown() {
         BaseStepDef.filename = null;
     }
