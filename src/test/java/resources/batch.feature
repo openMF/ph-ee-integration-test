@@ -14,6 +14,13 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
+  Scenario: Batch aggregate API Test
+    Given I have a batch id from previous scenario
+    And I have tenant as "gorilla"
+    When I call the batch transactions endpoint with expected status of 200
+    Then I should get non empty response
+    When I call the batch aggregate API with expected status of 200
+    Then I should get non empty response
 
   Scenario: Batch summary API Test
     Given I have a batch id from previous scenario
@@ -35,12 +42,11 @@ Feature: Batch Details API test
     When I call the batch details API with expected status of 200
     Then I should get non empty response
 
-
-    Scenario: Batch transaction API Test for Synchronous File Validation with empty file
-      Given I have tenant as "gorilla"
-      When I call the batch transactions endpoint with expected status of 400 without payload
-      Then I should get non empty response
-      And I should have "Error Information" and "File not uploaded" in response
+  Scenario: Batch transaction API Test for Synchronous File Validation with empty file
+    Given I have tenant as "gorilla"
+    When I call the batch transactions endpoint with expected status of 400 without payload
+    Then I should get non empty response
+    And I should have "Error Information" and "File not uploaded" in response
 
   Scenario: Batch transaction API Test for Synchronous File Validation with invalid file
     Given I have tenant as "gorilla"
