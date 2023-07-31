@@ -84,6 +84,8 @@ workflows:
           cluster-name: sit
           requires:
             - build
+          context:
+            - AWS
       # - install-helm-chart:
       #     cluster-name: sit
       # - delete-helm-release:
