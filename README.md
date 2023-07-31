@@ -124,6 +124,18 @@ Use below command to execute the integration test.
 ```
 Where `<cucumber tag>` has to be replaced with valid tag, for example if you are willing to run test cases related to g2p scenario then pass the tag `@gov`. If `-Dcucumber.filter.tags` flag is omitted then all the test cases would be triggered independent of the tag.
 
+# Checkstyle
+Use below command to execute the checkstyle test.
+```shell
+./gradlew checkstyleMain
+```
+
+## Spotless
+Use below command to execute the spotless apply.
+```shell
+./gradlew spotlessApply
+```
+
 ## FAQs
 1. How to make step def reusable?
 2. Order of execution of feature/steps?
