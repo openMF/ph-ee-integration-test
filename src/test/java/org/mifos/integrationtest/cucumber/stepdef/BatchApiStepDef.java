@@ -1,7 +1,10 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.*;
+import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
+import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
+import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
+import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
