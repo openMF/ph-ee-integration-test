@@ -122,5 +122,4 @@ public class BaseStepDef {
         String hashedData = SecurityUtil.hash(jwsDataToBeHashed);
         return SecurityUtil.encryptUsingPrivateKey(hashedData, BaseStepDef.privateKeyString);
     }
-
 }
