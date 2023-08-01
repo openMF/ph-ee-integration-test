@@ -1,11 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
-import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
-import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
-import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
-
+import static org.mifos.integrationtest.common.Utils.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,14 +18,14 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -79,6 +75,18 @@ public class BatchApiStepDef extends BaseStepDef {
         BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
     }
 
+    @And("I have the registeringInstituteId {string}")
+    public void setRegisteringInstituteId(String registeringInstituteId) {
+        BaseStepDef.registeringInstituteId = registeringInstituteId;
+        assertThat(BaseStepDef.registeringInstituteId).isNotNull();
+    }
+
+    @And("I have the programId {string}")
+    public void setProgramId(String programId) {
+        BaseStepDef.programId = programId;
+        assertThat(BaseStepDef.programId).isNotNull();
+    }
+
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
@@ -93,6 +101,26 @@ public class BatchApiStepDef extends BaseStepDef {
                 .get(operationsAppConfig.batchSummaryEndpoint + "?batchId=" + BaseStepDef.batchId).andReturn().asString();
 
         logger.info("Batch Summary Response: " + BaseStepDef.response);
+    }
+
+    @Then("I am able to parse batch summary response")
+    public void parseBatchSummaryResponse() {
+        BatchDTO batchDTO = null;
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response).isNotEmpty();
+        try {
+            batchDTO = objectMapper.readValue(BaseStepDef.response, BatchDTO.class);
+            BaseStepDef.batchDTO = batchDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertThat(BaseStepDef.batchDTO).isNotNull();
+    }
+
+    @And("Status of transaction is {string}")
+    public void checkIfCreatedAtIsNotNull(String status) {
+        assertThat(BaseStepDef.batchDTO).isNotNull();
+        assertThat(BaseStepDef.batchDTO.getStatus()).isEqualTo(status);
     }
 
     @When("I call the batch details API with expected status of {int}")
@@ -195,10 +223,15 @@ public class BatchApiStepDef extends BaseStepDef {
         if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
             requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
         }
+        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        }
 
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data").multiPart("data", f).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
@@ -210,7 +243,7 @@ public class BatchApiStepDef extends BaseStepDef {
             System.out.print(header.getName() + " : ");
             System.out.println(header.getValue());
         }
-        logger.info("Batch Details Response: " + BaseStepDef.response);
+        logger.info("Batch Transactions Response: " + BaseStepDef.response);
     }
 
     @Then("I should get non empty response")
@@ -229,5 +262,37 @@ public class BatchApiStepDef extends BaseStepDef {
     public void iHaveCallbackUrlAsSimulatedUrl() {
         bulkProcessorConfig.setCallbackUrl(bulkProcessorConfig.simulateEndpoint);
         BaseStepDef.callbackUrl = bulkProcessorConfig.getCallbackUrl();
+    }
+
+    @And("I fetch batch ID from batch transaction API's response")
+    public void iFetchBatchIDFromBatchTransactionAPISResponse() {
+        assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
+        BaseStepDef.batchId = fetchBatchId(BaseStepDef.batchTransactionResponse);
+        logger.info("batchId: {}", batchId);
+        assertThat(batchId).isNotEmpty();
+    }
+
+    @And("I am able to parse batch transactions response")
+    public void parseBatchTransactionsResponseStep() {
+        parseBatchTransactionsResponse();
+    }
+
+    private String fetchBatchId(BatchTransactionResponse batchTransactionResponse) {
+        String pollingPath = batchTransactionResponse.getPollingPath()
+                .replace("\"", "");
+		String[] pollingPathSplitResult = pollingPath.split("/");
+        return pollingPathSplitResult[pollingPathSplitResult.length - 1];
+    }
+
+    private void parseBatchTransactionsResponse() {
+        assertThat(BaseStepDef.response).isNotEmpty();
+        BatchTransactionResponse response = null;
+        try {
+            response = objectMapper.readValue(BaseStepDef.response, BatchTransactionResponse.class);
+            BaseStepDef.batchTransactionResponse = response;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
 }
