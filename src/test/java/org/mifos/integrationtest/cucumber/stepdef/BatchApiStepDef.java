@@ -5,6 +5,8 @@ import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
 import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
 import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
 import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
+import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
+import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
