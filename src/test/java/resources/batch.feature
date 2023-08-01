@@ -138,6 +138,7 @@ Feature: Batch Details API test
     When I call the batch details API with expected status of 200
     Then I should get non empty response with failure and success percentage
 
+
   @gov
   Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
     Given I have tenant as "rhino"
@@ -148,15 +149,18 @@ Feature: Batch Details API test
     And I have private key
     And I generate signature
 
-  @gov-255
-  Scenario: Batch test for payerIdentifier resolution using budgetAccount info
+  @gov
+  Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
     Given I have tenant as "rhino"
-	And I have the demo csv file "ph-ee-bulk-demo-13.csv"
+    And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "123"
+    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I have private key
+    And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
     When I call the batch summary API with expected status of 200
-	Then I am able to parse batch summary response
+    Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
