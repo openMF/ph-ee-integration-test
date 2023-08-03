@@ -8,7 +8,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/openjdk:17.0.0
+      - image: cimg/openjdk:17.0.0-node
       - image: docker:17.05.0-ce-git
     working_directory: ~/repo
     environment:
@@ -47,9 +47,9 @@ jobs:
           add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
           wait: true
           timeout: "300s"
-      #- run: helm test g2p-sandbox --namespace=paymenthub
-            # reset-values: true
-            # dry-run: true
+          #- run: helm test g2p-sandbox --namespace=paymenthub
+          # reset-values: true
+          # dry-run: true
       # - helm/install-helm-chart:
       #     add-repo: "https://fynarfin.io/images/"
       #     chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.2.0.tgz"
@@ -57,11 +57,13 @@ jobs:
       #     namespace: ph-test
   test-chart-gov:
     docker:
-      - image: cimg/openjdk:17.0.0
+      - image: cimg/openjdk:17.0.0-node
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - run: sudo npm install -g localtunnel
+      - run: lt --subdomain ph-ee-integration-test --port 53013 &
+      - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
@@ -95,7 +97,7 @@ workflows:
       - test-chart-gov:
           requires:
             - upgrade-helm-chart
-          context: 
+          context:
             - AWS
             - Helm
             - slack
