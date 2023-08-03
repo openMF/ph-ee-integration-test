@@ -62,8 +62,9 @@ jobs:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
       - run: sudo npm install -g localtunnel
-      - run: lt --subdomain ph-ee-integration-test --port 53013 &
-      - run: ./gradlew test -Dcucumber.filter.tags="@gov"
+      - run: |
+          lt --subdomain ph-ee-integration-test --port 53013 &
+          ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
