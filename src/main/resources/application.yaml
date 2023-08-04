@@ -70,7 +70,7 @@ savings:
 mock-server:
   port: 53013
 
-callback_url: "https://ph-ee-integration-test.loca.lt"
+callback_url: ${NGROK_PUBLIC_URL:localhost}
 
 identity-account-mapper:
   contactpoint: "https://identity.sandbox.fynarfin.io"
@@ -79,3 +79,4 @@ identity-account-mapper:
     add-payment-modality: /paymentModality
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
+    batch-account-lookup: /accountLookup

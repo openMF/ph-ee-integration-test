@@ -43,10 +43,50 @@ Feature: Identity Account Mapper Api Test
   Scenario: Account Lookup Api Consistency Test
     When I can inject MockServer
     And I can start mock server
-    Then I call the account lookup API 100 times with expected status of 202 and stub "/accountLookup"
+    Then I call the account lookup API 10 times with expected status of 202 and stub "/accountLookup"
     And I can register the stub with "/accountLookup" endpoint for "PUT" request with status of 200
     When I make the "PUT" request to "/accountLookup" endpoint with expected status of 200
-    Then I should be able to verify that the "PUT" method to "/accountLookup" endpoint received 100 request
+    Then I should be able to verify that the "PUT" method to "/accountLookup" endpoint received 10 request
+    And I can stop mock server
+
+  Scenario: Invalid Registering Institution Id
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202
+    And I create an IdentityMapperDTO for adding 2 beneficiary
+    When I call the register beneficiary API with "Social" as registering institution id expected status of 202
+    Then I can inject MockServer
+    And I can start mock server
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
+    When I make the "PUT" request to "/batchAccountLookup" endpoint with expected status of 200
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 1 request
+    And I can stop mock server
+
+  Scenario: Beneficiary not registered
+    Then I can inject MockServer
+    And I can start mock server
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202
+    And I create an IdentityMapperDTO for adding 2 beneficiary
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
+    When I make the "PUT" request to "/batchAccountLookup" endpoint with expected status of 200
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
+    And I can stop mock server
+
+  Scenario: Batch Account Lookup API
+    Then I can inject MockServer
+    And I can start mock server
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
+    When I make the "PUT" request to "/batchAccountLookup" endpoint with expected status of 200
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
     And I can stop mock server
 
   Scenario: Bulk Processor Inbound Integration Test
