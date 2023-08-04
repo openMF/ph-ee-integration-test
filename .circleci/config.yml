@@ -65,7 +65,7 @@ jobs:
       - run:
           name: Start ngrok tunnel
           command: |
-            ngrok_output=$(ngrok http 53013)
+            ngrok_output=$(ngrok http 53013 &)
             public_url=$(echo "$ngrok_output" | grep -Eo 'https://[^ ]+' | tail -n 1)
             echo "Tunnel started! Public URL: $public_url"
             echo "export NGROK_PUBLIC_URL=$public_url" >> $BASH_ENV
