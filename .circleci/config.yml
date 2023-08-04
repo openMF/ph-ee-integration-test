@@ -62,7 +62,8 @@ jobs:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
       - run: curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
-      - run: chmod a+x ngrok-run.sh &&  sh ngrok-run.sh
+      - run: chmod a+x ngrok-run.sh
+      - run: ./ngrok-run.sh
       - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
