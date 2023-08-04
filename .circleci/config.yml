@@ -65,17 +65,16 @@ jobs:
       - run:
           name: Start ngrok tunnel
           command: |
-            ngrok_output=$(ngrok http 53013 &)
-            public_url=$(echo "$ngrok_output" | grep -Eo 'https://[^ ]+' | tail -n 1)
-            echo "Tunnel started! Public URL: $public_url"
-            echo "export NGROK_PUBLIC_URL=$public_url" >> $BASH_ENV
-      - run:
-          name: Wait for 5 minutes
-          command: sleep 600
+            ngrok http 53013 > /dev/null & sleep 5
+            NGROK_URL=$(curl --silent --max-time 10 --connect-timeout 5 \
+                            --show-error http://127.0.0.1:4040/api/tunnels | \
+                            sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p')
+            export CALLBACK_URL="https://$NGROK_URL"
+            echo $CALLBACK_URL
+      - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - run:
           name: Stop ngrok
           command: pkill ngrok
-      - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
