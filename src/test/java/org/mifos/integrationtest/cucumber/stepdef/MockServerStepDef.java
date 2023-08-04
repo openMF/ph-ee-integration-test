@@ -81,7 +81,7 @@ public class MockServerStepDef extends BaseStepDef {
                 requestSender.post(endpoint).andReturn().asString();
             }
             case PUT -> {
-                requestSender.put(endpoint);
+                requestSender.put(endpoint).andReturn().asString();
             }
             case DELETE -> {
                 requestSender.delete(endpoint);
