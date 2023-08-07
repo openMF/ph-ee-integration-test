@@ -1,3 +1,4 @@
+@gov
 Feature: Identity Account Mapper Api Test
 
   Scenario: Register Beneficiary Api Test
