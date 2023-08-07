@@ -66,11 +66,11 @@ jobs:
           name: Start ngrok tunnel
           command: |
             ngrok http 53013 > /dev/null & sleep 5
-            NGROK_URL=$(curl --silent --max-time 10 --connect-timeout 5 \
+            CALLBACK_URL=$(curl --silent --max-time 10 --connect-timeout 5 \
                             --show-error http://127.0.0.1:4040/api/tunnels | \
                             sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p')
-            export NGROK_PUBLIC_URL="https://$NGROK_URL"
-            echo NGROK_PUBLIC_URL
+            export CALLBACK_PUBLIC_URL="https://$CALLBACK_URL"
+            echo CALLBACK_PUBLIC_URL
       - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
