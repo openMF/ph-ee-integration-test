@@ -72,9 +72,6 @@ jobs:
             export NGROK_PUBLIC_URL="https://$NGROK_URL"
             echo NGROK_PUBLIC_URL
       - run: ./gradlew test -Dcucumber.filter.tags="@gov"
-      - run:
-          name: Stop ngrok
-          command: pkill ngrok
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
