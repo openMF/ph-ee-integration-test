@@ -69,8 +69,8 @@ jobs:
             CALLBACK_URL=$(curl --silent --max-time 10 --connect-timeout 5 \
                             --show-error http://127.0.0.1:4040/api/tunnels | \
                             sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p')
-            export CALLBACK_PUBLIC_URL="https://$CALLBACK_URL"
-            echo CALLBACK_PUBLIC_URL
+            export CALLBACK_URL="https://$CALLBACK_URL"
+            echo CALLBACK_URL
       - run: ./gradlew test -Dcucumber.filter.tags="@gov"
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
