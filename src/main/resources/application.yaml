@@ -79,3 +79,7 @@ identity-account-mapper:
     add-payment-modality: /identityAccountMapper/addPaymentModality
     update-payment-modality: /identityAccountMapper/updatePaymentModality
     account-lookup: /identityAccountMapper/accountLookup
+
+config:
+  completion-threshold-check:
+    completion-threshold: 90
