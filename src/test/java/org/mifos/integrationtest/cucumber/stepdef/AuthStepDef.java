@@ -21,7 +21,7 @@ public class AuthStepDef extends BaseStepDef {
     @Value("${operations-app.auth.header}")
     public String authHeader;
 
-    @When("I call the auth endpoint with username: {string} and password: {string}")
+    @When("I call the operations-app auth endpoint with username: {string} and password: {string}")
     public void authenticateWithUsernameAndPassword(String username, String password) {
         if (authEnabled) {
             RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);

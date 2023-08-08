@@ -251,11 +251,6 @@ public class BatchApiStepDef extends BaseStepDef {
         logger.info("Batch Transactions Response: " + BaseStepDef.response);
     }
 
-    @Then("I should get non empty response")
-    public void nonEmptyResponseCheck() {
-        assertThat(BaseStepDef.response).isNotNull();
-    }
-
     @And("I should have {string} and {string} in response")
     public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {
         assertThat(BaseStepDef.response).contains(pollingpath);
