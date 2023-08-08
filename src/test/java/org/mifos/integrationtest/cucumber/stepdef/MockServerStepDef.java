@@ -81,14 +81,14 @@ public class MockServerStepDef extends BaseStepDef {
                 requestSender.post(endpoint).andReturn().asString();
             }
             case PUT -> {
-                requestSender.put(endpoint);
+                requestSender.put(endpoint).andReturn().asString();
             }
             case DELETE -> {
                 requestSender.delete(endpoint);
             }
         }
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
