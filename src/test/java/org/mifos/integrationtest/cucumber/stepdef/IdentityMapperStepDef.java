@@ -28,7 +28,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static AccountMapperRequestDTO registerBeneficiaryBody = null;
     private static AccountMapperRequestDTO addPaymentModalityBody = null;
     private static AccountMapperRequestDTO updatePaymentModalityBody = null;
-    private static String payeeIdentity;
+    private static String payeeIdentity = "69028769626982342711";
     private static int getApiCount = 0;
     private static String fieldName = "numberFailedCases";
     private static String fieldValue = "0";
@@ -76,8 +76,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create an IdentityMapperDTO for Register Beneficiary")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        payeeIdentity = generateUniqueNumber(14);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, null, null, null);
+
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912115", null, null, null);
         beneficiaryDTOList.add(beneficiaryDTO);
         requstId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
@@ -88,7 +88,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForAddPaymentModality() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
 
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "12345678", null);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912114", "00", "12345678", null);
         beneficiaryDTOList.add(beneficiaryDTO);
         requstId = generateUniqueNumber(10);
         addPaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
@@ -99,7 +99,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForUpdatePaymentModality() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
 
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "LB28369763644714781256435714", "test");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912115", "00", "LB28369763644714781256435714", null);
         beneficiaryDTOList.add(beneficiaryDTO);
         requstId = generateUniqueNumber(10);
         updatePaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
@@ -109,7 +109,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCallTheAccountLookupAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", "94049169714828912115")
                 .queryParam("paymentModality", "00").queryParam("requestId", generateUniqueNumber(10))
                 .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -126,7 +126,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         for (int i = 1; i < count; i++) {
 
             BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
-                    .header("X-CallbackURL", identityMapperConfig.callbackURL + endpoint).queryParam("payeeIdentity", payeeIdentity)
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + endpoint).queryParam("payeeIdentity", "94049169714828912115")
                     .queryParam("paymentModality", "00").queryParam("requestId", generateUniqueNumber(10))
                     .queryParam("sourceBBID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -143,7 +143,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         verify(putRequestedFor(urlEqualTo(endpoint))
-                .withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                .withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo("94049169714828912115"))));
     }
 
     public static String generateUniqueNumber(int length) {
