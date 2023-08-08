@@ -29,6 +29,9 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.transactionRequests}")
     public String transactionRequestsEndpoint;
 
+    @Value("${operations-app.endpoints.batches}")
+    public String batchesEndpoint;
+
     @Value("${operations-app.username}")
     public String username;
 
@@ -45,6 +48,8 @@ public class OperationsAppConfig {
 
     public String transactionRequestsUrl;
 
+    public String batchesUrl;
+
     public String authUrl;
 
     @PostConstruct
@@ -55,6 +60,7 @@ public class OperationsAppConfig {
         authUrl = operationAppContactPoint + authEndpoint;
         transfersUrl = operationAppContactPoint + transfersEndpoint;
         transactionRequestsUrl = operationAppContactPoint + transactionRequestsEndpoint;
+        batchesUrl = operationAppContactPoint + batchesEndpoint;
     }
 
 }

@@ -15,11 +15,6 @@ import static com.google.common.truth.Truth.assertThat;
  */
 public class GenericStepDef extends BaseStepDef {
 
-    @Given("I have tenant as {string}")
-    public void setTenantGiven(String tenant) {
-        setTenant(tenant);
-    }
-
     @And("I have tenant as {string}")
     public void setTenantAnd(String tenant) {
         setTenant(tenant);

@@ -20,6 +20,7 @@ import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -99,6 +100,7 @@ public class BaseStepDef {
     protected static KongService kongService;
     protected static KongRoute kongRoute;
     protected static KongPlugin kongPlugin;
+    protected static BatchPaginatedResponse batchesResponse;
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
