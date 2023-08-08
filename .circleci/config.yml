@@ -64,7 +64,7 @@ jobs:
       - run: curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
       - run:
           command: |
-            ngrok http 53013 > /dev/null & sleep 5
+            ngrok http 53013 > /dev/null &
             echo -n "Extracting ngrok public url ."
             NGROK_PUBLIC_URL=""
             while [ -z "$NGROK_PUBLIC_URL" ]; do
@@ -77,8 +77,11 @@ jobs:
             done
 
             export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
+            echo -n "Public url ."
             echo $CALLBACK_URL
             ./gradlew test -Dcucumber.filter.tags="@gov"
+            echo -n "Test execution is completed, kill ngrok"
+            pkill ngrok
       - store_test_results:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
   test-chart-ams:
