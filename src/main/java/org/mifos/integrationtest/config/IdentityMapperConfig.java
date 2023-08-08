@@ -17,4 +17,6 @@ public class IdentityMapperConfig {
     public String updatePaymentModalityEndpoint;
     @Value("${identity-account-mapper.endpoints.account-lookup}")
     public String accountLookupEndpoint;
+    @Value("${callback_url}")
+    public String callbackURL;
 }

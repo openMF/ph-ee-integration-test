@@ -1,10 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
 
 import io.cucumber.java.en.And;
@@ -46,8 +42,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @When("I call the register beneficiary API with expected status of {int} and stub {string}")
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
@@ -56,8 +53,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @When("I call the add payment modality API with expected status of {int} and stub {string}")
     public void iCallTheAddPaymentModalityAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(addPaymentModalityBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.addPaymentModalityEndpoint).andReturn().asString();
 
@@ -66,10 +64,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @When("I call the update payment modality API with expected status of {int} and stub {string}")
     public void iCallTheUpdatePaymentModalityAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(updatePaymentModalityBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(identityMapperConfig.updatePaymentModalityEndpoint).andReturn().asString();
+                .put(identityMapperConfig.updatePaymentModalityEndpoint).andReturn().asString();
 
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
@@ -108,8 +107,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Then("I call the account lookup API with expected status of {int} and stub {string}")
     public void iCallTheAccountLookupAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + stub).queryParam("payeeIdentity", "94049169714828912115")
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", "94049169714828912115")
                 .queryParam("paymentModality", "00").queryParam("requestId", generateUniqueNumber(10))
                 .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -121,11 +121,12 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @Then("I call the account lookup API {int} times with expected status of {int} and stub {string}")
     public void iCallTheAccountLookupAPITimesWithExpectedStatusOf(int count, int expectedStatus, String endpoint) {
         getApiCount = count;
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
         // int i=0;
         for (int i = 1; i < count; i++) {
 
-            BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                    .header("X-CallbackURL", mockServer.getBaseUri() + endpoint).queryParam("payeeIdentity", "94049169714828912115")
+            BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + endpoint).queryParam("payeeIdentity", "94049169714828912115")
                     .queryParam("paymentModality", "00").queryParam("requestId", generateUniqueNumber(10))
                     .queryParam("sourceBBID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -136,12 +137,12 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        verify(postRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requstId))));
+        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requstId))));
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
-        verify(postRequestedFor(urlEqualTo(endpoint))
+        verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo("94049169714828912115"))));
     }
 
@@ -155,8 +156,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @When("I call the register beneficiary API with expected status of {int}")
     public void iCallTheRegisterBeneficiaryAPIWithAMSISDNAndDFSPIDAs(int expectedStatus) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + "/registerBeneficiary")
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + "/registerBeneficiary")
                 .baseUri(identityMapperConfig.identityMapperContactPoint).body(registerBeneficiaryBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();

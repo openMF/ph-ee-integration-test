@@ -70,12 +70,12 @@ savings:
 mock-server:
   port: 53013
 
-callback_url: "http://localhost:5001/simulate"
+callback_url: ${CALLBACK_URL:localhost}
 
 identity-account-mapper:
-  contactpoint: "http://ph-ee-identity-account-mapper.identity-mapper.svc.cluster.local"
+  contactpoint: "https://identity.sandbox.fynarfin.io"
   endpoints:
-    register-beneficiary: /identityAccountMapper/registerBeneficiary
-    add-payment-modality: /identityAccountMapper/addPaymentModality
-    update-payment-modality: /identityAccountMapper/updatePaymentModality
-    account-lookup: /identityAccountMapper/accountLookup
+    register-beneficiary: /beneficiary
+    add-payment-modality: /paymentModality
+    update-payment-modality: /paymentModality
+    account-lookup: /beneficiary
