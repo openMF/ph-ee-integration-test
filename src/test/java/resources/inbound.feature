@@ -7,7 +7,7 @@ Feature: Inbound transaction test
     Then I should get non empty response
     And I should be able to parse transactionId
 
-  Scenario: IAM-005 Bulk Processor Inbound Integration Test
+  Scenario: Bulk Processor Inbound Integration Test
     When I create an IdentityMapperDTO for registering beneficiary with "gorilla" as DFSPID
     Then I can inject MockServer
     And I can start mock server

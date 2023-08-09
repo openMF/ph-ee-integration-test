@@ -49,14 +49,3 @@ Feature: Identity Account Mapper Api Test
     Then I should be able to verify that the "PUT" method to "/accountLookup" endpoint received 10 request
     And I can stop mock server
 
-  Scenario: Bulk Processor Inbound Integration Test
-    When I create an IdentityMapperDTO for registering beneficiary with "gorilla" as DFSPID
-    Then I can inject MockServer
-    And I can start mock server
-    When I call the register beneficiary API with expected status of 202
-    Given I have the demo csv file "ph-ee-bulk-demo-7.csv"
-    And I have tenant as "rhino"
-    When I call the batch transactions endpoint with expected response status of 200
-    Then I should be able to parse batch id from response
-    When I call the batch details API with expected response status of 200
-    And I can assert the payee DFSPID is same as used to register beneficiary id type from response
