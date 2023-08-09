@@ -9,7 +9,8 @@ Feature: Operations APP related feature
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
 
-  Scenario: Batches API test 2
-    Given I am happy
-    When I get chocolate
-    Then I get more happy
+  Scenario: Batches API test filter with batchId
+    Given I have tenant as "rhino"
+    When I have the demo csv file "ph-ee-bulk-demo-12.csv"
+    Then I call the batch transactions endpoint with expected status of 200
+    And I should get non empty response

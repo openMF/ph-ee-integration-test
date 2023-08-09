@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
@@ -35,6 +36,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.spec.InvalidKeySpecException;
+import static com.google.common.truth.Truth.assertThat;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
@@ -124,4 +126,20 @@ public class BaseStepDef {
         String hashedData = SecurityUtil.hash(jwsDataToBeHashed);
         return SecurityUtil.encryptUsingPrivateKey(hashedData, BaseStepDef.privateKeyString);
     }
+
+    private <T> void assertNonEmptyArray(List<T> objects) {
+        assertNotNull(objects);
+        assertThat(objects).isNotEmpty();
+        assertThat(objects.size()).isGreaterThan(0);
+    }
+
+//    private <T> void assertNotEmpty(T object) {
+//        assertNotNull(object);
+//        assertThat(object).isN;
+//    }
+
+    private <T> void assertNotNull(T object) {
+        assertThat(object).isNotNull();
+    }
+
 }

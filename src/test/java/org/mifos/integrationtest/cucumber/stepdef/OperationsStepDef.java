@@ -96,4 +96,8 @@ public class OperationsStepDef extends BaseStepDef {
         }
     }
 
+    private void assertBatchPaginatedResponse(BatchPaginatedResponse response) {
+
+    }
+
 }
