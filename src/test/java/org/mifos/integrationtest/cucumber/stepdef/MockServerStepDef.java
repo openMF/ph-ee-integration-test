@@ -1,18 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.status;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
@@ -28,6 +16,7 @@ import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
 public class MockServerStepDef extends BaseStepDef {
+    private static Boolean wiremockStarted = false;
 
     @Value("${mock-server.port}")
     private int mockServerPortFromConfig;
@@ -81,7 +70,7 @@ public class MockServerStepDef extends BaseStepDef {
                 requestSender.post(endpoint).andReturn().asString();
             }
             case PUT -> {
-                requestSender.put(endpoint);
+                requestSender.put(endpoint).andReturn().asString();
             }
             case DELETE -> {
                 requestSender.delete(endpoint);
@@ -121,5 +110,26 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can stop mock server")
     public void stopMockServer() {
         mockServer.getMockServer().stop();
+    }
+
+    @Given("I will start the mock server")
+    public void iWillStartTheMockServer() {
+        if(!wiremockStarted) {
+            checkIfMockServerIsInjected();
+            startMockServer();
+        }
+    }
+
+    @And("I will register the stub with {string} endpoint for {httpMethod} request with status of {int}")
+    public void iWillRegisterTheStubWithEndpointForRequestWithStatusOf(String endpoint, HttpMethod httpMethod, int status) {
+        if(!wiremockStarted) {
+            startStub(endpoint, httpMethod, status);
+
+        }
+    }
+
+    @Then("I will update the  mock server and register stub as done")
+    public void iWillUpdateTheMockServerAndRegisterStubAsDone() {
+        wiremockStarted = true;
     }
 }
