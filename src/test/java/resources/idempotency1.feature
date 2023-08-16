@@ -2,7 +2,7 @@ Feature: Client Correlation Id Idempotency Test
 
 @application.yaml
 
-  Scenario: Collection API Idempotency Test
+  Scenario: IT-001 Collection API Idempotency Test
     Given I create a new clientCorrelationId
     And I have tenant as "gorilla"
     When I call collection api with client correlation id expected status 200

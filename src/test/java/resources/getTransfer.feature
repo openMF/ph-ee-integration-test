@@ -3,7 +3,7 @@
 Feature: Get Transfers API test
 
 
-        Scenario: Get Transfers API With Auth
+        Scenario: GT-001 Get Transfers API With Auth
                 Given I have tenant as "gorilla"
                 When I call the auth endpoint with username: "mifos" and password: "password"
                 Then I should get a valid token

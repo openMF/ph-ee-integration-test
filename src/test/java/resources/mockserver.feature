@@ -1,13 +1,13 @@
 @gov
 Feature: Testing the startup and working of mockserver
 
-  Scenario: Mockserver config test
+  Scenario: MS-001 Mockserver config test
     Given I can inject MockServer
     And I can start mock server
     Then I should be able to get instance of mock server
     And I can stop mock server
 
-  Scenario: Mockserver stub test
+  Scenario: MS-002 Mockserver stub test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/test" endpoint for "POST" request with status of 200

@@ -1,7 +1,7 @@
 @govtodo
 Feature: Json Web Signature test
 
-  Scenario: Test the jws for batchTransactions
+  Scenario: JWS-001 Test the jws for batchTransactions
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "gorilla"
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
@@ -10,7 +10,7 @@ Feature: Json Web Signature test
     When I call the batch transactions endpoint with expected status of 200
     Then I should get non empty response
 
-  Scenario: Test the jws in response for batchTransactions
+  Scenario: JWS-002 Test the jws in response for batchTransactions
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "gorilla"
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
