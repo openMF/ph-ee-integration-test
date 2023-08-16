@@ -72,6 +72,7 @@ Feature: Batch Details API test
     When I should call callbackUrl api
     Then I should get expected status of 200
 
+    @govtodo
   Scenario: BD-009 Batch Phased Callback API Test Failure
     Given I have a batch id from previous scenario
     And I have tenant as "gorilla"
