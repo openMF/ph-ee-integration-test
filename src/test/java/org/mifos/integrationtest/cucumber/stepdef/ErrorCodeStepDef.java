@@ -96,6 +96,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
         }
     }
 
+    public void iWillSleepForSecs(int time) throws InterruptedException {
+        Thread.sleep(time);
+    }
+
     @And("I should be able to parse transactionId from response")
     public void parseTransactionId() {
         try {
@@ -134,11 +138,6 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
         assertThat(errorInformation.getErrorCode()).isNotNull();
         assertThat(errorInformation.getErrorCode()).matches(errorCode);
-    }
-
-    @And("I will sleep for {int} millisecond")
-    public void iWillSleepForSecs(int time) throws InterruptedException {
-        Thread.sleep(time);
     }
 
     @And("I should be able to parse {string} Error Code from GSMA Transfer response")

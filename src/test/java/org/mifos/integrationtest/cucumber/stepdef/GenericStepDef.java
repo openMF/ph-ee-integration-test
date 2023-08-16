@@ -25,6 +25,11 @@ public class GenericStepDef extends BaseStepDef {
         assertNonEmpty(BaseStepDef.response);
     }
 
+    @And("I will sleep for {int} millisecond")
+    public void iWillSleepForSecs(int time) throws InterruptedException {
+        Thread.sleep(time);
+    }
+
     private void setTenant(String tenant) {
         BaseStepDef.tenant = tenant;
         assertThat(BaseStepDef.tenant).isNotEmpty();

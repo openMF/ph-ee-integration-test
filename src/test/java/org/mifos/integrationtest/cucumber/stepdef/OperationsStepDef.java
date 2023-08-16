@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -51,13 +52,29 @@ public class OperationsStepDef extends BaseStepDef {
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
-        callBatchesEndpoint(expectedStatus, null);
+        callBatchesEndpoint(expectedStatus, BaseStepDef.batchesEndpointQueryParam);
     }
 
     @Then("I am able to parse batch paginated response into DTO")
     public void parseBatchPaginatedDto() {
         assertThat(BaseStepDef.response).isNotNull();
         parseBatchesResponse(BaseStepDef.response);
+    }
+
+    @And("I add the query param key: {string} value: {string}")
+    public void updateQueryParam(String key, Object value) {
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, key, value);
+    }
+
+    @And("I add batchId query param")
+    public void addBatchIdQueryParam() {
+        assertNotNull(BaseStepDef.batchId);
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "batchId", BaseStepDef.batchId);
+    }
+
+    @Then("I am able to assert only {int} totalBatches")
+    public void assertTotalSubBatches(int count) {
+        assertThat(BaseStepDef.batchesResponse.getTotalBatches()).isEqualTo(count);
     }
 
     private void batchDbSetup() {
@@ -68,6 +85,10 @@ public class OperationsStepDef extends BaseStepDef {
     private void batchDbTearDown() {
         // todo define the teardown step/task in this method
         assertThat(1).isEqualTo(1);
+    }
+
+    private void updateQueryParam(Map<String, Object> queryParam, String key, Object object) {
+        queryParam.put(key, object);
     }
 
     private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams) {

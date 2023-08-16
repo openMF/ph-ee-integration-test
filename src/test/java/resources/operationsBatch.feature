@@ -11,6 +11,19 @@ Feature: Operations APP related feature
 
   Scenario: Batches API test filter with batchId
     Given I have tenant as "rhino"
-    When I have the demo csv file "ph-ee-bulk-demo-12.csv"
+    And I have the demo csv file "ph-ee-bulk-demo-13.csv"
+    And I have the registeringInstituteId "123"
+    And I have the programId "123"
     Then I call the batch transactions endpoint with expected status of 200
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
+    When I call the batch summary API with expected status of 200
+    Then I am able to parse batch summary response
     And I should get non empty response
+#    And I have a batch with id "11213778-f699-4d57-87bc-7689c6a507a4"
+    Then I add batchId query param
+    When I call the batches endpoint with expected status of 200
+    Then I should get non empty response
+    And I am able to parse batch paginated response into DTO
+    And I am able to assert only 1 totalBatches

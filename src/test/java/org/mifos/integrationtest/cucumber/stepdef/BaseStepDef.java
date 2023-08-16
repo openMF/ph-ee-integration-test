@@ -10,7 +10,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import org.apache.commons.lang3.StringUtils;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
@@ -103,6 +105,7 @@ public class BaseStepDef {
     protected static KongRoute kongRoute;
     protected static KongPlugin kongPlugin;
     protected static BatchPaginatedResponse batchesResponse;
+    protected static Map<String, Object> batchesEndpointQueryParam = new HashMap<>();
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
@@ -133,12 +136,7 @@ public class BaseStepDef {
         assertThat(objects.size()).isGreaterThan(0);
     }
 
-//    private <T> void assertNotEmpty(T object) {
-//        assertNotNull(object);
-//        assertThat(object).isN;
-//    }
-
-    private <T> void assertNotNull(T object) {
+    protected  <T> void assertNotNull(T object) {
         assertThat(object).isNotNull();
     }
 
