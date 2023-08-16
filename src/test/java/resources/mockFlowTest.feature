@@ -1,7 +1,7 @@
 @gov
 Feature: Mock Flow Test
 
-  Scenario: Test for minimal mock fund transfer flow
+  Scenario: MFT-001 Test for minimal mock fund transfer flow
     Given I have tenant as "rhino"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO

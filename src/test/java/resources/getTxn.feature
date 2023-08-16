@@ -1,7 +1,7 @@
 Feature: Get Txn Req API test
 
 
-  Scenario: Get Txn Req API Test With Auth
+  Scenario: GTX-001 Get Txn Req API Test With Auth
     Given I have tenant as "gorilla"
     When I call the auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -10,7 +10,7 @@ Feature: Get Txn Req API test
     And I should have clientCorrelationId in response
 
 
-    Scenario: Get Txn Req API with Params
+    Scenario: GTX-002 Get Txn Req API with Params
       Given I have tenant as "gorilla"
       And I call collection api with expected status 200
       When I call the auth endpoint with username: "mifos" and password: "password"

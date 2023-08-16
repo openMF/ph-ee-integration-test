@@ -3,7 +3,7 @@ Feature: Client Correlation Id Idempotency Test
 
 @application.yaml
 
-  Scenario: Inbound Transfer API Idempotency Test
+  Scenario: IT-003 Inbound Transfer API Idempotency Test
     Given I create a new clientCorrelationId
     And I have tenant as "gorilla"
     Given I can mock TransactionChannelRequestDTO

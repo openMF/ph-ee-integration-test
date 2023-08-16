@@ -1,7 +1,7 @@
 @amsintegrationtest
 Feature: Interop Error Code Test
 
-  Scenario: GSMA Transfer Api PayerNotFound Test
+  Scenario: IEC-001 GSMA Transfer Api PayerNotFound Test
     Given I can create GSMATransferDTO with incorrect Payer
     And I have tenant as "gorilla"
     When I call the GSMATransfer endpoint with expected status of 200
@@ -9,7 +9,7 @@ Feature: Interop Error Code Test
     Then I should poll the transfer query endpoint with transactionId until errorInformation is populated for the transactionId
     And I should be able to parse "PayerNotFound" Error Code from response
 
-  Scenario: GSMA Transfer Api PayerInsufficientBalance Test
+  Scenario: IEC-002 GSMA Transfer Api PayerInsufficientBalance Test
     Given I can create GSMATransferDTO with Payer Insufficient Balance
     And I have tenant as "gorilla"
     When I call the GSMATransfer endpoint with expected status of 200
