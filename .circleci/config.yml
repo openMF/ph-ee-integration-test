@@ -35,6 +35,7 @@ jobs:
       cluster-name:
         description: "sit"
         type: string
+      recreate-pods: true
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: "sit"
