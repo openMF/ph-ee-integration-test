@@ -35,7 +35,9 @@ jobs:
       cluster-name:
         description: "sit"
         type: string
-      recreate-pods: true
+      recreate-pods: 
+          default: true
+          type: boolean
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: "sit"
