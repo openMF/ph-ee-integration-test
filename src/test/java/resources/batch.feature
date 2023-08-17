@@ -3,7 +3,7 @@ Feature: Batch Details API test
 
   Background: I will start mock server and register stub
     Given I will start the mock server
-    And I can register the stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    And I can register the stub with "/authorization/callback" endpoint for "PUT" request with status of 200
     Then I will update the  mock server and register stub as done
 
   @gov
