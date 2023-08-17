@@ -34,6 +34,7 @@ channel-connector:
     gsma-p2p: "/channel/gsma/transfer"
     collection: "/channel/collection"
     transferReq: "/channel/transactionRequest"
+    international-remittance: "/channel/gsma/deposit"
 
 max-retry-count: 5
 retry-interval: 15000
@@ -79,3 +80,19 @@ identity-account-mapper:
     add-payment-modality: /paymentModality
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
+
+kafka:
+  brokers: "kafka:9092"
+  topic: "zeebe-export"
+  consumerTimeoutMs: 6000
+
+zeebe-test:
+  enabled: true
+
+zeebe-operations:
+  contactpoint: "https://zeebeops2.sandbox.fynarfin.io"
+  endpoints:
+    workflow: "/channel/workflow/"
+    upload-bpmn: "/zeebe/upload"
+  no-of-workflows : 10
+  thread-count: 5
