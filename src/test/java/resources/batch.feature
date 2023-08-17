@@ -1,6 +1,11 @@
 
 Feature: Batch Details API test
 
+  Background: I will start mock server and register stub
+    Given I will start the mock server
+    And I can register the stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    Then I will update the  mock server and register stub as done
+
   @gov
   Scenario: BD-001 Batch transactions API Test
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
@@ -139,9 +144,9 @@ Feature: Batch Details API test
     Then I should get non empty response with failure and success percentage
 
   Scenario: Batch Authorization API test
-    Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
-    And I have tenant as "gorilla"
-    When I call the batch transactions endpoint with expected status of 200
-    Then I should get batchId in response
-    When I call the batch summary API with expected status of 200
-    Then I should get batch status as "FAILED"
+    When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
+    And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
+    And I make the "PUT" request to "/authorization/callback" endpoint with expected status of 200
+    Then I should be able to verify that the "PUT" method to "/authorization/callback" endpoint received a request with authorization status
+    And I can stop mock server
+

@@ -52,6 +52,8 @@ public class BaseStepDef {
     @Autowired
     IdentityMapperConfig identityMapperConfig;
 
+
+
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
 

@@ -21,6 +21,8 @@ public class MockServerStepDef extends BaseStepDef {
     @Value("${mock-server.port}")
     private int mockServerPortFromConfig;
 
+    private static Boolean wiremockStarted = false;
+
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
         assertThat(mockServer).isNotNull();
