@@ -9,8 +9,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.AuthorizationRequest;
 import org.mifos.integrationtest.common.BatchSummaryResponse;
+import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,7 +44,8 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
 
     @When("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")
     public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
-        BaseStepDef.response = RestAssured.given().header("Content-Type", "application/json")
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-CallbackURL", mockServer.getBaseUri() + stub)
                 .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
