@@ -13,6 +13,8 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.mifos.connector.common.util.CertificateUtil;
 import org.mifos.connector.common.util.Constant;
 import org.mifos.connector.common.util.SecurityUtil;
@@ -27,13 +29,10 @@ public class JWSStepDef extends BaseStepDef {
     }
 
     @And("I generate signature")
-    public void generateSignature() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
+    public void generateSignatureStep() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        String fileContent = Files.readString(Paths.get(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename)));
-        String jwsDataToBeHashed = new StringBuilder().append(BaseStepDef.clientCorrelationId).append(BaseStepDef.jwsDataSeparator)
-                .append(BaseStepDef.tenant).append(BaseStepDef.jwsDataSeparator).append(fileContent).toString();
-        String hashedData = SecurityUtil.hash(jwsDataToBeHashed);
-        BaseStepDef.signature = SecurityUtil.encryptUsingPrivateKey(hashedData, BaseStepDef.privateKeyString);
+        BaseStepDef.signature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant,
+                BaseStepDef.filename, true);
         assertThat(BaseStepDef.signature).isNotEmpty();
         logger.info("Generated signature: {}", BaseStepDef.signature);
     }
