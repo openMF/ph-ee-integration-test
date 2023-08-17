@@ -84,7 +84,8 @@ identity-account-mapper:
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
 
+# add ingress for mock-payment-schema
 mock-payment-schema:
-  contactpoint: "http://localhsot:5000"
+  contactpoint: ""
   endpoints:
     mock-batch-authorization: "/batches/"
