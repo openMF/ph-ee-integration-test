@@ -1,4 +1,4 @@
-@ZeebeExport
+@gov
 Feature: Zeebe exporter test
 
   Scenario: Test zeebe-export kafka topic

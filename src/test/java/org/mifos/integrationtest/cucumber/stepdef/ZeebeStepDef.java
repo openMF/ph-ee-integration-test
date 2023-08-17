@@ -174,6 +174,8 @@ public class ZeebeStepDef extends BaseStepDef {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         return new KafkaConsumer<>(properties);
+
+        // adding dummy comment
     }
 
     private void processKafkaRecords(ConsumerRecords<String, String> records){
