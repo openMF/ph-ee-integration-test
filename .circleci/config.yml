@@ -67,8 +67,11 @@ jobs:
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
-      - run: curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
+      - run: 
+          name: Ngrok setup
+          command: curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
       - run:
+          name: Ngrok test execution
           command: |
             ngrok http 53013 > /dev/null &
             echo -n "Extracting ngrok public url ."
