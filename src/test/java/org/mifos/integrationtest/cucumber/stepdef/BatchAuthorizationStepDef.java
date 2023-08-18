@@ -46,10 +46,14 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", mockServer.getBaseUri() + stub)
-                .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
+                .header("X-CallbackURL", "https://91c5-2406-7400-51-9c5-81cc-23cb-25ff-f710.ngrok.io" + stub)
+                .header("X-Client-Correlation-ID", "998877")
+                .queryParam("command", "authorize")
+//                .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
+                .baseUri("http://localhost:8090").body(authorizationRequest)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
+//                .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
+                .post("/batches/" + batchId).andReturn().asString();
 
         logger.info("Authorization Response: {}", BaseStepDef.response);
     }

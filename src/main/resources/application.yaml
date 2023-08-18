@@ -70,7 +70,7 @@ savings:
 mock-server:
   port: 53013
 
-callback_url: "https://1491-171-76-86-74.ngrok.io"
+callback_url: "https://91c5-2406-7400-51-9c5-81cc-23cb-25ff-f710.ngrok.io"
 
 
 json-web-signature:
@@ -86,6 +86,7 @@ identity-account-mapper:
     account-lookup: /beneficiary
 
 mock-payment-schema:
-  contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
+#  contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
+  contactpoint: "http://localhost:8090"
   endpoints:
     mock-batch-authorization: "/batches/"
