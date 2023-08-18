@@ -17,12 +17,22 @@ import io.restassured.http.Headers;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class BatchApiStepDef extends BaseStepDef {
 
@@ -47,7 +57,19 @@ public class BatchApiStepDef extends BaseStepDef {
     @Given("I have the demo csv file {string}")
     public void setFilename(String filename) {
         BaseStepDef.filename = filename;
+        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        assertThat(f.exists()).isTrue();
         assertThat(BaseStepDef.filename).isNotEmpty();
+    }
+
+    @And("I make sure there is no file")
+    public void removeTheFilename() {
+        clearFilename();
+        assertThat(BaseStepDef.filename).isNull();
+    }
+
+    public void clearFilename() {
+        BaseStepDef.filename = null;
     }
 
     @And("I have tenant as {string}")
@@ -91,11 +113,16 @@ public class BatchApiStepDef extends BaseStepDef {
     @When("I call the batch transactions endpoint with expected status of {int} without payload")
     public void iCallTheBatchTransactionsEndpointWithExpectedStatusOfWithoutPayload(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        requestSpec.header("filename", BaseStepDef.filename);
-        requestSpec.header("X-CorrelationID", UUID.randomUUID().toString());
+        requestSpec.header("X-CorrelationID", BaseStepDef.clientCorrelationId);
         requestSpec.queryParam("type", "CSV");
+        if (StringUtils.isNotBlank(BaseStepDef.filename)) {
+            requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        }
+        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        }
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+               .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
         logger.info("Batch Transactions without payload Response: " + BaseStepDef.response);
@@ -112,10 +139,14 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @When("I should call callbackUrl api")
-    public void iShouldCallCallbackUrlApi() throws JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+    public void iShouldCallCallbackUrlApi() throws  NoSuchPaddingException, IllegalBlockSizeException, IOException,
+            NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
         String callbackReq = new String("The Batch Aggregation API was complete");
         logger.info(callbackReq);
+		String jwsSignature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant, callbackReq, false);
+
+        requestSpec.header(HEADER_JWS_SIGNATURE, jwsSignature);
 
         BaseStepDef.statusCode = RestAssured.given(requestSpec).body(callbackReq).post(bulkProcessorConfig.getCallbackUrl()).andReturn()
                 .getStatusCode();
@@ -129,7 +160,9 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @Then("I should get expected status of {int}")
-    public void iShouldGetExpectedStatusOf(int expectedStatus) throws JSONException {
+    public void iShouldGetExpectedStatusOf(int expectedStatus) throws  NoSuchPaddingException,
+            IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
         assertThat(BaseStepDef.statusCode).isNotNull();
         assertThat(BaseStepDef.statusCode).isEqualTo(expectedStatus);
         if (expectedStatus != 200) {
@@ -166,7 +199,7 @@ public class BatchApiStepDef extends BaseStepDef {
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data").multiPart("data", f).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
         BaseStepDef.response = resp.andReturn().asString();

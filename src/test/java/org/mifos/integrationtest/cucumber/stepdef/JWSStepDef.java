@@ -13,12 +13,19 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.mifos.connector.common.util.CertificateUtil;
 import org.mifos.connector.common.util.Constant;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.config.JWSKeyConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JWSStepDef extends BaseStepDef {
+
+    @Autowired
+    JWSKeyConfig jwsKeyConfig;
 
     @And("I have clientCorrelationId as {string}")
     public void setClientCorrelationId(String clientCorrelationId) {
@@ -27,13 +34,10 @@ public class JWSStepDef extends BaseStepDef {
     }
 
     @And("I generate signature")
-    public void generateSignature() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
+    public void generateSignatureStep() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        String fileContent = Files.readString(Paths.get(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename)));
-        String jwsDataToBeHashed = new StringBuilder().append(BaseStepDef.clientCorrelationId).append(BaseStepDef.jwsDataSeparator)
-                .append(BaseStepDef.tenant).append(BaseStepDef.jwsDataSeparator).append(fileContent).toString();
-        String hashedData = SecurityUtil.hash(jwsDataToBeHashed);
-        BaseStepDef.signature = SecurityUtil.encryptUsingPrivateKey(hashedData, BaseStepDef.privateKeyString);
+        BaseStepDef.signature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant,
+                BaseStepDef.filename, true);
         assertThat(BaseStepDef.signature).isNotEmpty();
         logger.info("Generated signature: {}", BaseStepDef.signature);
     }
@@ -47,15 +51,16 @@ public class JWSStepDef extends BaseStepDef {
         BaseStepDef.signature = signatureHeaderValue;
     }
 
-    @And("The signature should be able successfully validated against certificate {string}")
-    public void verifyResponseSignature(String x509Certificate) {
+    @And("The signature should be able successfully validated against certificate")
+    public void verifyResponseSignature() {
         assertThat(BaseStepDef.restResponseObject).isNotNull();
+        assertThat(jwsKeyConfig).isNotNull();
         String data = BaseStepDef.response;
         String signature = BaseStepDef.restResponseObject.getHeader(Constant.HEADER_JWS);
 
         Boolean isValidSignature = null;
         try {
-            isValidSignature = validateSignature(signature, data, x509Certificate);
+            isValidSignature = validateSignature(signature, data, jwsKeyConfig.x509Certificate);
         } catch (Exception e) {
             logger.error("Failed step verifyResponseSignature"
                     + " \"The signature should be able successfully validated against certificate {string}\"");

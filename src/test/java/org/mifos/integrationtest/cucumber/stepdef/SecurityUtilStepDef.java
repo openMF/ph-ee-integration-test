@@ -14,8 +14,13 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.mifos.connector.common.util.SecurityUtil;
+import org.mifos.integrationtest.config.JWSKeyConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SecurityUtilStepDef extends BaseStepDef {
+
+    @Autowired
+    JWSKeyConfig jwsKeyConfig;
 
     @Given("generate random data")
     public void generateRandomData() {
@@ -54,9 +59,10 @@ public class SecurityUtilStepDef extends BaseStepDef {
         assertThat(BaseStepDef.publicKeyString).isNotEmpty();
     }
 
-    @And("I have private key {string}")
-    public void setPrivateKey(String privateKeyString) {
-        BaseStepDef.privateKeyString = privateKeyString;
+    @And("I have private key")
+    public void setPrivateKey() {
+        assertThat(jwsKeyConfig).isNotNull();
+        BaseStepDef.privateKeyString = jwsKeyConfig.privateKey;
         assertThat(BaseStepDef.privateKeyString).isNotEmpty();
     }
 
