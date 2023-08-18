@@ -19,8 +19,13 @@ import org.mifos.connector.common.util.CertificateUtil;
 import org.mifos.connector.common.util.Constant;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.config.JWSKeyConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JWSStepDef extends BaseStepDef {
+
+    @Autowired
+    JWSKeyConfig jwsKeyConfig;
 
     @And("I have clientCorrelationId as {string}")
     public void setClientCorrelationId(String clientCorrelationId) {
@@ -46,15 +51,16 @@ public class JWSStepDef extends BaseStepDef {
         BaseStepDef.signature = signatureHeaderValue;
     }
 
-    @And("The signature should be able successfully validated against certificate {string}")
-    public void verifyResponseSignature(String x509Certificate) {
+    @And("The signature should be able successfully validated against certificate")
+    public void verifyResponseSignature() {
         assertThat(BaseStepDef.restResponseObject).isNotNull();
+        assertThat(jwsKeyConfig).isNotNull();
         String data = BaseStepDef.response;
         String signature = BaseStepDef.restResponseObject.getHeader(Constant.HEADER_JWS);
 
         Boolean isValidSignature = null;
         try {
-            isValidSignature = validateSignature(signature, data, x509Certificate);
+            isValidSignature = validateSignature(signature, data, jwsKeyConfig.x509Certificate);
         } catch (Exception e) {
             logger.error("Failed step verifyResponseSignature"
                     + " \"The signature should be able successfully validated against certificate {string}\"");
