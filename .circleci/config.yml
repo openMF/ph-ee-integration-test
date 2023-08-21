@@ -1,38 +1,9 @@
 version: 2.1
-orbs:
-  slack: circleci/slack@4.12.5
-  aws-ecr: circleci/aws-ecr@8.2.1
-  helm: circleci/helm@2.0.1
-  aws-eks: circleci/aws-eks@2.2.0
-  kubernetes: circleci/kubernetes@1.3
 executors:
   docker-executor:
     docker:
       - image: circleci/openjdk:17-buster-node-browsers-legacy
-jobs:
-  build:
-    docker:
-      - image: cimg/openjdk:17.0.0-node
-      - image: docker:17.05.0-ce-git
-    working_directory: ~/repo
-    environment:
-      JVM_OPTS: -Xmx512m
-      TERM: dumb
-    steps:
-      - checkout
-      - setup_remote_docker
-      - aws-ecr/build-and-push-image:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          extra-build-args: "--compress"
-          push-image: true
-          region: "$REGION"
-          registry-id: AWS_REGISTRY_ID
-          repo: phee-integration-test
-          repo-scan-on-push: true
-          role-arn: arn:aws:iam::419830066942:role/CustomAdmin
-          tag: latest
-
+jobs:  
   build_and_push_tag_image:
     executor: docker-executor
     environment:
@@ -172,27 +143,18 @@ jobs:
 workflows:
   deploy:
     jobs:
-      - build:
-          context:
-            - AWS
-            - slack
       - build_and_push_tag_image:
-          requires:
-            - build
           filters:
             tags:
               only: /^v\d+\.\d+\.\d+$/  # Match tags in the format v1.2.3
           context:
             - DOCKER
       - build_and_push_latest_image:
-          requires:
-            - build
           context:
             - DOCKER
       - upgrade-helm-chart:
           cluster-name: sit
           requires:
-            - build
             - build_and_push_tag_image
             - build_and_push_latest_image
           context:
