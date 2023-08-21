@@ -16,6 +16,7 @@ public class Utils {
     public static final String HEADER_FILENAME = "filename";
     public static final String HEADER_PURPOSE = "purpose";
     public static final String QUERY_PARAM_TYPE = "type";
+    public static final String PAYMENT_SCHEME_HEADER = "X-Payment-Scheme";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
