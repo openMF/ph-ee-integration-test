@@ -28,18 +28,18 @@ jobs:
             IMAGE_TAG=$CIRCLE_TAG
 
             # Check if the Docker image with the same tag already exists in Docker Hub
-            if curl -s -f -u "$DOCKERHUB_USERNAME":"$DOCKERHUB_PASSWORD" "https://hub.docker.com/v2/repositories/openmf/ph-ee-integration-testr/tags/$IMAGE_TAG" > /dev/null; then
+            if curl -s -f -u "$DOCKERHUB_USERNAME":"$DOCKERHUB_PASSWORD" "https://hub.docker.com/v2/repositories/openmf/ph-ee-integration-test/tags/$IMAGE_TAG" > /dev/null; then
               echo "Skipping the build and push as the tag $IMAGE_TAG already exists in Docker Hub."
               exit 0
             fi
 
             # Build and tag the Docker image
             ./gradlew bootJar
-            docker build -t "openmf/ph-ee-integration-testr:$IMAGE_TAG" .
+            docker build -t "openmf/ph-ee-integration-test:$IMAGE_TAG" .
 
             # Push the Docker image to Docker Hub
             docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
-            docker push "openmf/ph-ee-integration-testr:$IMAGE_TAG"
+            docker push "openmf/ph-ee-integration-test:$IMAGE_TAG"
 
           # when: always  # The job will be executed even if there's no match for the tag filter
   
@@ -60,7 +60,7 @@ jobs:
           name: Build Docker image
           command: |
             ./gradlew bootJar
-            docker build -t openmf/ph-ee-integration-testr:latest .
+            docker build -t openmf/ph-ee-integration-test:latest .
 
       # Log in to DockerHub using environment variables
       - run:
@@ -70,7 +70,7 @@ jobs:
       # Push the Docker image to DockerHub
       - run:
           name: Push Docker image to DockerHub
-          command: docker push openmf/ph-ee-integration-testr:latest
+          command: docker push openmf/ph-ee-integration-test:latest
 
   upgrade-helm-chart:
     docker:
