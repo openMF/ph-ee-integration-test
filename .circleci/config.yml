@@ -161,7 +161,6 @@ workflows:
       - upgrade-helm-chart:
           cluster-name: sit
           requires:
-            - build
             - build_and_push_tag_image
             - build_and_push_latest_image
           context:
