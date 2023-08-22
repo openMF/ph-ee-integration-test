@@ -117,7 +117,7 @@ public class BatchApiStepDef extends BaseStepDef {
             batchDTO = objectMapper.readValue(BaseStepDef.response, BatchDTO.class);
             BaseStepDef.batchDTO = batchDTO;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error parsing the batch summary response", e);
         }
         assertThat(BaseStepDef.batchDTO).isNotNull();
     }
@@ -296,7 +296,7 @@ public class BatchApiStepDef extends BaseStepDef {
             response = objectMapper.readValue(BaseStepDef.response, BatchTransactionResponse.class);
             BaseStepDef.batchTransactionResponse = response;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error parsing the batch transaction response", e);
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
