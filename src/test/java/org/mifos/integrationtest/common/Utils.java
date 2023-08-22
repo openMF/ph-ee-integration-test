@@ -56,7 +56,7 @@ public class Utils {
     }
 
     public static String getAbsoluteFilePathToResource(String fileName) {
-        return "src/test/java/resources/" + fileName;
+        return "src/test/java/resources/batch_demo_csv/" + fileName;
     }
 
     public static RequestSpecification getRequestType(String requestType) {
