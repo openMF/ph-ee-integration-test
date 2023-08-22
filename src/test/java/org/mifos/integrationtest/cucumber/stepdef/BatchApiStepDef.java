@@ -1,6 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
 import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
@@ -27,11 +26,8 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
-import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
-import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.crypto.BadPaddingException;

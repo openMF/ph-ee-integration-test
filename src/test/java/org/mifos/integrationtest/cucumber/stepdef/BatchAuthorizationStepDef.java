@@ -15,11 +15,15 @@ import org.mifos.integrationtest.common.BatchSummaryResponse;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class BatchAuthorizationStepDef extends BaseStepDef {
 
     @Autowired
     MockPaymentSchemaConfig mockPaymentSchemaConfig;
+
+    @Value("${callback_url}")
+    private String callBackUrl;
 
     private static AuthorizationRequest authorizationRequest;
 
@@ -46,14 +50,12 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", "https://91c5-2406-7400-51-9c5-81cc-23cb-25ff-f710.ngrok.io" + stub)
+                .header("X-CallbackURL", callBackUrl + stub)
                 .header("X-Client-Correlation-ID", "998877")
                 .queryParam("command", "authorize")
-//                .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
-                .baseUri("http://localhost:8090").body(authorizationRequest)
+                .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-//                .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
-                .post("/batches/" + batchId).andReturn().asString();
+                .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
 
         logger.info("Authorization Response: {}", BaseStepDef.response);
     }
