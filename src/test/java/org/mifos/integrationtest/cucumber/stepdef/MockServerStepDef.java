@@ -46,10 +46,10 @@ public class MockServerStepDef extends BaseStepDef {
                 stubFor(get(endpoint).willReturn(status(status)));
             }
             case POST -> {
-                stubFor(post(endpoint).willReturn(status(status)));
+                stubFor(post(endpoint).willReturn(status(status).withFixedDelay(5000)));
             }
             case PUT -> {
-                stubFor(put(endpoint).willReturn(status(status)));
+                stubFor(put(endpoint).willReturn(status(status).withFixedDelay(5000)));
             }
             case DELETE -> {
                 stubFor(delete(endpoint).willReturn(status(status)));
@@ -75,11 +75,6 @@ public class MockServerStepDef extends BaseStepDef {
             case DELETE -> {
                 requestSender.delete(endpoint);
             }
-        }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 

@@ -3,17 +3,19 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,19 +34,32 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static int getApiCount = 0;
     private static String fieldName = "numberFailedCases";
     private static String fieldValue = "0";
-    private static String requstId;
+    private static String requestId;
     private static final String payeeIdentityAccountLookup = "003001003873110196";
     private static TransactionChannelRequestDTO transactionChannelRequestDTO = new TransactionChannelRequestDTO();
     private static String transactionId;
     private static String tenant;
     private static String payeeDfspId;
     private static String sourceBBID = "SocialWelfare";
+    private static List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
+    private static AccountMapperRequestDTO batchAccountLookupBody = null;
+    private static String callbackBody;
+    private static Map<String, String> paymentModalityList = new HashMap<String, String>() {
+        {
+            put("ACCOUNT_ID", "00");
+            put("MSISDN", "01");
+            put("VIRTUAL_ADDRESS", "02");
+            put("WALLET_ID", "03");
+            put("VOUCHER", "04");
+        }
+    };
+
 
     @When("I call the register beneficiary API with expected status of {int} and stub {string}")
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL+ stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
@@ -76,11 +91,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create an IdentityMapperDTO for Register Beneficiary")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        payeeIdentity = generateUniqueNumber(14);
+        payeeIdentity = generateUniqueNumber(16);
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, null, null, null);
         beneficiaryDTOList.add(beneficiaryDTO);
-        requstId = generateUniqueNumber(10);
-        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
 
     }
 
@@ -90,8 +105,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "12345678", null);
         beneficiaryDTOList.add(beneficiaryDTO);
-        requstId = generateUniqueNumber(10);
-        addPaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
+        requestId = generateUniqueNumber(18);
+        addPaymentModalityBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
 
     }
 
@@ -101,8 +116,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "LB28369763644714781256435714", "test");
         beneficiaryDTOList.add(beneficiaryDTO);
-        requstId = generateUniqueNumber(10);
-        updatePaymentModalityBody = new AccountMapperRequestDTO(requstId, sourceBBID, beneficiaryDTOList);
+        requestId = generateUniqueNumber(10);
+        updatePaymentModalityBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 
     @Then("I call the account lookup API with expected status of {int} and stub {string}")
@@ -137,7 +152,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requstId))));
+        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
@@ -174,8 +190,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentityAccountLookup, "01", "12345678", dfspId);
         beneficiaryDTOList.add(beneficiaryDTO);
-        requstId = generateUniqueNumber(10);
-        registerBeneficiaryBody = new AccountMapperRequestDTO(requstId, "SocialWelfare", beneficiaryDTOList);
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "SocialWelfare", beneficiaryDTOList);
     }
 
     @Then("I can call ops app transfer api with expected status of {int}")
@@ -248,5 +264,150 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 .get(operationsAppConfig.batchDetailsEndpoint).andReturn().asString();
 
         logger.info("Batch Details Response: " + BaseStepDef.response);
+    }
+
+    @When("I create an IdentityMapperDTO for adding {int} beneficiary")
+    public void iCreateAnIdentityMapperDTOForAddingBeneficiary(int count) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for(int i=0;i<count;i++){
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(18), null, null, null);
+            beneficiaryList.add(beneficiaryDTO);
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(14);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I call the register beneficiary API with {string} as registering institution id expected status of {int}")
+    public void iCallTheRegisterBeneficiaryAPIWithAsRegisteringInstitutionIdExpectedStatusOf(String registeringInstitutionId, int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", mockServer.getBaseUri()).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+    }
+
+    @Then("I call bulk account lookup API with these {int} beneficiaries and {string} as registering institution id and stub {string}")
+    public void iCallBulkAccountLookupAPIWithTheseBeneficiariesAndAsRegisteringInstitutionId(int noOfBeneficiaries, String registeringInstitutionId, String stub) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                .baseUri(identityMapperConfig.identityMapperContactPoint).body(batchAccountLookupBody).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
+                .post(identityMapperConfig.batchAccountLookupEndpoint).andReturn().asString();
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+    }
+
+    @And("I create request body for batch account lookup API")
+    public void iCreateRequestBodyForBatchAccountLookupAPI() {
+        batchAccountLookupBody = null;
+        requestId = generateUniqueNumber(14);
+        batchAccountLookupBody = new AccountMapperRequestDTO(requestId, "", beneficiaryList);
+    }
+
+    @And("I should be able to verify that the {string} method to {string} receive {int} request")
+    public void iShouldBeAbleToVerifyThatTheMethodToReceiveRequest(String httpMethod, String stub, int noOfRequest) throws JsonProcessingException {
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        //assertThat(allServeEvents).hasSize(1);
+        //System.out.println(allServeEvents.size());
+        for(int i=0; i< allServeEvents.size();i++) {
+            ServeEvent request = allServeEvents.get(i);
+
+            //callbackBody = request.getRequest().getBodyAsString();
+            if(!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                String requestID = rootNode.get("requestID").asText();
+
+                if (requestId.equals(requestID)) {
+                    callbackBody = request.getRequest().getBodyAsString();
+                }
+
+            }
+        }
+        int count=0;
+        try {
+            //ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(callbackBody);
+
+            JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
+            if (beneficiaryDTOList.isArray()) {
+                for (JsonNode beneficiary : beneficiaryDTOList) {
+                    count++ ;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertThat(count).isEqualTo(noOfRequest);
+    }
+
+
+    @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string}")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithPaymentModalityAs(int noOfBeneficiary, String paymentModality) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for(int i=0;i<noOfBeneficiary;i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(16), getPaymentModality(paymentModality), "12345678", "ABCDEF");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    public String getPaymentModality(String paymentModality){
+        return paymentModalityList.get(paymentModality);
+    }
+
+    @When("I call the update beneficiary API with expected status of {int} and stub {string}")
+    public void iCallTheUpdateBeneficiaryAPIWithExpectedStatusOfAndStub(int expectedStatus, String stub) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .put(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+
+    }
+
+    @When("I create an IdentityMapperDTO for {int} update Beneficiary with payment modality as {string}")
+    public void iCreateAnIdentityMapperDTOForUpdateBeneficiaryWithPaymentModalityAs(int noOfBeneficiary, String paymentModality) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for(int i=0;i<noOfBeneficiary;i++) {
+            BeneficiaryDTO beneficiaryDTO =  registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setPaymentModality(getPaymentModality(paymentModality));
+           // BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912115", getPaymentModality(paymentModality), "12345678", "ABCDEF");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I create an IdentityMapperDTO for {int} update Beneficiary with banking institution code as {string}")
+    public void iCreateAnIdentityMapperDTOForUpdateBeneficiaryWithBankingInstitutionCodeAs(int noOfBeneficiary, String bankingInstitutionCode) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for(int i=0;i<noOfBeneficiary;i++) {
+            BeneficiaryDTO beneficiaryDTO =  registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setBankingInstitutionCode(bankingInstitutionCode);
+            //BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912115","00", "12345678", bankingInstitutionCode);
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I create an IdentityMapperDTO for {int} update Beneficiary with financial address code as {string}")
+    public void iCreateAnIdentityMapperDTOForUpdateBeneficiaryWithFinancialAddressCodeAs(int noOfBeneficiary, String financialAddress) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for(int i=0;i<noOfBeneficiary;i++) {
+            BeneficiaryDTO beneficiaryDTO =  registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setFinancialAddress(financialAddress);
+            //BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("94049169714828912115","00", "12345678", bankingInstitutionCode);
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 }

@@ -83,3 +83,5 @@ identity-account-mapper:
     add-payment-modality: /paymentModality
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
+    batch-account-lookup: /accountLookup
+

@@ -19,4 +19,6 @@ public class IdentityMapperConfig {
     public String accountLookupEndpoint;
     @Value("${callback_url}")
     public String callbackURL;
+    @Value("${identity-account-mapper.endpoints.batch-account-lookup}")
+    public String batchAccountLookupEndpoint;
 }
