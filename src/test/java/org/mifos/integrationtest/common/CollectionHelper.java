@@ -26,6 +26,18 @@ public class CollectionHelper {
         return body;
     }
 
+    public static JSONObject getCollectionRequestBody(String key1, String key2) throws JSONException {
+        List<Pair<String, String>> payers = new ArrayList<>();
+        payers.add(new Pair<>(key1, "254708374149"));
+        payers.add(new Pair<>(key2, "24450523"));
+
+        JSONObject body = new JSONObject();
+        body.put("payer", getPayerArray(payers));
+        body.put("amount", getAmountObject("1"));
+        body.put("transactionType", getTransactionTypeObject());
+        return body;
+    }
+
     private static JSONArray getPayerArray(List<Pair<String, String>> payers) {
         JSONArray payerArray = new JSONArray();
         payers.forEach(payer -> {
