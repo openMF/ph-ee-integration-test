@@ -9,7 +9,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
 
   @gov
@@ -19,7 +19,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
@@ -31,7 +31,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     When I call the auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -46,7 +46,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     When I call the auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -83,7 +83,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And I should get batchId in response
     Given I have a batch id from previous scenario
@@ -102,7 +102,7 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And I have retry count as 2
     When I should call callbackUrl api
@@ -117,7 +117,7 @@ Feature: Batch Details API test
     And I have private key
     And I generate signature
     And I have callbackUrl as "http://httpstat.us/503"
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     Given I have retry count as 2
     When I should call callbackUrl api
@@ -131,9 +131,25 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     When I call the auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batch details API with expected status of 200
     Then I should get non empty response with failure and success percentage
+
+  @gov
+  Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
+    Given I have tenant as "rhino"
+	And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
+    And I have the registeringInstituteId "123"
+    And I have the programId "123"
+    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    When I call the batch summary API with expected status of 200
+	Then I am able to parse batch summary response
+    And Status of transaction is "COMPLETED"

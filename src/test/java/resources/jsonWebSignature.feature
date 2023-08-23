@@ -7,7 +7,7 @@ Feature: Json Web Signature test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
 
   Scenario: JWS-002 Test the jws in response for batchTransactions
@@ -16,7 +16,7 @@ Feature: Json Web Signature test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-    When I call the batch transactions endpoint with expected status of 200
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And The response should have non empty header X-SIGNATURE
     And The signature should be able successfully validated against certificate

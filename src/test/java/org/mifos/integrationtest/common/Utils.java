@@ -16,6 +16,8 @@ public class Utils {
     public static final String HEADER_FILENAME = "filename";
     public static final String HEADER_PURPOSE = "purpose";
     public static final String QUERY_PARAM_TYPE = "type";
+    public static final String HEADER_REGISTERING_INSTITUTE_ID = "X-Registering-Institution-ID";
+    public static final String HEADER_PROGRAM_ID = "X-Program-ID";
 
     public static void initializeRESTAssured() {
         RestAssured.baseURI = "https://localhost";
@@ -54,7 +56,7 @@ public class Utils {
     }
 
     public static String getAbsoluteFilePathToResource(String fileName) {
-        return "src/test/java/resources/" + fileName;
+        return "src/test/java/resources/batch_demo_csv/" + fileName;
     }
 
     public static RequestSpecification getRequestType(String requestType) {

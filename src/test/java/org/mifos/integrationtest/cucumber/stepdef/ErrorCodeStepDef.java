@@ -103,7 +103,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
             transactionId = jsonObject.getString("transactionId");
             logger.info("Inbound transfer Id: {}", transactionId);
         } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error("Error parsing the transaction id from response", e);
             assertThat(false).isTrue();
             return;
         }

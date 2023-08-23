@@ -198,7 +198,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             payeeDfsp = transactionStatus.get("payeeDfspId").toString();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error parsing the response", e);
         }
         assertThat(payeeDfspId).isEqualTo(payeeDfsp);
     }
