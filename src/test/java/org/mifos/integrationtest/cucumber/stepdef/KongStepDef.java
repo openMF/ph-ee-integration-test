@@ -178,7 +178,7 @@ public class KongStepDef extends BaseStepDef {
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
         try {
             Response resp = RestAssured.given(baseReqSpec)
-                    .baseUri("http://"+kongConfig.routeHost)
+                    .baseUri("https://"+kongConfig.routeHost)
                     .header(kongConfig.apiKeyHeader, BaseStepDef.kongConsumerKey.getKey())
                     .expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
