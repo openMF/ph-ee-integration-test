@@ -148,16 +148,6 @@ Feature: Batch Details API test
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature
-
-  @gov
-  Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
-    Given I have tenant as "rhino"
-    And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
-    And I have the registeringInstituteId "123"
-    And I have the programId "123"
-    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
-    And I have private key
-    And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
