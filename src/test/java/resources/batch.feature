@@ -144,7 +144,7 @@ Feature: Batch Details API test
     Given I have tenant as "rhino"
 	And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
-    And I have the programId "123"
+    And I have the programId "SocialWelfare"
     And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
     And I have private key
     And I generate signature

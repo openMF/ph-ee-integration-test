@@ -73,13 +73,6 @@ public class BatchApiStepDef extends BaseStepDef {
         BaseStepDef.filename = null;
     }
 
-    @And("I have tenant as {string}")
-    public void setTenant(String tenant) {
-        BaseStepDef.tenant = tenant;
-        assertThat(BaseStepDef.tenant).isNotEmpty();
-        BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
-    }
-
     @And("I have the registeringInstituteId {string}")
     public void setRegisteringInstituteId(String registeringInstituteId) {
         BaseStepDef.registeringInstituteId = registeringInstituteId;

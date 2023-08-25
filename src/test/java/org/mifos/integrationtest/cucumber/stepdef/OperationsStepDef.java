@@ -106,7 +106,7 @@ public class OperationsStepDef extends BaseStepDef {
                 .when()
                 .get(operationsAppConfig.batchesEndpoint).andReturn().asString();
 
-        logger.info("Batch Summary Response: " + BaseStepDef.response);
+        logger.info("Batches api Response: " + BaseStepDef.response);
     }
 
     private void parseBatchesResponse(String response) {
