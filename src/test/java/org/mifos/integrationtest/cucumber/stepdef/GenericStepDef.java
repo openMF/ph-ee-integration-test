@@ -30,6 +30,11 @@ public class GenericStepDef extends BaseStepDef {
         Thread.sleep(time);
     }
 
+    @And("I store this time as start time")
+    public void storeCurrentTime() {
+        BaseStepDef.time = System.currentTimeMillis();
+    }
+
     private void setTenant(String tenant) {
         BaseStepDef.tenant = tenant;
         assertThat(BaseStepDef.tenant).isNotEmpty();

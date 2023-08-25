@@ -96,8 +96,9 @@ public class BaseStepDef {
     protected static String signature;
     protected static Response restResponseObject;
     protected static String registeringInstituteId;
-    public static String programId;
-    public static BatchDTO batchDTO;
+    protected static String programId;
+    protected static BatchDTO batchDTO;
+    protected static long time;
     public static BatchTransactionResponse batchTransactionResponse;
     protected static KongConsumer kongConsumer;
     protected static KongConsumerKey kongConsumerKey;
