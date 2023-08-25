@@ -5,10 +5,10 @@ orbs:
   helm: circleci/helm@2.0.1
   aws-eks: circleci/aws-eks@2.2.0
   kubernetes: circleci/kubernetes@1.3
-executors:	
-docker-executor:	
-  docker:	
-    - image: circleci/openjdk:17-buster-node-browsers-legacy
+executors:
+  docker-executor:
+    docker:
+      - image: circleci/openjdk:17-buster-node-browsers-legacy
 jobs:
   build:
     docker:
