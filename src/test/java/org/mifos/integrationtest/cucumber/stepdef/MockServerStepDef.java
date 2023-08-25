@@ -76,11 +76,6 @@ public class MockServerStepDef extends BaseStepDef {
                 requestSender.delete(endpoint);
             }
         }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Then("I should be able to verify that the {httpMethod} method to {string} endpoint received {int} request")
