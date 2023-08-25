@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.HttpMethod.PUT;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,9 +60,10 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL+ stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
+
 
         logger.info("Identity Mapper Response: {}", BaseStepDef.response);
     }
@@ -146,6 +148,12 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .queryParam("sourceBBID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
         }
     }

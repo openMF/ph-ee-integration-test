@@ -46,10 +46,10 @@ public class MockServerStepDef extends BaseStepDef {
                 stubFor(get(endpoint).willReturn(status(status)));
             }
             case POST -> {
-                stubFor(post(endpoint).willReturn(status(status).withFixedDelay(5000)));
+                stubFor(post(endpoint).willReturn(status(status)));
             }
             case PUT -> {
-                stubFor(put(endpoint).willReturn(status(status).withFixedDelay(5000)));
+                stubFor(put(endpoint).willReturn(status(status)));
             }
             case DELETE -> {
                 stubFor(delete(endpoint).willReturn(status(status)));
