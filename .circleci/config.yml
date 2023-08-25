@@ -175,16 +175,12 @@ workflows:
             - AWS
             - slack
       - build_and_push_tag_image:
-          requires:
-            - build
           filters:
             tags:
-              only: /^v\d+\.\d+\.\d+$/  # Match tags in the format v1.2.3
+              only: /^v\d+\.\d+\.\d+([-rc.0-9]+)*?$/  # Match tags in the format v1.2.3
           context:
             - DOCKER
       - build_and_push_latest_image:
-          requires:
-            - build
           context:
             - DOCKER
       - upgrade-helm-chart:
