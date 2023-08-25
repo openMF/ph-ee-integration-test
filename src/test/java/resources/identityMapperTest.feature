@@ -10,6 +10,7 @@ Feature: Identity Account Mapper Api Test
     And I can register the stub with "/accountLookup" endpoint for "PUT" request with status of 200
     And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
     And I can register the stub with "/updateBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    Then I will sleep for 2000 millisecond
     Then I will update the  mock server and register stub as done
 
 
