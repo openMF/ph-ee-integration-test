@@ -1,7 +1,8 @@
-@gov-223 @ops-batch-setup @ops-batch-teardown
+@gov-223
 Feature: Operations APP related feature
 
-  Scenario: Batches API test vanilla
+  @ops-batch-setup @ops-batch-teardown
+  Scenario: Batches API no filter test
     Given I have tenant as "rhino"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -9,7 +10,8 @@ Feature: Operations APP related feature
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
 
-  Scenario: Batches API test with batchId
+  @ops-batch-setup @ops-batch-teardown
+  Scenario: Batches API batchId filter test
     Given I have tenant as "rhino"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -28,16 +30,16 @@ Feature: Operations APP related feature
     When I call the batches endpoint with expected status of 200
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
-    And I am able to assert only 1 totalBatches
+    And I am able to assert 1 totalBatches
 
-  # store time
-  # hit 5 batches
-  # sleep for 10 secs
-  # calculate time
-  Scenario: Batches API filter
-    Given I have tenant as "rhino"
-    And I store this time as start time
+  # create 2 batch txn
+  # set offset to 0 and limit to 1
+  # assert single batch is returned
+  # set offset to 1 and limit to 1
+  @ops-batch-setup @ops-batch-teardown
+  Scenario: Batches API pagination test
     # Batch 1 call
+    Given I have tenant as "rhino"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
@@ -55,8 +57,49 @@ Feature: Operations APP related feature
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
+    And I add limit filter 1
+    And I add offset filter 0
+    When I call the batches endpoint with expected status of 200
+    Then I should get non empty response
+    And I am able to parse batch paginated response into DTO
+    And The count of batches should be 1
+    When I add limit filter 1
+    And I add offset filter 1
+	And I call the batches endpoint with expected status of 200
+    Then I should get non empty response
+    And I am able to parse batch paginated response into DTO
+    And The count of batches should be 1
+
+  # store startTime
+  # hit 5 batches
+  # sleep for some secs
+  # calculate endTime
+  # query using startTime and endTime ->> then I should get 5 txn
+  @ops-batch-setup @ops-batch-teardown
+  Scenario: Batches API date filter test
+    Given I will sleep for 5000 millisecond
+    And I have tenant as "rhino"
+    And I store this time as start time
+    # Batch 1 call
+    And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
+    And I have the registeringInstituteId "123"
+    And I have the programId "SocialWelfare"
+    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I have private key
+    And I generate signature
+    Then I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 1000 millisecond
+    And I will sleep for 2000 millisecond
+  	# Batch 2 call
+    And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
+    And I have the registeringInstituteId "123"
+    And I have the programId "SocialWelfare"
+    And I have clientCorrelationId as "e3bdffd4-f484-4a06-a8d0-e9e4694635cc"
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
+    # sleep for 1 sec
+    Then I will sleep for 2000 millisecond
   	# Batch 3 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -66,7 +109,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 1000 millisecond
+    Then I will sleep for 2000 millisecond
   	# Batch 4 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -76,7 +119,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 1000 millisecond
+    Then I will sleep for 2000 millisecond
   	# Batch 5 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -86,3 +129,10 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 5 sec
+    Then I will sleep for 5000 millisecond
+  	And I add date from filter
+    And I add date to filter
+    When I call the batches endpoint with expected status of 200
+    Then I should get non empty response
+    And I am able to parse batch paginated response into DTO
+    And I am able to assert 5 totalBatches

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -40,19 +41,27 @@ public class OperationsStepDef extends BaseStepDef {
 
     @Before("@ops-batch-setup")
     public void operationsBatchTestSetup() {
-        batchDbSetup();
         log.info("Running @ops-batch-setup");
+        batchDbSetup();
     }
 
     @After("@ops-batch-teardown")
     public void operationsBatchTestTearDown() {
-        batchDbTearDown();
         log.info("Running @ops-batch-teardown");
+        batchDbTearDown();
     }
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
+        log.info("Query params: {}", BaseStepDef.batchesEndpointQueryParam);
         callBatchesEndpoint(expectedStatus, BaseStepDef.batchesEndpointQueryParam);
+    }
+
+    @And("The count of batches should be {int}")
+    public void assertCountOfBatches(int expectedCount) {
+        assertThat(BaseStepDef.batchesResponse).isNotNull();
+        assertThat(BaseStepDef.batchesResponse.getData()).isNotNull();
+        assertThat(BaseStepDef.batchesResponse.getData().size()).isEqualTo(expectedCount);
     }
 
     @Then("I am able to parse batch paginated response into DTO")
@@ -72,19 +81,45 @@ public class OperationsStepDef extends BaseStepDef {
         updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "batchId", BaseStepDef.batchId);
     }
 
-    @Then("I am able to assert only {int} totalBatches")
+    @And("I add date from filter")
+    public void addDateFromFilter() {
+        String date = BaseStepDef.getDateInFormat(BaseStepDef.dateTime);
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "dateFrom", date);
+    }
+
+    @And("I add date to filter")
+    public void addDateToFilter() {
+        String date = BaseStepDef.getCurrentDateInFormat();
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "dateTo", date);
+    }
+
+    @And("I add limit filter {int}")
+    public void addLimitFilter(int limit) {
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "limit", limit);
+    }
+
+    @And("I add offset filter {int}")
+    public void addOffsetFilter(int offset) {
+        updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "offset", offset);
+    }
+
+    @Then("I am able to assert {int} totalBatches")
     public void assertTotalSubBatches(int count) {
         assertThat(BaseStepDef.batchesResponse.getTotalBatches()).isEqualTo(count);
     }
 
     private void batchDbSetup() {
-		// todo define the setup step/task in this method
-        assertThat(1).isEqualTo(1);
+		// instantiate the shared query param variable if null
+        if (BaseStepDef.batchesEndpointQueryParam == null) {
+            BaseStepDef.batchesEndpointQueryParam = new HashMap<>();
+        }
     }
 
     private void batchDbTearDown() {
-        // todo define the teardown step/task in this method
-        assertThat(1).isEqualTo(1);
+		// clearing the query parameter shared variable
+        if (BaseStepDef.batchesEndpointQueryParam.size() > 0) {
+            BaseStepDef.batchesEndpointQueryParam.clear();
+        }
     }
 
     private void updateQueryParam(Map<String, Object> queryParam, String key, Object object) {

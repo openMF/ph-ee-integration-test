@@ -1,7 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import java.util.UUID;
 import static com.google.common.truth.Truth.assertThat;
@@ -32,7 +31,7 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I store this time as start time")
     public void storeCurrentTime() {
-        BaseStepDef.time = System.currentTimeMillis();
+        BaseStepDef.dateTime = System.currentTimeMillis();
     }
 
     private void setTenant(String tenant) {

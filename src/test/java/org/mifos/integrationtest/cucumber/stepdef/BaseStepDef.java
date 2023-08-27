@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +100,7 @@ public class BaseStepDef {
     protected static String registeringInstituteId;
     protected static String programId;
     protected static BatchDTO batchDTO;
-    protected static long time;
+    protected static long dateTime;
     public static BatchTransactionResponse batchTransactionResponse;
     protected static KongConsumer kongConsumer;
     protected static KongConsumerKey kongConsumerKey;
@@ -106,7 +108,20 @@ public class BaseStepDef {
     protected static KongRoute kongRoute;
     protected static KongPlugin kongPlugin;
     protected static BatchPaginatedResponse batchesResponse;
+    protected static String dateFormat = "yyyy-MM-dd HH:mm:ss";
     protected static Map<String, Object> batchesEndpointQueryParam = new HashMap<>();
+
+    protected static String getCurrentDateInFormat() {
+        return getDateInFormat(System.currentTimeMillis());
+    }
+
+    protected static String getDateInFormat(long dateMillis) {
+        return getSimpleDateFormat().format(dateMillis);
+    }
+
+    protected static SimpleDateFormat getSimpleDateFormat() {
+        return new SimpleDateFormat(dateFormat);
+    }
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
