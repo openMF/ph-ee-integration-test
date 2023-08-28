@@ -139,6 +139,7 @@ jobs:
           name: Test execution
           command: |
             ngrok config add-authtoken “$AUTH_TOKEN”
+            ngrok config check
             ngrok http 53013 > /dev/null &
             echo -n "Extracting ngrok public url ."
             NGROK_PUBLIC_URL=""
