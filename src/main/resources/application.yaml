@@ -22,7 +22,7 @@ paybill:
       settlement: "/confirmation"
 
 bulk-processor:
-  contactpoint: "ph-ee-connector-bulk"
+  contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"
