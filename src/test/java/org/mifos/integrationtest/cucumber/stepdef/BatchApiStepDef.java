@@ -27,11 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mifos.connector.common.operations.dto.Transfer;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.Party;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchDetailResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
@@ -356,6 +358,28 @@ public class BatchApiStepDef extends BaseStepDef {
         batchRequestDTOS.add(batchRequestDTO);
         BaseStepDef.batchRawRequest = objectMapper.writeValueAsString(batchRequestDTOS);
         assertThat(BaseStepDef.batchRawRequest).isNotEmpty();
+    }
+
+    @Then("I should get transactions with note set as {string}")
+    public void iShouldGetTransactionsWithNoteSetAs(String duplicateTransactionNote) {
+        logger.info(BaseStepDef.response);
+        BatchDetailResponse batchDetailResponse = null;
+        int duplicateRecordCount = 0;
+        try {
+            batchDetailResponse = objectMapper.readValue(BaseStepDef.response, BatchDetailResponse.class);
+        } catch (Exception e) {
+            logger.error("Error parsing the batch detail response", e);
+        }
+
+        assertThat(batchDetailResponse).isNotNull();
+        List<Transfer> transfers = batchDetailResponse.getContent();
+
+        for(Transfer transfer : transfers) {
+            if(duplicateTransactionNote.equals(transfer.getErrorInformation())){
+                duplicateRecordCount++;
+            }
+        }
+        assertThat(duplicateRecordCount).isGreaterThan(0);
     }
 
     @After("@batch-teardown")
