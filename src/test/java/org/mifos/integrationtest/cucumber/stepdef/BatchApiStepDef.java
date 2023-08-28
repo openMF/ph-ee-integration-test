@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mifos.connector.common.operations.dto.Transfer;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchDetailResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -299,5 +302,27 @@ public class BatchApiStepDef extends BaseStepDef {
             logger.error("Error parsing the batch transaction response", e);
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
+    }
+
+    @Then("I should get transactions with note set as {string}")
+    public void iShouldGetTransactionsWithNoteSetAs(String duplicateTransactionNote) {
+        logger.info(BaseStepDef.response);
+        BatchDetailResponse batchDetailResponse = null;
+        int duplicateRecordCount = 0;
+        try {
+            batchDetailResponse = objectMapper.readValue(BaseStepDef.response, BatchDetailResponse.class);
+        } catch (Exception e) {
+            logger.error("Error parsing the batch detail response", e);
+        }
+
+        assertThat(batchDetailResponse).isNotNull();
+        List<Transfer> transfers = batchDetailResponse.getContent();
+
+        for(Transfer transfer : transfers) {
+            if(duplicateTransactionNote.equals(transfer.getErrorInformation())){
+                duplicateRecordCount++;
+            }
+        }
+        assertThat(duplicateRecordCount).isGreaterThan(0);
     }
 }

@@ -1,0 +1,4 @@
+id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
+0,k1e22fe3-9740-4fba-97b6-78f43bfa7f2f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+1,l9f6ac4d052e-72aa3ea4-e6f6-4880-877f,mojaloop,msisdn,835322416,msisdn,27713803912,10,USD,Moja bulk test
+2,m27631f6-6dd4-4d69-b4fc-8932bd721913,mojaloop,msisdn,835322416,msisdn,27713803913,10,USD,Moja bulk test
