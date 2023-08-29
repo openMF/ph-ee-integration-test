@@ -32,7 +32,6 @@ import javax.crypto.NoSuchPaddingException;
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
 
-
     @Autowired
     ObjectMapper objectMapper;
 
@@ -86,6 +85,10 @@ public class BaseStepDef {
     public static String programId;
     public static BatchDTO batchDTO;
     public static BatchTransactionResponse batchTransactionResponse;
+
+    protected static int throttleTime;
+
+    protected static int subBatchSize;
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,

@@ -7,6 +7,8 @@ import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
 import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
 import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
 import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
+
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,10 +20,14 @@ import io.restassured.http.Headers;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
+import java.util.StringJoiner;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -39,6 +45,12 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Autowired
     BulkProcessorConfig bulkProcessorConfig;
+
+    private String firstSubBatchFirstTxn;
+
+    private String secondSubBatchFirstTxn;
+
+    private long differenceInSeconds;
 
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
@@ -302,21 +314,94 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @Given("The system has a configured throttle time of {int} seconds and sub-batch size of {int}")
-    public void theSystemHasAConfiguredThrottleTimeOfSecondsAndSubBatchSizeOf(int arg0, int arg1) {
-        
+    public void theSystemHasAConfiguredThrottleTimeOfSecondsAndSubBatchSizeOf(int throttleTime, int subBatchSize) {
+        BaseStepDef.throttleTime = throttleTime;
+        BaseStepDef.subBatchSize = subBatchSize;
     }
+
 
     @And("I fetch requestId of first transactions for consecutive sub-batches based on sub-batch size")
     public void iFetchRequestIdOfFirstTransactionsForConsecutiveSubBatchesBasedOnSubBatchSize() {
-        
+        logger.info(filename);
+        String fileContent = getFileContent(filename);
+        String[] firstTxnFromFirstAndSecondSubBatch = getFirstTxnFromFirstAndSecondSubBatch(fileContent, subBatchSize);
+        firstSubBatchFirstTxn = firstTxnFromFirstAndSecondSubBatch[0];
+        secondSubBatchFirstTxn = firstTxnFromFirstAndSecondSubBatch[1];
+        logger.info("first sub batch txn: " + firstSubBatchFirstTxn);
+        logger.info("second sub batch txn: " + secondSubBatchFirstTxn);
     }
-
-    @Then("I call the transfer API for requestIds fetched with expected status of {int}")
-    public void iCallTheTransferAPIForRequestIdsFetchedWithExpectedStatusOf(int arg0) {
-    }
-
 
     @And("The difference between completedAt for requestIds is greater than or equal to throttleTime")
     public void theDifferenceBetweenCompletedAtForRequestIdsIsGreaterThanOrEqualToThrottleTime() {
+        assertThat(differenceInSeconds).isGreaterThan((long) throttleTime);
+    }
+
+    @Then("I call the transfer API for requestIds fetched with expected status of {int}")
+    public void iCallTheTransferAPIForRequestIdsFetchedWithExpectedStatusOf(int expectedStatus) {
+        Date firstSubBatchFirstTxnStartedAtTimestamp =
+                makeTransferApiCallAndFetchStartedAtTimestamp(firstSubBatchFirstTxn, expectedStatus);
+        Date secondSubBatchFirstTxnStartedAtTimestamp =
+                makeTransferApiCallAndFetchStartedAtTimestamp(secondSubBatchFirstTxn, expectedStatus);
+
+        assertThat(firstSubBatchFirstTxnStartedAtTimestamp).isNotNull();
+        assertThat(secondSubBatchFirstTxnStartedAtTimestamp).isNotNull();
+
+        long firstSubBatchTxnStartedAtInMillis = firstSubBatchFirstTxnStartedAtTimestamp.getTime();
+        long secondSubBatchTxnStartedAtInMillis = secondSubBatchFirstTxnStartedAtTimestamp.getTime();
+        long differenceInMillis = secondSubBatchTxnStartedAtInMillis - firstSubBatchTxnStartedAtInMillis;
+        differenceInSeconds = differenceInMillis / 1000;
+    }
+
+    private String getFileContent(String filePath) {
+        File file = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        Reader reader;
+        CSVFormat csvFormat;
+        CSVParser csvParser = null;
+        try {
+            reader = new FileReader(file);
+            csvFormat = CSVFormat.DEFAULT.withDelimiter(',');
+            csvParser = new CSVParser(reader, csvFormat);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        StringJoiner stringJoiner = new StringJoiner("\n");
+
+        for (CSVRecord csvRecord : csvParser) {
+            stringJoiner.add(csvRecord.toString());
+        }
+        return stringJoiner.toString();
+    }
+
+    private String[] getFirstTxnFromFirstAndSecondSubBatch(String fileContent, int batchSize){
+        String[] csvRecords = fileContent.split("\n");
+
+        String firstBatchFirstTxnRecord = csvRecords[1];
+        String secondBatchFirstTxnRecord = csvRecords[1+batchSize];
+
+        String[] firstBatchFirstTxnRecordValues = firstBatchFirstTxnRecord.split(",");
+        String[] secondBatchFirstTxnRecordValues = secondBatchFirstTxnRecord.split(",");
+
+        return new String[]{firstBatchFirstTxnRecordValues[4].trim(), secondBatchFirstTxnRecordValues[4].trim()};
+    }
+
+    private Date makeTransferApiCallAndFetchStartedAtTimestamp(String clientCorrelationId, int expectedStatus){
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        String urlPath = operationsAppConfig.transfersEndpoint + "&clientCorrelationId=" + clientCorrelationId;
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(urlPath).andReturn().asString();
+        logger.info(BaseStepDef.response);
+        return fetchStartAtTimestamp(BaseStepDef.response);
+    }
+
+    private Date fetchStartAtTimestamp(String response) {
+        TransferResponse transferResponse = null;
+        try {
+            transferResponse = objectMapper.readValue(BaseStepDef.response, TransferResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return transferResponse.getStartedAt();
     }
 }
