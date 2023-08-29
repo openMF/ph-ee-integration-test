@@ -300,4 +300,23 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
+
+    @Given("The system has a configured throttle time of {int} seconds and sub-batch size of {int}")
+    public void theSystemHasAConfiguredThrottleTimeOfSecondsAndSubBatchSizeOf(int arg0, int arg1) {
+        
+    }
+
+    @And("I fetch requestId of first transactions for consecutive sub-batches based on sub-batch size")
+    public void iFetchRequestIdOfFirstTransactionsForConsecutiveSubBatchesBasedOnSubBatchSize() {
+        
+    }
+
+    @Then("I call the transfer API for requestIds fetched with expected status of {int}")
+    public void iCallTheTransferAPIForRequestIdsFetchedWithExpectedStatusOf(int arg0) {
+    }
+
+
+    @And("The difference between completedAt for requestIds is greater than or equal to throttleTime")
+    public void theDifferenceBetweenCompletedAtForRequestIdsIsGreaterThanOrEqualToThrottleTime() {
+    }
 }
