@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.TransferResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.crypto.BadPaddingException;
