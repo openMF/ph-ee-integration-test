@@ -10,14 +10,13 @@ Feature: Identity Account Mapper Api Test
     And I can register the stub with "/accountLookup" endpoint for "PUT" request with status of 200
     And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
     And I can register the stub with "/updateBeneficiaryApiTest" endpoint for "PUT" request with status of 200
-    Then I will sleep for 2000 millisecond
     Then I will update the  mock server and register stub as done
 
 
   Scenario: IAM-001 Register Beneficiary Api Test
     Given I create an IdentityMapperDTO for Register Beneficiary
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
-    Then I will sleep for 3000 millisecond
+    Then I will sleep for 7000 millisecond
     And I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with required parameter in body
 
   Scenario: IAM-002 Add Payment Modality Api Test
@@ -32,7 +31,7 @@ Feature: Identity Account Mapper Api Test
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/updatePaymentModalityApiTest" endpoint received a request with required parameter in body
 
-  Scenario: IAM-003 Account Lookup Api Test
+  Scenario: PPV-11 Account Lookup Api Test
     When I call the account lookup API with expected status of 202 and stub "/accountLookupTest"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with same payeeIdentity
@@ -188,4 +187,31 @@ Feature: Identity Account Mapper Api Test
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
     Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with required parameter in body
+
+  Scenario: PPV-04 Invalid Registering Institution Id
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
+    And I create an IdentityMapperDTO for adding 2 beneficiary
+    When I call the register beneficiary API with "Social" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 10 beneficiaries and "Social" as registering institution id and stub "/batchAccountLookup"
+    Then I will sleep for 3000 millisecond
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 2 request
+
+  Scenario: PPV-02 Beneficiary not registered
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
+    And I create an IdentityMapperDTO for adding 2 beneficiary
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    Then I will sleep for 3000 millisecond
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
+
+  Scenario: PPV-02 Batch Account Lookup API
+    When I create an IdentityMapperDTO for adding 8 beneficiary
+    When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
+    And I create request body for batch account lookup API
+    Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    Then I will sleep for 3000 millisecond
+    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
     And I can stop mock server

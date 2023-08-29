@@ -286,11 +286,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 
-    @When("I call the register beneficiary API with {string} as registering institution id expected status of {int}")
-    public void iCallTheRegisterBeneficiaryAPIWithAsRegisteringInstitutionIdExpectedStatusOf(String registeringInstitutionId, int expectedStatus) {
+    @When("I call the register beneficiary API with {string} as registering institution id expected status of {int} and stub {string}")
+    public void iCallTheRegisterBeneficiaryAPIWithAsRegisteringInstitutionIdExpectedStatusOf(String registeringInstitutionId, int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
-                .header("X-CallbackURL", mockServer.getBaseUri()).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL+ stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
@@ -319,25 +319,26 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I should be able to verify that the {string} method to {string} receive {int} request")
     public void iShouldBeAbleToVerifyThatTheMethodToReceiveRequest(String httpMethod, String stub, int noOfRequest) throws JsonProcessingException {
         List<ServeEvent> allServeEvents = getAllServeEvents();
-        //assertThat(allServeEvents).hasSize(1);
-        //System.out.println(allServeEvents.size());
+
         for(int i=0; i< allServeEvents.size();i++) {
             ServeEvent request = allServeEvents.get(i);
 
-            //callbackBody = request.getRequest().getBodyAsString();
             if(!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                String requestID = rootNode.get("requestID").asText();
+                try {
+                    JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                    String requestID = rootNode.get("requestID").asText();
 
-                if (requestId.equals(requestID)) {
-                    callbackBody = request.getRequest().getBodyAsString();
+                    if (requestId.equals(requestID)) {
+                        callbackBody = request.getRequest().getBodyAsString();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
 
             }
         }
         int count=0;
         try {
-            //ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(callbackBody);
 
             JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
@@ -350,6 +351,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             e.printStackTrace();
         }
         assertThat(count).isEqualTo(noOfRequest);
+        beneficiaryList = new ArrayList<>();
     }
 
 
