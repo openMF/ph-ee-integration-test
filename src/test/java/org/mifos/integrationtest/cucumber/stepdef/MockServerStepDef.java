@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.annotation.PostConstruct;
 
 public class MockServerStepDef extends BaseStepDef {
-    private static Boolean wiremockStarted = false;
 
     @Value("${mock-server.port}")
     private int mockServerPortFromConfig;
@@ -42,7 +41,7 @@ public class MockServerStepDef extends BaseStepDef {
     }
 
     @And("I can register the stub with {string} endpoint for {httpMethod} request with status of {int}")
-    public void startStub(String endpoint, HttpMethod httpMethod, int status) {
+        public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
                 stubFor(get(endpoint).willReturn(status(status)));
@@ -110,26 +109,21 @@ public class MockServerStepDef extends BaseStepDef {
     }
 
     @Given("The mock server is running")
+    public void isMockServerRunning(){
+        assertThat(mockServer.getMockServer().isRunning()).isTrue();
+    }
+
+
     @PostConstruct
     public void iWillStartTheMockServer() {
-        if(!wiremockStarted) {
-            logger.info("I will start the mock server");
-            checkIfMockServerIsInjected();
-            startMockServer();
-            iWillUpdateTheMockServerAndRegisterStubAsDone();
-        }
+        logger.info("I will start the mock server");
+        checkIfMockServerIsInjected();
+        startMockServer();
     }
 
     @And("I will register the stub with {string} endpoint for {httpMethod} request with status of {int}")
     public void iWillRegisterTheStubWithEndpointForRequestWithStatusOf(String endpoint, HttpMethod httpMethod, int status) {
-        if(!wiremockStarted) {
-            startStub(endpoint, httpMethod, status);
-
-        }
+        startStub(endpoint, httpMethod, status);
     }
 
-    @Then("I will update the  mock server and register stub as done")
-    public void iWillUpdateTheMockServerAndRegisterStubAsDone() {
-        wiremockStarted = true;
-    }
 }
