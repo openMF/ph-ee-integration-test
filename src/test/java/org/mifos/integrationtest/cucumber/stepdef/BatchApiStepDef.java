@@ -354,6 +354,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void iWillRegisterTheStubWithEndpointForRequestWithStatusOf(String endpoint, HttpMethod httpMethod, int status) {
         if(!isStubCreated) {
             mockServerStepDef.startStub(endpoint, httpMethod, status);
+
         }
     }
 }
