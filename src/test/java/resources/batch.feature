@@ -166,3 +166,4 @@ Feature: Batch Details API test
     And I will sleep for 2000 millisecond
     Then I should be able to verify that the "PUT" method to "/authorization/callback" endpoint received a request with authorization status
     And I can stop mock server
+    And I will sleep for 5000 millisecond
