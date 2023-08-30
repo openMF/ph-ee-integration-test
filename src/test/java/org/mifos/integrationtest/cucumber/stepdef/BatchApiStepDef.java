@@ -300,4 +300,18 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
+
+    @When("I create an AuthorizationRequest for Batch Authorization with batch ID as {string}, payerIdentifier as {string}, currency as {string} and amount as {string}")
+    public void iCreateAnAuthorizationRequestForBatchAuthorizationWithBatchIDAsPayerIdentifierAsCurrencyAsAndAmountAs(String arg0, String arg1, String arg2, String arg3) {
+        
+    }
+
+    @And("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")
+    public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String arg0, int arg1, String arg2) {
+        
+    }
+
+    @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String arg0, String arg1) {
+    }
 }
