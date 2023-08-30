@@ -18,3 +18,4 @@ Feature: Inbound transaction test
     Then I should be able to parse batch id from response
     When I call the batch details API with expected response status of 200
     And I can assert the payee DFSPID is same as used to register beneficiary id type from response
+    And I can stop mock server
