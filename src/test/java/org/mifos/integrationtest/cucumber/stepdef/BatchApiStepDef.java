@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
 import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
@@ -325,6 +326,8 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
-    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String arg0, String arg1) {
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String arg0, String endpoint) {
+        verify(postRequestedFor(urlEqualTo(endpoint))
+                .withRequestBody(matchingJsonPath("$.status", equalTo("Y"))));
     }
 }
