@@ -163,6 +163,6 @@ Feature: Batch Details API test
   Scenario: Batch Authorization API test
     When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
-    And I will sleep for 6000 millisecond
+    And I will sleep for 2000 millisecond
     Then I should be able to verify that the "PUT" method to "/authorization/callback" endpoint received a request with authorization status
     And I can stop mock server
