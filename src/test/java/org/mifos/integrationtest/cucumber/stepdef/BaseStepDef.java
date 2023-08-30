@@ -9,6 +9,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.lang3.StringUtils;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,7 +65,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
-
 
     @Autowired
     ObjectMapper objectMapper;

@@ -65,7 +65,7 @@ jobs:
             docker push "openmf/ph-ee-integration-test:$IMAGE_TAG"
 
           # when: always  # The job will be executed even if there's no match for the tag filter
-  
+
   build_and_push_latest_image:
     executor: docker-executor
     environment:

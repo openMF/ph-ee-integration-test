@@ -19,12 +19,15 @@ import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.mifos.integrationtest.common.dto.OperationsHelper;
 import org.mifos.integrationtest.common.dto.operationsapp.GetTransactionRequestResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.TransactionRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.truth.Truth.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExternalIdTest {
 
+    private static final Logger log = LoggerFactory.getLogger(ExternalIdTest.class);
     private ResponseSpecification statusOkResponseSpec;
     private RequestSpecification requestSpec;
 
@@ -42,12 +45,12 @@ public class ExternalIdTest {
     @Disabled
     public void testSendCollectionRequest() throws JSONException {
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
-        System.out.println(collectionRequestBody);
+        log.debug("{}", collectionRequestBody);
         String json = RestAssured.given(requestSpec).baseUri("http://localhost:5002").body(collectionRequestBody.toString()).expect()
                 .spec(statusOkResponseSpec).when().post("/channel/collection").andReturn().asString();
         CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
         assertThat(response.getTransactionId()).isNotEmpty();
-        System.out.println(response.getTransactionId());
+        log.debug("{}", response.getTransactionId());
         this.transactionId = response.getTransactionId();
     }
 
@@ -55,7 +58,7 @@ public class ExternalIdTest {
     @Disabled
     public void testGetTransactionRequestApi() {
         Utils.sleep(5);
-        System.out.println("Getting transactionRequestObject with transactionId " + this.transactionId);
+        log.debug("Getting transactionRequestObject with transactionId {}", this.transactionId);
         RequestSpecification localSpec = requestSpec;
         localSpec.queryParam("transactionId", this.transactionId);
         String json = RestAssured.given(localSpec).baseUri("http://localhost:5000").expect().spec(statusOkResponseSpec).when()
@@ -70,12 +73,12 @@ public class ExternalIdTest {
     @Disabled
     public void testBulkFilterApi() throws JSONException {
         Utils.sleep(10);
-        System.out.println("Executing bulk filter api using externalId " + this.externalId);
+        log.debug("Executing bulk filter api using externalId {}", this.externalId);
         JSONObject bulkFilterRequestBody = OperationsHelper.getBulkFilterRequestBodyForExternalId(this.externalId);
-        System.out.println(bulkFilterRequestBody);
+        log.debug("{}", bulkFilterRequestBody);
         String json = RestAssured.given(requestSpec).baseUri("http://localhost:5000").body(bulkFilterRequestBody.toString()).expect()
                 .spec(statusOkResponseSpec).when().post("/api/v1/transactionRequests/export").andReturn().asString();
-        System.out.println(json);
+        log.debug("{}", json);
         assertThat(json.split("\n").length).isEqualTo(2);
     }
 

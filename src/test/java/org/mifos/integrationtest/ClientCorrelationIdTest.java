@@ -61,7 +61,7 @@ public class ClientCorrelationIdTest {
                 .asString();
         CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
         assertThat(response.getTransactionId()).isNotEmpty();
-        System.out.println(response.getTransactionId());
+        logger.debug(response.getTransactionId());
         this.transactionId = response.getTransactionId();
     }
 

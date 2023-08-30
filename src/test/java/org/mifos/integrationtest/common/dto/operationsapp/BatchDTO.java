@@ -1,11 +1,10 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,8 +12,22 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class BatchDTO {
 
-    private String batch_id, request_id, file, notes, created_at, status,
-            modes, purpose, failPercentage, successPercentage;
-    private Long total, ongoing, failed, successful;
-    private BigDecimal totalAmount, successfulAmount, pendingAmount, failedAmount, approvedAmount, approvedCount;
+    private String batchId;
+    private String requestId;
+    private String file;
+    private String notes;
+    private String createdAt;
+    private String status;
+    private String modes;
+    private String purpose;
+    private String failPercentage;
+    private String successPercentage;
+    private Long total;
+    private Long ongoing;
+    private Long failed;
+    private Long successful;
+    private BigDecimal totalAmount;
+    private BigDecimal successfulAmount;
+    private BigDecimal pendingAmount;
+    private BigDecimal failedAmount;
 }
