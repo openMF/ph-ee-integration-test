@@ -32,7 +32,10 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -41,6 +44,12 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Autowired
     BulkProcessorConfig bulkProcessorConfig;
+
+    @Autowired
+    MockPaymentSchemaConfig mockPaymentSchemaConfig;
+
+    @Value("${callback_url}")
+    private String callBackUrl;
 
     private AuthorizationRequest authorizationRequest;
 
@@ -326,7 +335,7 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
-    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String arg0, String endpoint) {
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String httpMethod, String endpoint) {
         verify(postRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.status", equalTo("Y"))));
     }
