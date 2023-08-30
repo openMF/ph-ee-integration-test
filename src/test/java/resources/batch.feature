@@ -160,7 +160,7 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
 
   @gov
-  Scenario: Batch Authorization API test
+  Scenario: BA-001 Batch Authorization API test
     When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
     And I will sleep for 5000 millisecond

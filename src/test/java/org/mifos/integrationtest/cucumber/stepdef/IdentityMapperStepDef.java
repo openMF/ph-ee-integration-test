@@ -52,6 +52,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Autowired
     private MockServerStepDef mockServerStepDef;
+
     private static Map<String, String> paymentModalityList = new HashMap<String, String>() {
         {
             put("ACCOUNT_ID", "00");

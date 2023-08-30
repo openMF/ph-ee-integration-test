@@ -41,7 +41,7 @@ public class MockServerStepDef extends BaseStepDef {
     }
 
     @And("I can register the stub with {string} endpoint for {httpMethod} request with status of {int}")
-        public void startStub(String endpoint, HttpMethod httpMethod, int status) {
+    public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
                 stubFor(get(endpoint).willReturn(status(status)));
