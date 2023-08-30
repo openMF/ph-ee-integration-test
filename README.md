@@ -147,4 +147,3 @@ Use below command to execute the spotless apply.
 2. Order of execution of feature/steps?
 3. Calling a scenario from another feature?
 4. How cucumber picks feature file? How to configure the location of feature file?
-   

@@ -12,7 +12,9 @@ import java.util.List;
  * "amount": "1", "currency": "USD" }, "transactionType": { "scenario": "MPESA", "subScenario": "BUYGOODS", "initiator":
  * "PAYEE", "initiatorType": "BUSINESS" } }
  */
-public class CollectionHelper {
+public final class CollectionHelper {
+
+    private CollectionHelper() {}
 
     public static JSONObject getCollectionRequestBody(String amount, String msisdn, String accountId) throws JSONException {
         List<Pair<String, String>> payers = new ArrayList<>();

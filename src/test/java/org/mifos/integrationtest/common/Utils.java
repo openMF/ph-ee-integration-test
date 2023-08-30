@@ -17,9 +17,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Utils {
+public final class Utils {
 
+    private Utils() {}
+
+    private static final Logger log = LoggerFactory.getLogger(Utils.class);
     public static final String TENANT_PARAM_NAME = "Platform-TenantId";
     public static final String REQUEST_TYPE_PARAM_NAME = "requestType";
     public static final String DEFAULT_TENANT = "gorilla";
@@ -43,7 +48,7 @@ public class Utils {
         try {
             Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
-            System.out.println("Unexpected InterruptedException" + e);
+            log.debug("Unexpected InterruptedException {}", e);
             throw new IllegalStateException("Unexpected InterruptedException", e);
         }
     }

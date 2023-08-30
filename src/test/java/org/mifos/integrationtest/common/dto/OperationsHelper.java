@@ -7,7 +7,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationsHelper {
+public final class OperationsHelper {
+
+    private OperationsHelper() {}
 
     public static JSONObject getBulkFilterRequestBodyForExternalId(List<String> externalIds) throws JSONException {
         JSONObject body = new JSONObject();
