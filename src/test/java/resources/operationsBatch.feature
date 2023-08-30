@@ -1,4 +1,4 @@
-@gov-223
+@gov
 Feature: Operations APP related feature
 
   @ops-batch-setup @ops-batch-teardown

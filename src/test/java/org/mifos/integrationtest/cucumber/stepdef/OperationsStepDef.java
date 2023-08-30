@@ -83,7 +83,7 @@ public class OperationsStepDef extends BaseStepDef {
 
     @And("I add date from filter")
     public void addDateFromFilter() {
-        String date = BaseStepDef.getDateInFormat(BaseStepDef.dateTime);
+        String date = BaseStepDef.dateTime;
         updateQueryParam(BaseStepDef.batchesEndpointQueryParam, "dateFrom", date);
     }
 
@@ -127,6 +127,7 @@ public class OperationsStepDef extends BaseStepDef {
     }
 
     private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams) {
+        log.info("Tenant I am passing is: {}", BaseStepDef.tenant);
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);

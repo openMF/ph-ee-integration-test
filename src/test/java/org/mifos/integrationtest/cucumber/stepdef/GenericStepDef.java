@@ -31,7 +31,7 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I store this time as start time")
     public void storeCurrentTime() {
-        BaseStepDef.dateTime = System.currentTimeMillis();
+        BaseStepDef.dateTime = getCurrentDateInFormat();
     }
 
     private void setTenant(String tenant) {

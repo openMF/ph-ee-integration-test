@@ -10,8 +10,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import org.apache.commons.lang3.StringUtils;
-
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +104,7 @@ public class BaseStepDef {
     protected static String registeringInstituteId;
     protected static String programId;
     protected static BatchDTO batchDTO;
-    protected static long dateTime;
+    protected static String dateTime;
     public static BatchTransactionResponse batchTransactionResponse;
     protected static KongConsumer kongConsumer;
     protected static KongConsumerKey kongConsumerKey;
@@ -112,15 +116,12 @@ public class BaseStepDef {
     protected static Map<String, Object> batchesEndpointQueryParam = new HashMap<>();
 
     protected static String getCurrentDateInFormat() {
-        return getDateInFormat(System.currentTimeMillis());
-    }
-
-    protected static String getDateInFormat(long dateMillis) {
-        return getSimpleDateFormat().format(dateMillis);
-    }
-
-    protected static SimpleDateFormat getSimpleDateFormat() {
-        return new SimpleDateFormat(dateFormat);
+        ZoneId zoneId = ZoneId.of("Asia/Kolkata");
+        // Get the current time in the specified time zone
+        ZonedDateTime currentTimeInZone = ZonedDateTime.now(zoneId);
+        // Define a format for the output
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+        return currentTimeInZone.format(formatter);
     }
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
