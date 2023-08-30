@@ -311,8 +311,17 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @And("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")
-    public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String arg0, int arg1, String arg2) {
-        
+    public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .header("X-CallbackURL", callBackUrl + stub)
+                .header("X-Client-Correlation-ID", "998877")
+                .queryParam("command", "authorize")
+                .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
+
+        logger.info("Authorization Response: {}", BaseStepDef.response);
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
