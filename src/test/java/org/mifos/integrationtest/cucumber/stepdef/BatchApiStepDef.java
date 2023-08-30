@@ -26,6 +26,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mifos.connector.common.batch.dto.AuthorizationRequest;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
@@ -39,6 +40,8 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Autowired
     BulkProcessorConfig bulkProcessorConfig;
+
+    private AuthorizationRequest authorizationRequest;
 
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
@@ -302,8 +305,9 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     @When("I create an AuthorizationRequest for Batch Authorization with batch ID as {string}, payerIdentifier as {string}, currency as {string} and amount as {string}")
-    public void iCreateAnAuthorizationRequestForBatchAuthorizationWithBatchIDAsPayerIdentifierAsCurrencyAsAndAmountAs(String arg0, String arg1, String arg2, String arg3) {
-        
+    public void iCreateAnAuthorizationRequestForBatchAuthorizationWithBatchIDAsPayerIdentifierAsCurrencyAsAndAmountAs
+            (String batchId, String payerIdentifier, String currency, String amount) {
+        authorizationRequest = new AuthorizationRequest(batchId, payerIdentifier, currency, amount);
     }
 
     @And("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")
