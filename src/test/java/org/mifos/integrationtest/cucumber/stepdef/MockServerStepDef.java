@@ -15,6 +15,8 @@ import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
+
 public class MockServerStepDef extends BaseStepDef {
     private static Boolean wiremockStarted = false;
 
@@ -107,11 +109,14 @@ public class MockServerStepDef extends BaseStepDef {
         mockServer.getMockServer().stop();
     }
 
-    @Given("I will start the mock server")
+    @Given("The mock server is running")
+    @PostConstruct
     public void iWillStartTheMockServer() {
         if(!wiremockStarted) {
+            logger.info("I will start the mock server");
             checkIfMockServerIsInjected();
             startMockServer();
+            iWillUpdateTheMockServerAndRegisterStubAsDone();
         }
     }
 
