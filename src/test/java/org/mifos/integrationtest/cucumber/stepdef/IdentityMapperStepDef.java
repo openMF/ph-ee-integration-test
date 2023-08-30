@@ -23,7 +23,9 @@ import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
+import org.mifos.integrationtest.common.HttpMethod;
 import org.mifos.integrationtest.common.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class IdentityMapperStepDef extends BaseStepDef {
 
@@ -45,6 +47,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private static AccountMapperRequestDTO batchAccountLookupBody = null;
     private static String callbackBody;
+
+    private static boolean isStubCreated = false;
+
+    @Autowired
+    private MockServerStepDef mockServerStepDef;
     private static Map<String, String> paymentModalityList = new HashMap<String, String>() {
         {
             put("ACCOUNT_ID", "00");
@@ -419,5 +426,17 @@ public class IdentityMapperStepDef extends BaseStepDef {
         }
         requestId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @Then("I mark the identity stubs as created")
+    public void iMarkStubsAsCreated(){
+        isStubCreated = true;
+    }
+
+    @And("I will register the identity stub with {string} endpoint for {httpMethod} request with status of {int}")
+    public void iWillRegisterTheStubWithEndpointForRequestWithStatusOf(String endpoint, HttpMethod httpMethod, int status) {
+        if(!isStubCreated) {
+            mockServerStepDef.startStub(endpoint, httpMethod, status);
+        }
     }
 }

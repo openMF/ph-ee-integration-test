@@ -3,7 +3,8 @@ Feature: Batch Details API test
 
   Background: I will start mock server and register stub
     Given The mock server is running
-    And I can register the stub with "/authorization/callback" endpoint for "PUT" request with status of 200
+    And I will register the batch stub with "/authorization/callback" endpoint for "POST" request with status of 200
+    Then I mark the batch stubs as created
 
   @gov
   Scenario: BD-001 Batch transactions API Test
@@ -163,6 +164,5 @@ Feature: Batch Details API test
     When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
     And I will sleep for 2000 millisecond
-    Then I should be able to verify that the "PUT" method to "/authorization/callback" endpoint received a request with authorization status
-#    And I can stop mock server
-#    And I will sleep for 5000 millisecond
+    Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
+

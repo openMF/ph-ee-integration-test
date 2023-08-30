@@ -3,13 +3,14 @@ Feature: Identity Account Mapper Api Test
 
   Background: I will start mock server and register stub
     Given The mock server is running
-    And I can register the stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/addPaymentModalityApiTest" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/updatePaymentModalityApiTest" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/accountLookupTest" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/accountLookup" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/updateBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/addPaymentModalityApiTest" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/updatePaymentModalityApiTest" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/accountLookupTest" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/accountLookup" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/batchAccountLookup" endpoint for "PUT" request with status of 200
+    And I will register the identity stub with "/updateBeneficiaryApiTest" endpoint for "PUT" request with status of 200
+    Then I mark the identity stubs as created
 
 
   Scenario: IAM-001 Register Beneficiary Api Test
@@ -213,4 +214,3 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
-#    And I can stop mock server

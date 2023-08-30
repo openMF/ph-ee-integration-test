@@ -121,9 +121,4 @@ public class MockServerStepDef extends BaseStepDef {
         startMockServer();
     }
 
-    @And("I will register the stub with {string} endpoint for {httpMethod} request with status of {int}")
-    public void iWillRegisterTheStubWithEndpointForRequestWithStatusOf(String endpoint, HttpMethod httpMethod, int status) {
-        startStub(endpoint, httpMethod, status);
-    }
-
 }
