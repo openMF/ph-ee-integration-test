@@ -16,7 +16,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -43,7 +43,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -53,7 +53,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "e3bdffd4-f484-4a06-a8d0-e9e4694635cc"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -84,7 +84,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     Then I call the batch transactions endpoint with expected status of 202
@@ -94,7 +94,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "e3bdffd4-f484-4a06-a8d0-e9e4694635cc"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -104,7 +104,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "54ecbf00-24b8-4fb4-a587-a138dbe02fb0"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -114,7 +114,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "cac0a8b6-0ec7-452d-9ef1-9bdc4bc0eb5e"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -124,7 +124,7 @@ Feature: Operations APP related feature
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
-    And I have clientCorrelationId as "9051df83-e13c-4d6c-a850-220874db737a"
+    And I generate clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
