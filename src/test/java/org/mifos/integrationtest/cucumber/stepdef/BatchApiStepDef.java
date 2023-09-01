@@ -70,7 +70,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchId).isNotEmpty();
     }
 
-    @Given("I ha    ve the demo csv file {string}")
+    @Given("I have the demo csv file {string}")
     public void setFilename(String filename) {
         BaseStepDef.filename = filename;
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
