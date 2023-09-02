@@ -300,4 +300,14 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
+    @And("I should have matching total txn count and successful txn count in response")
+    public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCountInResponse() {
+       assertThat(BaseStepDef.batchDTO).isNotNull();
+        assertThat(BaseStepDef.batchDTO.getTotal()).isNotNull();
+        assertThat(BaseStepDef.batchDTO.getSuccessful()).isNotNull();
+        assertThat(BaseStepDef.batchDTO.getTotal()).isGreaterThan(0);
+        assertThat(BaseStepDef.batchDTO.getSuccessful()).isGreaterThan(0);
+        assertThat(BaseStepDef.batchDTO.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
+
+    }
 }
