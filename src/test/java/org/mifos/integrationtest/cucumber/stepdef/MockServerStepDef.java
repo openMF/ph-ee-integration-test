@@ -1,9 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
-
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -14,6 +10,10 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 public class MockServerStepDef extends BaseStepDef {
     private static Boolean wiremockStarted = false;

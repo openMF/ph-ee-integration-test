@@ -9,13 +9,17 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import org.apache.commons.lang3.StringUtils;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
+import org.mifos.integrationtest.common.dto.kong.KongConsumer;
+import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
+import org.mifos.integrationtest.common.dto.kong.KongPlugin;
+import org.mifos.integrationtest.common.dto.kong.KongRoute;
+import org.mifos.integrationtest.common.dto.kong.KongService;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -28,6 +32,7 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.security.spec.InvalidKeySpecException;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
@@ -86,6 +91,11 @@ public class BaseStepDef {
     public static String programId;
     public static BatchDTO batchDTO;
     public static BatchTransactionResponse batchTransactionResponse;
+    protected static KongConsumer kongConsumer;
+    protected static KongConsumerKey kongConsumerKey;
+    protected static KongService kongService;
+    protected static KongRoute kongRoute;
+    protected static KongPlugin kongPlugin;
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,

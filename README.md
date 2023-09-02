@@ -123,6 +123,12 @@ Use below command to execute the integration test.
 ./gradlew test -Dcucumber.filter.tags="<cucumber tag>"
 ```
 Where `<cucumber tag>` has to be replaced with valid tag, for example if you are willing to run test cases related to g2p scenario then pass the tag `@gov`. If `-Dcucumber.filter.tags` flag is omitted then all the test cases would be triggered independent of the tag.
+```shell
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights.
+```
 
 # Checkstyle
 Use below command to execute the checkstyle test.

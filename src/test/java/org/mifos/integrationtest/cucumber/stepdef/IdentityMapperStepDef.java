@@ -2,13 +2,10 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.HttpMethod.PUT;
-
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -16,7 +13,6 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
 import java.util.*;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +20,10 @@ import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
 import org.mifos.integrationtest.common.Utils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class IdentityMapperStepDef extends BaseStepDef {
 

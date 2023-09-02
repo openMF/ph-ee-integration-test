@@ -1,7 +1,5 @@
 package org.mifos.integrationtest;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -21,6 +19,8 @@ import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.mifos.integrationtest.common.dto.OperationsHelper;
 import org.mifos.integrationtest.common.dto.operationsapp.GetTransactionRequestResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.TransactionRequest;
+
+import static com.google.common.truth.Truth.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExternalIdTest {
