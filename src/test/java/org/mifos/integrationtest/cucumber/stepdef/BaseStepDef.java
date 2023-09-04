@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -116,6 +117,8 @@ public class BaseStepDef {
     protected static String dateFormat = "yyyy-MM-dd HH:mm:ss";
     protected static Map<String, Object> batchesEndpointQueryParam = new HashMap<>();
     protected static JSONObject requestBody;
+    protected static BatchRequestDTO batchRequestDTO;
+    protected static String batchRawRequest;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

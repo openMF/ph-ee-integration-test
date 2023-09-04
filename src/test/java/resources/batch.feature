@@ -155,3 +155,18 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
+
+  Scenario: BD-012 Batch Transaction REST Api test
+    Given I have tenant as "rhino"
+    And I have the registeringInstituteId "123"
+    And I have the programId "SocialWelfare"
+    And I create a new clientCorrelationId
+	And I can mock the Batch Transaction Request DTO without payer info
+    And I have private key
+    And I generate signature
+    When I call the batch transactions raw endpoint with expected status of 202
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    When I call the batch summary API with expected status of 200
+    Then I am able to parse batch summary response
+    And Status of transaction is "COMPLETED"

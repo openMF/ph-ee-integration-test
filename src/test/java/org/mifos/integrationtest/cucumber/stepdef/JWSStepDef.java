@@ -33,8 +33,13 @@ public class JWSStepDef extends BaseStepDef {
     @And("I generate signature")
     public void generateSignatureStep() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        BaseStepDef.signature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant,
-                BaseStepDef.filename, true);
+        if (BaseStepDef.filename != null) {
+            BaseStepDef.signature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant,
+                    BaseStepDef.filename, true);
+        } else {
+            BaseStepDef.signature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant,
+                    BaseStepDef.batchRawRequest, false);
+        }
         assertThat(BaseStepDef.signature).isNotEmpty();
         logger.info("Generated signature: {}", BaseStepDef.signature);
     }

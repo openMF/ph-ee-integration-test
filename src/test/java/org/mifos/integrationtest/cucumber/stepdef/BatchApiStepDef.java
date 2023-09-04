@@ -7,6 +7,8 @@ import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
 import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
 import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
 import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
+
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -22,11 +24,16 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.BatchRequestDTO;
+import org.mifos.integrationtest.common.dto.Party;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
@@ -300,5 +307,77 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchDTO.getSuccessful()).isGreaterThan(0);
         assertThat(BaseStepDef.batchDTO.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
 
+    }
+
+    @When("I call the batch transactions raw endpoint with expected status of {int}")
+    public void callBatchTransactionsRawEndpoint(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
+        requestSpec.header(HEADER_PURPOSE, "Integartion test");
+        requestSpec.header(HEADER_FILENAME, "");
+        requestSpec.header(QUERY_PARAM_TYPE, "RAW");
+        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        }
+        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        }
+
+        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .contentType("application/json").body(BaseStepDef.batchRawRequest).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
+
+        BaseStepDef.response = resp.andReturn().asString();
+        BaseStepDef.restResponseObject = resp;
+
+        Headers allHeaders = resp.getHeaders();
+        for (Header header : allHeaders) {
+            System.out.print(header.getName() + " : ");
+            System.out.println(header.getValue());
+        }
+        logger.info("Batch Transactions Response: " + BaseStepDef.response);
+    }
+
+    @And("I can mock the Batch Transaction Request DTO without payer info")
+    public void mockBatchTransactionRequestDTOWithoutPayer() throws JsonProcessingException {
+        BatchRequestDTO batchRequestDTO = mockBatchTransactionRequestDTO();
+        batchRequestDTO = setCreditPartyInMockBatchTransactionRequestDTO(batchRequestDTO);
+        assertThat(batchRequestDTO).isNotNull();
+        assertThat(batchRequestDTO.getCurrency()).isNotEmpty();
+        assertThat(batchRequestDTO.getAmount()).isNotEmpty();
+        assertThat(batchRequestDTO.getSubType()).isNotEmpty();
+        assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
+        BaseStepDef.batchRequestDTO = batchRequestDTO;
+
+        List<BatchRequestDTO> batchRequestDTOS = new ArrayList<>();
+        batchRequestDTOS.add(batchRequestDTO);
+        BaseStepDef.batchRawRequest = objectMapper.writeValueAsString(batchRequestDTOS);
+        assertThat(BaseStepDef.batchRawRequest).isNotEmpty();
+    }
+
+    public BatchRequestDTO mockBatchTransactionRequestDTO() {
+        BatchRequestDTO batchRequestDTO = new BatchRequestDTO();
+        batchRequestDTO.setAmount("100");
+        batchRequestDTO.setCurrency("USD");
+        batchRequestDTO.setSubType("mojaloop");
+        batchRequestDTO.setDescriptionText("Integration test");
+        return batchRequestDTO;
+    }
+
+    public BatchRequestDTO setCreditPartyInMockBatchTransactionRequestDTO(BatchRequestDTO batchRequestDTO) {
+        List<Party> creditParties = new ArrayList<>();
+        creditParties.add(new Party("msisdn", "8837461856"));
+        batchRequestDTO.setCreditParty(creditParties);
+        return batchRequestDTO;
+    }
+
+    public BatchRequestDTO setDebitPartyInMockBatchTransactionRequestDTO(BatchRequestDTO batchRequestDTO) {
+        List<Party> debitParties = new ArrayList<>();
+        debitParties.add(new Party("accountnumber", "003001003874120160"));
+        batchRequestDTO.setDebitParty(debitParties);
+        return batchRequestDTO;
     }
 }
