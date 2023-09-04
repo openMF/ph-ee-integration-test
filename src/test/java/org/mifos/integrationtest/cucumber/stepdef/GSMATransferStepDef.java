@@ -1,6 +1,14 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
+
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -10,17 +18,20 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
-import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
+import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
+import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
 import org.mifos.integrationtest.common.Utils;
+import org.apache.fineract.client.models.PostSelfLoansLoanIdResponse;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class GSMATransferStepDef {
+public class GSMATransferStepDef extends BaseStepDef{
 
     @Autowired
     GsmaConfig gsmaConfig;
@@ -29,6 +40,12 @@ public class GSMATransferStepDef {
     @Autowired
     ObjectMapper objectMapper;
     Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static String payer_identifier;
+    private static String payeeIdentity;
+    private static String requestId;
+    private static AccountMapperRequestDTO registerBeneficiaryBody = null;
+    private static String registeringInstitutionId = "SocialWelfare";
+    private static String callbackBody;
 
     @Given("I have Fineract-Platform-TenantId as {string}")
     public void setTenantLoan(String tenant) {
@@ -89,8 +106,8 @@ public class GSMATransferStepDef {
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        String payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
+        payer_identifier = savingsAccountResponse.getSavingsId().toString();
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "MSISDN");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
@@ -303,4 +320,78 @@ public class GSMATransferStepDef {
         assertThat(gsmaTransferDef.gsmaTransactionResponse).isNotEmpty();
     }
 
+    @Then("I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        payeeIdentity = generateUniqueNumber(16);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "01", payer_identifier, "gorilla");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "", beneficiaryDTOList);
+    }
+    public static String generateUniqueNumber(int length) {
+        Random rand = new Random();
+        long timestamp = System.currentTimeMillis();
+        long randomLong = rand.nextLong(100000000);
+        String uniqueNumber = timestamp + "" + randomLong;
+        return uniqueNumber.substring(0, length);
+    }
+
+    @When("I call the register beneficiary API with expected status of {int} and callback stub {string}")
+    public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
+
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+    }
+
+    @Then("I call the account lookup API with expected status of {int} and callback stub {string}")
+    public void iCallTheAccountLookupAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
+        requestId = generateUniqueNumber(10);
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
+                .queryParam("paymentModality", "01").queryParam("requestId", requestId)
+                .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+    }
+
+    @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        Boolean isValidated = null;
+
+        for(int i=0; i< allServeEvents.size();i++) {
+            ServeEvent request = allServeEvents.get(i);
+
+            if(!(request.getRequest().getBodyAsString()).isEmpty()) {
+                try {
+                    JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                    String requestID = rootNode.get("requestId").asText();
+
+                    if (requestId.equals(requestID)) {
+                        callbackBody = request.getRequest().getBodyAsString();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        try {
+            JsonNode rootNode = objectMapper.readTree(callbackBody);
+            isValidated = rootNode.get("isValidated").asBoolean();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertThat(isValidated).isTrue();
+    }
 }

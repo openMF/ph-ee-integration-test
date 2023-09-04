@@ -214,4 +214,19 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
+
+  Scenario: PPV-003 Account lookup with GSMA
+    Given I have Fineract-Platform-TenantId as "gorilla"
+    When I call the create payer client endpoint
+    Then I call the create savings product endpoint
+    When I call the create savings account endpoint
+    Then I call the interop identifier endpoint
+    Then I approve the deposit with command "approve"
+    When I activate the account with command "activate"
+    Then I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step
+    When I call the register beneficiary API with expected status of 202 and callback stub "/registerBeneficiaryApiTest"
+    And I will sleep for 3000 millisecond
+    Then I call the account lookup API with expected status of 202 and callback stub "/accountLookupTest"
+    And I will sleep for 3000 millisecond
+    And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with validation
     And I can stop mock server
