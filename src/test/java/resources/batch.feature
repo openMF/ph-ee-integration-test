@@ -155,6 +155,7 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
+    And I should have matching total txn count and successful txn count in response
 
   Scenario: BD-012 Batch Transaction REST Api test
     Given I have tenant as "rhino"
@@ -170,3 +171,4 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
+    And I should have matching total txn count and successful txn count in response
