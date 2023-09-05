@@ -63,7 +63,7 @@ Feature: Batch Details API test
       And I generate signature
       When I call the batch transactions endpoint with expected status of 400 without payload
       Then I should get non empty response
-      And I should have "Error Information" and "File not uploaded" in response
+      And I should have "errorInformation" and "File not uploaded" in response
 
   @gov
   Scenario: BD-006 Batch transaction API Test for Synchronous File Validation with invalid file
