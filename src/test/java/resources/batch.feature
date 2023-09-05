@@ -157,8 +157,10 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
+  @gov
   Scenario: BD-012 Batch Transaction REST Api test
     Given I have tenant as "rhino"
+    And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
     And I create a new clientCorrelationId
