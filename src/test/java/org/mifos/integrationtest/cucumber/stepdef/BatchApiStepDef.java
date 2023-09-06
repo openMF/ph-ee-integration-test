@@ -73,13 +73,6 @@ public class BatchApiStepDef extends BaseStepDef {
         BaseStepDef.filename = null;
     }
 
-    @And("I have tenant as {string}")
-    public void setTenant(String tenant) {
-        BaseStepDef.tenant = tenant;
-        assertThat(BaseStepDef.tenant).isNotEmpty();
-        BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
-    }
-
     @And("I have the registeringInstituteId {string}")
     public void setRegisteringInstituteId(String registeringInstituteId) {
         BaseStepDef.registeringInstituteId = registeringInstituteId;
@@ -145,16 +138,19 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions endpoint with expected status of {int} without payload")
     public void iCallTheBatchTransactionsEndpointWithExpectedStatusOfWithoutPayload(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        requestSpec.header("X-CorrelationID", BaseStepDef.clientCorrelationId);
-        requestSpec.queryParam("type", "CSV");
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        requestSpec.header(HEADER_PURPOSE, "Integration test");
+        requestSpec.header(HEADER_FILENAME, "");
+        requestSpec.header(QUERY_PARAM_TYPE, "CSV");
         if (StringUtils.isNotBlank(BaseStepDef.filename)) {
             requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
         }
         if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
             requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
         }
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect()
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
@@ -221,7 +217,7 @@ public class BatchApiStepDef extends BaseStepDef {
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
-        requestSpec.header(HEADER_PURPOSE, "Integartion test");
+        requestSpec.header(HEADER_PURPOSE, "Integration test");
         requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
@@ -249,11 +245,6 @@ public class BatchApiStepDef extends BaseStepDef {
             System.out.println(header.getValue());
         }
         logger.info("Batch Transactions Response: " + BaseStepDef.response);
-    }
-
-    @Then("I should get non empty response")
-    public void nonEmptyResponseCheck() {
-        assertThat(BaseStepDef.response).isNotNull();
     }
 
     @And("I should have {string} and {string} in response")

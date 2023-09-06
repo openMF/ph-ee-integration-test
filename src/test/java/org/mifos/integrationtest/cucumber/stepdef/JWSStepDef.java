@@ -15,6 +15,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -23,9 +24,9 @@ public class JWSStepDef extends BaseStepDef {
     @Autowired
     JWSKeyConfig jwsKeyConfig;
 
-    @And("I have clientCorrelationId as {string}")
-    public void setClientCorrelationId(String clientCorrelationId) {
-        BaseStepDef.clientCorrelationId = clientCorrelationId;
+    @And("I generate clientCorrelationId")
+    public void setClientCorrelationId() {
+        BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
         assertThat(BaseStepDef.clientCorrelationId).isNotEmpty();
     }
 

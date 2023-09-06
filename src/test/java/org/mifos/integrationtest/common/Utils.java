@@ -4,6 +4,12 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Utils {
 
     public static final String TENANT_PARAM_NAME = "Platform-TenantId";
@@ -63,6 +69,17 @@ public class Utils {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(REQUEST_TYPE_PARAM_NAME, requestType);
         return requestSpec;
+    }
+
+    public static String getUTCFormat(String dateTime, String interfaceTimezone) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, formatter);
+        ZoneId interfaceZone = ZoneId.of(interfaceTimezone);
+        ZonedDateTime interfaceDateTime = ZonedDateTime.of(localDateTime, interfaceZone);
+        ZonedDateTime gmtDateTime = interfaceDateTime.withZoneSameInstant(ZoneId.of("GMT"));
+        DateTimeFormatter gmtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String gmtDateTimeString = gmtDateTime.format(gmtFormatter);
+        return gmtDateTimeString;
     }
 
 }
