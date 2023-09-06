@@ -101,3 +101,10 @@ kong:
     host: "ph-ee-connector-bulk.paymenthub.80.svc"
   route:
     host: "bulk-connector.sandbox.fynarfin.io"
+
+voucher-management:
+  contactpoint: "https://vouchers.sandbox.fynarfin.io"
+  endpoints:
+    create-voucher: /vouchers
+    voucher-lifecycle: /vouchers
+    voucher-validity: /voucher/validity
