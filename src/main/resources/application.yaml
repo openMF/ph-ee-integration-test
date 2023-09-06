@@ -84,6 +84,7 @@ identity-account-mapper:
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
     batch-account-lookup: /accountLookup
+    fetch-beneficiary: /beneficiaries
 
 kong:
   admin-contactpoint: "http://kong-admin.sandbox.fynarfin.io"

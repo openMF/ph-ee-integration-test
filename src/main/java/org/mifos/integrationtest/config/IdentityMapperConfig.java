@@ -21,4 +21,6 @@ public class IdentityMapperConfig {
     public String callbackURL;
     @Value("${identity-account-mapper.endpoints.batch-account-lookup}")
     public String batchAccountLookupEndpoint;
+    @Value("${identity-account-mapper.endpoints.fetch-beneficiary}")
+    public String fetchBeneficiaryEndpoint;
 }
