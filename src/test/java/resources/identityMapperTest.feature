@@ -36,7 +36,7 @@ Feature: Identity Account Mapper Api Test
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with same payeeIdentity
 
-  Scenario: IAM-004 Account Lookup Api Consistency Test
+  Scenario: IAM-005 Account Lookup Api Consistency Test
     When I call the account lookup API 10 times with expected status of 202 and stub "/accountLookup"
     Then I will sleep for 3000 millisecond
 
@@ -238,3 +238,4 @@ Feature: Identity Account Mapper Api Test
     Then I will call the fetch beneficiary API with expected status of 200
     And I will assert the fields from fetch beneficiary response
     And I can stop mock server
+
