@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
@@ -114,6 +115,7 @@ public class BaseStepDef {
     protected static BatchPaginatedResponse batchesResponse;
     protected static String dateFormat = "yyyy-MM-dd HH:mm:ss";
     protected static Map<String, Object> batchesEndpointQueryParam = new HashMap<>();
+    protected static JSONObject requestBody;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

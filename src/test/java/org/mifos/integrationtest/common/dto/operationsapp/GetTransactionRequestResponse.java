@@ -9,7 +9,7 @@ public class GetTransactionRequestResponse {
     private int totalElements;
     private boolean last;
     private int numberOfElements;
-    private ArrayList<Sort> sort;
+    private Sort sort;
     private boolean first;
     private int size;
     private int number;
@@ -56,11 +56,11 @@ public class GetTransactionRequestResponse {
         this.numberOfElements = numberOfElements;
     }
 
-    public ArrayList<Sort> getSort() {
+    public Sort getSort() {
         return sort;
     }
 
-    public void setSort(ArrayList<Sort> sort) {
+    public void setSort(Sort sort) {
         this.sort = sort;
     }
 
