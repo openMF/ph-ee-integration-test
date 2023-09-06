@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
@@ -14,6 +12,8 @@ import org.mifos.integrationtest.common.CollectionHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class GetTxnApiDef extends BaseStepDef {
 

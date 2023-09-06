@@ -1,10 +1,11 @@
 package org.mifos.integrationtest.common;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * { "payer": [ { "key": "MSISDN", "value": "254708374149" }, { "key": "ACCOUNTID", "value": "24450523" } ], "amount": {

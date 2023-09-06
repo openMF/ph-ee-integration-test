@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonMappingException;
 import io.cucumber.java.en.And;
@@ -28,6 +26,8 @@ import org.mifos.connector.common.gsma.dto.SubjectName;
 import org.mifos.integrationtest.common.GSMATransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ErrorCodeStepDef extends BaseStepDef {
 
@@ -96,6 +96,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
         }
     }
 
+    public void iWillSleepForSecs(int time) throws InterruptedException {
+        Thread.sleep(time);
+    }
+
     @And("I should be able to parse transactionId from response")
     public void parseTransactionId() {
         try {
@@ -134,11 +138,6 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
         assertThat(errorInformation.getErrorCode()).isNotNull();
         assertThat(errorInformation.getErrorCode()).matches(errorCode);
-    }
-
-    @And("I will sleep for {int} millisecond")
-    public void iWillSleepForSecs(int time) throws InterruptedException {
-        Thread.sleep(time);
     }
 
     @And("I should be able to parse {string} Error Code from GSMA Transfer response")

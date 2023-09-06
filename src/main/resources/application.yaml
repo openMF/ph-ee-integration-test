@@ -10,7 +10,7 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
-
+    batches: "api/v1/batches"
     transfers: "/api/v1/transfers?size=1&page=0"
     transactionRequests: "/api/v1/transactionRequests"
 
@@ -84,4 +84,28 @@ identity-account-mapper:
     update-payment-modality: /paymentModality
     account-lookup: /beneficiary
     batch-account-lookup: /accountLookup
+    fetch-beneficiary: /beneficiaries
 
+kong:
+  admin-contactpoint: "http://kong-admin.sandbox.fynarfin.io"
+  endpoint:
+    consumers: /consumers
+    createKey: /consumers/{username}/key-auth
+    services: /services
+    createRoute: /services/{serviceId}/routes
+    createPlugin: /services/{serviceId}/plugins
+    routes: /routes
+    plugins: /plugins
+  header:
+    apikey: "X-API-KEY"
+  service:
+    host: "ph-ee-connector-bulk.paymenthub.80.svc"
+  route:
+    host: "bulk-connector.sandbox.fynarfin.io"
+
+voucher-management:
+  contactpoint: "https://vouchers.sandbox.fynarfin.io"
+  endpoints:
+    create-voucher: /vouchers
+    voucher-lifecycle: /vouchers
+    voucher-validity: /voucher/validity

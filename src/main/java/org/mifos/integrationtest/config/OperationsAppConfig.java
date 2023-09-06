@@ -1,8 +1,9 @@
 package org.mifos.integrationtest.config;
 
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class OperationsAppConfig {
@@ -28,6 +29,9 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.transactionRequests}")
     public String transactionRequestsEndpoint;
 
+    @Value("${operations-app.endpoints.batches}")
+    public String batchesEndpoint;
+
     @Value("${operations-app.username}")
     public String username;
 
@@ -44,6 +48,8 @@ public class OperationsAppConfig {
 
     public String transactionRequestsUrl;
 
+    public String batchesUrl;
+
     public String authUrl;
 
     @PostConstruct
@@ -54,6 +60,7 @@ public class OperationsAppConfig {
         authUrl = operationAppContactPoint + authEndpoint;
         transfersUrl = operationAppContactPoint + transfersEndpoint;
         transactionRequestsUrl = operationAppContactPoint + transactionRequestsEndpoint;
+        batchesUrl = operationAppContactPoint + batchesEndpoint;
     }
 
 }

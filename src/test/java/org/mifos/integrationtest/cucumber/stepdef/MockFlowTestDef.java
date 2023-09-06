@@ -49,15 +49,19 @@ public class MockFlowTestDef extends BaseStepDef {
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnId(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
-        requestSpec.queryParam("size", "10");
+        requestSpec.queryParam("size", "1");
+        requestSpec.header("page", "0");
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when().get(operationsAppConfig.transfersEndpoint)
                 .andReturn().asString();
 
         logger.info("GetTxn Request Response: " + BaseStepDef.response);
     }
+
+
 }
