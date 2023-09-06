@@ -25,6 +25,7 @@ import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
+import org.mifos.integrationtest.config.VoucherManagementConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,8 @@ public class BaseStepDef {
     @Autowired
     IdentityMapperConfig identityMapperConfig;
 
+    @Autowired
+    VoucherManagementConfig voucherManagementConfig;
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
 
