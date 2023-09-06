@@ -45,6 +45,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private static AccountMapperRequestDTO batchAccountLookupBody = null;
     private static String callbackBody;
+    private static String fetchBeneficiaryBody;
     private static Map<String, String> paymentModalityList = new HashMap<String, String>() {
         {
             put("ACCOUNT_ID", "00");
@@ -419,5 +420,32 @@ public class IdentityMapperStepDef extends BaseStepDef {
         }
         requestId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @Then("I will call the fetch beneficiary API with expected status of {int}")
+    public void iWillCallTheFetchBeneficiaryAPIWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
+                .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(identityMapperConfig.fetchBeneficiaryEndpoint+ "/" + payeeIdentity).andReturn().asString();
+
+        fetchBeneficiaryBody = BaseStepDef.response;
+
+        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+    }
+
+    @And("I will assert the fields from fetch beneficiary response")
+    public void iWillAssertTheFieldsFromFetchBeneficiaryResponse() {
+        try {
+            JsonNode rootNode = objectMapper.readTree(fetchBeneficiaryBody);
+
+            String payeeIdentityResponse = rootNode.get("payeeIdentity").asText();
+            String registeringInstitutionIdResponse = rootNode.get("registeringInstitutionId").asText();
+            assertThat(payeeIdentityResponse).isEqualTo(payeeIdentity);
+            assertThat(registeringInstitutionIdResponse).isEqualTo(sourceBBID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
