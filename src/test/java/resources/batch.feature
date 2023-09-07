@@ -87,6 +87,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I should get batchId in response
     Given I have a batch id from previous scenario
+    Then I will sleep for 2000 millisecond
     And I have tenant as "gorilla"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
