@@ -24,6 +24,7 @@ import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
+import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -89,6 +90,7 @@ public class BaseStepDef {
     protected static String clientCorrelationId;
     protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
+    protected static String paymentStatusCheckReqDto;
     protected static String callbackUrl;
 
     protected static String randomData;

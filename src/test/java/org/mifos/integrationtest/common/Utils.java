@@ -3,6 +3,14 @@ package org.mifos.integrationtest.common;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -80,6 +88,23 @@ public class Utils {
         DateTimeFormatter gmtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String gmtDateTimeString = gmtDateTime.format(gmtFormatter);
         return gmtDateTimeString;
+    }
+
+    public static List<String> extractClientCorrelationIdFromCsv(String filename, List<String> requestIds) {
+        File file = new File(Utils.getAbsoluteFilePathToResource(filename));
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            List<String> line = IOUtils.readLines(inputStream, StandardCharsets.UTF_8);
+            line.remove(0);
+            while (line.size() > 0) {
+                String[] temp = line.get(0).split(",");
+                requestIds.add(temp[1]);
+                line.remove(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return requestIds;
     }
 
 }
