@@ -95,7 +95,7 @@ public class AuthStepDef extends BaseStepDef {
         } catch (Exception e) {
             BaseStepDef.keycloakTokenResponse = null;
         }
-        logger.info("97736366: {}", BaseStepDef.keycloakTokenResponse.getAccessToken());
+        logger.info("Auth bearer token {}", BaseStepDef.keycloakTokenResponse.getAccessToken());
         assertThat(BaseStepDef.keycloakTokenResponse).isNotNull();
         assertThat(BaseStepDef.keycloakTokenResponse.getAccessToken()).isNotNull();
     }
