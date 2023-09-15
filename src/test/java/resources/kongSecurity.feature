@@ -1,4 +1,5 @@
 @gov-security
+@gov
 Feature: Kong security test
 
   @kong-teardown
