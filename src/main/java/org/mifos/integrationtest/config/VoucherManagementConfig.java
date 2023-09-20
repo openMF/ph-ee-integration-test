@@ -14,4 +14,6 @@ public class VoucherManagementConfig {
     public String voucherLifecycleEndpoint;
     @Value("${voucher-management.endpoints.voucher-validity}")
     public String voucherValidityEndpoint;
+    @Value("${voucher-management.endpoints.fetch}")
+    public String fetchVoucherEndpoint;
 }

@@ -109,3 +109,4 @@ voucher-management:
     create-voucher: /vouchers
     voucher-lifecycle: /vouchers
     voucher-validity: /voucher/validity
+    fetch: /vouchers
