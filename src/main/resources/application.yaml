@@ -123,3 +123,10 @@ mock-payment-schema:
   endpoints:
     mock-batch-authorization: "/batches/"
 
+
+netflix-conductor:
+  server:
+    contactpoint: "https://conductor-server.sandbox.fynarfin.io"
+    endpoints:
+      home: "/"
+      health: "/health"
