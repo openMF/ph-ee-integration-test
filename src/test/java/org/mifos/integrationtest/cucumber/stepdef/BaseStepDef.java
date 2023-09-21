@@ -26,6 +26,7 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
+import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -129,6 +130,7 @@ public class BaseStepDef {
     protected static Long currentBalance;
     protected static String beneficiaryPayeeIdentity;
     protected static String payer_identifier;
+    protected static KeycloakUser keycloakUser;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

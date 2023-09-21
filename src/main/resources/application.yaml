@@ -135,11 +135,17 @@ netflix-conductor:
 
 keycloak:
   contactpoint: http://keycloak.sandbox.fynarfin.io
+  realm: "paymenthub"
   endpoint:
-    token: /auth/realms/Kong/protocol/openid-connect/token
+    token: /auth/realms/{realm}/protocol/openid-connect/token
+    user: /auth/admin/realms/{realm}/users
+    userResetPassword: /auth/admin/realms/{realm}/users/{userId}/reset-password
   config:
+    admin:
+      username: "admin"
+      password: "admin"
     client:
       id: "kong-oidc"
-      secret: "HQ9bjbPDPVwhUy65llyUO7b5S1iiGZa1"
+      secret: "OUdKGHRSB2gLQWld1b5aTINHaYMuEunB"
     grant_type: "password"
 
