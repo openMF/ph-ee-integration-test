@@ -48,9 +48,7 @@ public class NCStepDef extends BaseStepDef {
     public void channelTransferAPICall(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
-        // BaseStepDef.response =
-        // RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("http://localhost:8081").body(BaseStepDef.requestBody.toString())
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("http://dpga-connector-chanel.sandbox.fynarfin.io/").body(BaseStepDef.requestBody.toString())
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
