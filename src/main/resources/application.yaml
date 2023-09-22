@@ -130,3 +130,4 @@ netflix-conductor:
     endpoints:
       home: "/"
       health: "/health"
+      workflow: "/api/workflow"

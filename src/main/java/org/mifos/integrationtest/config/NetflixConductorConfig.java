@@ -1,6 +1,5 @@
 package org.mifos.integrationtest.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,4 +14,7 @@ public class NetflixConductorConfig {
 
     @Value("${netflix-conductor.server.endpoints.health}")
     public String healthEndpoint;
+
+    @Value("${netflix-conductor.server.endpoints.workflow}")
+    public String workflowEndpoint;
 }
