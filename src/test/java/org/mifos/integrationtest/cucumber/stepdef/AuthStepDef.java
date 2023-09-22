@@ -73,30 +73,4 @@ public class AuthStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint).andReturn()
                 .asString();
     }
-
-    @When("I call the keycloak auth api with {string} username and {string} password")
-    public void getTokenFromKeycloakUser(String username, String password) throws JsonProcessingException {
-        RequestSpecification requestSpecification = Utils.getDefaultSpec();
-        requestSpecification.header(CONTENT_TYPE, "application/x-www-form-urlencoded");
-        requestSpecification
-                .formParam(KeycloakConfig.headerUsernameKey, username)
-                .formParam(KeycloakConfig.headerPasswordKey, password)
-                .formParam(KeycloakConfig.headerClientIdKey, keycloakConfig.clientId)
-                .formParam(KeycloakConfig.headerClientSecretKey, keycloakConfig.clientSecret)
-                .formParam(KeycloakConfig.headerGrantTypeKey, keycloakConfig.grantType);
-        BaseStepDef.response = RestAssured.given(requestSpecification)
-                .baseUri(keycloakConfig.keycloakContactPoint)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(keycloakConfig.tokenEndpoint)
-                .andReturn().asString();
-        try {
-            BaseStepDef.keycloakTokenResponse = objectMapper.readValue(BaseStepDef.response, KeycloakTokenResponse.class);
-        } catch (Exception e) {
-            BaseStepDef.keycloakTokenResponse = null;
-        }
-        logger.info("Auth bearer token {}", BaseStepDef.keycloakTokenResponse.getAccessToken());
-        assertThat(BaseStepDef.keycloakTokenResponse).isNotNull();
-        assertThat(BaseStepDef.keycloakTokenResponse.getAccessToken()).isNotNull();
-    }
 }

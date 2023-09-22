@@ -104,6 +104,10 @@ kong:
     createPlugin: /services/{serviceId}/plugins
     routes: /routes
     plugins: /plugins
+  plugin:
+    oidc:
+      scope: "openid"
+      bearerTokenOnly: true
   header:
     apikey: "X-API-KEY"
   service:
@@ -136,6 +140,8 @@ netflix-conductor:
 keycloak:
   contactpoint: http://keycloak.sandbox.fynarfin.io
   realm: "paymenthub"
+  introspectionEndpoint: "http://keycloak.sandbox.fynarfin.io/auth/realms/{realm}/protocol/openid-connect/token/introspect"
+  discoveryUrl: "http://keycloak.sandbox.fynarfin.io/auth/realms/{realm}/.well-known/openid-configuration"
   endpoint:
     token: /auth/realms/{realm}/protocol/openid-connect/token
     user: /auth/admin/realms/{realm}/users

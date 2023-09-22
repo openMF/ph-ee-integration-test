@@ -10,13 +10,16 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.apache.commons.lang3.StringUtils;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
 import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
+import org.mifos.integrationtest.config.KeycloakConfig;
 import org.mifos.integrationtest.config.KongConfig;
+import org.mifos.integrationtest.config.KongOidcPluginConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -30,6 +33,12 @@ public class KongStepDef extends BaseStepDef {
 
     @Autowired
     public KongConfig kongConfig;
+
+    @Autowired
+    public KeycloakConfig keycloakConfig;
+
+    @Autowired
+    public KongOidcPluginConfig kongOidcPluginConfig;
 
     @Given("I have required Kong configuration")
     public void checkKongConfigNotNull() {
@@ -147,13 +156,41 @@ public class KongStepDef extends BaseStepDef {
         Utils.sleep(seconds);
     }
 
+    @And("I register service with url {string} and {string} protocol")
+    public void commonRegisterService(String serviceUrl, String protocol) throws JsonProcessingException {
+        registerService(serviceUrl, protocol);
+        assertThat(BaseStepDef.kongService).isNotNull();
+    }
+
+    @And("I register route with route host {string} and path {string}")
+    public void commonRegisterRouteInService(String routeHost, String path) throws JsonProcessingException {
+        registerRouteInService(new ArrayList<>() {{ add(path); }},
+                new ArrayList<>() {{ add(routeHost); }},
+                BaseStepDef.kongService.getId());
+        assertThat(BaseStepDef.kongRoute).isNotNull();
+    }
+
+    @And("I enable oidc plugin")
+    public void enableOidcPluginForService() throws JsonProcessingException {
+        Map<String, Object> config = new HashMap<>(){{
+            put("discovery", keycloakConfig.discoveryUrl.replace("{realm}",keycloakConfig.realm));
+            put("client_id", keycloakConfig.clientId);
+            put("client_secret", keycloakConfig.clientSecret);
+            put("introspection_endpoint", keycloakConfig.introspectionUrl.replace("{realm}",keycloakConfig.realm));
+            put("bearer_only", kongOidcPluginConfig.bearerTokenOnly ? "yes":"no");
+            put("scope", kongOidcPluginConfig.scope);
+            put("realm", keycloakConfig.realm);
+        }};
+        enablePluginForService(BaseStepDef.kongService.getId(), "oidc", config);
+        assertThat(BaseStepDef.kongPlugin).isNotNull();
+    }
+
     public void registerService(String serviceUrl, String protocol) throws JsonProcessingException {
         KongService service = new KongService();
         service.setId(UUID.randomUUID().toString());
         service.setUrl(serviceUrl);
         service.setName("name_"+service.getId());
         service.setProtocol(protocol);
-        logger.debug("Sendoing data: {}", objectMapper.writeValueAsString(service));
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(baseReqSpec)
@@ -211,7 +248,7 @@ public class KongStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
                 .post(kongConfig.createPluginEndpoint, serviceId).andReturn().asString();
 
-        logger.debug("Enable key-auth plugin response from kong: {}", BaseStepDef.response);
+        logger.debug("Enable plugin response from kong: {}", BaseStepDef.response);
         try {
             BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
             logger.debug("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
@@ -227,7 +264,7 @@ public class KongStepDef extends BaseStepDef {
             BaseStepDef.kongConsumer = null;
             BaseStepDef.kongConsumerKey = null;
         }
-        if (BaseStepDef.kongPlugin != null) {
+        if (BaseStepDef.kongPlugin != null && StringUtils.isNotBlank(BaseStepDef.kongPlugin.getId())) {
             deletePlugin(BaseStepDef.kongPlugin.getId());
             BaseStepDef.kongPlugin= null;
         }

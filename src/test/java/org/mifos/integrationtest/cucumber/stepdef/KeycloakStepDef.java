@@ -4,6 +4,8 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.cucumber.core.internal.com.fasterxml.jackson.core.type.TypeReference;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -33,21 +35,34 @@ public class KeycloakStepDef extends BaseStepDef {
         doAdminAuthentication();
         createUser(username);
         BaseStepDef.keycloakUser = fetchKeycloakUserUsingUsername(username);
-        resetUserPassword(BaseStepDef.keycloakUser.getId(), "password");
+        logger.debug("Keycloak user: {}", objectMapper.writeValueAsString(BaseStepDef.keycloakUser));
+        BaseStepDef.keycloakCurrentUserPassword = "password";
+        resetUserPassword(BaseStepDef.keycloakUser.getId(), BaseStepDef.keycloakCurrentUserPassword);
     }
 
     @After("@keycloak-user-teardown")
     public void keycloakUserTeardown() {
         logger.info("Running keycloak-user-teardown");
+        doAdminAuthentication();
         deleteUser(BaseStepDef.keycloakUser.getId());
     }
 
-    public void doAdminAuthentication() {
+    @And("I authenticate with new keycloak user")
+    public void authenticateCurrentKeycloakUser() throws JsonProcessingException {
+        if (BaseStepDef.keycloakUser == null || BaseStepDef.keycloakCurrentUserPassword == null) {
+            throw new RuntimeException("Current keycloak user or password is not present." +
+                    "Make sure to call create the new user using admin step");
+        }
+        getTokenFromKeycloakUser(BaseStepDef.keycloakUser.username, BaseStepDef.keycloakCurrentUserPassword);
+    }
+
+    @When("I call the keycloak auth api with {string} username and {string} password")
+    public void getTokenFromKeycloakUser(String username, String password) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification.header(CONTENT_TYPE, "application/x-www-form-urlencoded");
         requestSpecification
-                .formParam(KeycloakConfig.headerUsernameKey, keycloakConfig.adminUsername)
-                .formParam(KeycloakConfig.headerPasswordKey, keycloakConfig.adminPassword)
+                .formParam(KeycloakConfig.headerUsernameKey, username)
+                .formParam(KeycloakConfig.headerPasswordKey, password)
                 .formParam(KeycloakConfig.headerClientIdKey, keycloakConfig.clientId)
                 .formParam(KeycloakConfig.headerClientSecretKey, keycloakConfig.clientSecret)
                 .formParam(KeycloakConfig.headerGrantTypeKey, keycloakConfig.grantType);
@@ -62,9 +77,14 @@ public class KeycloakStepDef extends BaseStepDef {
         } catch (Exception e) {
             BaseStepDef.keycloakTokenResponse = null;
         }
-        logger.info("Auth bearer token for admin {}", BaseStepDef.keycloakTokenResponse.getAccessToken());
+        logger.debug("Auth response {}", BaseStepDef.response);
         assertThat(BaseStepDef.keycloakTokenResponse).isNotNull();
         assertThat(BaseStepDef.keycloakTokenResponse.getAccessToken()).isNotNull();
+    }
+
+    public void doAdminAuthentication() {
+        logger.info("Doing admin auth");
+        getTokenFromKeycloakUser(keycloakConfig.adminUsername, keycloakConfig.adminPassword);
     }
 
     public void deleteUser(String userId) {

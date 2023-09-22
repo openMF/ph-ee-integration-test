@@ -131,6 +131,7 @@ public class BaseStepDef {
     protected static String beneficiaryPayeeIdentity;
     protected static String payer_identifier;
     protected static KeycloakUser keycloakUser;
+    protected static String keycloakCurrentUserPassword = "password";
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

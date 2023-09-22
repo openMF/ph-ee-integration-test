@@ -14,6 +14,12 @@ public class KeycloakConfig {
     @Value("${keycloak.realm}")
     public String realm;
 
+    @Value("${keycloak.discoveryUrl}")
+    public String discoveryUrl;
+
+    @Value("${keycloak.introspectionEndpoint}")
+    public String introspectionUrl;
+
     @Value("${keycloak.endpoint.token}")
     public String tokenEndpoint;
 
