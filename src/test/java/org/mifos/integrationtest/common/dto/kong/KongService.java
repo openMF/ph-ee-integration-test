@@ -17,4 +17,6 @@ public class KongService {
 
     private String name;
 
+    private String protocol;
+
 }
