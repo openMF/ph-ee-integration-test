@@ -37,6 +37,7 @@ public class VoucherManagementStepDef extends BaseStepDef{
     private static String registeringInstitutionId = "SocialWelfare";
     private static String requestId;
     private static String agentId;
+    private static String fetchVoucherResponseBody;
     @Autowired
     MockServerStepDef mockServerStepDef;
 
@@ -301,7 +302,7 @@ public class VoucherManagementStepDef extends BaseStepDef{
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -443,5 +444,36 @@ public class VoucherManagementStepDef extends BaseStepDef{
     public void iShouldBeAbleToAssertResponseBodyFromCallback(String endpoint) {
         verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(requestId))));
         verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+    }
+
+    @Then("I will call the fetch voucher API with expected status of {int}")
+    public void iWillCallTheFetchVoucherAPIWithExpectedStatusOf(int responseCode) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec)
+                .header("Content-Type", "application/json")
+                .header("X-Registering-Institution-ID", registeringInstitutionId)
+                .baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build())
+                .when()
+                .get(voucherManagementConfig.fetchVoucherEndpoint + "/" + serialNumber)
+                .andReturn().asString();
+
+         fetchVoucherResponseBody = BaseStepDef.response;
+        logger.info("Voucher Response: {}", BaseStepDef.response);
+    }
+
+    @And("I will assert the fields from fetch voucher response")
+    public void iWillAssertTheFieldsFromFetchVoucherResponse() {
+        try {
+            JsonNode rootNode = objectMapper.readTree(fetchVoucherResponseBody);
+
+            String serialNumberResponse = rootNode.get("serialNumber").asText();
+            String registeringInstitutionIdResponse = rootNode.get("registeringInstitutionId").asText();
+            assertThat(serialNumberResponse).isEqualTo(serialNumber);
+            assertThat(registeringInstitutionIdResponse).isEqualTo(registeringInstitutionId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

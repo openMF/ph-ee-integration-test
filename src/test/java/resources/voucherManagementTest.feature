@@ -7,7 +7,7 @@ Feature: Voucher Management Api Test
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
      Given I can create an VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 202 and stub "/createVoucher"
-     Then I will sleep for 5000 millisecond
+     Then I will sleep for 7000 millisecond
      Then I should be able to extract response body from callback
 
 
@@ -53,6 +53,10 @@ Feature: Voucher Management Api Test
     And I call the validity check API with expected status of 202 and stub "/validity"
     And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
+
+  @createAndActivateVoucher
+  Scenario: Fetch Voucher Api Test
+    When I will sleep for 3000 millisecond
+    Then I will call the fetch voucher API with expected status of 200
+    And I will assert the fields from fetch voucher response
     And I can stop mock server
-
-
