@@ -1,5 +1,5 @@
 operations-app:
-  contactpoint: "https://ops-bk.sandbox.fynarfin.io"
+  contactpoint: "https://ops-bk1.sandbox.fynarfin.io"
   username: "mifos"
   password: "password"
   auth:
@@ -16,19 +16,19 @@ operations-app:
 
 paybill:
   mpesa-connector:
-    contactpoint: https://mpesa.sandbox.fynarfin.io
+    contactpoint: https://mpesa1.sandbox.fynarfin.io
     endpoints:
       validation: "/validation"
       settlement: "/confirmation"
 
 bulk-processor:
-  contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
+  contactpoint: "https://bulk-connector1.sandbox.fynarfin.io"
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"
 
 channel-connector:
-  contactpoint: "https://channel.sandbox.fynarfin.io"
+  contactpoint: "https://channel1.sandbox.fynarfin.io"
   endpoints:
     transfer: "/channel/transfer"
     gsma-p2p: "/channel/gsma/transfer"
@@ -43,7 +43,7 @@ defaults:
   authorization: "Basic bWlmb3M6cGFzc3dvcmQ="
 
 channel:
-  base-url: https://channel.sandbox.fynarfin.io
+  base-url: https://channel1.sandbox.fynarfin.io
   endpoint: /channel/gsma/transaction
 
 loan:
@@ -77,7 +77,7 @@ json-web-signature:
   x509Certificate: "MIIDvDCCAqQCCQDZK/l5vKIt7jANBgkqhkiG9w0BAQsFADCBnzELMAkGA1UEBhMCSU4xEjAQBgNVBAgMCUtBUk5BVEFLQTETMBEGA1UEBwwKRE9NQVNBTkRSQTERMA8GA1UECgwIRllOQVJGSU4xFDASBgNVBAsMC0RFVkVMT1BNRU5UMR0wGwYDVQQDDBRodHRwczovL2Z5bmFyZmluLmlvLzEfMB0GCSqGSIb3DQEJARYQYXZpa0BmeW5hcmZpbi5pbzAeFw0yMzA0MDUwNjExMDNaFw0yMzA1MDUwNjExMDNaMIGfMQswCQYDVQQGEwJJTjESMBAGA1UECAwJS0FSTkFUQUtBMRMwEQYDVQQHDApET01BU0FORFJBMREwDwYDVQQKDAhGWU5BUkZJTjEUMBIGA1UECwwLREVWRUxPUE1FTlQxHTAbBgNVBAMMFGh0dHBzOi8vZnluYXJmaW4uaW8vMR8wHQYJKoZIhvcNAQkBFhBhdmlrQGZ5bmFyZmluLmlvMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtO38XREJbL1r4IAYK6K5ONNXHcmfTKlehRf0YF+vjptt4D/6zBObBOf/zqButSlN3RI/aYXBx/OOU7sjRMnOFYasXtYM5eFSGZDo/v9qsWLwrD9Ur97cE7Pnw3xb+TQNWV6orME5YI0di6X9bXrxUBDswfVmLx/wbvZIK9gJRzD1evm+4HCYo/+1tYZ3YgpNmoW4u6F44zgxeMhFPcjQIaKYm3uM8zF/hTuHhWKVJq40ucL7+mgGp36HiDE8IRfNRo/Vd6x3+FLA91RMe+96uxj7l5WUi8oja1Anb8SE4fnVvGPSArgk8t2xW6dfx86D3c5JFJczzSi5S4ldsOBHMQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBPhTd+DhzbUGqAvsU6T34Iu3k+6Br4N6m90dkvBeMgYL8J7J6Fa7hm7f6xEeDqM+RTPhuFXNlS5swjqUYg/j85jKqVtgYAB6IE7z7BTwBAtF4tJ+jVOV4PfS/lSqvfxwo/qThqU1iXFz9xU38zlqxH5JuWZjeV58uUP/vZC8Ys44RDhU4X1qDbt51Vs8E+DeV1A4aweoEVc/txEdShbxnR2MVpPpca1NOElYW2cTAWjJypgw5bJZX4G0gZmHCZhQtgXSIMC1KSqMM7DK+HA7xTfKNJ+vnD08FOzBAb6nl2cHVb/zySdNWwsPu6w3FmzgFit9Hq2zE2F41167GvRBEL"
 
 identity-account-mapper:
-  contactpoint: "https://identity-mapper.sandbox.fynarfin.io"
+  contactpoint: "https://identity-mapper1.sandbox.fynarfin.io"
   endpoints:
     register-beneficiary: /beneficiary
     add-payment-modality: /paymentModality
@@ -104,7 +104,7 @@ kong:
     host: "bulk-connector.sandbox.fynarfin.io"
 
 voucher-management:
-  contactpoint: "https://vouchers.sandbox.fynarfin.io"
+  contactpoint: "https://vouchers1.sandbox.fynarfin.io"
   endpoints:
     create-voucher: /vouchers
     voucher-lifecycle: /vouchers
