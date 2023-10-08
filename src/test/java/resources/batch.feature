@@ -33,6 +33,9 @@ Feature: Batch Details API test
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batch summary API with expected status of 200
@@ -48,6 +51,8 @@ Feature: Batch Details API test
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batch details API with expected status of 200
@@ -85,9 +90,9 @@ Feature: Batch Details API test
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
-    And I should get batchId in response
-    Given I have a batch id from previous scenario
-    Then I will sleep for 2000 millisecond
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
     And I have tenant as "gorilla"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -173,11 +178,17 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  Scenario: Batch aggregate API Test
+  @gov @batch-teardown
+  Scenario: BD-013 Batch aggregate API Test
     Given I have the demo csv file "test.csv"
-    And I have tenant as "gorilla"
-    When I call the batch transactions endpoint with expected status of 200
+    And I have tenant as "rhino"
+    And I generate clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
-    And I fetch batchId from response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
     When I call the batch aggregate API with expected status of 200
     Then I should get non empty response

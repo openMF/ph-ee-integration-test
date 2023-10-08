@@ -377,16 +377,10 @@ public class BatchApiStepDef extends BaseStepDef {
         logger.info("Batch Aggregate Response: " + BaseStepDef.response);
     }
 
-    @And("I fetch batchId from response")
-    public void iFetchBatchIdFromResponse() {
-        assertThat(BaseStepDef.response).isNotEmpty();
-        BaseStepDef.batchId = fetchBatchId(BaseStepDef.response);
-        logger.info("batchId: {}", batchId);
-        assertThat(batchId).isNotEmpty();
-    }
-
     public void batchTearDown() {
         BaseStepDef.filename = null;
+        BaseStepDef.batchId = null;
+        BaseStepDef.response = null;
     }
 
     public BatchRequestDTO mockBatchTransactionRequestDTO() {
