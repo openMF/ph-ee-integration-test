@@ -171,22 +171,13 @@ workflows:
           context:
             - DOCKER
       - create-secret-paymenthub-namespace:
-          requires:
-            - upgrade-helm-chart
           context:
             - AWS
             - Helm
             - slack
             - Secrets
-      # - install-helm-chart:
-      #     cluster-name: sit
-      # - delete-helm-release:
-      #     cluster-name: sit
-      #     requires:
-      #       - install-helm-chart
       - test-chart-gov:
           requires:
-            - upgrade-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
@@ -195,7 +186,6 @@ workflows:
             - Ngrok
       - test-chart-ams:
           requires:
-            - upgrade-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
