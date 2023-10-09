@@ -170,14 +170,6 @@ workflows:
       - build_and_push_latest_image:
           context:
             - DOCKER
-      - upgrade-helm-chart:
-          cluster-name: sit
-          requires:
-            - build
-            - build_and_push_tag_image
-            - build_and_push_latest_image
-          context:
-            - AWS
       - create-secret-paymenthub-namespace:
           requires:
             - upgrade-helm-chart
