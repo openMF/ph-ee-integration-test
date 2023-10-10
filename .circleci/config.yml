@@ -64,7 +64,7 @@ jobs:
             docker push "openmf/ph-ee-integration-test:$IMAGE_TAG"
 
           # when: always  # The job will be executed even if there's no match for the tag filter
-  
+
   build_and_push_latest_image:
     executor: docker-executor
     environment:
@@ -93,6 +93,40 @@ jobs:
           name: Push Docker image to DockerHub
           command: docker push openmf/ph-ee-integration-test:latest
 
+  upgrade-helm-chart:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      cluster-name:
+        description: "sit"
+        type: string
+      recreate-pods:
+        default: true
+        type: boolean
+      wait:
+        default: true
+        type: boolean
+    steps:
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: "sit"
+          aws-region: "$REGION"
+      - helm/upgrade-helm-chart:
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
+          release-name: g2p-sandbox
+          namespace: paymenthub-new
+          recreate-pods: true
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
+          wait: true
+          timeout: "300s"
+          #- run: helm test g2p-sandbox --namespace=paymenthub
+          # reset-values: true
+          # dry-run: true
+      # - helm/install-helm-chart:
+      #     add-repo: "https://fynarfin.io/images/"
+      #     chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.2.0.tgz"
+      #     release-name: g2p-sandbox
+      #     namespace: ph-test
+
   create-secret-paymenthub-namespace:
     docker:
       - image: cimg/base:2022.06
@@ -105,7 +139,7 @@ jobs:
           cluster-name: "sit"
           aws-region: "$REGION"
       - run: |
-          export ENV_NAMESPACE=paymenthub-new
+          export ENV_NAMESPACE=paymenthub
           kubectl delete secret bulk-processor-secret -n $ENV_NAMESPACE || echo "delete the secret if exist"
           kubectl create secret generic bulk-processor-secret \
           --from-literal=aws-access-key=$S3_ACCESS_KEY_ID \
@@ -170,14 +204,31 @@ workflows:
       - build_and_push_latest_image:
           context:
             - DOCKER
+      - upgrade-helm-chart:
+          cluster-name: sit
+          requires:
+            - build
+            - build_and_push_tag_image
+            - build_and_push_latest_image
+          context:
+            - AWS
       - create-secret-paymenthub-namespace:
+          requires:
+            - upgrade-helm-chart
           context:
             - AWS
             - Helm
             - slack
             - Secrets
+      # - install-helm-chart:
+      #     cluster-name: sit
+      # - delete-helm-release:
+      #     cluster-name: sit
+      #     requires:
+      #       - install-helm-chart
       - test-chart-gov:
           requires:
+            - upgrade-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
@@ -186,6 +237,7 @@ workflows:
             - Ngrok
       - test-chart-ams:
           requires:
+            - upgrade-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
