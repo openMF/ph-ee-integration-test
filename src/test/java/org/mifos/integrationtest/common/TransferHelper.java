@@ -23,6 +23,15 @@ public class TransferHelper {
         return body;
     }
 
+    public static JSONObject getTransferRequestBody(String payerIdentifier, String payeeIdentifier, String amount) throws JSONException {
+
+        JSONObject body = new JSONObject();
+        body.put("payer", getPartyObject(payerIdentifier));
+        body.put("payee", getPartyObject(payeeIdentifier));
+        body.put("amount", getAmountObject(amount));
+        return body;
+    }
+
     private static JSONObject getPartyObject(String value) throws JSONException {
 
         JSONObject partyIdObject = new JSONObject();

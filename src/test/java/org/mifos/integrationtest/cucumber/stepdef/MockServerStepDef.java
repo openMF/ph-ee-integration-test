@@ -43,16 +43,16 @@ public class MockServerStepDef extends BaseStepDef {
     public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
-                stubFor(get(endpoint).willReturn(status(status)));
+                stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case POST -> {
-                stubFor(post(endpoint).willReturn(status(status)));
+                stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case PUT -> {
-                stubFor(put(endpoint).willReturn(status(status)));
+                stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                stubFor(delete(endpoint).willReturn(status(status)));
+                stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
