@@ -366,8 +366,21 @@ public class BatchApiStepDef extends BaseStepDef {
         batchTearDown();
     }
 
+    @When("I call the batch aggregate API with expected status of {int}")
+    public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchAggregateEndpoint + BaseStepDef.batchId).andReturn().asString();
+        logger.info("Batch Aggregate Response: " + BaseStepDef.response);
+    }
+
     public void batchTearDown() {
         BaseStepDef.filename = null;
+        BaseStepDef.batchId = null;
+        BaseStepDef.response = null;
     }
 
     public BatchRequestDTO mockBatchTransactionRequestDTO() {
@@ -391,5 +404,10 @@ public class BatchApiStepDef extends BaseStepDef {
         debitParties.add(new Party("accountNumber", "003001003879112168"));
         batchRequestDTO.setDebitParty(debitParties);
         return batchRequestDTO;
+    }
+
+    private String fetchBatchId(String response) {
+        String[] split = response.split(",");
+        return split[0].substring(31);
     }
 }
