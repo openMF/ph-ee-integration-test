@@ -180,9 +180,9 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-013 Batch aggregate API Test
-    Given I have the demo csv file "test.csv"
-    And I have tenant as "rhino"
-    And I generate clientCorrelationId
+    Given I have tenant as "rhino"
+    And I have the demo csv file "ph-ee-bulk-demo-7.csv"
+    And I create a new clientCorrelationId
     And I have private key
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
@@ -192,3 +192,6 @@ Feature: Batch Details API test
     Then I will sleep for 5000 millisecond
     When I call the batch aggregate API with expected status of 200
     Then I should get non empty response
+    Then I am able to parse batch summary response
+    And Status of transaction is "COMPLETED"
+    And I should have matching total txn count and successful txn count in response
