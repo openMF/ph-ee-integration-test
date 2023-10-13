@@ -310,6 +310,21 @@ public class VoucherManagementStepDef extends BaseStepDef{
         iCanCreateAnVoucherRequestDTOForVoucherActivation();
         iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(202, "/activateVoucher");
     }
+    @Before("@createVoucher")
+    public void createVoucher(){
+        iCreateAnIdentityMapperDTOForRegisterBeneficiary();
+        mockServerStepDef.checkIfMockServerIsInjected();
+        mockServerStepDef.startMockServer();
+        mockServerStepDef.startStub("/createVoucher", PUT, 200);
+        mockServerStepDef.startStub("/activateVoucher", PUT, 200);
+        iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        iShouldBeAbleToExtractResponseBodyFromCallback();
+    }
     @After("@redeemVoucherFailure")
     public void redeemVoucherFailure(){
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
