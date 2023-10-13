@@ -148,8 +148,6 @@ Feature: Batch Details API test
     When I call the batch details API with expected status of 200
     Then I should get non empty response with failure and success percentage
 
-<<<<<<< HEAD
-
   @gov @batch-teardown
   Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
     Given I have tenant as "rhino"
