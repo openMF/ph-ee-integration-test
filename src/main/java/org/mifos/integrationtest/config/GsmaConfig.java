@@ -42,4 +42,10 @@ public class GsmaConfig {
     public String payerClientBaseUrl;
     @Value("${savings.endpoints.client-endpoint}")
     public String payerClientEndpoint;
+    @Value("${amsmifos.mock.base-url}")
+    public String amsMifosBasseUrl;
+    @Value("${amsmifos.mock.endpoints.deposit-endpoint}")
+    public String savingsDepositAccountMockEndpoint;
+    @Value("${amsmifos.mock.endpoints.repayment-endpoint}")
+    public String loanRepaymentMockEndpoint;
 }

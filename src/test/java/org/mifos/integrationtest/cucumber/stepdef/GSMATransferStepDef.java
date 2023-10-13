@@ -97,6 +97,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         logger.info("Savings Account Response: " + gsmaTransferDef.responseSavingsAccount);
         assertThat(gsmaTransferDef.responseSavingsAccount).isNotEmpty();
     }
+
     @Then("I call the interop identifier endpoint")
     public void callCreateInteropIdentifierEndpoint() throws JsonProcessingException {
         // Setting headers and body
@@ -329,6 +330,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "", beneficiaryDTOList);
     }
+
     public static String generateUniqueNumber(int length) {
         Random rand = new Random();
         long timestamp = System.currentTimeMillis();
@@ -368,10 +370,10 @@ public class GSMATransferStepDef extends BaseStepDef{
         List<ServeEvent> allServeEvents = getAllServeEvents();
         Boolean isValidated = null;
 
-        for(int i=0; i< allServeEvents.size();i++) {
+        for (int i = 0; i < allServeEvents.size(); i++) {
             ServeEvent request = allServeEvents.get(i);
 
-            if(!(request.getRequest().getBodyAsString()).isEmpty()) {
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
                 try {
                     JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
                     String requestID = rootNode.get("requestId").asText();
@@ -379,7 +381,7 @@ public class GSMATransferStepDef extends BaseStepDef{
                     if (requestId.equals(requestID)) {
                         callbackBody = request.getRequest().getBodyAsString();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -388,10 +390,30 @@ public class GSMATransferStepDef extends BaseStepDef{
         try {
             JsonNode rootNode = objectMapper.readTree(callbackBody);
             isValidated = rootNode.get("isValidated").asBoolean();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         assertThat(isValidated).isTrue();
+    }
+
+    @When("I call the AMS Mifos Deposit Mock API with expected status of {int}")
+    public void sendRequestToGSMADepositMockEndpoint(int status) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+        String body = "{}";
+        RestAssured.given(requestSpec).baseUri(gsmaConfig.amsMifosBasseUrl)
+                .body(body).expect().spec(new ResponseSpecBuilder().expectStatusCode(status).build()).when()
+                .post(gsmaConfig.savingsDepositAccountMockEndpoint).andReturn().asString();
+    }
+
+    @When("I call the AMS Mifos Loan Repayment Mock API with expected status of {int}")
+    public void sendRequestToGSMALoanRepaymentMockEndpoint(int status) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+        String body = "{}";
+        RestAssured.given(requestSpec).baseUri(gsmaConfig.amsMifosBasseUrl)
+                .body(body).expect().spec(new ResponseSpecBuilder().expectStatusCode(status).build()).when()
+                .post(gsmaConfig.loanRepaymentMockEndpoint).andReturn().asString();
     }
 }

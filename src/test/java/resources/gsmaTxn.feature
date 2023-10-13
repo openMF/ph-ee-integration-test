@@ -26,3 +26,9 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     When I have amsName as "mifos" and acccountHoldingInstitutionId as "gorilla" and amount as 11
     Then I call the channel connector API for loan account with expected status of 200
 
+# AMS Mock API call integration test
+  Scenario: AMS Mifos Deposit Mock API Call Test
+    When I call the AMS Mifos Deposit Mock API with expected status of 200
+
+  Scenario: AMS Mifos Loan Repayment Mock API Call Test
+    When I call the AMS Mifos Loan Repayment Mock API with expected status of 200

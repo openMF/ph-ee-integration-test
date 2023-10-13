@@ -47,6 +47,12 @@ channel:
   base-url: https://channel.sandbox.fynarfin.io
   endpoint: /channel/gsma/transaction
 
+amsmifos:
+  mock:
+    base-url: https://ams-mifos-mock.sandbox.fynarfin.io
+    endpoints:
+      repayment-endpoint: /fineract/transactions/loanrepayment
+      deposit-endpoint: /fineract/savingsaccount/transfers
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:
