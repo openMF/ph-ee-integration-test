@@ -73,6 +73,7 @@ public class BaseStepDef {
 
     @Autowired
     VoucherManagementConfig voucherManagementConfig;
+
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
 

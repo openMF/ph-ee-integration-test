@@ -117,3 +117,9 @@ voucher-management:
     voucher-lifecycle: /vouchers
     voucher-validity: /voucher/validity
     fetch: /vouchers
+
+mock-payment-schema:
+  contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
+  endpoints:
+    mock-batch-authorization: "/batches/"
+
