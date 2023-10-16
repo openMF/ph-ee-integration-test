@@ -315,7 +315,7 @@ public class BatchApiStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
         requestSpec.header(HEADER_FILENAME, "");
-        requestSpec.header(QUERY_PARAM_TYPE, "RAW");
+        requestSpec.header("X-CallbackURL",bulkProcessorConfig.simulateEndpoint);
         if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
             requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
         }
@@ -326,7 +326,8 @@ public class BatchApiStepDef extends BaseStepDef {
 
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .contentType("application/json").body(BaseStepDef.batchRawRequest).expect()
+                .contentType("application/json").queryParam(QUERY_PARAM_TYPE, "RAW")
+                .body(BaseStepDef.batchRawRequest).expect()
                 //.spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
@@ -350,7 +351,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchRequestDTO).isNotNull();
         assertThat(batchRequestDTO.getCurrency()).isNotEmpty();
         assertThat(batchRequestDTO.getAmount()).isNotEmpty();
-        assertThat(batchRequestDTO.getSubType()).isNotEmpty();
+        assertThat(batchRequestDTO.getPaymentMode()).isNotEmpty();
         assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
         BaseStepDef.batchRequestDTO = batchRequestDTO;
 
@@ -374,7 +375,7 @@ public class BatchApiStepDef extends BaseStepDef {
         BatchRequestDTO batchRequestDTO = new BatchRequestDTO();
         batchRequestDTO.setAmount("100");
         batchRequestDTO.setCurrency("USD");
-        batchRequestDTO.setSubType("mojaloop");
+        batchRequestDTO.setPaymentMode("mojaloop");
         batchRequestDTO.setDescriptionText("Integration test");
         return batchRequestDTO;
     }
