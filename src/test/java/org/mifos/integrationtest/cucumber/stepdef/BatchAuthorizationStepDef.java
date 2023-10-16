@@ -13,6 +13,7 @@ import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.AuthorizationRequest;
 import org.mifos.integrationtest.common.BatchSummaryResponse;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +23,8 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     @Autowired
     MockPaymentSchemaConfig mockPaymentSchemaConfig;
 
-    @Value("${callback_url}")
-    private String callBackUrl;
+    @Autowired
+    IdentityMapperConfig identityMapperConfig;
 
     private static AuthorizationRequest authorizationRequest;
 
@@ -50,7 +51,7 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", callBackUrl + stub)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
                 .header("X-Client-Correlation-ID", "998877")
                 .queryParam("command", "authorize")
                 .baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).body(authorizationRequest)
