@@ -24,6 +24,7 @@ public class Utils {
     public static final String REQUEST_TYPE_PARAM_NAME = "requestType";
     public static final String DEFAULT_TENANT = "gorilla";
     public static final String X_CORRELATIONID = "X-CorrelationID";
+    public static final String X_CallbackURL = "X-CallbackURL";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_TYPE_VALUE = "application/json";
     public static final String HEADER_JWS_SIGNATURE = "X-SIGNATURE";

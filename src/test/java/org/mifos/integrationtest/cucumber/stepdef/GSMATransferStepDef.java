@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
 import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
+import static org.mifos.integrationtest.common.Utils.X_CallbackURL;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
@@ -285,12 +286,13 @@ public class GSMATransferStepDef extends BaseStepDef{
         assertThat(gsmaTransferDef.amount).isNotNull();
     }
 
-    @Then("I call the channel connector API for savings account with expected status of {int}")
-    public void sendRequestToGSMAEndpointSavings(int status) throws JsonProcessingException {
+    @Then("I call the channel connector API for savings account with expected status of {int} and stub {string}")
+    public void sendRequestToGSMAEndpointSavings(int status, String stub) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
         requestSpec.header(X_CORRELATIONID, "123456789");
+        requestSpec.header(X_CallbackURL,gsmaConfig.callbackURL+stub);
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
@@ -303,13 +305,14 @@ public class GSMATransferStepDef extends BaseStepDef{
         assertThat(gsmaTransferDef.gsmaTransactionResponse).isNotEmpty();
     }
 
-    @Then("I call the channel connector API for loan account with expected status of {int}")
-    public void sendRequestToGSMAEndpointLoan(int status) throws JsonProcessingException {
+    @Then("I call the channel connector API for loan account with expected status of {int} and stub {string}")
+    public void sendRequestToGSMAEndpointLoan(int status,String stub) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
         requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+        requestSpec.header(X_CallbackURL,gsmaConfig.callbackURL+stub);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("L");
 
