@@ -48,4 +48,6 @@ public class GsmaConfig {
     public String savingsDepositAccountMockEndpoint;
     @Value("${amsmifos.mock.endpoints.repayment-endpoint}")
     public String loanRepaymentMockEndpoint;
+    @Value("${callback_url}")
+    public String callbackURL;
 }
