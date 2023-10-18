@@ -11,3 +11,5 @@ Feature: DPGA API test
     Then I should get transaction id in response
     When I call the get workflow API in  with workflow id as path variable
     Then I should get valid status
+    When I call the get transfer API in ops app with transactionId as parameter
+    Then I should get transfer state as completed

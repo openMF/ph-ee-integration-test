@@ -11,6 +11,9 @@ public class OperationsAppConfig {
     @Value("${operations-app.contactpoint}")
     public String operationAppContactPoint;
 
+    @Value("${operations-app.dpgcontactpoint}")
+    public String dpgOperationAppContactPoint;
+
     @Value("${operations-app.endpoints.batch-transaction}")
     public String batchTransactionEndpoint;
 

@@ -2,6 +2,9 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -68,6 +71,34 @@ public class NCStepDef extends BaseStepDef {
         assertThat(response).isNotNull();
         String status = response.getString("status");
         assertThat(status).isAnyOf("COMPLETED", "TERMINATED", "RUNNING");
+    }
+
+    @When("I call the get transfer API in ops app with transactionId as parameter")
+    public void iCallTheTransferAPIWithTransactionId()throws InterruptedException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
+
+        Thread.sleep(5000);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
+
+        logger.info(BaseStepDef.transactionId);
+        logger.info("Get Transfer Response: " + BaseStepDef.response);
+    }
+
+
+    @Then("I should get transfer state as completed")
+    public void assertValues()throws JSONException {
+        JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();;
+        String status = jsonObject.getAsJsonArray("content")
+                            .get(0).getAsJsonObject()
+                            .get("status").getAsString();
+        assertThat(status).isAnyOf ("COMPLETED", "TERMINATED");
     }
 
 }

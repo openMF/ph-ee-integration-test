@@ -1,5 +1,6 @@
 operations-app:
   contactpoint: "https://ops-bk.sandbox.fynarfin.io"
+  dpgcontactpoint: "https://ops-bk-dpg.sandbox.fynarfin.io"
   username: "mifos"
   password: "password"
   auth:
