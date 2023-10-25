@@ -203,3 +203,19 @@ Feature: Batch Details API test
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
     And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
+
+  @gov @batch-teardown
+  Scenario: Sub Batch summary API Test
+    Given I have tenant as "rhino"
+    And I have the demo csv file "ph-ee-bulk-demo-7.csv"
+    And I create a new clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
+    Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
+    And I call the sub batch summary API for sub batch summary with expected status of 200
+    Then I am able to parse sub batch summary response
+    And I should assert total txn count and successful txn count in response

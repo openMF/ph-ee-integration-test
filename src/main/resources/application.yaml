@@ -10,7 +10,7 @@ operations-app:
     batch-summary: "/api/v1/batch"
     batch-details: "api/v1/batch/detail"
     batch-transaction: "/api/v1/batch/transactions"
-    batches: "api/v1/batches"
+    batches: "/api/v1/batches"
     batch-aggregate: "/api/v1/batch/"
     transfers: "/api/v1/transfers?size=1&page=0"
     transactionRequests: "/api/v1/transactionRequests"

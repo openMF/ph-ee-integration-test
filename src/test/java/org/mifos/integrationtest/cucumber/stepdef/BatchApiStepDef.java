@@ -1,12 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
-import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
-import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
-import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
-import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
-import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
+import static org.mifos.integrationtest.common.Utils.*;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.After;
@@ -35,6 +30,7 @@ import org.json.JSONObject;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.Party;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
@@ -104,7 +100,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchSummaryEndpoint + "?batchId=" + BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchSummaryEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
 
         logger.info("Batch Summary Response: " + BaseStepDef.response);
     }
@@ -409,5 +405,67 @@ public class BatchApiStepDef extends BaseStepDef {
     private String fetchBatchId(String response) {
         String[] split = response.split(",");
         return split[0].substring(31);
+    }
+
+    @Given("I have a batch id {string}")
+    public void iHaveABatchId(String batchID) {
+        BaseStepDef.batchId = batchID;
+    }
+
+    @And("I call the batch summary API for sub batch summary with expected status of {int}")
+    public void iCallTheBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchSummaryEndpoint + BaseStepDef.batchId).andReturn().asString();
+
+        logger.info("Batch Summary Response: " + BaseStepDef.response);
+    }
+
+    @Then("I am able to parse sub batch summary response")
+    public void iAmAbleToParseSubBatchSummaryResponse() {
+        batchAndSubBatchSummaryResponse = null;
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response).isNotEmpty();
+        try {
+            BaseStepDef.batchAndSubBatchSummaryResponse = objectMapper.readValue(BaseStepDef.response, BatchAndSubBatchSummaryResponse.class);
+        } catch (Exception e) {
+            logger.error("Error parsing the batch summary response", e);
+        }
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
+    }
+
+    @And("I call the sub batch summary API for sub batch summary with expected status of {int}")
+    public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        requestSpec.header("X-Correlation-ID", BaseStepDef.clientCorrelationId);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
+        logger.info("Calling with batch id: {}", operationsAppConfig.operationAppContactPoint+operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId).andReturn().asString();
+
+        logger.info("Batch Summary Response: " + BaseStepDef.response);
+    }
+
+    @And("I should assert total txn count and successful txn count in response")
+    public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInResponse() {
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isNotNull();
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
     }
 }
