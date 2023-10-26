@@ -25,6 +25,7 @@ import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -122,6 +123,7 @@ public class BaseStepDef {
     protected static JSONObject requestBody;
     protected static BatchRequestDTO batchRequestDTO;
     protected static String batchRawRequest;
+    protected static BatchAndSubBatchSummaryResponse batchAndSubBatchSummaryResponse;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
