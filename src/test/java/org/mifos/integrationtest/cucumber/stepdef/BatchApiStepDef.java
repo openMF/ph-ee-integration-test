@@ -1,9 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.java.After;
 import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
 import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
 import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
@@ -11,6 +8,8 @@ import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
 import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
 import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
 
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -33,7 +32,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.operations.dto.Transfer;
@@ -300,9 +298,10 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
     }
+
     @And("I should have matching total txn count and successful txn count in response")
     public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCountInResponse() {
-       assertThat(BaseStepDef.batchDTO).isNotNull();
+        assertThat(BaseStepDef.batchDTO).isNotNull();
         assertThat(BaseStepDef.batchDTO.getTotal()).isNotNull();
         assertThat(BaseStepDef.batchDTO.getSuccessful()).isNotNull();
         assertThat(BaseStepDef.batchDTO.getTotal()).isGreaterThan(0);
@@ -313,7 +312,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions raw endpoint with expected status of {int}")
     public void callBatchTransactionsRawEndpoint(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
         requestSpec.header(HEADER_FILENAME, "");
         requestSpec.header(QUERY_PARAM_TYPE, "RAW");
@@ -328,17 +327,16 @@ public class BatchApiStepDef extends BaseStepDef {
         File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("application/json").body(BaseStepDef.batchRawRequest).expect()
-                //.spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
+                // .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when().post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
         BaseStepDef.response = resp.andReturn().asString();
         BaseStepDef.restResponseObject = resp;
 
         Headers allHeaders = resp.getHeaders();
         for (Header header : allHeaders) {
-            System.out.print(header.getName() + " : ");
-            System.out.println(header.getValue());
+            logger.info(" : {}", header.getName());
+            logger.info("{}", header.getValue());
         }
         logger.info("Batch Transactions Response: " + BaseStepDef.response);
     }
@@ -484,7 +482,8 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.response).isNotNull();
         assertThat(BaseStepDef.response).isNotEmpty();
         try {
-            BaseStepDef.batchAndSubBatchSummaryResponse = objectMapper.readValue(BaseStepDef.response, BatchAndSubBatchSummaryResponse.class);
+            BaseStepDef.batchAndSubBatchSummaryResponse = objectMapper.readValue(BaseStepDef.response,
+                    BatchAndSubBatchSummaryResponse.class);
         } catch (Exception e) {
             logger.error("Error parsing the batch summary response", e);
         }
@@ -500,11 +499,12 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         // requestSpec.queryParam("batchId", BaseStepDef.batchId);
         logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
-        logger.info("Calling with batch id: {}", operationsAppConfig.operationAppContactPoint+operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}",
+                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId);
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
 
         logger.info("Sub batch Summary Response: " + BaseStepDef.response);
     }
@@ -516,7 +516,8 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal())
+                .isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
     }
 
     @And("Total transaction in batch should add up to total transaction in each sub batch")
@@ -525,7 +526,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(Integer.parseInt(BaseStepDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
         long batchTotal = BaseStepDef.batchAndSubBatchSummaryResponse.getTotal();
         long subBatchTotal = 0L;
-        for (SubBatchSummary subBatchSummary: BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
+        for (SubBatchSummary subBatchSummary : BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
             subBatchTotal += subBatchSummary.getTotal();
         }
         assertThat(batchTotal).isEqualTo(subBatchTotal);

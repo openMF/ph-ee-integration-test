@@ -1,6 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
@@ -27,10 +26,6 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 public class MockServerStepDef extends BaseStepDef {
 

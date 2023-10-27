@@ -1,5 +1,7 @@
 package org.mifos.integrationtest;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -23,8 +25,6 @@ import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.google.common.truth.Truth.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ClientCorrelationIdTest {

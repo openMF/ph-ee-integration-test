@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.hamcrest.Matchers.*;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -12,9 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
-import static org.hamcrest.Matchers.*;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class InboundStepDef extends BaseStepDef {
 
@@ -50,33 +50,21 @@ public class InboundStepDef extends BaseStepDef {
     @And("I call the inbound transfer endpoint with authentication")
     public void callBatchSummaryAPIWithAuth() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        requestSpec.header("Authorization", "Bearer " +
-                keycloakTokenResponse.getAccessToken());
+        requestSpec.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
 
         // since after authentication channel can return anything apart from 400 and 401
-        ResponseSpecification responseSpecBuilder = new ResponseSpecBuilder()
-                .expectStatusCode(anyOf(not(anyOf(is(400), is(401))))).build();
+        ResponseSpecification responseSpecBuilder = new ResponseSpecBuilder().expectStatusCode(anyOf(not(anyOf(is(400), is(401))))).build();
 
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(mockTransactionChannelRequestDTO)
-                .expect()
-                .spec(responseSpecBuilder)
-                .when()
-                .post(channelConnectorConfig.transferEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(mockTransactionChannelRequestDTO).expect().spec(responseSpecBuilder).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
 
     public void callBatchSummaryAPI(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        BaseStepDef.response = RestAssured.given(requestSpec)
-                .baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(mockTransactionChannelRequestDTO)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .post(channelConnectorConfig.transferEndpoint)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
         logger.info("Inbound transfer Response: {}", BaseStepDef.response);
     }
 
@@ -94,27 +82,15 @@ public class InboundStepDef extends BaseStepDef {
         assertThat(transactionId).isNotNull();
         assertThat(transactionId).isNotEmpty();
     }
+
     @Given("I can mock TransactionChannelRequestDTO for account lookup")
     public void iCanMockTransactionChannelRequestDTOForAccountLookup() throws JsonProcessingException {
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{")
-                .append("\"payer\": {")
-                .append("\"partyIdInfo\": {")
-                .append("\"partyIdType\": \"MSISDN\",")
-                .append("\"partyIdentifier\": \"27710101999\"")
-                .append("}")
-                .append("},")
-                .append("\"payee\": {")
-                .append("\"partyIdInfo\": {")
-                .append("\"partyIdType\": \"MSISDN\",")
-                .append("\"partyIdentifier\": ")
-                .append("\"").append(beneficiaryPayeeIdentity).append("\"") // Replace with the variable here
-                .append("}")
-                .append("},")
-                .append("\"amount\": {")
-                .append("\"amount\": 2240,")
-                .append("\"currency\": \"TZS\"")
-                .append("}")
+        jsonBuilder.append("{").append("\"payer\": {").append("\"partyIdInfo\": {").append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": \"27710101999\"").append("}").append("},").append("\"payee\": {").append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",").append("\"partyIdentifier\": ").append("\"").append(beneficiaryPayeeIdentity)
+                .append("\"") // Replace with the variable here
+                .append("}").append("},").append("\"amount\": {").append("\"amount\": 2240,").append("\"currency\": \"TZS\"").append("}")
                 .append("}");
 
         String json = jsonBuilder.toString();

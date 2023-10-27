@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VoucherManagementConfig {
+
     @Value("${voucher-management.contactpoint}")
     public String voucherManagementContactPoint;
 

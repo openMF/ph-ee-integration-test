@@ -7,10 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
-<<<<<<< HEAD
-=======
 
->>>>>>> 42a246b (PHEE-307 Resolve checkstyle errors manually and update gradle command in CI)
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -56,15 +53,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     private static AccountMapperRequestDTO batchAccountLookupBody = null;
     private static String callbackBody;
     private static String fetchBeneficiaryBody;
-    private static Map<String, String> paymentModalityList = new HashMap<String, String>() {
-        {
-            put("ACCOUNT_ID", "00");
-            put("MSISDN", "01");
-            put("VIRTUAL_ADDRESS", "02");
-            put("WALLET_ID", "03");
-            put("VOUCHER", "04");
-        }
-    };
+    private static Map<String, String> paymentModalityList = new HashMap<>();
 
     static {
         paymentModalityList.put("ACCOUNT_ID", "00");
@@ -454,10 +443,10 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @Then("I will call the fetch beneficiary API with expected status of {int}")
     public void iWillCallTheFetchBeneficiaryAPIWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", sourceBBID)
-                .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .header("X-Registering-Institution-ID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(identityMapperConfig.fetchBeneficiaryEndpoint+ "/" + payeeIdentity).andReturn().asString();
+                .get(identityMapperConfig.fetchBeneficiaryEndpoint + "/" + payeeIdentity).andReturn().asString();
 
         fetchBeneficiaryBody = BaseStepDef.response;
 
@@ -474,7 +463,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             assertThat(payeeIdentityResponse).isEqualTo(payeeIdentity);
             assertThat(registeringInstitutionIdResponse).isEqualTo(sourceBBID);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("{}", e.getMessage());
         }
     }
 }

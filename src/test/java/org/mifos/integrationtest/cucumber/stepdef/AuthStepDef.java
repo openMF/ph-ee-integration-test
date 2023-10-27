@@ -1,22 +1,18 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.HashMap;
 import org.mifos.integrationtest.common.Utils;
-import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.config.KeycloakConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
-
-import java.util.HashMap;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class AuthStepDef extends BaseStepDef {
 

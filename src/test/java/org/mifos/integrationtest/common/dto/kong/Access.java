@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Access{
+public class Access {
+
     public boolean manageGroupMembership, view, mapRoles, impersonate, manage;
 }
