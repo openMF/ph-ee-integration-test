@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
@@ -10,9 +12,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
 import org.mifos.integrationtest.config.PaymentStatusCheckConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.google.common.truth.Truth.assertThat;
-
 
 public class PaymentStatusCheckDef extends BaseStepDef {
 
@@ -39,11 +38,8 @@ public class PaymentStatusCheckDef extends BaseStepDef {
         paymentStatusCheckReqDto.setRequestIds(paymentStatusCheckConfig.requestIds);
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
-        jsonBuilder.append("\"requestIds\": [")
-                .append("\"" + "\\" + "\"" + paymentStatusCheckConfig.requestIds.get(0) + "\\" + "\"" + "\"")
-                .append(",")
-                .append("\"" + "\\" + "\"" + paymentStatusCheckConfig.requestIds.get(1) + "\\" + "\""+ "\"")
-                .append("],");
+        jsonBuilder.append("\"requestIds\": [").append("\"" + "\\" + "\"" + paymentStatusCheckConfig.requestIds.get(0) + "\\" + "\"" + "\"")
+                .append(",").append("\"" + "\\" + "\"" + paymentStatusCheckConfig.requestIds.get(1) + "\\" + "\"" + "\"").append("],");
         jsonBuilder.append("\"payeePartyIds\": []");
         jsonBuilder.append("}");
         String jsonString = jsonBuilder.toString();
@@ -61,8 +57,8 @@ public class PaymentStatusCheckDef extends BaseStepDef {
         }
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint)
                 .body(BaseStepDef.paymentStatusCheckReqDto).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(operationsAppConfig.transfersEndpoint).andReturn().asString();
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().post(operationsAppConfig.transfersEndpoint)
+                .andReturn().asString();
 
         logger.info("Batch Details Response: " + BaseStepDef.response);
     }

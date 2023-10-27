@@ -1,8 +1,10 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;

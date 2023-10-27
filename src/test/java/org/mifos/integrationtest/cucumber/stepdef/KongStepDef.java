@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -11,6 +13,9 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
 import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
@@ -48,18 +53,16 @@ public class KongStepDef extends BaseStepDef {
     @When("I create new consumer")
     public void createNewConsumer() throws JsonProcessingException {
         KongConsumer consumer = new KongConsumer();
-        consumer.setCustomId("custom_"+System.currentTimeMillis());
+        consumer.setCustomId("custom_" + System.currentTimeMillis());
         consumer.setId(UUID.randomUUID().toString());
-        consumer.setUsername("user_"+System.currentTimeMillis());
+        consumer.setUsername("user_" + System.currentTimeMillis());
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
 
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(consumer)).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.consumerEndpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(consumer)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.consumerEndpoint).andReturn()
+                .asString();
 
         logger.debug("Create new consumer response from kong: {}", BaseStepDef.response);
         try {
@@ -79,10 +82,8 @@ public class KongStepDef extends BaseStepDef {
         consumerKey.setId(UUID.randomUUID().toString());
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(consumerKey)).expect()
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(consumerKey)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
                 .post(kongConfig.createKeyEndpoint, BaseStepDef.kongConsumer.getUsername()).andReturn().asString();
 
@@ -128,19 +129,16 @@ public class KongStepDef extends BaseStepDef {
         logger.debug("Host: {}", kongConfig.routeHost);
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
         try {
-            Response resp = RestAssured.given(baseReqSpec)
-                    .baseUri("https://"+kongConfig.routeHost)
-                    .header(kongConfig.apiKeyHeader, BaseStepDef.kongConsumerKey.getKey())
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                    .when()
-                    .get("/actuator/health/liveness").andReturn();
+            Response resp = RestAssured.given(baseReqSpec).baseUri("https://" + kongConfig.routeHost)
+                    .header(kongConfig.apiKeyHeader, BaseStepDef.kongConsumerKey.getKey()).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get("/actuator/health/liveness")
+                    .andReturn();
             BaseStepDef.response = resp.asString();
 
             logger.debug("Status Code: {}", resp.getStatusCode());
             logger.debug("Response: {}", BaseStepDef.response);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug("{}", e.getMessage());
             clearKongData();
         }
     }
@@ -276,7 +274,7 @@ public class KongStepDef extends BaseStepDef {
         }
         if (BaseStepDef.kongPlugin != null && StringUtils.isNotBlank(BaseStepDef.kongPlugin.getId())) {
             deletePlugin(BaseStepDef.kongPlugin.getId());
-            BaseStepDef.kongPlugin= null;
+            BaseStepDef.kongPlugin = null;
         }
         if (BaseStepDef.kongRoute != null) {
             deleteRoute(BaseStepDef.kongRoute.getId());
@@ -291,40 +289,32 @@ public class KongStepDef extends BaseStepDef {
     // deletes the consumer in kong by calling admin api
     private void deleteConsumer(String consumerId) {
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        String deleteResponse = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .delete(kongConfig.consumerEndpoint+"/{consumerId}",consumerId)
-                .andReturn().asString();
+        String deleteResponse = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .delete(kongConfig.consumerEndpoint + "/{consumerId}", consumerId).andReturn().asString();
         logger.debug("Consumer delete response: {}", deleteResponse);
     }
 
     // deletes the plugin in kong by calling admin api
     private void deletePlugin(String pluginId) {
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        String deleteResponse = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .delete(kongConfig.pluginsEndpoint+"/{pluginId}",pluginId)
-                .andReturn().asString();
+        String deleteResponse = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .delete(kongConfig.pluginsEndpoint + "/{pluginId}", pluginId).andReturn().asString();
         logger.debug("Plugin delete response: {}", deleteResponse);
     }
 
     // deletes the route in kong by calling admin api
     private void deleteRoute(String routeId) {
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        String deleteResponse = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .delete(kongConfig.routesEndpoint+"/{routeId}",routeId)
-                .andReturn().asString();
+        String deleteResponse = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .delete(kongConfig.routesEndpoint + "/{routeId}", routeId).andReturn().asString();
         logger.debug("Route delete response: {}", deleteResponse);
     }
 
     // deletes the service in kong by calling admin api
     private void deleteService(String serviceId) {
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        String deleteResponse = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .delete(kongConfig.servicesEndpoint+"/{serviceId}",serviceId)
-                .andReturn().asString();
+        String deleteResponse = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .delete(kongConfig.servicesEndpoint + "/{serviceId}", serviceId).andReturn().asString();
         logger.debug("Service delete response: {}", deleteResponse);
     }
 

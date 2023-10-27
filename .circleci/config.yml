@@ -82,6 +82,7 @@ jobs:
           name: Build Docker image
           command: |
             ./gradlew checkstyleMain
+            ./gradlew checkstyleTest
             ./gradlew bootJar
             docker build -t openmf/ph-ee-integration-test:latest .
             if [ "$CIRCLE_BRANCH" != "master" ]; then

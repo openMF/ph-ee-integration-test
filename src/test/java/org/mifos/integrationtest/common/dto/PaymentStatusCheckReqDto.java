@@ -1,21 +1,16 @@
 package org.mifos.integrationtest.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class PaymentStatusCheckReqDto {
 
     @Override
     public String toString() {
-        return "PaymentStatusCheckReqDto{" +
-                "requestIds:" + requestIds +
-                ", payeePartyIds:" + payeePartyIds +
-                '}';
+        return "PaymentStatusCheckReqDto{" + "requestIds:" + requestIds + ", payeePartyIds:" + payeePartyIds + '}';
     }
 
     List<String> requestIds;
-    List<String>  payeePartyIds;
+    List<String> payeePartyIds;
 
     public PaymentStatusCheckReqDto() {
 
@@ -29,12 +24,11 @@ public class PaymentStatusCheckReqDto {
         this.requestIds = requestIds;
     }
 
-    public List<String>  getPayeePartyIds() {
+    public List<String> getPayeePartyIds() {
         return payeePartyIds;
     }
 
-    public void setPayeePartyIds(List<String>  payeePartyIds) {
+    public void setPayeePartyIds(List<String> payeePartyIds) {
         this.payeePartyIds = payeePartyIds;
     }
 }
-

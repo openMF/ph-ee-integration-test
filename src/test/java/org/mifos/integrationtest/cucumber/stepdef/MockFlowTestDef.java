@@ -61,8 +61,7 @@ public class MockFlowTestDef extends BaseStepDef {
         }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().get(operationsAppConfig.transfersEndpoint)
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
                 .andReturn().asString();
 
         logger.info("GetTxn Request Response: " + BaseStepDef.response);
