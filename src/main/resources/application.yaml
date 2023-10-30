@@ -1,5 +1,6 @@
 operations-app:
   contactpoint: "https://ops-bk.sandbox.fynarfin.io"
+  dpgcontactpoint: "https://ops-bk-dpg.sandbox.fynarfin.io"
   username: "mifos"
   password: "password"
   auth:
@@ -123,3 +124,11 @@ mock-payment-schema:
   endpoints:
     mock-batch-authorization: "/batches/"
 
+
+netflix-conductor:
+  server:
+    contactpoint: "https://conductor-server.sandbox.fynarfin.io"
+    endpoints:
+      home: "/"
+      health: "/health"
+      workflow: "/api/workflow"
