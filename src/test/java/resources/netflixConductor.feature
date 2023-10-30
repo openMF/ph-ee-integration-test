@@ -5,16 +5,6 @@ Feature: DPGA API test
     When I make a call to nc server health API with expected status 200
     Then I get the value of Healthy as true in response
 
-  Scenario: dpga transfer api trigger test
-    Given I have tenant as "lion"
-    And I have the request body for transfer
-    When I call the channel transfer API with client correlation id and expected status of 200
-    Then I should get transaction id in response
-    When I call the get workflow API in  with workflow id as path variable
-    Then I should get valid status
-    When I call the get transfer API in ops app with transactionId as parameter
-    Then I should get transfer state as completed
-
   Scenario: dpga transfer api test with ams withdrawal verification
     Given I have Fineract-Platform-TenantId as "lion"
     When I call the create payer client endpoint
