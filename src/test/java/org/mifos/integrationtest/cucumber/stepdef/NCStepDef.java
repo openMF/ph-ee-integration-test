@@ -42,7 +42,16 @@ public class NCStepDef extends BaseStepDef {
 
     @And("I have the request body for transfer")
     public void iHaveRequestBody() throws JSONException {
-        JSONObject collectionRequestBody = TransferHelper.getTransferRequestBody();
+        String payerIdentifier = BaseStepDef.payerIdentifier;
+        JSONObject collectionRequestBody;
+
+        if(payerIdentifier!=null){
+            collectionRequestBody = TransferHelper.getTransferRequestBody(payerIdentifier);
+        }
+        else {
+            collectionRequestBody = TransferHelper.getTransferRequestBody();
+        }
+
         BaseStepDef.requestBody = collectionRequestBody;
         logger.info(String.valueOf(BaseStepDef.requestBody));
     }
@@ -94,11 +103,16 @@ public class NCStepDef extends BaseStepDef {
 
     @Then("I should get transfer state as completed")
     public void assertValues()throws JSONException {
-        JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();;
+        JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
         String status = jsonObject.getAsJsonArray("content")
                             .get(0).getAsJsonObject()
                             .get("status").getAsString();
         assertThat(status).isAnyOf ("COMPLETED", "TERMINATED");
+    }
+
+    @Then("I verify that the current balance is {long}")
+    public void isAccountBalanceValid(long expectedBalance) {
+        assertThat(BaseStepDef.currentBalance).isEqualTo(expectedBalance);
     }
 
 }

@@ -8,7 +8,7 @@ import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
 import static org.mifos.integrationtest.common.Utils.X_CallbackURL;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.JsonObject;import com.google.gson.JsonParser;import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -109,6 +109,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
         payer_identifier = savingsAccountResponse.getSavingsId().toString();
+        BaseStepDef.payerIdentifier = payer_identifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "MSISDN");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
         // Calling Interop Identifier endpoint
@@ -418,5 +419,23 @@ public class GSMATransferStepDef extends BaseStepDef{
         RestAssured.given(requestSpec).baseUri(gsmaConfig.amsMifosBasseUrl)
                 .body(body).expect().spec(new ResponseSpecBuilder().expectStatusCode(status).build()).when()
                 .post(gsmaConfig.loanRepaymentMockEndpoint).andReturn().asString();
+    }
+    @When("I call the savings account endpoint to get the current Balance")
+    public void getCurrentBalance()throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = gsmaTransferDef.setHeaders(requestSpec);
+        // Setting account ID in path
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
+                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
+        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+
+        String responseBody = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .get(gsmaConfig.savingsApproveEndpoint).andReturn().asString();
+
+        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+
+        BaseStepDef.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
+        logger.info(String.valueOf(BaseStepDef.currentBalance));
     }
 }
