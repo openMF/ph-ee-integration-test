@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -8,10 +9,13 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class MockFlowTestDef extends BaseStepDef {
 
@@ -26,6 +30,7 @@ public class MockFlowTestDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         logger.info("X-CorrelationId: {}", BaseStepDef.clientCorrelationId);
         requestSpec.header(Utils.X_CORRELATIONID, BaseStepDef.clientCorrelationId);
+        requestSpec.header("X-Registering-Institution-ID", "SocialWelfare");
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(BaseStepDef.inboundTransferMockReq).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
@@ -61,6 +66,19 @@ public class MockFlowTestDef extends BaseStepDef {
                 .andReturn().asString();
 
         logger.info("GetTxn Request Response: " + BaseStepDef.response);
+    }
+
+
+    @And("I should have PayeeFspId as {string}")
+    public void iShouldHavePayeeFspIdAs(String payeeDfspId) throws JSONException {
+        assert BaseStepDef.response.contains("payeeDfspId");
+        JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+        JSONArray jsonArray = (JSONArray) jsonObject.get("content");
+        JSONObject content = (JSONObject) jsonArray.get(0);
+        String value = content.get("payeeDfspId").toString();
+        String payeeIdentifier = content.get("payeePartyId").toString();
+        assertThat(value).isEqualTo(payeeDfspId);
+        assertThat(payeeIdentifier).isEqualTo(BaseStepDef.payerIdentifier);
     }
 
 

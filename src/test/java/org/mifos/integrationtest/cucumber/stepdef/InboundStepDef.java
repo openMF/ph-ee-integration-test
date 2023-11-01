@@ -60,5 +60,37 @@ public class InboundStepDef extends BaseStepDef {
         assertThat(transactionId).isNotNull();
         assertThat(transactionId).isNotEmpty();
     }
+    @Given("I can mock TransactionChannelRequestDTO for account lookup")
+    public void iCanMockTransactionChannelRequestDTOForAccountLookup() throws JsonProcessingException {
+        if (mockTransactionChannelRequestDTO != null) {
+            assertThat(mockTransactionChannelRequestDTO).isNotNull();
+            return;
+        }
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{")
+                .append("\"payer\": {")
+                .append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": \"27710101999\"")
+                .append("}")
+                .append("},")
+                .append("\"payee\": {")
+                .append("\"partyIdInfo\": {")
+                .append("\"partyIdType\": \"MSISDN\",")
+                .append("\"partyIdentifier\": ")
+                .append("\"").append(beneficiaryPayeeIdentity).append("\"") // Replace with the variable here
+                .append("}")
+                .append("},")
+                .append("\"amount\": {")
+                .append("\"amount\": 2240,")
+                .append("\"currency\": \"TZS\"")
+                .append("}")
+                .append("}");
+
+        String json = jsonBuilder.toString();
+        mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
+        assertThat(mockTransactionChannelRequestDTO).isNotNull();
+        BaseStepDef.inboundTransferMockReq = mockTransactionChannelRequestDTO;
+    }
 
 }
