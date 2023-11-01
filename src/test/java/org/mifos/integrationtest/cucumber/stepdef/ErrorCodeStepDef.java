@@ -25,6 +25,7 @@ import org.mifos.connector.common.gsma.dto.PostalAddress;
 import org.mifos.connector.common.gsma.dto.SubjectName;
 import org.mifos.integrationtest.common.GSMATransferHelper;
 import org.mifos.integrationtest.common.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -40,6 +41,9 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public static String randomTransactionId;
     public static GSMATransaction gsmaTransaction = null;
     public static PhErrorDTO errorInformation = null;
+
+    @Autowired
+    GSMATransferStepDef gsmaTransferStepDef;
 
     @When("I call the GSMATransfer endpoint with expected status of {int}")
     public void iCallTheGSMATransferEndpointWithExpectedStatusOf(int expectedStatus) {
@@ -57,9 +61,9 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void iCallTheTransferQueryEndpointWithTransactionIdAndExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
-        requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
-        requestSpec.queryParam("size", 10);
-        requestSpec.queryParam("page", 0);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
@@ -341,9 +345,8 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
-        // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
-        requestSpec.queryParam("size", 10);
-        requestSpec.queryParam("page", 0);
+        if(authEnabled)
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
@@ -359,8 +362,47 @@ public class ErrorCodeStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
             logger.info("Transfer query Response: {}", BaseStepDef.response);
-            checkForCallback();
+            status = checkForStatus();
             retryCount++;
         }
+    }
+    @When("I can create GSMATransferDTO with different payer and payee")
+    public void iCanCreateGSMATransactionDTOWithDifferentPayerAndPayee() {
+        GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
+        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        GsmaParty debit = gsmaTransferHelper.gsmaPartyHelper("msisdn", gsmaTransferStepDef.debitParty);
+        GsmaParty credit = gsmaTransferHelper.gsmaPartyHelper("msisdn", gsmaTransferStepDef.creditParty);
+        InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                "2022-09-28T12:51:19.260+00:00", "string", "string");
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+                "string");
+        SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+                postalAddress, subjectName);
+        BaseStepDef.gsmaP2PAmtDebit = 11;
+        try {
+            ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "USD", "string", "string",
+                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
+                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+        public String checkForStatus() {
+            String status = null;
+            try {
+                JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+                JSONArray content = jsonObject.getJSONArray("content");
+                if (content.getJSONObject(0).has("status")) {
+                    status = content.getJSONObject(0).getString("errorInformation");
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+        }
+            return status;
     }
 }

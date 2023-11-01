@@ -137,6 +137,8 @@ public class BaseStepDef {
     protected static String keycloakCurrentUserPassword = "password";
     protected static PaymentBatchDetail paymentBatchDetail;
 
+    protected static int gsmaP2PAmtDebit;
+
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
         // Get the current time in the specified time zone
