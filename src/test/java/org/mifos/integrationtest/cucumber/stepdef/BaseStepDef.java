@@ -126,6 +126,8 @@ public class BaseStepDef {
     protected static BatchAndSubBatchSummaryResponse batchAndSubBatchSummaryResponse;
     protected static String payerIdentifier;
     protected static Long currentBalance;
+    protected static String beneficiaryPayeeIdentity;
+    protected static String payer_identifier;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

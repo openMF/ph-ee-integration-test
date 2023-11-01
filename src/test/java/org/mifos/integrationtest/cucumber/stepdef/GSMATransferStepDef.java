@@ -11,6 +11,7 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonObject;import com.google.gson.JsonParser;import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -90,6 +91,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.savingsAccountBody = gsmaTransferDef.setBodySavingsAccount();
+        gsmaTransferDef.responseSavingsAccount = null;
         // Calling savings product endpoint
         gsmaTransferDef.responseSavingsAccount = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsAccountBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -110,8 +112,12 @@ public class GSMATransferStepDef extends BaseStepDef{
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
         payer_identifier = savingsAccountResponse.getSavingsId().toString();
         BaseStepDef.payerIdentifier = payer_identifier;
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "MSISDN");
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+        //gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
+        //gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+        String endpoint = gsmaConfig.interopIdentifierEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "MSISDN");
+        endpoint = endpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.savingsBaseUrl)
@@ -119,7 +125,7 @@ public class GSMATransferStepDef extends BaseStepDef{
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
                 .when()
-                .post(gsmaConfig.interopIdentifierEndpoint)
+                .post(endpoint)
                 .andReturn().asString();
 
         logger.info("Interop Identifier Response: " + gsmaTransferDef.responseInteropIdentifier);
@@ -136,11 +142,13 @@ public class GSMATransferStepDef extends BaseStepDef{
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        //gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payer_identifier);
+        String endpoint = gsmaConfig.savingsApproveEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payer_identifier);
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsApprove = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(gsmaConfig.savingsApproveEndpoint).andReturn().asString();
+                .post(endpoint).andReturn().asString();
 
         logger.info("Savings Approve Response: " + gsmaTransferDef.responseSavingsApprove);
         assertThat(gsmaTransferDef.responseSavingsApprove).isNotEmpty();
@@ -156,11 +164,13 @@ public class GSMATransferStepDef extends BaseStepDef{
         //Setting account ID
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsActivateEndpoint = gsmaConfig.savingsActivateEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        //gsmaConfig.savingsActivateEndpoint = gsmaConfig.savingsActivateEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        String endpoint = gsmaConfig.savingsActivateEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());;
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(gsmaConfig.savingsActivateEndpoint).andReturn().asString();
+                .post(endpoint).andReturn().asString();
 
         logger.info("Savings Activate Response: " + gsmaTransferDef.responseSavingsActivate);
         assertThat(gsmaTransferDef.responseSavingsActivate).isNotEmpty();
@@ -329,6 +339,7 @@ public class GSMATransferStepDef extends BaseStepDef{
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         payeeIdentity = generateUniqueNumber(16);
+        beneficiaryPayeeIdentity = payeeIdentity;
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "01", payer_identifier, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(12);
@@ -360,7 +371,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         requestId = generateUniqueNumber(10);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").header("X-Registering-Institution-ID", registeringInstitutionId)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", beneficiaryPayeeIdentity)
                 .queryParam("paymentModality", "01").queryParam("requestId", requestId)
                 .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
