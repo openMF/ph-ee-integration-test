@@ -54,6 +54,10 @@ amsmifos:
     endpoints:
       repayment-endpoint: /fineract/transactions/loanrepayment
       deposit-endpoint: /fineract/savingsaccount/transfers
+  status:
+    base-url: https://ams-mifos.sandbox.fynarfin.io
+    endpoints: /ams/accounts/{{identifierType}}/{{identifierId}}/status
+
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:

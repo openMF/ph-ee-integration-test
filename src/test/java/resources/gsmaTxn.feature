@@ -41,3 +41,14 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
 
   Scenario: AMS Mifos Loan Repayment Mock API Call Test
     When I call the AMS Mifos Loan Repayment Mock API with expected status of 200
+
+#AMS Account Status API test
+  Scenario: AMS account status test
+    Given I have Fineract-Platform-TenantId as "gorilla"
+    When I call the create payer client endpoint
+    Then I call the create savings product endpoint
+    When I call the create savings account endpoint
+    Then I call the interop identifier endpoint
+    Then I approve the deposit with command "approve"
+    When I activate the account with command "activate"
+    When I call the AMS Account Status API with expected status of 200

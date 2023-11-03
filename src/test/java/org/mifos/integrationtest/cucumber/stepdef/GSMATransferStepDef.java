@@ -19,6 +19,7 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.apache.fineract.client.models.InteropIdentifierAccountResponseData;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
 import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
@@ -412,6 +413,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         assertThat(isValidated).isTrue();
     }
 
+
     @When("I call the AMS Mifos Deposit Mock API with expected status of {int}")
     public void sendRequestToGSMADepositMockEndpoint(int status) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
@@ -448,5 +450,33 @@ public class GSMATransferStepDef extends BaseStepDef{
 
         BaseStepDef.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
         logger.info(String.valueOf(BaseStepDef.currentBalance));
+    }
+
+    @When("I call the AMS Account Status API with expected status of {int}")
+    public void checkAMSAccountStatus(int status) throws JsonProcessingException{
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec.header("Platform-TenantId", "gorilla");
+        requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
+
+        String body = "{}";
+        PostSavingsAccountsResponse postSavingsAccountsResponse = objectMapper.readValue( gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+
+
+        gsmaConfig.amsStatusEndpointUrl = gsmaConfig.amsStatusEndpointUrl.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        gsmaConfig.amsStatusEndpointUrl = gsmaConfig.amsStatusEndpointUrl.replaceAll("\\{\\{identifierId\\}\\}",
+                postSavingsAccountsResponse.getSavingsId().toString());
+
+
+        logger.info("amsStatusEndpointUrl : {}", gsmaConfig.amsStatusEndpointUrl);
+        logger.info("account id is : {}", postSavingsAccountsResponse);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(gsmaConfig.amsStatusBaseUrl)
+                .body(body).expect().spec(new ResponseSpecBuilder().expectStatusCode(status).build()).when()
+                .get(gsmaConfig.amsStatusEndpointUrl).andReturn().asString();
+
+        logger.info("AMS account status is : {}", BaseStepDef.response);
+        assertThat("accountStatus").isNotEmpty();
     }
 }
