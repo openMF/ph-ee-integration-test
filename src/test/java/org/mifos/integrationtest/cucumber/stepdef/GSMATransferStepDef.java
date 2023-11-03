@@ -167,7 +167,6 @@ public class GSMATransferStepDef extends BaseStepDef {
         // savingsAccountResponse.getSavingsId().toString());
         String endpoint = gsmaConfig.savingsActivateEndpoint;
         endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
-        ;
         // Calling create loan account endpoint
         gsmaTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()

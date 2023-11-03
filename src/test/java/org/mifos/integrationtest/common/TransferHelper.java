@@ -3,7 +3,9 @@ package org.mifos.integrationtest.common;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TransferHelper {
+public final class TransferHelper {
+
+    private TransferHelper() {}
 
     public static JSONObject getTransferRequestBody() throws JSONException {
 
