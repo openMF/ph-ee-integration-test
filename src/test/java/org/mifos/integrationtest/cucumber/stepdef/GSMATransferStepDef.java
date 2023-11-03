@@ -125,8 +125,8 @@ public class GSMATransferStepDef extends BaseStepDef{
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         gsmaTransferDef.interopIdentifierBody = gsmaTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
         payer_identifier = savingsAccountResponse.getSavingsId().toString();
         BaseStepDef.payerIdentifier = payer_identifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
@@ -600,18 +600,20 @@ public class GSMATransferStepDef extends BaseStepDef{
                 .spec(new ResponseSpecBuilder().expectStatusCode(status).build()).when().post(gsmaConfig.loanRepaymentMockEndpoint)
                 .andReturn().asString();
     }
+
     @When("I call the savings account endpoint to get the current Balance")
-    public void getCurrentBalance()throws JsonProcessingException {
+    public void getCurrentBalance() throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = gsmaTransferDef.setHeaders(requestSpec);
         // Setting account ID in path
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+        gsmaConfig.savingsApproveEndpoint = gsmaConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
 
-        String responseBody = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(gsmaConfig.savingsApproveEndpoint).andReturn().asString();
+        String responseBody = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(gsmaConfig.savingsApproveEndpoint).andReturn()
+                .asString();
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
