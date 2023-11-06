@@ -52,3 +52,4 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     When I call the AMS Account Status API with expected status of 200
+    Then I check the AMS account status as "active"

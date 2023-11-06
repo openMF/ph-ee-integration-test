@@ -460,7 +460,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         String body = "{}";
-        PostSavingsAccountsResponse postSavingsAccountsResponse = objectMapper.readValue( gsmaTransferDef.responseSavingsAccount,
+        PostSavingsAccountsResponse postSavingsAccountsResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
 
 
@@ -478,5 +478,13 @@ public class GSMATransferStepDef extends BaseStepDef{
 
         logger.info("AMS account status is : {}", BaseStepDef.response);
         assertThat("accountStatus").isNotEmpty();
+    }
+
+    @Then("I check the AMS account status as {string}")
+    public void checkAMSAccountStatus(String active) throws JsonProcessingException{
+        JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
+        String currentStatus = jsonObject.get("accountStatus").getAsString();
+
+        assertThat(currentStatus).contains(active);
     }
 }
