@@ -473,6 +473,7 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("Total transaction in batch should add up to total transaction in each sub batch")
     public void matchTotalSubBatchTxnAndBatchTxnCount() {
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(Integer.parseInt(BaseStepDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
         long batchTotal = BaseStepDef.batchAndSubBatchSummaryResponse.getTotal();
         long subBatchTotal = 0L;
         for (SubBatchSummary subBatchSummary: BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
