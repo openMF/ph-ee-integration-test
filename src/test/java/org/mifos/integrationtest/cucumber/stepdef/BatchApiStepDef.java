@@ -33,6 +33,7 @@ import org.mifos.integrationtest.common.dto.Party;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.crypto.BadPaddingException;
@@ -456,7 +457,7 @@ public class BatchApiStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId).andReturn().asString();
 
-        logger.info("Batch Summary Response: " + BaseStepDef.response);
+        logger.info("Sub batch Summary Response: " + BaseStepDef.response);
     }
 
     @And("I should assert total txn count and successful txn count in response")
@@ -466,6 +467,19 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
+    }
+
+    @And("Total transaction in batch should add up to total transaction in each sub batch")
+    public void matchTotalSubBatchTxnAndBatchTxnCount() {
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(Integer.parseInt(BaseStepDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
+        long batchTotal = BaseStepDef.batchAndSubBatchSummaryResponse.getTotal();
+        long subBatchTotal = 0L;
+        for (SubBatchSummary subBatchSummary: BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
+            subBatchTotal += subBatchSummary.getTotal();
+        }
+        assertThat(batchTotal).isEqualTo(subBatchTotal);
+
     }
 }
