@@ -102,7 +102,8 @@ jobs:
         type: string
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: << parameters.cluster-name >>
+          cluster-name: "sit"
+          aws-region: "$REGION"
       - helm/delete-helm-release:
           release-name: g2p-sandbox
   install-helm-chart:
@@ -114,7 +115,8 @@ jobs:
         type: string
     steps:
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: << parameters.cluster-name >>
+          cluster-name: "sit"
+          aws-region: "$REGION"
       - helm/install-helm-chart:
           chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
