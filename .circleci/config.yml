@@ -107,6 +107,23 @@ jobs:
       - helm/delete-helm-release:
           release-name: g2p-sandbox
           namespace: paymenthub
+
+  delete-configmap:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - kubernetes/delete-resource:
+          now: true
+          resource-names: ph-ee-config
+          resource-types: configmap
+          namespace: paymenthub-new
+          wait: true
+
+    parameters:
+      show-kubectl-command: true
+      resource-names:
+      resource-types:
+
   install-helm-chart:
     docker:
       - image: cimg/python:3.10
@@ -270,12 +287,19 @@ workflows:
             - build_and_push_latest_image
           context:
             - AWS
-      - install-helm-chart:
+      - delete-configmap:
           cluster-name: sit
           requires:
             - delete-helm-release
           context:
             - AWS
+      - install-helm-chart:
+          cluster-name: sit
+          requires:
+            - delete-configmap
+          context:
+            - AWS
+
       - create-secret-paymenthub-namespace:
           requires:
             - install-helm-chart
