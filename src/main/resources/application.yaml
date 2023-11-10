@@ -104,12 +104,20 @@ kong:
     createPlugin: /services/{serviceId}/plugins
     routes: /routes
     plugins: /plugins
+  plugin:
+    oidc:
+      scope: "openid"
+      bearerTokenOnly: true
   header:
     apikey: "X-API-KEY"
   service:
     host: "ph-ee-connector-bulk.paymenthub.80.svc"
+    channel-connector: "https://ph-ee-connector-channel.paymenthub.8443.svc"
   route:
     host: "bulk-connector.sandbox.fynarfin.io"
+    channel:
+      host: "channel.sandbox.fynarfin.io"
+      path: "/channel/transfer"
 
 voucher-management:
   contactpoint: "https://vouchers.sandbox.fynarfin.io"
@@ -132,3 +140,22 @@ netflix-conductor:
       home: "/"
       health: "/health"
       workflow: "/api/workflow"
+
+keycloak:
+  contactpoint: http://keycloak.sandbox.fynarfin.io
+  realm: "paymenthub"
+  introspectionEndpoint: "http://keycloak.sandbox.fynarfin.io/auth/realms/{realm}/protocol/openid-connect/token/introspect"
+  discoveryUrl: "http://keycloak.sandbox.fynarfin.io/auth/realms/{realm}/.well-known/openid-configuration"
+  endpoint:
+    token: /auth/realms/{realm}/protocol/openid-connect/token
+    user: /auth/admin/realms/{realm}/users
+    userResetPassword: /auth/admin/realms/{realm}/users/{userId}/reset-password
+  config:
+    admin:
+      username: "admin"
+      password: "admin"
+    client:
+      id: "kong-oidc"
+      secret: "OUdKGHRSB2gLQWld1b5aTINHaYMuEunB"
+    grant_type: "password"
+

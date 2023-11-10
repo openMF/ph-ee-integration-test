@@ -14,6 +14,15 @@ public class KongConfig {
     @Value("${kong.route.host}")
     public String routeHost;
 
+    @Value("${kong.service.channel-connector}")
+    public String channelServiceUrl;
+
+    @Value("${kong.route.channel.host}")
+    public String channelRouteHost;
+
+    @Value("${kong.route.channel.path}")
+    public String channelRoutePath;
+
     @Value("${kong.admin-contactpoint}")
     public String adminContactPoint;
 
@@ -46,7 +55,7 @@ public class KongConfig {
     @PostConstruct
     private void setup() {
         serviceUrl = new StringBuilder()
-                .append("http://")
+                .append("https://")
                 .append(serviceHost)
                 .append("/").toString();
     }

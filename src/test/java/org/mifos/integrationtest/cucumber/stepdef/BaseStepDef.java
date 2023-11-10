@@ -26,6 +26,7 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
+import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -34,6 +35,7 @@ import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
+import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -94,7 +96,7 @@ public class BaseStepDef {
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
     protected static String paymentStatusCheckReqDto;
     protected static String callbackUrl;
-
+    protected static KeycloakTokenResponse keycloakTokenResponse;
     protected static String randomData;
     protected static String encryptedData;
     protected static String decryptedData;
@@ -128,6 +130,8 @@ public class BaseStepDef {
     protected static Long currentBalance;
     protected static String beneficiaryPayeeIdentity;
     protected static String payer_identifier;
+    protected static KeycloakUser keycloakUser;
+    protected static String keycloakCurrentUserPassword = "password";
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

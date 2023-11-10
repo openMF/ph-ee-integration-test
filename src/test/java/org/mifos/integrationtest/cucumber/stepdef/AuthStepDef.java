@@ -1,13 +1,18 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import com.google.gson.Gson;
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
+import org.mifos.integrationtest.config.KeycloakConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 
 import java.util.HashMap;
 
@@ -20,6 +25,9 @@ public class AuthStepDef extends BaseStepDef {
 
     @Value("${operations-app.auth.header}")
     public String authHeader;
+
+    @Autowired
+    KeycloakConfig keycloakConfig;
 
     @When("I call the operations-app auth endpoint with username: {string} and password: {string}")
     public void authenticateWithUsernameAndPassword(String username, String password) {
