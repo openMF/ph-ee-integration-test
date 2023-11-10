@@ -283,11 +283,8 @@ workflows:
           context:
             - AWS
       - delete-configmap:
-          cluster-name: sit
           requires:
             - delete-helm-release
-          context:
-            - AWS
       - install-helm-chart:
           cluster-name: sit
           requires:
