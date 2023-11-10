@@ -108,7 +108,7 @@ jobs:
           release-name: g2p-sandbox
           namespace: paymenthub
 
-  delete:
+  delete-configmap:
     docker:
       - image: cimg/base:stable
     steps:
@@ -118,11 +118,6 @@ jobs:
           resource-types: configmap
           namespace: paymenthub-new
           wait: true
-
-    parameters:
-      show-kubectl-command: true
-      resource-names:
-      resource-types:
 
   install-helm-chart:
     docker:
@@ -287,7 +282,7 @@ workflows:
             - build_and_push_latest_image
           context:
             - AWS
-      - delete:
+      - delete-configmap:
           cluster-name: sit
           requires:
             - delete-helm-release
@@ -296,7 +291,7 @@ workflows:
       - install-helm-chart:
           cluster-name: sit
           requires:
-            - delete
+            - delete-configmap
           context:
             - AWS
 
