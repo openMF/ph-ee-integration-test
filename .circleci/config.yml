@@ -121,7 +121,7 @@ jobs:
       - helm/install-helm-chart:
           chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
-          namespace: paymenthub
+          namespace: paymenthub-new
 #          recreate-pods: true
           add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
           wait: true
@@ -147,7 +147,7 @@ jobs:
       - helm/upgrade-helm-chart:
           chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
           release-name: g2p-sandbox
-          namespace: paymenthub
+          namespace: paymenthub-new
           recreate-pods: true
           add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
           wait: true
