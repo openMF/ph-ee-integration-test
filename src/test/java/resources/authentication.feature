@@ -5,9 +5,9 @@ Feature: Authentication test for services routed through kong & keycloak
   Scenario: Unauthorized channel-connector test
     Given I have tenant as "gorilla"
     And I can mock TransactionChannelRequestDTO
-    And I register service with url "https://ph-ee-connector-channel.paymenthub.80.svc" and "https" protocol
+    And I register channel service using config
     And I will sleep for 2000 millisecond
-    And I register route with route host "channel.sandbox.fynarfin.io" and path "/channel/transfer"
+    And I register channel route using config
     And I will sleep for 2000 millisecond
     And I enable oidc plugin
     And I will sleep for 5000 millisecond
@@ -18,9 +18,9 @@ Feature: Authentication test for services routed through kong & keycloak
   Scenario: Authorized channel-connector test
     Given I have tenant as "gorilla"
     And I can mock TransactionChannelRequestDTO
-    And I register service with url "https://ph-ee-connector-channel.paymenthub.80.svc" and "https" protocol
+    And I register channel service using config
     And I will sleep for 2000 millisecond
-    And I register route with route host "channel.sandbox.fynarfin.io" and path "/channel/transfer"
+    And I register channel route using config
     And I will sleep for 2000 millisecond
     And I enable oidc plugin
     And I will sleep for 5000 millisecond

@@ -112,8 +112,12 @@ kong:
     apikey: "X-API-KEY"
   service:
     host: "ph-ee-connector-bulk.paymenthub.80.svc"
+    channel-connector: "https://ph-ee-connector-channel.paymenthub.8443.svc"
   route:
     host: "bulk-connector.sandbox.fynarfin.io"
+    channel:
+      host: "channel.sandbox.fynarfin.io"
+      path: "/channel/transfer"
 
 voucher-management:
   contactpoint: "https://vouchers.sandbox.fynarfin.io"

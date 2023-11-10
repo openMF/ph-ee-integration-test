@@ -156,10 +156,20 @@ public class KongStepDef extends BaseStepDef {
         Utils.sleep(seconds);
     }
 
+    @And("I register channel service using config")
+    public void registerChannelServiceFromConfig() throws JsonProcessingException {
+        registerService(kongConfig.channelServiceUrl, "https");
+    }
+
     @And("I register service with url {string} and {string} protocol")
     public void commonRegisterService(String serviceUrl, String protocol) throws JsonProcessingException {
         registerService(serviceUrl, protocol);
         assertThat(BaseStepDef.kongService).isNotNull();
+    }
+
+    @And("I register channel route using config")
+    public void registerChannelRouteFromConfig() throws JsonProcessingException {
+        commonRegisterRouteInService(kongConfig.channelRouteHost, kongConfig.channelRoutePath);
     }
 
     @And("I register route with route host {string} and path {string}")
