@@ -112,6 +112,8 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
+      - checkout
+      - kubernetes/install-kubectl
       - kubernetes/delete-resource:
           now: true
           resource-names: ph-ee-config
