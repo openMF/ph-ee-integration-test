@@ -93,6 +93,39 @@ jobs:
           name: Push Docker image to DockerHub
           command: docker push openmf/ph-ee-integration-test:latest
 
+  delete-helm-release:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      cluster-name:
+        description: "sit"
+        type: string
+    steps:
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - helm/delete-helm-release:
+          helm-version: v3.2.4
+          release-name: g2p-sandbox
+          timeout: 600s
+  install-helm-chart:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      cluster-name:
+        description: "sit"
+        type: string
+    steps:
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
+      - helm/install-helm-chart:
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
+          release-name: g2p-sandbox
+          namespace: paymenthub
+          recreate-pods: true
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
+          wait: true
+          timeout: "300s"
+
   upgrade-helm-chart:
     docker:
       - image: cimg/python:3.10
@@ -118,6 +151,7 @@ jobs:
           add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
           wait: true
           timeout: "300s"
+
           #- run: helm test g2p-sandbox --namespace=paymenthub
           # reset-values: true
           # dry-run: true
@@ -227,7 +261,7 @@ workflows:
       - build_and_push_latest_image:
           context:
             - DOCKER
-      - upgrade-helm-chart:
+      - delete-helm-release:
           cluster-name: sit
           requires:
             - build
@@ -235,9 +269,18 @@ workflows:
             - build_and_push_latest_image
           context:
             - AWS
+      - install-helm-chart:
+          cluster-name: sit
+          requires:
+            - build
+            - build_and_push_tag_image
+            - build_and_push_latest_image
+            - delete-helm-release
+          context:
+            - AWS
       - create-secret-paymenthub-namespace:
           requires:
-            - upgrade-helm-chart
+            - install-helm-chart
           context:
             - AWS
             - Helm
@@ -251,7 +294,7 @@ workflows:
       #       - install-helm-chart
       - test-chart-gov:
           requires:
-            - upgrade-helm-chart
+            - install-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
@@ -260,7 +303,7 @@ workflows:
             - Ngrok
       - test-chart-ams:
           requires:
-            - upgrade-helm-chart
+            - install-helm-chart
             - create-secret-paymenthub-namespace
           context:
             - AWS
