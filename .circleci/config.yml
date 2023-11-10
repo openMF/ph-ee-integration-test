@@ -106,6 +106,7 @@ jobs:
           aws-region: "$REGION"
       - helm/delete-helm-release:
           release-name: g2p-sandbox
+          namespace: paymenthub
   install-helm-chart:
     docker:
       - image: cimg/python:3.10
