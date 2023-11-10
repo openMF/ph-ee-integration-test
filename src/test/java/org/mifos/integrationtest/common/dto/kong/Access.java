@@ -7,5 +7,9 @@ import lombok.Setter;
 @Setter
 public class Access {
 
-    public boolean manageGroupMembership, view, mapRoles, impersonate, manage;
+    public boolean manageGroupMembership;
+    public boolean view;
+    public boolean mapRoles;
+    public boolean impersonate;
+    public boolean manage;
 }

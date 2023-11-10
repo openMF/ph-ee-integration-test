@@ -1,7 +1,9 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
