@@ -96,10 +96,6 @@ public class InboundStepDef extends BaseStepDef {
     }
     @Given("I can mock TransactionChannelRequestDTO for account lookup")
     public void iCanMockTransactionChannelRequestDTOForAccountLookup() throws JsonProcessingException {
-        if (mockTransactionChannelRequestDTO != null) {
-            assertThat(mockTransactionChannelRequestDTO).isNotNull();
-            return;
-        }
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{")
                 .append("\"payer\": {")
