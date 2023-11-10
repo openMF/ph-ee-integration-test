@@ -108,7 +108,7 @@ jobs:
           release-name: g2p-sandbox
           namespace: paymenthub
 
-  delete-resource:
+  delete:
     docker:
       - image: cimg/base:stable
     steps:
@@ -287,7 +287,7 @@ workflows:
             - build_and_push_latest_image
           context:
             - AWS
-      - delete-resource:
+      - delete:
           cluster-name: sit
           requires:
             - delete-helm-release
@@ -296,7 +296,7 @@ workflows:
       - install-helm-chart:
           cluster-name: sit
           requires:
-            - delete-resource
+            - delete
           context:
             - AWS
 
