@@ -34,6 +34,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummar
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
+import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.crypto.BadPaddingException;
@@ -482,4 +483,44 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchTotal).isEqualTo(subBatchTotal);
 
     }
+
+    @And("I call the payment batch detail API with expected status of {int}")
+    public void iCallThePaymentBatchDetailAPIWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        requestSpec.header("X-Correlation-ID", BaseStepDef.clientCorrelationId);
+        requestSpec.queryParam("associations", "all");
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
+        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
+        logger.info("Calling with batch id: {}", operationsAppConfig.operationAppContactPoint+operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId);
+
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .get(operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId).andReturn().asString();
+
+        logger.info("Batch Payment Detail Response: " + BaseStepDef.response);
+    }
+
+    @Then("I am able to parse payment batch detail response")
+    public void iAmAbleToParsePaymentBatchDetailResponse() {
+        paymentBatchDetail = null;
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response).isNotEmpty();
+        try {
+            BaseStepDef.paymentBatchDetail = objectMapper.readValue(BaseStepDef.response, PaymentBatchDetail.class);
+        } catch (Exception e) {
+            logger.error("Error parsing the payment batch detail response", e);
+        }
+        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
+    }
+
+    @And("I should assert total txn count and successful txn count in payment batch detail response")
+    public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponse() {
+        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
+        assertThat(BaseStepDef.paymentBatchDetail.getSubBatchList().size()).isEqualTo(3);
+        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(12);
+    }
+
 }

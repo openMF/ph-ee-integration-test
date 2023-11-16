@@ -29,6 +29,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummar
 import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.*;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
 import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
@@ -132,6 +133,7 @@ public class BaseStepDef {
     protected static String payer_identifier;
     protected static KeycloakUser keycloakUser;
     protected static String keycloakCurrentUserPassword = "password";
+    protected static PaymentBatchDetail paymentBatchDetail;
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
