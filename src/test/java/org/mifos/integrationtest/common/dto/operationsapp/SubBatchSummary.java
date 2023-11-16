@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -55,6 +56,14 @@ public class SubBatchSummary {
 
     private Set<String> payeeFspSet;
 
+    private List<Instruction> instructionList;
 
+    private String budgetAccount;
+
+    private String generatedBy;
+
+    private String generatedAt;
+
+    private Long totalInstructionCount;
 
 }
