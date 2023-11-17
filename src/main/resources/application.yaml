@@ -159,3 +159,4 @@ keycloak:
       secret: "OUdKGHRSB2gLQWld1b5aTINHaYMuEunB"
     grant_type: "password"
 
+global_wait_time_ms : 0
