@@ -30,9 +30,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
-import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
-import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
-import org.mifos.integrationtest.common.dto.operationsapp.*;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
 import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
@@ -42,6 +39,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummar
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
