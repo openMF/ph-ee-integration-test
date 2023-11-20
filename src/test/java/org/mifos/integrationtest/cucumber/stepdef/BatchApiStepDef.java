@@ -375,7 +375,10 @@ public class BatchApiStepDef extends BaseStepDef {
         List<Transfer> transfers = batchDetailResponse.getContent();
 
         for(Transfer transfer : transfers) {
-            if(duplicateTransactionNote.equals(transfer.getErrorInformation())){
+            if (transfer.getErrorInformation() == null) {
+                continue;
+            }
+            if(transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())){
                 duplicateRecordCount++;
             }
         }
