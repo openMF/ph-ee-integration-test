@@ -155,7 +155,7 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
@@ -170,7 +170,7 @@ Feature: Batch Details API test
     When I call the batch transactions raw endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
@@ -187,7 +187,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch aggregate API with expected status of 200
     Then I should get non empty response
     Then I am able to parse batch summary response
@@ -205,7 +205,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     And I call the sub batch summary API for sub batch summary with expected status of 200
     Then I am able to parse sub batch summary response
     And I should assert total txn count and successful txn count in response
@@ -221,7 +221,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
@@ -242,13 +242,13 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     And I call the payment batch detail API with expected status of 200
     Then I am able to parse payment batch detail response
     And I should assert total txn count and successful txn count in payment batch detail response
 
   @gov @batch-teardown
-  Scenario: bd-017 Batch test for de-duplicating payments
+  Scenario: BD-017 Batch test for de-duplicating payments
     Given I have the demo csv file "deduplication-test.csv"
     And I have tenant as "rhino"
     And I create a new clientCorrelationId
@@ -257,7 +257,7 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+    Then I will sleep for 10000 millisecond
     And I call the batch details API with expected status of 200
     Then I should get transactions with note set as "Duplicate transaction"
 
