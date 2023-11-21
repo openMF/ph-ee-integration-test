@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.operations.dto.Transfer;
+import org.mifos.connector.common.operations.type.TransferStatus;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.Party;
@@ -380,6 +381,7 @@ public class BatchApiStepDef extends BaseStepDef {
             }
             if(transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())){
                 duplicateRecordCount++;
+                assertThat(transfer.getStatus().equals(TransferStatus.FAILED));
             }
         }
         assertThat(duplicateRecordCount).isGreaterThan(0);
