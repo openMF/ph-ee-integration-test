@@ -89,7 +89,7 @@ Feature: Operations APP related feature
     And I generate signature
     Then I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    And I will sleep for 2000 millisecond
+    And I will sleep for 5000 millisecond
   	# Batch 2 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -99,7 +99,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 2000 millisecond
+    Then I will sleep for 5000 millisecond
   	# Batch 3 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -109,7 +109,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 2000 millisecond
+    Then I will sleep for 5000 millisecond
   	# Batch 4 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -119,7 +119,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 2000 millisecond
+    Then I will sleep for 5000 millisecond
   	# Batch 5 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -129,7 +129,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 5 sec
-    Then I will sleep for 5000 millisecond
+    Then I will sleep for 20000 millisecond
   	And I add date from filter
     And I add date to filter
     When I call the batches endpoint with expected status of 200
