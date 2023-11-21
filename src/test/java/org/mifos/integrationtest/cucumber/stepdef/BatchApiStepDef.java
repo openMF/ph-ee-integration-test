@@ -361,17 +361,21 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchRawRequest).isNotEmpty();
     }
 
-    @Then("I should get transactions with note set as {string}")
-    public void iShouldGetTransactionsWithNoteSetAs(String duplicateTransactionNote) {
-        logger.info(BaseStepDef.response);
+    public BatchDetailResponse parseBatchDetailResponse(String jsonString) {
         BatchDetailResponse batchDetailResponse = null;
-        int duplicateRecordCount = 0;
         try {
-            batchDetailResponse = objectMapper.readValue(BaseStepDef.response, BatchDetailResponse.class);
+            batchDetailResponse = objectMapper.readValue(jsonString, BatchDetailResponse.class);
         } catch (Exception e) {
             logger.error("Error parsing the batch detail response", e);
         }
+        return batchDetailResponse;
+    }
 
+    @Then("I should get transactions with note set as {string}")
+    public void iShouldGetTransactionsWithNoteSetAs(String duplicateTransactionNote) {
+        logger.info(BaseStepDef.response);
+        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(BaseStepDef.response);
+        int duplicateRecordCount = 0;
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
@@ -381,10 +385,25 @@ public class BatchApiStepDef extends BaseStepDef {
             }
             if(transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())){
                 duplicateRecordCount++;
-                assertThat(transfer.getStatus().equals(TransferStatus.FAILED));
             }
         }
         assertThat(duplicateRecordCount).isGreaterThan(0);
+    }
+
+    @And("All the duplicate transaction should have status as Failed")
+    public void duplicateTransactionStatusShouldBeFailed() {
+        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(BaseStepDef.response);
+        assertThat(batchDetailResponse).isNotNull();
+        List<Transfer> transfers = batchDetailResponse.getContent();
+
+        for(Transfer transfer : transfers) {
+            if (transfer.getErrorInformation() == null) {
+                continue;
+            }
+            if(transfer.getErrorInformation().toLowerCase().contains("duplicate")){
+                assertThat(transfer.getStatus().equals(TransferStatus.FAILED));
+            }
+        }
     }
 
     @After("@batch-teardown")

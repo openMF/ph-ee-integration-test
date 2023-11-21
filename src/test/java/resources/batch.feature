@@ -260,6 +260,7 @@ Feature: Batch Details API test
     Then I will sleep for 10000 millisecond
     And I call the batch details API with expected status of 200
     Then I should get transactions with note set as "Duplicate transaction"
+    And All the duplicate transaction should have status as Failed
 
   @gov
   Scenario: BA-001 Batch Authorization API test
