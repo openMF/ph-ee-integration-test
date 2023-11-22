@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
+import org.mifos.connector.common.util.JsonWebSignature;
 import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
@@ -148,23 +149,15 @@ public class BaseStepDef {
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
             NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        StringBuilder jwsDataToBeHashedBuilder = new StringBuilder()
-                .append(clientCorrelationId).append(BaseStepDef.jwsDataSeparator)
-                .append(tenant);
-        if (isDataAFile) {
-            if (StringUtils.isNotBlank(filename)) {
-                String fileContent = Files.readString(Paths.get(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename)));
-                jwsDataToBeHashedBuilder.append(BaseStepDef.jwsDataSeparator).append(fileContent);
-            }
-        } else {
-            if (StringUtils.isNotBlank(data)) {
-                jwsDataToBeHashedBuilder.append(BaseStepDef.jwsDataSeparator).append(data);
-            }
-        }
-        String jwsDataToBeHashed = jwsDataToBeHashedBuilder.toString();
-        logger.info("Data to be hashed: {}", jwsDataToBeHashed);
-        String hashedData = SecurityUtil.hash(jwsDataToBeHashed);
-        return SecurityUtil.encryptUsingPrivateKey(hashedData, BaseStepDef.privateKeyString);
+
+        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder()
+                .setClientCorrelationId(clientCorrelationId)
+                .setTenantId(tenant)
+                .setIsDataAsFile(isDataAFile)
+                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(BaseStepDef.filename) : data)
+                .build();
+
+        return jsonWebSignature.getSignature(BaseStepDef.privateKeyString);
     }
 
     private <T> void assertNonEmptyArray(List<T> objects) {
