@@ -109,7 +109,18 @@ jobs:
             JIRA_STORY=$(echo $PR_TITLE | cut -d "[" -f2 | cut -d "]" -f1 | tr '[A-Z]' '[a-z]')
             docker push openmf/ph-ee-integration-test:${JIRA_STORY}
             fi
-
+  docker-image-availability-check-and-upgrade:
+    docker:
+      - image: cimg/python:3.10
+    steps:
+      - mifos-orb/docker-image-availability-check-and-upgrade:
+          namespace: paymenthub
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
+          release-name: g2p-sandbox
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
+          cluster-name: "sit"
+          aws-region: "$REGION"
+          service-file-path: https://raw.githubusercontent.com/openMF/ph-ee-env-labs/master/.circleci/services.txt
   create-secret-paymenthub-namespace:
     docker:
       - image: cimg/base:2022.06
@@ -210,14 +221,7 @@ workflows:
       - build_and_push_latest_image:
           context:
             - DOCKER
-      - mifos-orb/docker-image-availability-check-and-upgrade:
-          namespace: paymenthub
-          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
-          release-name: g2p-sandbox
-          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
-          cluster-name: "sit"
-          aws-region: "$REGION"
-          service-file-path: https://raw.githubusercontent.com/openMF/ph-ee-env-labs/master/.circleci/services.txt
+      - docker-image-availability-check-and-upgrade:
           context:
             - AWS
             - Helm
@@ -228,7 +232,7 @@ workflows:
             - build_and_push_latest_image
       - create-secret-paymenthub-namespace:
           requires:
-            - mifos-orb/docker-image-availability-check-and-upgrade
+            - docker-image-availability-check-and-upgrade
           context:
             - AWS
             - Helm
@@ -242,7 +246,7 @@ workflows:
       #       - install-helm-chart
       - test-chart-gov:
           requires:
-            - mifos-orb/docker-image-availability-check-and-upgrade
+            - docker-image-availability-check-and-upgrade
             - create-secret-paymenthub-namespace
           context:
             - AWS
@@ -251,7 +255,7 @@ workflows:
             - Ngrok
       - test-chart-ams:
           requires:
-            - mifos-orb/docker-image-availability-check-and-upgrade
+            - docker-image-availability-check-and-upgrade
             - create-secret-paymenthub-namespace
           context:
             - AWS
