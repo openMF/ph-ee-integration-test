@@ -156,6 +156,6 @@ keycloak:
       password: "admin"
     client:
       id: "kong-oidc"
-      secret: "4tExZclUJMmdifaBMhMdq2W4kM8oZSwn"
+      secret: "y7ThP2OjtWoCdYNYnMuwK6xV8u7ynI1Y"
     grant_type: "password"
 
