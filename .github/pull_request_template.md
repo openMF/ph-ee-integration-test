@@ -1,13 +1,15 @@
 ## Description
 
+* PR title should have jira ticket enclosed in `[]`.<br>
+  Format: ``` [jira_ticket] description```<br>
+  ex: [phee-123] PR title.
+* Add a link to the Jira ticket.
 * Describe the changes made and why they were made.
-* Add a link to the design document or include the design bullet points related to this PR here.
-
- _(Ignore if these details are present on the associated JIRA ticket)_
 
 ## Checklist
 
 Please make sure these boxes are checked before submitting your pull request - thanks!
+- [ ] Followed the PR title naming convention mentioned above.
 
 - [ ] Acknowledge that we will not merge PRs that are not passing the checks ("green") - it is your (author's) responsibility to get a proposed PR to pass all the checks, not primarily the project's maintainers.
 
