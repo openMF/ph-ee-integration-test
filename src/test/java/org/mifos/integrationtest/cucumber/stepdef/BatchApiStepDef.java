@@ -20,6 +20,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -236,6 +237,7 @@ public class BatchApiStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integration test");
         requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
         if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
@@ -317,6 +319,13 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchDTO.getSuccessful()).isGreaterThan(0);
         assertThat(BaseStepDef.batchDTO.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
 
+    }
+    @When("I can assert the approved count as {int} and approved amount as {int}")
+    public void iCanAssertTheApprovedCountAsAndApprovedAmountAs(int count, int amount) {
+        BigDecimal approvedCount = BaseStepDef.batchDTO.getApprovedCount();
+        BigDecimal approvedAmount = BaseStepDef.batchDTO.getApprovedAmount();
+        assertThat(approvedCount).isEqualTo(new BigDecimal(count));
+        assertThat(approvedAmount).isEqualTo(new BigDecimal(amount));
     }
 
     @When("I call the batch transactions raw endpoint with expected status of {int}")
@@ -634,4 +643,10 @@ public class BatchApiStepDef extends BaseStepDef {
             logger.info("Batch Transactions Response: " + BaseStepDef.response);
         }
 
+    @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
+    public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
+        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
+        assertThat(BaseStepDef.paymentBatchDetail.getSubBatchList().size()).isEqualTo(2);
+        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+    }
 }
