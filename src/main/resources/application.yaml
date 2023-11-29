@@ -167,6 +167,10 @@ keycloak:
       secret: "toCozdqKQut8dpVi7WiXXGVeEqKrrTjp"
     grant_type: "password"
 
+config:
+  completion-threshold-check:
+    completion-threshold: 90
+
 payerFundTransfer:
   tenant:
     payer: "gorilla"
