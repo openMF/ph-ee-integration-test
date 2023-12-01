@@ -9,7 +9,6 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the deposit with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
-
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of party lookup
@@ -26,7 +25,6 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the deposit with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
-
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of quotation
@@ -43,7 +41,6 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the deposit with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
-
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of quotation
