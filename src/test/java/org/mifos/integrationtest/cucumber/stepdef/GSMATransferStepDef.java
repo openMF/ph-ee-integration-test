@@ -8,7 +8,9 @@ import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
 import static org.mifos.integrationtest.common.Utils.X_CallbackURL;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import com.google.gson.JsonObject;import com.google.gson.JsonParser;import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
@@ -115,8 +117,8 @@ public class GSMATransferStepDef extends BaseStepDef{
         //gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "ACCOUNT_ID");
         //gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
         String endpoint = gsmaConfig.interopIdentifierEndpoint;
-        endpoint = endpoint.replaceAll("\\{\\{payer_identifierType\\}\\}", "MSISDN");
-        endpoint = endpoint.replaceAll("\\{\\{payer_identifier\\}\\}", payer_identifier);
+        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", payer_identifier);
 
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)

@@ -32,6 +32,9 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.transfers}")
     public String transfersEndpoint;
 
+    @Value("${operations-app.endpoints.variables}")
+    public String variablesEndpoint;
+
     @Value("${operations-app.endpoints.transactionRequests}")
     public String transactionRequestsEndpoint;
 

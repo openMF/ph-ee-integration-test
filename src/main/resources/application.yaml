@@ -14,6 +14,7 @@ operations-app:
     batches: "/api/v1/batches"
     batch-aggregate: "/api/v1/batch/"
     transfers: "/api/v1/transfers?size=1&page=0"
+    variables: "/api/v1/variables"
     transactionRequests: "/api/v1/transactionRequests"
 
 paybill:
@@ -73,7 +74,7 @@ savings:
     approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     activate-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     deposit-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}/transactions
-    interop-identifier-endpoint: /fineract-provider/api/v1/interoperation/parties/{{payer_identifierType}}/{{payer_identifier}}
+    interop-identifier-endpoint: /fineract-provider/api/v1/interoperation/parties/{{identifierType}}/{{identifier}}
 
 mock-server:
   port: 53013
@@ -159,3 +160,22 @@ keycloak:
       secret: "y7ThP2OjtWoCdYNYnMuwK6xV8u7ynI1Y"
     grant_type: "password"
 
+payerFundTransfer:
+  tenant:
+    payer: "gorilla"
+    payee: "lion"
+
+mojaloop:
+  fspid:
+    payer: "payerfsp"
+    payee: "payeefsp"
+  contactpoint: http://account-lookup-service.sandbox.fynarfin.io
+  endpoint:
+    als: /participants/{{identifierType}}/{{identifier}}
+
+ml-connector:
+  host:  "mojaloop.sandbox.fynarfin.io"
+  endpoint:
+    get-party: "/switch/parties/{{identifierType}}/{{identifier}}"
+    get-quote: "/switch/quotes"
+    transfer: "switch/transfers"

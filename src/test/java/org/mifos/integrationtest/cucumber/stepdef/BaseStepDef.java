@@ -129,6 +129,7 @@ public class BaseStepDef {
     protected static String batchRawRequest;
     protected static BatchAndSubBatchSummaryResponse batchAndSubBatchSummaryResponse;
     protected static String payerIdentifier;
+    protected static String payeeIdentifier;
     protected static Long currentBalance;
     protected static String beneficiaryPayeeIdentity;
     protected static String payer_identifier;
