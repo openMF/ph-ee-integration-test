@@ -50,4 +50,9 @@ public class GsmaConfig {
     public String loanRepaymentMockEndpoint;
     @Value("${callback_url}")
     public String callbackURL;
+    @Value("${amsmifos.status.base-url}")
+    public String amsStatusBaseUrl;
+
+    @Value("${amsmifos.status.endpoints}")
+    public String amsStatusEndpointUrl;
 }
