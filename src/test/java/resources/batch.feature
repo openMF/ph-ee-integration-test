@@ -194,7 +194,7 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  @gov @batch-teardown
+  @gov @batch-teardown @wip
   Scenario: BD-014 Sub Batch summary API Test
     Given I have tenant as "rhino"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"

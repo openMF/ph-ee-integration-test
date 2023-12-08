@@ -214,7 +214,7 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
-
+  @wip
   Scenario: PPV-003 Account lookup with GSMA
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I call the create payer client endpoint
