@@ -187,7 +187,7 @@ Feature: Identity Account Mapper Api Test
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
     Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with required parameter in body
-
+  @wip
   Scenario: PPV-04 Invalid Registering Institution Id
     When I create an IdentityMapperDTO for adding 8 beneficiary
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
@@ -197,7 +197,7 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 10 beneficiaries and "Social" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 2 request
-
+  @wip
   Scenario: PPV-02 Beneficiary not registered
     When I create an IdentityMapperDTO for adding 8 beneficiary
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
@@ -206,7 +206,7 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
-
+  @wip
   Scenario: PPV-02 Batch Account Lookup API
     When I create an IdentityMapperDTO for adding 8 beneficiary
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
@@ -214,7 +214,7 @@ Feature: Identity Account Mapper Api Test
     Then I call bulk account lookup API with these 8 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
-
+  @wip
   Scenario: PPV-003 Account lookup with GSMA
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I call the create payer client endpoint

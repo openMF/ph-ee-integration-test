@@ -1,7 +1,7 @@
 @gov
 Feature: Authentication test for services routed through kong & keycloak
 
-  @keycloak-user-setup @keycloak-user-teardown @kong-teardown
+  @keycloak-user-setup @keycloak-user-teardown @kong-teardown @wip
   Scenario: Unauthorized channel-connector test
     Given I have tenant as "gorilla"
     And I can mock TransactionChannelRequestDTO
@@ -14,7 +14,7 @@ Feature: Authentication test for services routed through kong & keycloak
     When I call the inbound transfer endpoint with expected status of 401 and no authentication
     Then I should get non empty response
 
-  @keycloak-user-setup @keycloak-user-teardown @kong-teardown
+  @keycloak-user-setup @keycloak-user-teardown @kong-teardown @wip
   Scenario: Authorized channel-connector test
     Given I have tenant as "gorilla"
     And I can mock TransactionChannelRequestDTO

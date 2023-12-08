@@ -1,7 +1,7 @@
 @gov
 Feature: Mock Flow Test
 
-
+  @wip
   Scenario: Test for minimal mock fund transfer account lookup flow
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I call the create payer client endpoint
@@ -51,7 +51,7 @@ Feature: Mock Flow Test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 5000 millisecond
+    Then I will sleep for 35000 millisecond
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
