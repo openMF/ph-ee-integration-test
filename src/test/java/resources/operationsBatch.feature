@@ -22,7 +22,7 @@ Feature: Operations APP related feature
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 2000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch summary API with expected status of 200
     Then I am able to parse batch summary response
     And I should get non empty response
@@ -89,7 +89,7 @@ Feature: Operations APP related feature
     And I generate signature
     Then I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    And I will sleep for 2000 millisecond
+    And I will sleep for 10000 millisecond
   	# Batch 2 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -99,7 +99,7 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 1 sec
-    Then I will sleep for 2000 millisecond
+    Then I will sleep for 10000 millisecond
   	# Batch 3 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
