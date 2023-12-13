@@ -1,11 +1,10 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.mifos.connector.common.operations.dto.Transfer;
-
-import java.util.List;
 
 @Getter
 @Setter

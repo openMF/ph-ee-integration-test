@@ -12,7 +12,7 @@ public class MojaloopDef {
     @Autowired
     ObjectMapper objectMapper;
 
-    protected String setBodyAddAlsUser(String fspId)throws JsonProcessingException {
+    protected String setBodyAddAlsUser(String fspId) throws JsonProcessingException {
         AddUserAlsRequest addUserAlsRequest = new AddUserAlsRequest();
         addUserAlsRequest.setCurrency("USD");
         addUserAlsRequest.setFspId(fspId);

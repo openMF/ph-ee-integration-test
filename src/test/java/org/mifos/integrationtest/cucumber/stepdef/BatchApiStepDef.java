@@ -377,11 +377,11 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
-        for(Transfer transfer : transfers) {
+        for (Transfer transfer : transfers) {
             if (transfer.getErrorInformation() == null) {
                 continue;
             }
-            if(transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())){
+            if (transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())) {
                 duplicateRecordCount++;
             }
         }
@@ -394,11 +394,11 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
-        for(Transfer transfer : transfers) {
+        for (Transfer transfer : transfers) {
             if (transfer.getErrorInformation() == null) {
                 continue;
             }
-            if(transfer.getErrorInformation().toLowerCase().contains("duplicate")){
+            if (transfer.getErrorInformation().toLowerCase().contains("duplicate")) {
                 assertThat(transfer.getStatus().equals(TransferStatus.FAILED));
             }
         }
