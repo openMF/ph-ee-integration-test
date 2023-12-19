@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class KeycloakUpdateRequest {
 
-    private String type, value;
+    private String type;
+    private String value;
     private boolean temporary;
 }

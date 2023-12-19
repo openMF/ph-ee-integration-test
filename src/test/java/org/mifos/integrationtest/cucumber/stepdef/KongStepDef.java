@@ -12,10 +12,11 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
 import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
@@ -27,13 +28,7 @@ import org.mifos.integrationtest.config.KongConfig;
 import org.mifos.integrationtest.config.KongOidcPluginConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.google.common.truth.Truth.assertThat;
-
+@SuppressWarnings("AvoidDoubleBraceInitialization")
 public class KongStepDef extends BaseStepDef {
 
     @Autowired
@@ -106,19 +101,33 @@ public class KongStepDef extends BaseStepDef {
 
     @And("I register a route to above service in kong")
     public void registerRouteInService() throws JsonProcessingException {
-        registerRouteInService(new ArrayList<>() {{ add("/"); }},
-                new ArrayList<>() {{ add(kongConfig.routeHost); }},
-                BaseStepDef.kongService.getId());
+        registerRouteInService(new ArrayList<>() {
+
+            {
+                add("/");
+            }
+        }, new ArrayList<>() {
+
+            {
+                add(kongConfig.routeHost);
+            }
+        }, BaseStepDef.kongService.getId());
         assertThat(BaseStepDef.kongRoute).isNotNull();
     }
 
     @And("I add the key-auth plugin in above service")
     public void enableKeyAuthPlugin() throws JsonProcessingException {
-        Map<String, Object> config = new HashMap<>(){{
-            put("key_names", new ArrayList<String>(){{
-                add(kongConfig.apiKeyHeader);
-            }});
-        }};
+        Map<String, Object> config = new HashMap<>() {
+
+            {
+                put("key_names", new ArrayList<String>() {
+
+                    {
+                        add(kongConfig.apiKeyHeader);
+                    }
+                });
+            }
+        };
         enablePluginForService(BaseStepDef.kongService.getId(), "key-auth", config);
         assertThat(BaseStepDef.kongPlugin).isNotNull();
     }
@@ -172,23 +181,34 @@ public class KongStepDef extends BaseStepDef {
 
     @And("I register route with route host {string} and path {string}")
     public void commonRegisterRouteInService(String routeHost, String path) throws JsonProcessingException {
-        registerRouteInService(new ArrayList<>() {{ add(path); }},
-                new ArrayList<>() {{ add(routeHost); }},
-                BaseStepDef.kongService.getId());
+        registerRouteInService(new ArrayList<>() {
+
+            {
+                add(path);
+            }
+        }, new ArrayList<>() {
+
+            {
+                add(routeHost);
+            }
+        }, BaseStepDef.kongService.getId());
         assertThat(BaseStepDef.kongRoute).isNotNull();
     }
 
     @And("I enable oidc plugin")
     public void enableOidcPluginForService() throws JsonProcessingException {
-        Map<String, Object> config = new HashMap<>(){{
-            put("discovery", keycloakConfig.discoveryUrl.replace("{realm}",keycloakConfig.realm));
-            put("client_id", keycloakConfig.clientId);
-            put("client_secret", keycloakConfig.clientSecret);
-            put("introspection_endpoint", keycloakConfig.introspectionUrl.replace("{realm}",keycloakConfig.realm));
-            put("bearer_only", kongOidcPluginConfig.bearerTokenOnly ? "yes":"no");
-            put("scope", kongOidcPluginConfig.scope);
-            put("realm", keycloakConfig.realm);
-        }};
+        Map<String, Object> config = new HashMap<>() {
+
+            {
+                put("discovery", keycloakConfig.discoveryUrl.replace("{realm}", keycloakConfig.realm));
+                put("client_id", keycloakConfig.clientId);
+                put("client_secret", keycloakConfig.clientSecret);
+                put("introspection_endpoint", keycloakConfig.introspectionUrl.replace("{realm}", keycloakConfig.realm));
+                put("bearer_only", kongOidcPluginConfig.bearerTokenOnly ? "yes" : "no");
+                put("scope", kongOidcPluginConfig.scope);
+                put("realm", keycloakConfig.realm);
+            }
+        };
         enablePluginForService(BaseStepDef.kongService.getId(), "oidc", config);
         assertThat(BaseStepDef.kongPlugin).isNotNull();
     }
@@ -197,16 +217,14 @@ public class KongStepDef extends BaseStepDef {
         KongService service = new KongService();
         service.setId(UUID.randomUUID().toString());
         service.setUrl(serviceUrl);
-        service.setName("name_"+service.getId());
+        service.setName("name_" + service.getId());
         service.setProtocol(protocol);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(service)).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.servicesEndpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(service)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.servicesEndpoint).andReturn()
+                .asString();
 
         logger.debug("Create new service response from kong: {}", BaseStepDef.response);
         try {
@@ -217,20 +235,19 @@ public class KongStepDef extends BaseStepDef {
         }
     }
 
-    public void registerRouteInService(ArrayList<String> paths, ArrayList<String> routeHosts, String serviceId) throws JsonProcessingException {
+    public void registerRouteInService(ArrayList<String> paths, ArrayList<String> routeHosts, String serviceId)
+            throws JsonProcessingException {
         KongRoute route = new KongRoute();
         route.setId(UUID.randomUUID().toString());
-        route.setName("name_"+route.getId());
+        route.setName("name_" + route.getId());
         route.setPaths(paths);
         route.setHosts(routeHosts);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(route)).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.createRouteEndpoint, serviceId).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(route)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.createRouteEndpoint, serviceId)
+                .andReturn().asString();
 
         logger.debug("Create new route response from kong: {}", BaseStepDef.response);
         try {
@@ -249,12 +266,10 @@ public class KongStepDef extends BaseStepDef {
         kongPlugin.setConfig(config);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(kongPlugin)).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.createPluginEndpoint, serviceId).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.createPluginEndpoint, serviceId)
+                .andReturn().asString();
 
         logger.debug("Enable plugin response from kong: {}", BaseStepDef.response);
         try {

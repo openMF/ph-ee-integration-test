@@ -1,16 +1,20 @@
 package org.mifos.integrationtest.common.dto.kong;
 
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
 
 @Getter
 @Setter
 public class KeycloakUser {
 
-    public String id,username,firstName,lastName;
-    public boolean enabled,emailVerified;
+    public String id;
+    public String username;
+    public String firstName;
+    public String lastName;
+
+    public boolean enabled;
+    public boolean emailVerified;
     public Access access;
     public ArrayList<String> realmRoles;
 

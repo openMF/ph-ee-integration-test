@@ -3,6 +3,9 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 import org.apache.fineract.client.models.InteropIdentifierRequestData;
 import org.apache.fineract.client.models.PostClientsRequest;
 import org.apache.fineract.client.models.PostClientsResponse;
@@ -30,12 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
-
 @Component
 public class PayerFundTransferDef {
+
     public String amsName;
     public int amount;
     public String accountId;
@@ -86,9 +86,11 @@ public class PayerFundTransferDef {
     protected void setTenant(String tenantName) {
         tenant = tenantName;
     }
+
     public void setPayerTenant(String payerTenant) {
         this.payerTenant = payerTenant;
     }
+
     public void setPayeeTenant(String payeeTenant) {
         this.payeeTenant = payeeTenant;
     }
@@ -153,18 +155,14 @@ public class PayerFundTransferDef {
         // Getting resourceId and clientId
         PostClientsResponse createPayerClientResponse;
 
-        if(client.equals("payer")) {
-            createPayerClientResponse = objectMapper.readValue(
-                    responsePayerClient, PostClientsResponse.class);
-        }
-        else {
-            createPayerClientResponse = objectMapper.readValue(
-                    responsePayeeClient, PostClientsResponse.class);
+        if (client.equals("payer")) {
+            createPayerClientResponse = objectMapper.readValue(responsePayerClient, PostClientsResponse.class);
+        } else {
+            createPayerClientResponse = objectMapper.readValue(responsePayeeClient, PostClientsResponse.class);
         }
 
-        PostSavingsProductsResponse savingsProductResponse = objectMapper.readValue(
-                responseSavingsProduct, PostSavingsProductsResponse.class
-        );
+        PostSavingsProductsResponse savingsProductResponse = objectMapper.readValue(responseSavingsProduct,
+                PostSavingsProductsResponse.class);
         String date = getCurrentDate();
         setcurrentDate(date);
         externalId = UUID.randomUUID().toString();
@@ -178,10 +176,10 @@ public class PayerFundTransferDef {
 
         return objectMapper.writeValueAsString(savingsAccountsRequest);
     }
-    protected String setBodyInteropIdentifier() throws  JsonProcessingException {
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                responseSavingsProduct, PostSavingsAccountsResponse.class
-        );
+
+    protected String setBodyInteropIdentifier() throws JsonProcessingException {
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsProduct,
+                PostSavingsAccountsResponse.class);
         String date = getCurrentDate();
         setcurrentDate(date);
 
@@ -240,17 +238,17 @@ public class PayerFundTransferDef {
         return objectMapper.writeValueAsString(postClientsRequest);
     }
 
-    protected String setBodyClient(String client)throws JsonProcessingException {
-        if(client.equals("payer")) {
+    protected String setBodyClient(String client) throws JsonProcessingException {
+        if (client.equals("payer")) {
             return setBodyPayerClient();
-        }
-        else if(client.equals("payee")) {
+        } else if (client.equals("payee")) {
             return setBodyPayeeClient();
         }
         return client;
     }
 
-    protected String setBodyPayeeQuoteRequest(String payerIdentifier, String payeeIdentifier, String amount, String quoteId)throws JsonProcessingException {
+    protected String setBodyPayeeQuoteRequest(String payerIdentifier, String payeeIdentifier, String amount, String quoteId)
+            throws JsonProcessingException {
         QuoteSwitchRequestDTO requestDTO = new QuoteSwitchRequestDTO();
 
         requestDTO.setPayer(getParty(payerIdentifier, mojaloopConfig.payerFspId));
@@ -274,7 +272,7 @@ public class PayerFundTransferDef {
         return party;
     }
 
-    protected String setBodyPayeeTransferRequest(String amount, String ilpPacket, String condition)throws JsonProcessingException {
+    protected String setBodyPayeeTransferRequest(String amount, String ilpPacket, String condition) throws JsonProcessingException {
         TransferSwitchRequestDTO requestDTO = new TransferSwitchRequestDTO();
         requestDTO.setTransferId(UUID.randomUUID().toString());
         requestDTO.setPayeeFsp(mojaloopConfig.payerFspId);
@@ -284,6 +282,5 @@ public class PayerFundTransferDef {
         requestDTO.setCondition(condition);
         return objectMapper.writeValueAsString(requestDTO);
     }
-
 
 }

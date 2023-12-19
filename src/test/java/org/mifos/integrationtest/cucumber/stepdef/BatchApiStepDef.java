@@ -51,8 +51,8 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummar
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDetailResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionResponse;
-import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
+import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
@@ -412,11 +412,11 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
-        for(Transfer transfer : transfers) {
+        for (Transfer transfer : transfers) {
             if (transfer.getErrorInformation() == null) {
                 continue;
             }
-            if(transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())){
+            if (transfer.getErrorInformation().toLowerCase().contains(duplicateTransactionNote.toLowerCase())) {
                 duplicateRecordCount++;
             }
         }
@@ -429,11 +429,11 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
-        for(Transfer transfer : transfers) {
+        for (Transfer transfer : transfers) {
             if (transfer.getErrorInformation() == null) {
                 continue;
             }
-            if(transfer.getErrorInformation().toLowerCase().contains("duplicate")){
+            if (transfer.getErrorInformation().toLowerCase().contains("duplicate")) {
                 assertThat(transfer.getStatus().equals(TransferStatus.FAILED));
             }
         }
@@ -551,7 +551,8 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
         assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
+        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal())
+                .isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
     }
 
     @And("Total transaction in batch should add up to total transaction in each sub batch")
@@ -560,7 +561,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(Integer.parseInt(BaseStepDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
         long batchTotal = BaseStepDef.batchAndSubBatchSummaryResponse.getTotal();
         long subBatchTotal = 0L;
-        for (SubBatchSummary subBatchSummary: BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
+        for (SubBatchSummary subBatchSummary : BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
             subBatchTotal += subBatchSummary.getTotal();
         }
         assertThat(batchTotal).isEqualTo(subBatchTotal);
@@ -577,11 +578,12 @@ public class BatchApiStepDef extends BaseStepDef {
         }
         // requestSpec.queryParam("batchId", BaseStepDef.batchId);
         logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
-        logger.info("Calling with batch id: {}", operationsAppConfig.operationAppContactPoint+operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId);
+        logger.info("Calling with batch id: {}",
+                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId);
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchesEndpoint +"/"+ BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
 
         logger.info("Batch Payment Detail Response: " + BaseStepDef.response);
     }

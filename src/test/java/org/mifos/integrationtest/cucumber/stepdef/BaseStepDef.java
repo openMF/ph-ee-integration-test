@@ -1,12 +1,27 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.StringUtils;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.util.JsonWebSignature;
-import org.mifos.connector.common.util.SecurityUtil;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
@@ -35,26 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.truth.Truth.assertThat;
 
 // this class is the base for all the cucumber step definitions
 public class BaseStepDef {
@@ -158,16 +153,13 @@ public class BaseStepDef {
 
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
-    protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
-            NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
-            BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile)
+            throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException,
+            InvalidKeySpecException, InvalidKeyException {
 
-        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder()
-                .setClientCorrelationId(clientCorrelationId)
-                .setTenantId(tenant)
-                .setIsDataAsFile(isDataAFile)
-                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(BaseStepDef.filename) : data)
-                .build();
+        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder().setClientCorrelationId(clientCorrelationId)
+                .setTenantId(tenant).setIsDataAsFile(isDataAFile)
+                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(BaseStepDef.filename) : data).build();
 
         return jsonWebSignature.getSignature(BaseStepDef.privateKeyString);
     }

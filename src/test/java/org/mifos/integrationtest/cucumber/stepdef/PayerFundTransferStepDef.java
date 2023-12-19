@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.google.common.truth.Truth.assertThat;
+
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,6 +15,12 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
 import org.json.JSONException;
 import org.mifos.connector.common.mojaloop.type.TransferState;
@@ -21,16 +30,8 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.mifos.integrationtest.config.PayerFundTransferConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.google.common.truth.Truth.assertThat;
 
-public class PayerFundTransferStepDef extends BaseStepDef{
+public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Autowired
     PayerFundTransferDef fundTransferDef;
@@ -58,12 +59,11 @@ public class PayerFundTransferStepDef extends BaseStepDef{
     public void setTenantForPayer(String client) {
         String tenant;
         logger.info(client);
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             tenant = transferConfig.payerTenant;
             fundTransferDef.setPayerTenant(tenant);
             BaseStepDef.tenant = tenant;
-        }
-        else {
+        } else {
             tenant = transferConfig.payeeTenant;
             fundTransferDef.setPayeeTenant(tenant);
         }
@@ -81,21 +81,19 @@ public class PayerFundTransferStepDef extends BaseStepDef{
 
         fundTransferDef.createClientBody = fundTransferDef.setBodyClient(client);
         // Calling savings product endpoint
-        String clientResponse = RestAssured.given(requestSpec).baseUri(transferConfig.clientBaseUrl)
-                .body(fundTransferDef.createClientBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(transferConfig.clientEndpoint).andReturn().asString();
+        String clientResponse = RestAssured.given(requestSpec).baseUri(transferConfig.clientBaseUrl).body(fundTransferDef.createClientBody)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(transferConfig.clientEndpoint)
+                .andReturn().asString();
 
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             fundTransferDef.responsePayerClient = clientResponse;
             assertThat(fundTransferDef.responsePayerClient).isNotEmpty();
-        }
-        else {
+        } else {
             fundTransferDef.responsePayeeClient = clientResponse;
             assertThat(fundTransferDef.responsePayeeClient).isNotEmpty();
         }
         logger.info("Create {} Client Response: {}", client, clientResponse);
     }
-
 
     @Then("I call the create savings product endpoint for {string}")
     public void callCreateSavingsProductEndpoint(String client) throws JsonProcessingException {
@@ -125,11 +123,10 @@ public class PayerFundTransferStepDef extends BaseStepDef{
 
         logger.info("Savings Account Response: " + responseSavingsAccount);
 
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             fundTransferDef.responseSavingsAccountPayer = responseSavingsAccount;
             assertThat(fundTransferDef.responseSavingsAccountPayer).isNotEmpty();
-        }
-        else {
+        } else {
             fundTransferDef.responseSavingsAccountPayee = responseSavingsAccount;
             assertThat(fundTransferDef.responseSavingsAccountPayee).isNotEmpty();
         }
@@ -143,17 +140,17 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
 
-        String responseSavingsAccount = client.equals("payer")?fundTransferDef.responseSavingsAccountPayer:fundTransferDef.responseSavingsAccountPayee;
+        String responseSavingsAccount = client.equals("payer") ? fundTransferDef.responseSavingsAccountPayer
+                : fundTransferDef.responseSavingsAccountPayee;
 
-        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
-                responseSavingsAccount, PostSavingsAccountsResponse.class);
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
         String identifier = savingsAccountResponse.getSavingsId().toString();
 
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             payer_identifier = identifier;
             BaseStepDef.payerIdentifier = identifier;
-        }
-        else {
+        } else {
             payee_identifier = identifier;
             BaseStepDef.payeeIdentifier = identifier;
         }
@@ -163,14 +160,9 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", identifier);
 
         // Calling Interop Identifier endpoint
-        fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
-                .baseUri(transferConfig.savingsBaseUrl)
-                .body(fundTransferDef.interopIdentifierBody)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(endpoint)
-                .andReturn().asString();
+        fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
 
         logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
@@ -185,10 +177,9 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         fundTransferDef.savingsApproveBody = fundTransferDef.setBodySavingsApprove();
         String endpoint = transferConfig.savingsApproveEndpoint;
 
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payer_identifier);
-        }
-        else {
+        } else {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payee_identifier);
         }
 
@@ -210,10 +201,9 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         fundTransferDef.savingsActivateBody = fundTransferDef.setBodySavingsActivate();
 
         String endpoint = transferConfig.savingsActivateEndpoint;
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payer_identifier);
-        }
-        else {
+        } else {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payee_identifier);
         }
         // Calling create loan account endpoint
@@ -232,18 +222,16 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         fundTransferDef.savingsDepositAccountBody = fundTransferDef.setSavingsDepositAccount(amount);
-        //Setting account ID
+        // Setting account ID
         PostSavingsAccountsResponse savingsAccountResponse;
-        if(client.equals("payer")) {
-             savingsAccountResponse= objectMapper.readValue(
-                    fundTransferDef.responseSavingsAccountPayer, PostSavingsAccountsResponse.class);
-        }
-        else {
-             savingsAccountResponse= objectMapper.readValue(
-                    fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
+        if (client.equals("payer")) {
+            savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayer, PostSavingsAccountsResponse.class);
+        } else {
+            savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
         }
 
-        String endpoint = transferConfig.savingsDepositAccountEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        String endpoint = transferConfig.savingsDepositAccountEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
 
         // Calling create loan account endpoint
         fundTransferDef.responseSavingsDepositAccount = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
@@ -288,10 +276,9 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         requestSpec.header("X-Lookup-Callback-Url", transferConfig.callbackURL);
 
         String identifier;
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             identifier = BaseStepDef.payerIdentifier;
-        }
-        else {
+        } else {
             identifier = BaseStepDef.payeeIdentifier;
         }
 
@@ -299,37 +286,34 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", identifier);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
-        .expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build())
-                         .when().get(endpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().get(endpoint).andReturn().asString();
 
         assertThat(BaseStepDef.response).isNotNull();
     }
 
     @Then("I call the get quotation api in ml connector for {string}")
-    public void callGetQuoteApi(String client)throws JsonProcessingException {
+    public void callGetQuoteApi(String client) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Date", new Date());
         requestSpec.header("Traceparent", UUID.randomUUID());
         requestSpec.header("X-Quote-Callback-Url", transferConfig.callbackURL);
 
         String quoteRequestBody;
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest(BaseStepDef.payerIdentifier, "1234", "1", quoteId);
-        }
-        else {
+        } else {
             quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest("1234", BaseStepDef.payeeIdentifier, "1", quoteId);
         }
 
-
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
-        .body(quoteRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build())
-                         .when().post(mojaloopConfig.mlConnectorGetQuoteEndpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).body(quoteRequestBody)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
+                .post(mojaloopConfig.mlConnectorGetQuoteEndpoint).andReturn().asString();
 
     }
 
     @Then("I call the transfer api in ml connector for {string}")
-    public void callTransferApi(String client)throws JsonProcessingException {
+    public void callTransferApi(String client) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Date", LocalDateTime.now(ZoneId.of("GMT")).minusMinutes(2).format(formatter));
         requestSpec.header("Traceparent", UUID.randomUUID());
@@ -340,9 +324,9 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         String condition = jsonObject.get("condition").getAsString();
         String transferRequestBody = fundTransferDef.setBodyPayeeTransferRequest("1", ilpPacket, condition);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
-        .body(transferRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build())
-                         .when().post(mojaloopConfig.mlConnectorTransferEndpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).body(transferRequestBody)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
+                .post(mojaloopConfig.mlConnectorTransferEndpoint).andReturn().asString();
 
     }
 
@@ -351,13 +335,13 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         List<ServeEvent> serveEvents = getAllServeEvents();
         logger.info(String.valueOf(serveEvents.size()));
         assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0,1).forEach(serveEvent -> {
-            if(!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+        serveEvents.subList(0, 1).forEach(serveEvent -> {
+            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
                 logger.info(serveEvent.getRequest().getBodyAsString());
             }
             JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
-            String firstName = jsonObject.getAsJsonObject("party").getAsJsonObject("personalInfo")
-            .getAsJsonObject("complexName").get("firstName").getAsString();
+            String firstName = jsonObject.getAsJsonObject("party").getAsJsonObject("personalInfo").getAsJsonObject("complexName")
+                    .get("firstName").getAsString();
             assertThat(firstName).isNotNull();
         });
     }
@@ -367,8 +351,8 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         List<ServeEvent> serveEvents = getAllServeEvents();
         logger.info(String.valueOf(serveEvents.size()));
         assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0,1).forEach(serveEvent -> {
-            if(!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+        serveEvents.subList(0, 1).forEach(serveEvent -> {
+            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
                 logger.info(serveEvent.getRequest().getBodyAsString());
             }
             quotationCallback = serveEvent.getRequest().getBodyAsString();
@@ -383,8 +367,8 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         List<ServeEvent> serveEvents = getAllServeEvents();
         logger.info(String.valueOf(serveEvents.size()));
         assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0,1).forEach(serveEvent -> {
-            if(!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+        serveEvents.subList(0, 1).forEach(serveEvent -> {
+            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
                 logger.info(serveEvent.getRequest().getBodyAsString());
             }
             JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
@@ -394,21 +378,22 @@ public class PayerFundTransferStepDef extends BaseStepDef{
     }
 
     @Then("I call the payer fund transfer api to transfer amount {string} from payer to payee")
-    public void payerFundTransfer(String amount)throws JSONException{
+    public void payerFundTransfer(String amount) throws JSONException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
-//        requestSpec.header("Platform-TenantId", transferConfig.payerTenant);
+        // requestSpec.header("Platform-TenantId", transferConfig.payerTenant);
 
-        String requestBody = TransferHelper.getTransferRequestBody(BaseStepDef.payerIdentifier, BaseStepDef.payeeIdentifier, amount).toString();
+        String requestBody = TransferHelper.getTransferRequestBody(BaseStepDef.payerIdentifier, BaseStepDef.payeeIdentifier, amount)
+                .toString();
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint).body(requestBody)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(channelConnectorConfig.transferEndpoint)
+                .andReturn().asString();
 
     }
 
     @When("I call the transfer API in ops app with transactionId as parameter")
-    public void iCallTheTransferAPIWithTransactionId()throws InterruptedException {
+    public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
@@ -416,8 +401,8 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
+                .asString();
 
         logger.info(BaseStepDef.transactionId);
         logger.info("Get Transfer Response: " + BaseStepDef.response);
@@ -427,12 +412,10 @@ public class PayerFundTransferStepDef extends BaseStepDef{
     public void checkForError(String action) {
         JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
 
-        JsonElement errorInformation = jsonObject.getAsJsonArray("content")
-                                      .get(0).getAsJsonObject()
-                                      .get("errorInformation");
+        JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
 
-        boolean actionError = (errorInformation!=null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
-                                && errorInformation.getAsString().contains(action);
+        boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
+                && errorInformation.getAsString().contains(action);
         assertThat(actionError).isFalse();
     }
 
@@ -444,39 +427,36 @@ public class PayerFundTransferStepDef extends BaseStepDef{
         }
         String endpoint = operationsAppConfig.variablesEndpoint + "/" + BaseStepDef.transactionId;
         String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(endpoint).andReturn().asString();
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
         JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
         assertThat(jsonObject.get(variable)).isNotNull();
 
-        if(jsonObject.get(variable)!=null) {
+        if (jsonObject.get(variable) != null) {
             String status = jsonObject.get(variable).getAsString();
             assertThat(status).isEqualTo(expectedValue);
         }
     }
 
     @Then("I assert {string} balance to be {long}")
-    public void getCurrentBalance(String client, Long amount)throws JsonProcessingException {
+    public void getCurrentBalance(String client, Long amount) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         fundTransferDef.tenant = fundTransferDef.payerTenant;
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse;
-        if(client.equals("payer")) {
-             savingsAccountResponse= objectMapper.readValue(
-                    fundTransferDef.responseSavingsAccountPayer, PostSavingsAccountsResponse.class);
+        if (client.equals("payer")) {
+            savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayer, PostSavingsAccountsResponse.class);
+        } else {
+            savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
         }
-        else {
-             savingsAccountResponse= objectMapper.readValue(
-                    fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
-        }
-        transferConfig.savingsApproveEndpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savingsAccountResponse.getSavingsId().toString());
+        transferConfig.savingsApproveEndpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+                savingsAccountResponse.getSavingsId().toString());
 
         logger.info(transferConfig.savingsApproveEndpoint);
-        String responseBody = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(transferConfig.savingsApproveEndpoint).andReturn().asString();
+        String responseBody = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(transferConfig.savingsApproveEndpoint).andReturn()
+                .asString();
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 

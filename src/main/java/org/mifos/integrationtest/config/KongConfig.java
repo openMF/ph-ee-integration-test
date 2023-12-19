@@ -53,10 +53,7 @@ public class KongConfig {
 
     @PostConstruct
     private void setup() {
-        serviceUrl = new StringBuilder()
-                .append("https://")
-                .append(serviceHost)
-                .append("/").toString();
+        serviceUrl = new StringBuilder().append("https://").append(serviceHost).append("/").toString();
     }
 
 }
