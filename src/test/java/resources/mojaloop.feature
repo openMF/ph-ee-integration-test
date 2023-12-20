@@ -1,6 +1,9 @@
 @wip
 Feature: Mojaloop test
 
+  Scenario: Mojaloop Setup
+    Given I am setting up Mojaloop
+
   Scenario: ML connector partial payee party lookup test
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
