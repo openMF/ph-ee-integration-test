@@ -179,4 +179,4 @@ ml-connector:
     get-party: "/switch/parties/{{identifierType}}/{{identifier}}"
     get-quote: "/switch/quotes"
     transfer: "switch/transfers"
-global_wait_time_ms : 10000
+global_wait_time_ms : 5000
