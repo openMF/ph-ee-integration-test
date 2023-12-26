@@ -42,6 +42,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     private static String requestId;
     private static String agentId;
     private static String fetchVoucherResponseBody;
+    private static String createVoucherResponseBody;
     @Autowired
     MockServerStepDef mockServerStepDef;
 
@@ -50,19 +51,19 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
-        requestId = generateUniqueNumber(16);
+        requestId= generateUniqueNumber(12);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
         sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
-        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(18)).append("\",\n");
+        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
         sb.append("            \"groupCode\": \"021\",\n");
         sb.append("            \"currency\": \"SGD\",\n");
-        sb.append("            \"amount\": 3000,\n");
-        sb.append("            \"payeeFunctionalID\": \"08187379158030059976\",\n");
-        sb.append("            \"narration\": \"Social Support Payment for the Month of January 2023\"\n");
+        sb.append("            \"amount\": 9000,\n");
+        sb.append("            \"payeeFunctionalID\": \"63310590322288932682\",\n");
+        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
         sb.append("        }\n");
         sb.append("    ]\n");
         sb.append("}");
@@ -79,6 +80,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
+        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        createVoucherResponseBody = scenarioScopeState.response;
         logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
 
@@ -460,6 +463,43 @@ public class VoucherManagementStepDef extends BaseStepDef {
             assertThat(registeringInstitutionIdResponse).isEqualTo(registeringInstitutionId);
         } catch (Exception e) {
             logger.debug(e.getMessage());
+        }
+    }
+
+    @Given("I can create an negative VoucherRequestDTO for voucher creation")
+    public void createNegativeVoucherRequestDTO() {
+        requestId= generateUniqueNumber(12);
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
+        sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
+        sb.append("    \"voucherInstructions\": [\n");
+        sb.append("        {\n");
+        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
+        sb.append("            \"groupCode\": \"0215\",\n");
+        sb.append("            \"currency\": \"SGDP\",\n");
+        sb.append("            \"amount\": -9000,\n");
+        sb.append("            \"payeeFunctionalID\": \"6331059032228893278594709682\",\n");
+        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
+        sb.append("        }\n");
+        sb.append("    ]\n");
+        sb.append("}");
+        createVoucherBody = sb.toString();
+    }
+
+    @And("I should be able to assert the create voucher validation for negative response")
+    public void iWillAssertTheFieldsFromCreateVoucherValidationResponse() {
+        try {
+            JsonNode rootNode = objectMapper.readTree(createVoucherResponseBody);
+
+            String errorCodeResponse = rootNode.get("errorCode").asText();
+            String errorDescriptionResponse = rootNode.get("errorDescription").asText();
+
+            assertThat(errorCodeResponse).isEqualTo("error.msg.schema.validation.errors");
+            assertThat(errorDescriptionResponse).isEqualTo("The request is invalid");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
