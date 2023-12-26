@@ -111,7 +111,7 @@ jobs:
             fi
   docker-image-availability-check-and-upgrade:
     docker:
-      - image: cimg/python:3.10
+      - image: 'cimg/python:3.10'
     steps:
       - mifos-orb/docker-image-availability-check-and-upgrade:
           namespace: paymenthub
@@ -124,7 +124,7 @@ jobs:
           service-file-path: https://raw.githubusercontent.com/openMF/ph-ee-env-labs/master/.circleci/services.txt
   create-secret-paymenthub-namespace:
     docker:
-      - image: cimg/base:2022.06
+      - image: 'cimg/base:2022.06'
       environment:
         TERM: dumb
         NAMESPACE: paymenthub-release
@@ -165,11 +165,13 @@ jobs:
     docker:
       - image: 'curlimages/curl:8.1.2'
     steps:
-      - checkout
+      - run: git clone https://github.com/openmf/ph-ee-env-labs
       - run: echo $AWS_PROFILE
       - run: echo $AWS_DEFAULT_PROFILE
       - run: until nc -vz ph-ee-zeebe-ops 80; do echo "Waiting for zeebe-ops service"; sleep 2; done;
-      - run: sh orchestration/deployBpmn.sh
+      - run: |
+          cd ph-ee-env-labs 
+          sh orchestration/deployBpmn.sh
   test-chart-gov:
     docker:
       - image: cimg/openjdk:17.0.0-node
