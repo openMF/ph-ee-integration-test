@@ -5,6 +5,8 @@ plugins {
     id 'eclipse'
     id 'checkstyle'
     id 'com.diffplug.spotless' version '6.19.0'
+    id 'com.adarshr.test-logger' version '3.2.0'
+
 }
 
 apply plugin:'com.diffplug.spotless'
@@ -177,6 +179,12 @@ tasks.named('test') {
 configurations {
     cucumberRuntime {
         extendsFrom testImplementation
+    }
+    testlogger {
+        // pick a theme - mocha, standard, plain, mocha-parallel, standard-parallel or plain-parallel
+        theme 'mocha'
+        showSkipped false
+        showStackTraces true
     }
 }
 
