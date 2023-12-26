@@ -170,8 +170,9 @@ jobs:
       - run: echo $AWS_PROFILE
       - run: echo $AWS_DEFAULT_PROFILE
       - run: |
-          apt install -y netcat
-          until nc -vz https://zeebeops.sandbox.fynarfin.io 443; do echo "Waiting for zeebe-ops service"; sleep 2; done;
+          #sleep 5
+          #sudo apt install -y netcat
+          #until nc -vz https://zeebeops.sandbox.fynarfin.io 443; do echo "Waiting for zeebe-ops service"; sleep 2; done;
       - run: |
           cd ph-ee-env-labs 
           sh orchestration/deployBpmn.sh
