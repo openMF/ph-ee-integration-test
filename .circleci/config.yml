@@ -163,7 +163,7 @@ jobs:
       - run: "kubectl delete pod  -n paymenthub `kubectl get pods -n paymenthub | grep ph-ee-connector-mock-payment-schema|cut -d ' ' -f1  ` || echo ' ' "
   deploying-bpmns:
     docker:
-      - image: 'curlimages/curl:8.1.2'
+      - image: 'cimg/base:2022.06'
     steps:
       - run: git clone https://github.com/openmf/ph-ee-env-labs
       - run: echo $AWS_PROFILE
