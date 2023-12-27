@@ -101,3 +101,21 @@ Feature: Mojaloop test
     Then I assert "payer" balance to be 11
     Then I assert "payee" balance to be 11
 
+  Scenario: Bulk Transfer with Mojaloop
+    When I create and setup a "payer" with account balance of 12
+    When I create and setup a "payee" with account balance of 10
+    Then Create a csv file with file name "batchTransaction.csv"
+    Then add row to csv with current payer and payee and transfer amount 3 and id 0
+    When I create and setup a "payer" with account balance of 120
+    Then add row to csv with current payer and payee and transfer amount 2 and id 1
+    When I create and setup a "payer" with account balance of 66
+    When I create and setup a "payee" with account balance of 10
+    Then add row to csv with current payer and payee and transfer amount 1 and id 2
+
+    And I generate clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 2000 millisecond
