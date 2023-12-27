@@ -61,7 +61,7 @@ public class GSMATransferStepDef extends BaseStepDef{
     String creditParty = "";
 
     int balance;
-    @Value("${ams.base-url}")
+    @Value("${amsmifos.base-url}")
     String amsBaseUrl;
     @Value("${ams.balance-endpoint}")
     String amsBalanceEndpoint;
