@@ -35,6 +35,7 @@ channel-connector:
   endpoints:
     transfer: "/channel/transfer"
     gsma-p2p: "/channel/gsma/transfer"
+    gsma-deposit: "/channel/gsma/deposit"
     collection: "/channel/collection"
     transferReq: "/channel/transactionRequest"
 

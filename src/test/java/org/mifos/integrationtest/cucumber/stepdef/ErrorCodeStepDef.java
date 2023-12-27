@@ -56,6 +56,17 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
         logger.info("GSMA transfer Response: {}", BaseStepDef.response);
     }
+    @When("I call the GSMATransfer Deposit endpoint with expected status of {int}")
+    public void iCallTheGSMATransferDepositEndpointWithExpectedStatusOf(int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        logger.info("body: {}", gsmaTransaction.toString());
+        logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
+        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(gsmaTransaction).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.gsmaP2PDepositEndpoint).andReturn().asString();
+
+        logger.info("GSMA transfer Response: {}", BaseStepDef.response);
+    }
 
     @When("I call the transfer query endpoint with transactionId and expected status of {int}")
     public void iCallTheTransferQueryEndpointWithTransactionIdAndExpectedStatusOf(int expectedStatus) {
