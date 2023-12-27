@@ -35,6 +35,7 @@ channel-connector:
   endpoints:
     transfer: "/channel/transfer"
     gsma-p2p: "/channel/gsma/transfer"
+    gsma-deposit: "/channel/gsma/deposit"
     collection: "/channel/collection"
     transferReq: "/channel/transactionRequest"
 
@@ -55,6 +56,11 @@ amsmifos:
     endpoints:
       repayment-endpoint: /fineract/transactions/loanrepayment
       deposit-endpoint: /fineract/savingsaccount/transfers
+
+ams:
+  base-url: https://ams-mifos.sandbox.fynarfin.io
+  balance-endpoint: /ams/accounts/{IdentifierType}/{IdentifierId}/balance
+
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:
@@ -71,10 +77,11 @@ savings:
     client-endpoint: /fineract-provider/api/v1/clients
     product-endpoint: /fineract-provider/api/v1/savingsproducts
     account-endpoint: /fineract-provider/api/v1/savingsaccounts
-    approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
+    approve-endpoint: /fineract-provider/api/v1/savingsaccounts/{savingsAccId}
     activate-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}
     deposit-endpoint: /fineract-provider/api/v1/savingsaccounts/{{savingsAccId}}/transactions
-    interop-identifier-endpoint: /fineract-provider/api/v1/interoperation/parties/{{identifierType}}/{{identifier}}
+    interop-identifier-endpoint: /fineract-provider/api/v1/interoperation/parties/{{payer_identifierType}}/{{payer_identifier}}
+    balance-endpoint: /fineract-provider/api/v1/savingsaccounts/{savingsAccId}}
 
 mock-server:
   port: 53013

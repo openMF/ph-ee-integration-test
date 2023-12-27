@@ -70,7 +70,8 @@ public class KeycloakStepDef extends BaseStepDef {
                 .baseUri(keycloakConfig.keycloakContactPoint)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build())
                 .when()
-                .post(keycloakConfig.tokenEndpoint, keycloakConfig.realm)
+                .post(keycloakConfig.tokenEndpoint, keycloakConfig
+                        .realm)
                 .andReturn().asString();
         try {
             BaseStepDef.keycloakTokenResponse = objectMapper.readValue(BaseStepDef.response, KeycloakTokenResponse.class);
