@@ -1,7 +1,7 @@
 @amsIntegration @govtodo
 Feature: GSMA Outbound Transfer test
 
-  Scenario: GSMA Withdrawal Transfer test (Payer Debit only)
+  Scenario: GSMA Withdrawal Transfer testx (Payer Debit only)
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
@@ -86,7 +86,7 @@ Feature: GSMA Outbound Transfer test
     And I should be able to parse transactionId from response
     Given I have tenant as "gorilla"
     When I call the transfer query endpoint with transactionId and expected status of 200
-    Then I will sleep for 1000 millisecond
+    Then I will sleep for 5000 millisecond
     Given I have tenant as "gorilla"
     Then I call the balance api for payer balance after debit
     Given I have tenant as "lion"
