@@ -290,4 +290,14 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200
     And I will sleep for 15000 millisecond
     Then I should be able to extract response body from callback for batch
+    When I make the "POST" request to "/callback" endpoint with expected status of 200
+    Then I should be able to extract response body from callback for batch
+    And I can stop mock server
+
+  @gov
+  Scenario: AM-001 mock actuator API test
+    When I call the mock actuator endpoint
+    Then I am able to parse actuator response
+    And Status of status is "UP"
+
 

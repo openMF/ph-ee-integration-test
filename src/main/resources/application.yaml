@@ -139,6 +139,7 @@ mock-payment-schema:
   contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
   endpoints:
     mock-batch-authorization: "/batches/"
+    actuator: "/actuator/health"
 
 
 netflix-conductor:

@@ -36,6 +36,7 @@ import org.mifos.connector.common.operations.type.TransferStatus;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.Party;
+import org.mifos.integrationtest.common.dto.operationsapp.ActuatorResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDetailResponse;
@@ -43,6 +44,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionRespon
 import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -57,6 +59,8 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Value("${callback_url}")
     public String callbackURL;
+    @Autowired
+    MockPaymentSchemaConfig mockPaymentSchemaConfig;
 
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
@@ -646,6 +650,45 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
         assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);}
+    @When("I call the mock actuator endpoint")
+    public void iCallTheMockActuatorEndpointWithExpectedStatusOf() {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+
+        Response resp = RestAssured.given(requestSpec).baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).expect()
+                .spec(new ResponseSpecBuilder().build()).when()
+                .get(mockPaymentSchemaConfig.mockActuatorEndpoint).then().extract().response();
+
+        BaseStepDef.response = resp.andReturn().asString();
+        BaseStepDef.restResponseObject = resp;
+
+        logger.info("Mock actuator Response: " + BaseStepDef.response);
+
+    }
+
+    @And("I should get non empty response and status as UP")
+    public void iShouldGetNonEmptyResponseAndStatusAsUP() {
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response.contains("status"));
+    }
+
+    @And("I am able to parse actuator response")
+    public void iAmAbleToParseActuatorResponse() {
+        ActuatorResponse actuatorResponse = null;
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response).isNotEmpty();
+        try {
+            actuatorResponse = objectMapper.readValue(BaseStepDef.response, ActuatorResponse.class);
+            BaseStepDef.actuatorResponse = actuatorResponse;
+        } catch (Exception e) {
+            logger.error("Error parsing the actuator response", e);
+        }
+        assertThat(BaseStepDef.actuatorResponse).isNotNull();
+    }
+
+    @And("Status of status is {string}")
+    public void statusOfStatusIs(String status) {
+        assertThat(BaseStepDef.actuatorResponse).isNotNull();
+        assertThat(BaseStepDef.actuatorResponse.getStatus()).isEqualTo(status);
     }
 }
