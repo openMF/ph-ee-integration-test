@@ -38,6 +38,7 @@ import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
+import org.mifos.integrationtest.common.dto.billPayP2G.BillPaymentsReqDTO;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -97,6 +98,7 @@ public class BaseStepDef {
     protected static String transactionId;
     protected static TransactionChannelRequestDTO inboundTransferMockReq;
     protected static String paymentStatusCheckReqDto;
+    protected static BillPaymentsReqDTO inboundTransferReqP2G;
     protected static String callbackUrl;
     protected static KeycloakTokenResponse keycloakTokenResponse;
     protected static String randomData;
@@ -147,6 +149,9 @@ public class BaseStepDef {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
         return currentTimeInZone.format(formatter);
     }
+
+    protected static String billId;
+
 
     // if data passed as a filename/absoluteFilePath then pass isDataAFile as true or else false
     protected String generateSignature(String clientCorrelationId, String tenant, String data, boolean isDataAFile) throws IOException,
