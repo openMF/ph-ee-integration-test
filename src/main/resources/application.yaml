@@ -195,4 +195,5 @@ billPay:
   endpoints:
     inquiry: /bills/{billId}
     payments: /paymentNotifications
+    billerRtpRequest: "/billTransferRequests"
 

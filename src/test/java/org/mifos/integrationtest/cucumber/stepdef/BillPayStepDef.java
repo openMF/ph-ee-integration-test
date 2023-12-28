@@ -14,6 +14,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.Bill;
+import org.mifos.integrationtest.common.dto.BillDetails;
+import org.mifos.integrationtest.common.dto.BillRTPReqDTO;
+import org.mifos.integrationtest.common.dto.PayerFSPDetail;
 import org.mifos.integrationtest.common.dto.billPayP2G.BillPaymentsReqDTO;
 import org.mifos.integrationtest.config.BillPayConnectorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,19 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Autowired
     private BillPayConnectorConfig billPayConnectorConfig;
+    private static String billerId;
+    private static BillRTPReqDTO billRTPReqDTO;
+
+    @Then("I can create DTO for Biller RTP Request")
+    public void iCanCreateDTOForBillerRTPRequest() {
+        BillDetails billDetails = new BillDetails("12345", "Test", 100.00);
+        Bill bill =new Bill("Test", 100.0);
+        PayerFSPDetail payerFSPDetail = new PayerFSPDetail("lion", "1223455");
+        billRTPReqDTO = new BillRTPReqDTO("123445","1234", "00", payerFSPDetail, bill);
+
+
+
+    }
 
     @And("I have bill id as {string}")
     public void iHaveBillIdAs(String billId) {
@@ -198,4 +215,31 @@ public class BillPayStepDef extends BaseStepDef {
         assertThat(flag).isTrue();
     }
 
+    @And("I can call the biller RTP request API with expected status of {int} and {string} endpoint")
+    public void iCanCallTheBillerRTPRequestAPIWithExpectedStatusOfAndEndpoint(int expectedStatus, String stub) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonPayload = objectMapper.writeValueAsString(billRTPReqDTO);
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(requestSpec)
+                .header("Content-Type", "application/json")
+                .header("X-Callback-URL",identityMapperConfig.callbackURL+ stub)
+                .header("X-Biller-Id", billerId)
+                .header("X-Client-Correlation-ID",clientCorrelationId)
+                .header("X-Platform-TenantId",tenant)
+                .baseUri(billPayConfig.billPayContactPoint)
+                .body(jsonPayload)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .post(billPayConfig.billerRtpEndpoint)
+                .andReturn().asString();
+
+
+        logger.info("Voucher Response: {}", BaseStepDef.response);
+    }
+
+    @And("I have a billerId as {string}")
+    public void iHaveABillerIdAs(String biller) {
+        billerId =  biller;
+    }
 }

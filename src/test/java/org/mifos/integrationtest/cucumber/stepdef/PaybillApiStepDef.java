@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -15,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
@@ -82,5 +88,29 @@ public class PaybillApiStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().post(paybillConfig.mpesaSettlementUrl)
                 .andReturn().asString();
         logger.info("Paybill Settlement Response: {}", paybillStepDef.response);
+    }
+
+    @And("I can extract the callback body and assert the rtpStatus")
+    public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        String rtpStatus = null;
+        for(int i=0; i< allServeEvents.size();i++) {
+            ServeEvent request = allServeEvents.get(i);
+
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                    System.out.println("Wiremock"+ rootNode);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (rootNode.has("rtpStatus")) {
+                    rtpStatus = rootNode.get("rtpStatus").asText();
+                }
+                assertThat(rtpStatus).isEqualTo("00");
+            }
+        }
     }
 }
