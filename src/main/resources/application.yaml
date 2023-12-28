@@ -16,6 +16,7 @@ operations-app:
     transfers: "/api/v1/transfers?size=1&page=0"
     variables: "/api/v1/variables"
     transactionRequests: "/api/v1/transactionRequests"
+    actuator: "/actuator/health"
 
 paybill:
   mpesa-connector:

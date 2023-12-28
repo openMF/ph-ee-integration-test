@@ -492,19 +492,4 @@ public class VoucherManagementStepDef extends BaseStepDef{
             e.printStackTrace();
         }
     }
-
-    @When("I call the voucher actuator endpoint")
-    public void iCallTheVoucherActuatorEndpoint() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-
-        Response resp = RestAssured.given(requestSpec).baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
-                .spec(new ResponseSpecBuilder().build()).when()
-                .get(voucherManagementConfig.voucherActuatorEndpoint).then().extract().response();
-
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
-
-        logger.info("Voucher actuator Response: " + BaseStepDef.response);
-
-    }
 }

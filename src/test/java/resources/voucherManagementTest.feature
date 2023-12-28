@@ -62,7 +62,7 @@ Feature: Voucher Management Api Test
     And I will assert the fields from fetch voucher response
     And I can stop mock server
 
-  Scenario: AP-004 voucher actuator API test
-    When I call the voucher actuator endpoint
+  Scenario: APT-003 voucher actuator API test
+    When I call the actuator API with Contactpoint "voucher-management.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
-    And Status of status is "UP"
+    And Status of service is "UP"

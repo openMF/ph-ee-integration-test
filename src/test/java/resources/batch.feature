@@ -295,20 +295,19 @@ Feature: Batch Details API test
     And I can stop mock server
 
   @gov
-  Scenario: AP-001 mock actuator API test
-    When I call the mock actuator endpoint
+  Scenario: APT-001 actuator API test
+    When I call the actuator API with Contactpoint "mock-payment-schema.contactpoint" and endpoint "/actuator/health"
+    Then I am able to parse actuator response
+    And Status of service is "UP"
+    When I call the actuator API with Contactpoint "operations-app.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of status is "UP"
-
-  @gov
-  Scenario: AP-001 bulk actuator API test
-    When I call the batch actuator endpoint
+    When I call the actuator API with Contactpoint "channel-connector.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of status is "UP"
-
-  @gov
-  Scenario: AP-001 channel actuator API test
-    When I call the channel actuator endpoint
+    When I call the actuator API with Contactpoint "bulk-processor.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of status is "UP"
-
+    When I call the actuator API with Contactpoint "mojaloop.contactpoint" and endpoint "/actuator/health"
+    Then I am able to parse actuator response
+    And Status of status is "UP"

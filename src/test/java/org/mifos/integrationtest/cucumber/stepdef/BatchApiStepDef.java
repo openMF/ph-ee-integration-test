@@ -48,6 +48,7 @@ import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -65,6 +66,9 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Autowired
     ChannelConnectorConfig channelConnectorConfig;
+
+    @Autowired
+    Environment environment;
 
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
@@ -684,33 +688,19 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.actuatorResponse).isNotNull();
     }
 
-    @And("Status of status is {string}")
-    public void statusOfStatusIs(String status) {
+    @And("Status of service is {string}")
+    public void statusOfServiceIs(String status) {
         assertThat(BaseStepDef.actuatorResponse).isNotNull();
         assertThat(BaseStepDef.actuatorResponse.getStatus()).isEqualTo(status);
     }
 
-    @When("I call the batch actuator endpoint")
-    public void iCallTheBatchActuatorEndpoint() {
+    @When("I call the actuator API with Contactpoint {string} and endpoint {string}")
+    public void iCallTheActuatorAPIWithContactpointAndEndpoint(String config, String endpoint) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
 
-        Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect()
+        Response resp = RestAssured.given(requestSpec).baseUri(environment.getProperty(config)).expect()
                 .spec(new ResponseSpecBuilder().build()).when()
-                .get(bulkProcessorConfig.bulkActuatorEndpoint).then().extract().response();
-
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
-
-        logger.info("Mock actuator Response: " + BaseStepDef.response);
-    }
-
-    @When("I call the channel actuator endpoint")
-    public void iCallTheChannelActuatorEndpoint() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-
-        Response resp = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint).expect()
-                .spec(new ResponseSpecBuilder().build()).when()
-                .get(channelConnectorConfig.channelActuatorEndpoint).then().extract().response();
+                .get(endpoint).then().extract().response();
 
         BaseStepDef.response = resp.andReturn().asString();
         BaseStepDef.restResponseObject = resp;
