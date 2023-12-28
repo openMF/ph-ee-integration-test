@@ -29,6 +29,8 @@ bulk-processor:
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"
+    actuator: "/actuator/health"
+
 
 channel-connector:
   contactpoint: "https://channel.sandbox.fynarfin.io"
@@ -38,6 +40,8 @@ channel-connector:
     gsma-deposit: "/channel/gsma/deposit"
     collection: "/channel/collection"
     transferReq: "/channel/transactionRequest"
+    actuator: "/actuator/health"
+
 
 max-retry-count: 5
 retry-interval: 15000

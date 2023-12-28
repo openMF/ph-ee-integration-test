@@ -295,9 +295,20 @@ Feature: Batch Details API test
     And I can stop mock server
 
   @gov
-  Scenario: AM-001 mock actuator API test
+  Scenario: AP-001 mock actuator API test
     When I call the mock actuator endpoint
     Then I am able to parse actuator response
     And Status of status is "UP"
 
+  @gov
+  Scenario: AP-001 bulk actuator API test
+    When I call the batch actuator endpoint
+    Then I am able to parse actuator response
+    And Status of status is "UP"
+
+  @gov
+  Scenario: AP-001 channel actuator API test
+    When I call the channel actuator endpoint
+    Then I am able to parse actuator response
+    And Status of status is "UP"
 
