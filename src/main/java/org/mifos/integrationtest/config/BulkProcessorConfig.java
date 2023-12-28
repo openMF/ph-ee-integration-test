@@ -17,7 +17,6 @@ public class BulkProcessorConfig {
     @Value("${bulk-processor.endpoints.simulate}")
     public String simulateEndpoint;
 
-
     public String bulkTransactionUrl;
 
     public String callbackUrl;
