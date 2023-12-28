@@ -256,4 +256,8 @@ Feature: Identity Account Mapper Api Test
     And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
     And I can stop mock server
 
+  Scenario: AP-008 IAM actuator API test
+    When I call the IAM actuator endpoint
+    Then I am able to parse actuator response
+    And Status of status is "UP"
 

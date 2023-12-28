@@ -61,3 +61,8 @@ Feature: Voucher Management Api Test
     Then I will call the fetch voucher API with expected status of 200
     And I will assert the fields from fetch voucher response
     And I can stop mock server
+
+  Scenario: AP-004 voucher actuator API test
+    When I call the voucher actuator endpoint
+    Then I am able to parse actuator response
+    And Status of status is "UP"

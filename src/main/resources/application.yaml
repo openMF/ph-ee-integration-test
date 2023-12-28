@@ -105,6 +105,7 @@ identity-account-mapper:
     account-lookup: /beneficiary
     batch-account-lookup: /accountLookup
     fetch-beneficiary: /beneficiaries
+    actuator: "/actuator/health"
 
 kong:
   admin-contactpoint: "http://kong-admin.sandbox.fynarfin.io"
@@ -138,6 +139,8 @@ voucher-management:
     voucher-lifecycle: /vouchers
     voucher-validity: /voucher/validity
     fetch: /vouchers
+    actuator: "/actuator/health"
+
 
 mock-payment-schema:
   contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
