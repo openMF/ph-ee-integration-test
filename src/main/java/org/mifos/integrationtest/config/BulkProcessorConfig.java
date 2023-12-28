@@ -17,8 +17,6 @@ public class BulkProcessorConfig {
     @Value("${bulk-processor.endpoints.simulate}")
     public String simulateEndpoint;
 
-    @Value("${bulk-processor.endpoints.actuator}")
-    public String bulkActuatorEndpoint;
 
     public String bulkTransactionUrl;
 

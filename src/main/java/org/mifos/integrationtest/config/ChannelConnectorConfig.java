@@ -22,8 +22,6 @@ public class ChannelConnectorConfig {
     public String collectionEndpoint;
     @Value("${channel-connector.endpoints.transferReq}")
     public String transferReqEndpoint;
-    @Value("${channel-connector.endpoints.actuator}")
-    public String channelActuatorEndpoint;
     public String transferUrl;
 
     public String requestType;

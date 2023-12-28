@@ -47,8 +47,6 @@ public class OperationsAppConfig {
     @Value("${operations-app.password}")
     public String password;
 
-    @Value("${operations-app.endpoints.actuator}")
-    public String opsActuatorEndpoint;
     public String batchTransactionUrl;
 
     public String batchSummaryUrl;
