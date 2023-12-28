@@ -1,9 +1,9 @@
 package org.mifos.integrationtest.common;
 
-import com.opencsv.CSVWriter;
+import com.opencsv.CSVReader;import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
-import com.opencsv.ICSVWriter;import org.springframework.stereotype.Component;
-import java.io.FileWriter;
+import org.springframework.stereotype.Component;
+import java.io.FileReader;import java.io.FileWriter;
 import java.io.IOException;
 
 @Component
@@ -16,7 +16,13 @@ public class CsvHelper {
     }
 
     public void addRow(String filePath, String[] row)throws IOException {
-        ICSVWriter writer = new CSVWriterBuilder(new FileWriter(filePath, true)).withQuoteChar('\0').build();
+        CSVWriter writer = (CSVWriter) new CSVWriterBuilder(new FileWriter(filePath, true)).withQuoteChar('\0').build();
+        writer.writeNext(row);
+        writer.close();
+    }
+
+    public void addLastRow(String filePath, String[] row)throws IOException {
+        CSVWriter writer = (CSVWriter) new CSVWriterBuilder(new FileWriter(filePath, true)).withQuoteChar('\0').withLineEnd("").build();
         writer.writeNext(row);
         writer.close();
     }

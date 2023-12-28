@@ -508,4 +508,13 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         csvHelper.addRow(filePath, row);
     }
 
+    @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
+    public void addLastRowToCsvFile(int transferAmount, int id)throws IOException {
+
+        String[] row = {String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
+                        BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment"};
+        String filePath = Utils.getAbsoluteFilePathToResource(BaseStepDef.filename);
+        csvHelper.addLastRow(filePath, row);
+    }
+
 }
