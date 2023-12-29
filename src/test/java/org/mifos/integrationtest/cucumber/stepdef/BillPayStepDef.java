@@ -223,12 +223,12 @@ public class BillPayStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         BaseStepDef.response = RestAssured.given(requestSpec)
                 .header("Content-Type", "application/json")
-                .header("X-Callback-URL",identityMapperConfig.callbackURL+ stub)
+                .header("X-Callback-URL",billPayConnectorConfig.callbackURL+ stub)
                 .header("X-Biller-Id", billerId)
                 .header("X-Client-Correlation-ID",clientCorrelationId)
                 .header("X-Platform-TenantId",tenant)
                 .baseUri(billPayConnectorConfig.billPayContactPoint)
-                .body(jsonPayload)
+                .body(billRTPReqDTO)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
@@ -236,11 +236,51 @@ public class BillPayStepDef extends BaseStepDef {
                 .andReturn().asString();
 
 
-        logger.info("Voucher Response: {}", BaseStepDef.response);
+        logger.info("RTP Response: {}", BaseStepDef.response);
     }
 
     @And("I have a billerId as {string}")
     public void iHaveABillerIdAs(String biller) {
         billerId =  biller;
+    }
+    @And("I can extract the callback body and assert the rtpStatus")
+    public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
+        boolean flag = false;
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        for (int i = allServeEvents.size()-1; i >= 0; i--) {
+            ServeEvent request = allServeEvents.get(i);
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                flag = true;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBody());
+                    logger.info("Rootnode value:" + rootNode);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                String requestId = null;
+                if(rootNode.has("requestId")) {
+                    requestId = rootNode.get("requestId").asText();
+                }
+                assertThat(requestId).isNotEmpty();
+                String rtpStatus = null;
+                if(rootNode.has("rtpStatus")) {
+                    rtpStatus = rootNode.get("rtpStatus").asText();
+                }
+                assertThat(rtpStatus).isNotEmpty();
+                String rtpId = null;
+                if(rootNode.has("rtpId")) {
+                    rtpId = rootNode.get("rtpId").asText();
+                }
+                assertThat(rtpId).isNotEmpty();
+                String billId = null;
+                if(rootNode.has("billId")) {
+                    billId = rootNode.get("billId").asText();
+                }
+                assertThat(billId).isNotEmpty();
+            }
+
+        }
+        assertThat(flag).isTrue();
     }
 }

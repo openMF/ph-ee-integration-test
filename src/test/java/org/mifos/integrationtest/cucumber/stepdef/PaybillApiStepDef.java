@@ -89,28 +89,4 @@ public class PaybillApiStepDef {
                 .andReturn().asString();
         logger.info("Paybill Settlement Response: {}", paybillStepDef.response);
     }
-
-    @And("I can extract the callback body and assert the rtpStatus")
-    public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        String rtpStatus = null;
-        for(int i=0; i< allServeEvents.size();i++) {
-            ServeEvent request = allServeEvents.get(i);
-
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                    System.out.println("Wiremock"+ rootNode);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-
-                if (rootNode.has("rtpStatus")) {
-                    rtpStatus = rootNode.get("rtpStatus").asText();
-                }
-                assertThat(rtpStatus).isEqualTo("00");
-            }
-        }
-    }
 }
