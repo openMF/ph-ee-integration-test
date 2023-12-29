@@ -328,4 +328,71 @@ public class KongStepDef extends BaseStepDef {
         logger.debug("Service delete response: {}", deleteResponse);
     }
 
+    @And("I add the ratelimiter plugin in above service")
+    public void enableRateLimitPlugin() throws JsonProcessingException {
+        KongPlugin kongPlugin = new KongPlugin();
+        kongPlugin.setId(UUID.randomUUID().toString());
+        kongPlugin.setName("rate-limiting");
+        kongPlugin.setEnabled(true);
+        kongPlugin.setConfig(new HashMap<>(){{
+            put("policy","cluster");
+            put("minute", 2);
+            put("limit_by", "consumer");;
+        }});
+
+        RequestSpecification baseReqSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(baseReqSpec)
+                .baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(kongPlugin)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
+                .post(kongConfig.createPluginEndpoint, BaseStepDef.kongService.getId()).andReturn().asString();
+
+        logger.info("Enable ratelimiter plugin response from kong: {}", BaseStepDef.response);
+        try {
+            BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
+            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
+        } catch (Exception e) {
+            BaseStepDef.kongPlugin = null;
+        }
+
+        assertThat(BaseStepDef.kongPlugin).isNotNull();
+    }
+
+    @And("I add the ratelimiter plugin in kong")
+    public void iAddTheRatelimiterPluginInKong() throws JsonProcessingException {
+        KongPlugin kongPlugin = new KongPlugin();
+        kongPlugin.setId(UUID.randomUUID().toString());
+        kongPlugin.setName("rate-limiting");
+        kongPlugin.setEnabled(true);
+        kongPlugin.setConfig(new HashMap<>(){{
+            put("policy","cluster");
+            put("second", 1);
+            put("minute", 5);
+            put("limit_by", "consumer");
+        }});
+
+        RequestSpecification baseReqSpec = Utils.getDefaultSpec();
+        BaseStepDef.response = RestAssured.given(baseReqSpec)
+                .baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(kongPlugin)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
+                .post(kongConfig.pluginsEndpoint).andReturn().asString();
+
+        logger.info("Creating ratelimiter plugin response from kong: {}", BaseStepDef.response);
+        try {
+            BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
+            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
+        } catch (Exception e) {
+            BaseStepDef.kongPlugin = null;
+        }
+
+        assertThat(BaseStepDef.kongPlugin).isNotNull();
+    }
+
+    @And("I should have {string} in response body")
+    public void iShouldHaveInResponseBody(String expectedResponse) {
+        assertThat(BaseStepDef.response).contains(expectedResponse);
+    }
 }
