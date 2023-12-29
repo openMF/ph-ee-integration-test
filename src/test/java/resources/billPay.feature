@@ -87,7 +87,7 @@ Feature: Bill Payment P2G Test
     When I call the mock bills payment api from PBB to Biller with billid with expected status of 200
     Then I should get non empty response
 
-
+  @gov
   Scenario: RTP Integration test
     Given I can inject MockServer
     And I can start mock server
