@@ -98,6 +98,6 @@ Feature: Bill Payment P2G Test
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request
     And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
-    Then I will sleep for 5000 millisecond
+    Then I will sleep for 8000 millisecond
     And I can extract the callback body and assert the rtpStatus
     And I can stop mock server

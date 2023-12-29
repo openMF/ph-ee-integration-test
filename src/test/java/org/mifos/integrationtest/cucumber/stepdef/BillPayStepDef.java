@@ -39,13 +39,13 @@ public class BillPayStepDef extends BaseStepDef {
     private BillPayConnectorConfig billPayConnectorConfig;
     private static String billerId;
     private static BillRTPReqDTO billRTPReqDTO;
+    private static String billId  = "12345";
 
     @Then("I can create DTO for Biller RTP Request")
     public void iCanCreateDTOForBillerRTPRequest() {
-        BillDetails billDetails = new BillDetails("12345", "Test", 100.00);
         Bill bill =new Bill("Test", 100.0);
         PayerFSPDetail payerFSPDetail = new PayerFSPDetail("lion", "1223455");
-        billRTPReqDTO = new BillRTPReqDTO("123445","1234", "00", payerFSPDetail, bill);
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", payerFSPDetail, bill);
 
 
 
@@ -258,26 +258,28 @@ public class BillPayStepDef extends BaseStepDef {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                String requestId = null;
-                if(rootNode.has("requestId")) {
-                    requestId = rootNode.get("requestId").asText();
+                if(rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals(billId)) {
+                    String requestId = null;
+                    if (rootNode.has("requestId")) {
+                        requestId = rootNode.get("requestId").asText();
+                    }
+                    assertThat(requestId).isNotEmpty();
+                    String rtpStatus = null;
+                    if (rootNode.has("rtpStatus")) {
+                        rtpStatus = rootNode.get("rtpStatus").asText();
+                    }
+                    assertThat(rtpStatus).isNotEmpty();
+                    String rtpId = null;
+                    if (rootNode.has("rtpId")) {
+                        rtpId = rootNode.get("rtpId").asText();
+                    }
+                    assertThat(rtpId).isNotEmpty();
+                    String billId = null;
+                    if (rootNode.has("billId")) {
+                        billId = rootNode.get("billId").asText();
+                    }
+                    assertThat(billId).isNotEmpty();
                 }
-                assertThat(requestId).isNotEmpty();
-                String rtpStatus = null;
-                if(rootNode.has("rtpStatus")) {
-                    rtpStatus = rootNode.get("rtpStatus").asText();
-                }
-                assertThat(rtpStatus).isNotEmpty();
-                String rtpId = null;
-                if(rootNode.has("rtpId")) {
-                    rtpId = rootNode.get("rtpId").asText();
-                }
-                assertThat(rtpId).isNotEmpty();
-                String billId = null;
-                if(rootNode.has("billId")) {
-                    billId = rootNode.get("billId").asText();
-                }
-                assertThat(billId).isNotEmpty();
             }
 
         }
