@@ -164,7 +164,7 @@ keycloak:
       password: "admin"
     client:
       id: "kong-oidc"
-      secret: "JWIbo7lhpkRSg5o9qGDtcVFu2J2iItwx"
+      secret: "toCozdqKQut8dpVi7WiXXGVeEqKrrTjp"
     grant_type: "password"
 
 payerFundTransfer:
