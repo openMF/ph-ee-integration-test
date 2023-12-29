@@ -19,6 +19,8 @@ public class BillPayConnectorConfig {
 
     @Value("${callback_url}")
     public String callbackURL;
+    @Value("${billPay.endpoints.billerRtpRequest}")
+    public String billerRtpEndpoint;
 
     @PostConstruct
     private void setup() {

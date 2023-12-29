@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -216,7 +217,7 @@ public class BillPayStepDef extends BaseStepDef {
     }
 
     @And("I can call the biller RTP request API with expected status of {int} and {string} endpoint")
-    public void iCanCallTheBillerRTPRequestAPIWithExpectedStatusOfAndEndpoint(int expectedStatus, String stub) throws JsonProcessingException {
+    public void iCanCallTheBillerRTPRequestAPIWithExpectedStatusOfAndEndpoint(int expectedStatus, String stub) throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonPayload = objectMapper.writeValueAsString(billRTPReqDTO);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
@@ -226,12 +227,12 @@ public class BillPayStepDef extends BaseStepDef {
                 .header("X-Biller-Id", billerId)
                 .header("X-Client-Correlation-ID",clientCorrelationId)
                 .header("X-Platform-TenantId",tenant)
-                .baseUri(billPayConfig.billPayContactPoint)
+                .baseUri(billPayConnectorConfig.billPayContactPoint)
                 .body(jsonPayload)
                 .expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when()
-                .post(billPayConfig.billerRtpEndpoint)
+                .post(billPayConnectorConfig.billerRtpEndpoint)
                 .andReturn().asString();
 
 
