@@ -86,3 +86,17 @@ Feature: Bill Payment P2G Test
     And I can mock payment notification request
     When I call the mock bills payment api from PBB to Biller with billid with expected status of 200
     Then I should get non empty response
+
+  @gov
+  Scenario: RTP Integration test
+    Given I can inject MockServer
+    And I can start mock server
+    And I can register the stub with "/test" endpoint for "POST" request with status of 200
+    Given I have tenant as "gorilla"
+    And I have a billerId as "GovBill"
+    And I generate clientCorrelationId
+    And I create a new clientCorrelationId
+    Then I can create DTO for Biller RTP Request
+    And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
+    Then I will sleep for 8000 millisecond
+    And I can extract the callback body and assert the rtpStatus
