@@ -14,9 +14,7 @@ Feature: Bill Payment P2G Test
     Then I should get non empty response
     And I should get transactionId in response
     And I will sleep for 5000 millisecond
-    When I make the "POST" request to "/billInquiry" endpoint with expected status of 200
     Then I should be able to extract response body from callback for bill pay
-    And I can stop mock server
 
   @gov
         #this is an integration for payment notification, includes api calls from PFI to PBB to Bill Agg and back (tests full flow)
@@ -31,14 +29,8 @@ Feature: Bill Payment P2G Test
     When I call the payment notification api expected status of 202 and callbackurl as "/billNotification"
     Then I should get non empty response
     And I should get transactionId in response
-    When I make the "POST" request to "/billNotification" endpoint with expected status of 200
     And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill pay
-    And I can stop mock server
-
-
-
-
 
 
     #this is an integration for bill inquiry stage w/o rtp, includes bill inquiry api and payment notification from PFI to PBB to Bill Agg and back

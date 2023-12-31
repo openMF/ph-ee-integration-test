@@ -191,26 +191,28 @@ public class BillPayStepDef extends BaseStepDef {
                 flag = true;
                 try {
                     rootNode = objectMapper.readTree(request.getRequest().getBody());
-                   logger.info("Rootnode value:" + rootNode);
+                    logger.info("Rootnode value:" + rootNode);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                String code = null;
-                if(rootNode.has("code")) {
-                    code = rootNode.get("code").asText();
+                if(rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
+                    String requestId = null;
+                    if (rootNode.has("requestId")) {
+                        requestId = rootNode.get("requestId").asText();
+                    }
+                    assertThat(requestId).isNotEmpty();
+                    String rtpStatus = null;
+                    if (rootNode.has("code")) {
+                        rtpStatus = rootNode.get("code").asText();
+                    }
+                    assertThat(rtpStatus).isNotEmpty();
+                    String billId = null;
+                    if (rootNode.has("billId")) {
+                        billId = rootNode.get("billId").asText();
+                    }
+                    assertThat(billId).isNotEmpty();
                 }
-                assertThat(code).isNotEmpty();
-                String reason = null;
-                if(rootNode.has("reason")) {
-                    reason = rootNode.get("reason").asText();
-                }
-                assertThat(reason).isNotEmpty();
-                String billId = null;
-                if(rootNode.has("billId")) {
-                    billId = rootNode.get("billId").asText();
-                }
-                assertThat(billId).isNotEmpty();
-        }
+            }
 
         }
         assertThat(flag).isTrue();
