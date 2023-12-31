@@ -271,3 +271,23 @@ Feature: Batch Details API test
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
     And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
+
+  @gov
+  Scenario: BD-018 Batch with callback
+    Given I will start the mock server
+    And I can register the stub with "/callback" endpoint for "POST" request with status of 200
+    Then I will update the  mock server and register stub as done
+    Given I have tenant as "rhino"
+    And I have the demo csv file "ph-ee-bulk-demo-7.csv"
+    And I create a new clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202 and callbackurl as "/callback"
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    Then I will sleep for 5000 millisecond
+    When I call the batch summary API with expected status of 200
+    And I will sleep for 15000 millisecond
+    When I make the "POST" request to "/callback" endpoint with expected status of 200
+    Then I should be able to extract response body from callback for batch
+    And I can stop mock server
