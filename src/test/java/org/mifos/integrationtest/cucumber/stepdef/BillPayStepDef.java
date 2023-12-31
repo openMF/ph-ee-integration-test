@@ -217,6 +217,44 @@ public class BillPayStepDef extends BaseStepDef {
         }
         assertThat(flag).isTrue();
     }
+    @Then("I should be able to extract response body from callback for bill notification")
+    public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotification() {
+        boolean flag = false;
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        for (int i = allServeEvents.size()-1; i >= 0; i--) {
+            ServeEvent request = allServeEvents.get(i);
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                flag = true;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBody());
+                    logger.info("Rootnode value:" + rootNode);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                if(rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
+                    String requestId = null;
+                    if (rootNode.has("billRequestId")) {
+                        requestId = rootNode.get("billRequestId").asText();
+                    }
+                    assertThat("billRequestId").isNotEmpty();
+                    String rtpStatus = null;
+                    if (rootNode.has("code")) {
+                        rtpStatus = rootNode.get("code").asText();
+                    }
+                    assertThat(rtpStatus).isNotEmpty();
+                    String billId = null;
+                    if (rootNode.has("billId")) {
+                        billId = rootNode.get("billId").asText();
+                    }
+                    assertThat(billId).isNotEmpty();
+                }
+            }
+
+        }
+        assertThat(flag).isTrue();
+    }
+
 
     @And("I can call the biller RTP request API with expected status of {int} and {string} endpoint")
     public void iCanCallTheBillerRTPRequestAPIWithExpectedStatusOfAndEndpoint(int expectedStatus, String stub) throws JsonProcessingException, com.fasterxml.jackson.core.JsonProcessingException {
