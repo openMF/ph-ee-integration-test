@@ -30,7 +30,7 @@ Feature: Bill Payment P2G Test
     Then I should get non empty response
     And I should get transactionId in response
     And I will sleep for 5000 millisecond
-    Then I should be able to extract response body from callback for bill pay
+    Then I should be able to extract response body from callback for bill notification
 
 
     #this is an integration for bill inquiry stage w/o rtp, includes bill inquiry api and payment notification from PFI to PBB to Bill Agg and back
