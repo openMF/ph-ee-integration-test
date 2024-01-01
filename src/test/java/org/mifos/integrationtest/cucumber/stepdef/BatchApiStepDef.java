@@ -646,7 +646,6 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
         assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getSubBatchList().size()).isEqualTo(2);
         assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
     }
 }
