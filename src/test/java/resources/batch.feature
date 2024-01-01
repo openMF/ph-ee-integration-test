@@ -274,7 +274,8 @@ Feature: Batch Details API test
 
   @gov
   Scenario: BD-018 Batch with callback
-    Given I will start the mock server
+    Given I can inject MockServer
+    And I can start mock server
     And I can register the stub with "/callback" endpoint for "POST" request with status of 200
     Then I will update the  mock server and register stub as done
     Given I have tenant as "rhino"
@@ -288,6 +289,4 @@ Feature: Batch Details API test
     Then I will sleep for 5000 millisecond
     When I call the batch summary API with expected status of 200
     And I will sleep for 15000 millisecond
-    When I make the "POST" request to "/callback" endpoint with expected status of 200
     Then I should be able to extract response body from callback for batch
-    And I can stop mock server
