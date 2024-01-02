@@ -54,6 +54,7 @@ Feature: Voucher Management Api Test
     And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
 
+
   @createAndActivateVoucher
   Scenario: Fetch Voucher Api Test
     When I will sleep for 3000 millisecond
