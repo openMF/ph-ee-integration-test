@@ -320,7 +320,7 @@ workflows:
             - Ngrok
       - test-chart-ams:
           requires:
-            - test-chart-ams
+            - test-chart-gov
           context:
             - AWS
             - Helm
