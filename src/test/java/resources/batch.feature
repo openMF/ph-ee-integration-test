@@ -305,6 +305,6 @@ Feature: Batch Details API test
     When I call the actuator API with Contactpoint "bulk-processor.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of service is "UP"
-    When I call the actuator API with Contactpoint "mojaloop.contactpoint" and endpoint "/actuator/health"
+    When I call the actuator API with Contactpoint "ml-connector.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of service is "UP"

@@ -223,6 +223,7 @@ mojaloop:
 
 ml-connector:
   host:  "mojaloop.sandbox.fynarfin.io"
+  contactpoint: "https://mojaloop.sandbox.fynarfin.io"
   endpoint:
     get-party: "/switch/parties/{{identifierType}}/{{identifier}}"
     get-quote: "/switch/quotes"
