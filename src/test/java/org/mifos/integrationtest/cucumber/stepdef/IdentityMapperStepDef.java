@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -448,4 +449,20 @@ public class IdentityMapperStepDef extends BaseStepDef {
             e.printStackTrace();
         }
     }
+
+    @Given("I create an IdentityMapperDTO for Register Beneficiary from csv file")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryFromCsvFile() {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        payeeIdentity = generateUniqueNumber(16);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("3001003873110196", "00", null, "gorilla");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        beneficiaryDTO = new BeneficiaryDTO("3001003874120160", "00", null, "gorilla");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        beneficiaryDTO = new BeneficiaryDTO("3001003873110195", "00", null, "rhino");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+
 }

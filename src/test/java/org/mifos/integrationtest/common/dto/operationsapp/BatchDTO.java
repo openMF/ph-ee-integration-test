@@ -16,5 +16,5 @@ public class BatchDTO {
     private String batch_id, request_id, file, notes, created_at, status,
             modes, purpose, failPercentage, successPercentage;
     private Long total, ongoing, failed, successful;
-    private BigDecimal totalAmount, successfulAmount, pendingAmount, failedAmount;
+    private BigDecimal totalAmount, successfulAmount, pendingAmount, failedAmount, approvedAmount, approvedCount;
 }
