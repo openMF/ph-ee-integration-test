@@ -250,7 +250,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-017 Batch test for de-duplicating payments
     Given I have the demo csv file "deduplication-test.csv"
-    And I have tenant as "rhino"
+    And I have tenant as "gorilla"
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
