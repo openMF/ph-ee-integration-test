@@ -510,6 +510,7 @@ public class GSMATransferStepDef extends BaseStepDef{
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "", beneficiaryDTOList);
+        BaseStepDef.beneficiaryPayeeIdentity = payeeIdentity;
     }
 
     public static String generateUniqueNumber(int length) {
