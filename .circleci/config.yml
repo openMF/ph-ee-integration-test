@@ -162,6 +162,7 @@ jobs:
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-connector-bulk|cut -d ' ' -f1  ` || echo ' ' "
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-connector-mock-payment-schema|cut -d ' ' -f1  ` || echo ' ' "
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-importer-rdbms|cut -d ' ' -f1  ` || echo ' ' "
+      - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-vouchers|cut -d ' ' -f1  ` || echo ' ' "
   deploying-bpmns:
     docker:
       - image: 'cimg/base:2022.06'
