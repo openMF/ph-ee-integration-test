@@ -691,6 +691,6 @@ public class BatchApiStepDef extends BaseStepDef {
         BaseStepDef.response = resp.andReturn().asString();
         BaseStepDef.restResponseObject = resp;
 
-        logger.info("Mock actuator Response: " + BaseStepDef.response);
+        logger.info("Actuator Response: " + BaseStepDef.response);
     }
 }
