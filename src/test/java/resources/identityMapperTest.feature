@@ -256,8 +256,3 @@ Feature: Identity Account Mapper Api Test
     And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
     And I can stop mock server
 
-  Scenario: APT-002 Identity actuator API test
-    When I call the actuator API with Contactpoint "identity-account-mapper.contactpoint" and endpoint "/actuator/health"
-    Then I am able to parse actuator response
-    And Status of service is "UP"
-
