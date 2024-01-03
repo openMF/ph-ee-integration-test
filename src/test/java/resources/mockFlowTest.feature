@@ -21,7 +21,7 @@ Feature: Mock Flow Test
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
     And I have tenant as "lion"
-    Then I will sleep for 7000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
     And I should have startedAt and completedAt in response
