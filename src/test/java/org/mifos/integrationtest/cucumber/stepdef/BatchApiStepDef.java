@@ -659,20 +659,6 @@ public class BatchApiStepDef extends BaseStepDef {
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
         assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
         assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);}
-    @When("I call the mock actuator endpoint")
-    public void iCallTheMockActuatorEndpointWithExpectedStatusOf() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-
-        Response resp = RestAssured.given(requestSpec).baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint).expect()
-                .spec(new ResponseSpecBuilder().build()).when()
-                .get(mockPaymentSchemaConfig.mockActuatorEndpoint).then().extract().response();
-
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
-
-        logger.info("Mock actuator Response: " + BaseStepDef.response);
-
-    }
 
     @And("I am able to parse actuator response")
     public void iAmAbleToParseActuatorResponse() {
