@@ -134,7 +134,7 @@ public class BaseStepDef {
     protected static String payeeIdentifier;
     protected static Long currentBalance;
     protected static String beneficiaryPayeeIdentity;
-    protected static String payer_identifier;
+    protected static String payee_identifier;
     protected static KeycloakUser keycloakUser;
     protected static String keycloakCurrentUserPassword = "password";
     protected static PaymentBatchDetail paymentBatchDetail;
