@@ -61,6 +61,7 @@ ams:
   base-url: https://ams-mifos.sandbox.fynarfin.io
   balance-endpoint: /ams/accounts/{IdentifierType}/{IdentifierId}/balance
 
+
 loan:
   base-url: https://fynams.sandbox.fynarfin.io
   endpoints:
