@@ -54,7 +54,7 @@ public class GSMATransferStepDef extends BaseStepDef{
     @Autowired
     ObjectMapper objectMapper;
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static String payer_identifier;
+    private static String payerIdentifier;
     private static String payeeIdentity;
     private static String requestId;
     private static AccountMapperRequestDTO registerBeneficiaryBody = null;
@@ -124,10 +124,10 @@ public class GSMATransferStepDef extends BaseStepDef{
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(
                 gsmaTransferDef.responseSavingsAccount, PostSavingsAccountsResponse.class);
-        payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        BaseStepDef.payerIdentifier = payer_identifier;
+        payerIdentifier = savingsAccountResponse.getSavingsId().toString();
+        BaseStepDef.payerIdentifier = payerIdentifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", payer_identifier);
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", payerIdentifier);
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec)
                 .baseUri(gsmaConfig.savingsBaseUrl)
@@ -506,10 +506,12 @@ public class GSMATransferStepDef extends BaseStepDef{
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         payeeIdentity = generateUniqueNumber(16);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "01", payer_identifier, "gorilla");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "01", payerIdentifier, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "", beneficiaryDTOList);
+        BaseStepDef.beneficiaryPayeeIdentity = payeeIdentity;
+        BaseStepDef.payeeIdentifier = payerIdentifier;
     }
 
     public static String generateUniqueNumber(int length) {
