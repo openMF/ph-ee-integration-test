@@ -78,7 +78,7 @@ public class MockFlowTestDef extends BaseStepDef {
         String value = content.get("payeeDfspId").toString();
         String payeeIdentifier = content.get("payeePartyId").toString();
         assertThat(value).isEqualTo(payeeDfspId);
-        assertThat(payeeIdentifier).isEqualTo(BaseStepDef.payee_identifier);
+        assertThat(payeeIdentifier).isEqualTo(BaseStepDef.payeeIdentifier);
     }
 
 
