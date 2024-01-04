@@ -290,3 +290,4 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200
     And I will sleep for 15000 millisecond
     Then I should be able to extract response body from callback for batch
+
