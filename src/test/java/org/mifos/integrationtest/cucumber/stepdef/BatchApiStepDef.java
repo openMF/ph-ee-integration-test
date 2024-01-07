@@ -649,3 +649,4 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
     }
 }
+
