@@ -240,7 +240,6 @@ public class VoucherManagementStepDef extends BaseStepDef{
         sb.append("{\n");
         sb.append("  \"requestID\": \"").append(requestId).append("\",\n"); // Replaced "849324499155" with requestId variable
         sb.append("  \"agentID\": \"").append(agentId).append("\",\n"); // Replaced "1234567890" with agentId variable
-        sb.append("  \"voucherSerialNumber\": \"").append(serialNumber).append("\",\n");
         sb.append("  \"voucherSecretNumber\": \"").append(voucherNumber).append("\"\n");
         sb.append("}");
 
