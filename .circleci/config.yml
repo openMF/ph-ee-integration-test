@@ -140,7 +140,11 @@ jobs:
           echo "$KEY" | tr '#' '\n' > key.pem
           echo "$SSL_BUNDLE" | tr '#' '\n' > ssl-bundle.crt
           openssl x509 -in ssl-bundle.crt -text -noout
-          kubectl create secret tls fyn-cert --namespace $NAMESPACE --key=key.pem --cert=ssl-bundle.crt -o yaml
+          if kubectl get secret fyn-cert --namespace $NAMESPACE &> /dev/null; then
+            echo "Secret fyn-cert already exists. Skipping creation."
+          else
+            kubectl create secret tls fyn-cert --namespace $NAMESPACE --key=key.pem --cert=ssl-bundle.crt -o yaml
+          fi
 
   create-secret-paymenthub-namespace:
     docker:
