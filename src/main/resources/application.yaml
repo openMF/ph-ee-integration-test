@@ -25,7 +25,7 @@ paybill:
       settlement: "/confirmation"
 
 bulk-processor:
-  contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
+  contactpoint: "https://localhost:8443"
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"
@@ -166,6 +166,10 @@ keycloak:
       id: "kong-oidc"
       secret: "toCozdqKQut8dpVi7WiXXGVeEqKrrTjp"
     grant_type: "password"
+
+config:
+  completion-threshold-check:
+    completion-threshold: 90
 
 payerFundTransfer:
   tenant:
