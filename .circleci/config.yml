@@ -122,7 +122,7 @@ jobs:
           cluster-name: "sit"
           aws-region: "$REGION"
           service-file-path: https://raw.githubusercontent.com/openMF/ph-ee-env-labs/master/.circleci/services.txt
-  create-secret-paymenthub-namespace:
+  delete-pods-paymenthub-namespace:
     docker:
       - image: 'cimg/base:2022.06'
     environment:
@@ -136,40 +136,11 @@ jobs:
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: "sit"
           aws-region: "$REGION"
-      - run: |
-          cd ph-ee-env-labs
-          export ENV_NAMESPACE=$NAMESPACE
-          kubectl config use-context arn:aws:eks:$REGION:419830066942:cluster/sit
-          kubectl config get-contexts
-          cd helm/kibana-secret/
-          make secrets || echo "kibana" already exists
-
-      - run: |
-          cd ph-ee-env-labs
-          export ENV_NAMESPACE=$NAMESPACE
-          kubectl config use-context arn:aws:eks:$REGION:419830066942:cluster/sit
-          kubectl config get-contexts
-          cd helm/es-secret/
-          make secrets || echo "elastic-certificates" already exists
-
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-connector-bulk|cut -d ' ' -f1  ` || echo ' ' "
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-connector-mock-payment-schema|cut -d ' ' -f1  ` || echo ' ' "
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-importer-rdbms|cut -d ' ' -f1  ` || echo ' ' "
       - run: "kubectl delete pod  -n $NAMESPACE `kubectl get pods -n $NAMESPACE | grep ph-ee-vouchers|cut -d ' ' -f1  ` || echo ' ' "
-  deploying-bpmns:
-    docker:
-      - image: 'cimg/base:2022.06'
-    steps:
-      - run: git clone https://github.com/openmf/ph-ee-env-labs
-      - run: echo $AWS_PROFILE
-      - run: echo $AWS_DEFAULT_PROFILE
-      - run: |
-          #sleep 5
-          #sudo apt install -y netcat
-          #until nc -vz https://zeebeops.sandbox.fynarfin.io 443; do echo "Waiting for zeebe-ops service"; sleep 2; done;
-      - run: |
-          cd ph-ee-env-labs 
-          sh orchestration/deployBpmn.sh
+
   test-chart-gov:
     docker:
       - image: cimg/openjdk:17.0.0-node
@@ -265,7 +236,7 @@ workflows:
             - build
             - build_and_push_tag_image
             - build_and_push_latest_image
-      - create-secret-paymenthub-namespace:
+      - delete-pods-paymenthub-namespace:
           requires:
             - docker-image-availability-check-and-upgrade
           context:
@@ -279,25 +250,9 @@ workflows:
       #     cluster-name: sit
       #     requires:
       #       - install-helm-chart
-      - deploying-bpmns:
-          requires:
-            - create-secret-paymenthub-namespace
-          context:
-            - AWS
-            - Helm
-            - slack
       - test-chart-ams:
           requires:
             - deploying-bpmns
-
-          context:
-            - AWS
-            - Helm
-            - slack
-            - Ngrok
-      - test-chart-gov:
-          requires:
-            - test-chart-ams
           context:
             - AWS
             - Helm
