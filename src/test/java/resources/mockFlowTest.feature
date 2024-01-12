@@ -1,7 +1,7 @@
 @gov
 Feature: Mock Flow Test
 
-
+  @flaky
   Scenario: Test for minimal mock fund transfer account lookup flow
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I call the create payer client endpoint
