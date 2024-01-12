@@ -198,7 +198,7 @@ Feature: Identity Account Mapper Api Test
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 2 request
 
-   @wip
+   @flaky
   Scenario: PPV-02 Beneficiary not registered
     When I create an IdentityMapperDTO for adding 8 beneficiary
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
@@ -208,7 +208,7 @@ Feature: Identity Account Mapper Api Test
     Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
   
-  @wip
+  @flaky
   Scenario: PPV-02 Batch Account Lookup API
     When I create an IdentityMapperDTO for adding 8 beneficiary
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
@@ -239,7 +239,8 @@ Feature: Identity Account Mapper Api Test
     And I will sleep for 3000 millisecond
     Then I will call the fetch beneficiary API with expected status of 200
     And I will assert the fields from fetch beneficiary response
-
+    
+  @flaky
   Scenario: Batch Account Lookup Integration Test
     Given I create an IdentityMapperDTO for Register Beneficiary from csv file
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
