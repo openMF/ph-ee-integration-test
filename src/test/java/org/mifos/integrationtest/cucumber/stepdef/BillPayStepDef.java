@@ -69,7 +69,7 @@ public class BillPayStepDef extends BaseStepDef {
         requestSpec.queryParam("fields","inquiry");
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(billPayConnectorConfig.inquiryEndpoint.replace("{billId}",billId)).andReturn().asString();
+                .get(billPayConnectorConfig.inquiryEndpoint.replace("{billId}",BaseStepDef.billId)).andReturn().asString();
 
         logger.info("Bill Pay response: {}", BaseStepDef.response);
         JSONObject jsonObject = new JSONObject(BaseStepDef.response);
@@ -197,10 +197,11 @@ public class BillPayStepDef extends BaseStepDef {
                 }
                 if(rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
                     String requestId = null;
-                    if (rootNode.has("requestId")) {
-                        requestId = rootNode.get("requestId").asText();
+                    if (rootNode.has("reason")) {
+                        requestId = rootNode.get("reason").asText();
                     }
                     assertThat(requestId).isNotEmpty();
+                    assertThat(requestId).contains("SUCCESSFUL");
                     String rtpStatus = null;
                     if (rootNode.has("code")) {
                         rtpStatus = rootNode.get("code").asText();
