@@ -1,5 +1,13 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.google.common.truth.Truth.assertThat;
+
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -11,14 +19,6 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
-import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
-import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
-import org.mifos.integrationtest.common.Utils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,14 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.google.common.truth.Truth.assertThat;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
+import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
+import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
+import org.mifos.integrationtest.common.Utils;
 
 public class IdentityMapperStepDef extends BaseStepDef {
 
@@ -483,6 +482,5 @@ public class IdentityMapperStepDef extends BaseStepDef {
         requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
-
 
 }

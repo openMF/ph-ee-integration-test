@@ -1,5 +1,14 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
+import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
+import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
+import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
+import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
+import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
+
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +23,18 @@ import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,28 +56,6 @@ import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
-import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
-import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
-import static org.mifos.integrationtest.common.Utils.HEADER_PURPOSE;
-import static org.mifos.integrationtest.common.Utils.HEADER_REGISTERING_INSTITUTE_ID;
-import static org.mifos.integrationtest.common.Utils.QUERY_PARAM_TYPE;
 
 public class BatchApiStepDef extends BaseStepDef {
 
@@ -331,6 +330,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(BaseStepDef.batchDTO.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
 
     }
+
     @When("I can assert the approved count as {int} and approved amount as {int}")
     public void iCanAssertTheApprovedCountAsAndApprovedAmountAs(int count, int amount) {
         BigDecimal approvedCount = BaseStepDef.batchDTO.getApprovedCount();
@@ -604,58 +604,58 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for batch")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBatch() {
-            boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
-            for (int i = allServeEvents.size()-1; i >= 0; i--) {
-                ServeEvent request = allServeEvents.get(i);
-                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                    JsonNode rootNode = null;
-                    flag = true;
-                    try {
-                        rootNode = objectMapper.readTree(request.getRequest().getBody());
-                        logger.info("Rootnode value:" + rootNode);
-                        assertThat(rootNode).isNotNull();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-            }
+        boolean flag = false;
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+            ServeEvent request = allServeEvents.get(i);
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                flag = true;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBody());
+                    logger.info("Rootnode value:" + rootNode);
+                    assertThat(rootNode).isNotNull();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-        }assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        }
     }
-}
 
     @When("I call the batch transactions endpoint with expected status of {int} and callbackurl as {string}")
     public void iCallTheBatchTransactionsEndpointWithExpectedStatusOfAndCallbackurlAs(int expectedStatus, String callback) {
-            RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant,BaseStepDef.clientCorrelationId);
-            requestSpec.header(HEADER_PURPOSE, "Integration test");
-            requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
-            requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
-            requestSpec.header(QUERY_PARAM_TYPE, "CSV");
-            requestSpec.header("X-CallbackURL",callbackURL + callback);
-            if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
-                requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
-            }
-            if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
-                requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
-                requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
-            }
-
-            File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
-            Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                    .contentType("multipart/form-data").multiPart("data", f).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                    .when()
-                    .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
-
-            BaseStepDef.response = resp.andReturn().asString();
-            BaseStepDef.restResponseObject = resp;
-
-            Headers allHeaders = resp.getHeaders();
-            for (Header header : allHeaders) {
-                System.out.print(header.getName() + " : ");
-                System.out.println(header.getValue());
-            }
-            logger.info("Batch Transactions Response: " + BaseStepDef.response);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        requestSpec.header(HEADER_PURPOSE, "Integration test");
+        requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
+        requestSpec.header(QUERY_PARAM_TYPE, "CSV");
+        requestSpec.header("X-CallbackURL", callbackURL + callback);
+        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
         }
+        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        }
+
+        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .contentType("multipart/form-data").multiPart("data", f).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
+
+        BaseStepDef.response = resp.andReturn().asString();
+        BaseStepDef.restResponseObject = resp;
+
+        Headers allHeaders = resp.getHeaders();
+        for (Header header : allHeaders) {
+            logger.info("{}", header.getName());
+            logger.info(header.getValue());
+        }
+        logger.info("Batch Transactions Response: " + BaseStepDef.response);
+    }
 
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {

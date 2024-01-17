@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -10,6 +12,10 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.kong.KongConsumer;
@@ -21,13 +27,6 @@ import org.mifos.integrationtest.config.KeycloakConfig;
 import org.mifos.integrationtest.config.KongConfig;
 import org.mifos.integrationtest.config.KongOidcPluginConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import static com.google.common.truth.Truth.assertThat;
 
 @SuppressWarnings("AvoidDoubleBraceInitialization")
 public class KongStepDef extends BaseStepDef {
@@ -340,17 +339,18 @@ public class KongStepDef extends BaseStepDef {
         kongPlugin.setId(UUID.randomUUID().toString());
         kongPlugin.setName("rate-limiting");
         kongPlugin.setEnabled(true);
-        kongPlugin.setConfig(new HashMap<>(){{
-            put("policy","cluster");
-            put("minute", 2);
-            put("limit_by", "consumer");;
-        }});
+        kongPlugin.setConfig(new HashMap<>() {
+
+            {
+                put("policy", "cluster");
+                put("minute", 2);
+                put("limit_by", "consumer");
+            }
+        });
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(kongPlugin)).expect()
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
                 .post(kongConfig.createPluginEndpoint, BaseStepDef.kongService.getId()).andReturn().asString();
 
@@ -371,20 +371,21 @@ public class KongStepDef extends BaseStepDef {
         kongPlugin.setId(UUID.randomUUID().toString());
         kongPlugin.setName("rate-limiting");
         kongPlugin.setEnabled(true);
-        kongPlugin.setConfig(new HashMap<>(){{
-            put("policy","cluster");
-            put("second", 1);
-            put("minute", 5);
-            put("limit_by", "consumer");
-        }});
+        kongPlugin.setConfig(new HashMap<>() {
+
+            {
+                put("policy", "cluster");
+                put("second", 1);
+                put("minute", 5);
+                put("limit_by", "consumer");
+            }
+        });
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec)
-                .baseUri(kongConfig.adminContactPoint)
-                .header("Content-Type", "application/json")
-                .body(objectMapper.writeValueAsString(kongPlugin)).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.pluginsEndpoint).andReturn().asString();
+        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+                .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.pluginsEndpoint).andReturn()
+                .asString();
 
         logger.info("Creating ratelimiter plugin response from kong: {}", BaseStepDef.response);
         try {

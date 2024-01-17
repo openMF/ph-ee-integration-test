@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PayerFSPDetail {
+
     private String payerFspId;
     private String financialAddress;
 }

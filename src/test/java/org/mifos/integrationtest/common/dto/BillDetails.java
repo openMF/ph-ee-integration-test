@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BillDetails {
+
     private String billId;
     private String billerName;
     private Double amount;

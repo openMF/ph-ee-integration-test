@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Alias {
+
     private String aliasType;
     private String aliasId;
 }

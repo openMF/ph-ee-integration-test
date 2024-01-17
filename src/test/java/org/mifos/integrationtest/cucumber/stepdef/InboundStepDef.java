@@ -1,5 +1,10 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -12,11 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 public class InboundStepDef extends BaseStepDef {
 

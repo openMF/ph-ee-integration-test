@@ -1,5 +1,12 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.google.common.truth.Truth.assertThat;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
@@ -13,13 +20,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.google.common.truth.Truth.assertThat;
 
 public class BatchAuthorizationStepDef extends BaseStepDef {
 

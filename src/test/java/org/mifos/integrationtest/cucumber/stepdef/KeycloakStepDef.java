@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.type.TypeReference;
 import io.cucumber.java.After;
@@ -9,6 +12,8 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.List;
+import java.util.UUID;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.common.dto.kong.Access;
@@ -16,12 +21,6 @@ import org.mifos.integrationtest.common.dto.kong.KeycloakUpdateRequest;
 import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
 import org.mifos.integrationtest.config.KeycloakConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.UUID;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 
 public class KeycloakStepDef extends BaseStepDef {
 
@@ -64,13 +63,9 @@ public class KeycloakStepDef extends BaseStepDef {
                 .formParam(KeycloakConfig.headerClientIdKey, keycloakConfig.clientId)
                 .formParam(KeycloakConfig.headerClientSecretKey, keycloakConfig.clientSecret)
                 .formParam(KeycloakConfig.headerGrantTypeKey, keycloakConfig.grantType);
-        BaseStepDef.response = RestAssured.given(requestSpecification)
-                .baseUri(keycloakConfig.keycloakContactPoint)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(keycloakConfig.tokenEndpoint, keycloakConfig
-                        .realm)
-                .andReturn().asString();
+        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(keycloakConfig.tokenEndpoint, keycloakConfig.realm).andReturn().asString();
         try {
             BaseStepDef.keycloakTokenResponse = objectMapper.readValue(BaseStepDef.response, KeycloakTokenResponse.class);
         } catch (Exception e) {

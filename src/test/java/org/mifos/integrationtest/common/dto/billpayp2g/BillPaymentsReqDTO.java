@@ -1,12 +1,11 @@
-package org.mifos.integrationtest.common.dto.billPayP2G;
+package org.mifos.integrationtest.common.dto.billpayp2g;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -17,11 +16,8 @@ public class BillPaymentsReqDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "BillPaymentsReqDTO{" +
-                "billInquiryRequestId='" + billInquiryRequestId + '\'' +
-                ", billId='" + billId + '\'' +
-                ", paymentReferenceID='" + paymentReferenceID + '\'' +
-                '}';
+        return "BillPaymentsReqDTO{" + "billInquiryRequestId='" + billInquiryRequestId + '\'' + ", billId='" + billId + '\''
+                + ", paymentReferenceID='" + paymentReferenceID + '\'' + '}';
     }
 
     private String billInquiryRequestId;
@@ -51,7 +47,5 @@ public class BillPaymentsReqDTO implements Serializable {
     public void setPaymentReferenceID(String paymentReferenceID) {
         this.paymentReferenceID = paymentReferenceID;
     }
-
-
 
 }

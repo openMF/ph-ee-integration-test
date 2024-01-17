@@ -1,5 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static io.restassured.config.EncoderConfig.encoderConfig;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -9,9 +12,6 @@ import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.google.common.truth.Truth.assertThat;
-import static io.restassured.config.EncoderConfig.encoderConfig;
 
 public class MojaloopStepDef extends BaseStepDef {
 
@@ -60,12 +60,12 @@ public class MojaloopStepDef extends BaseStepDef {
     }
 
     @Given("I am setting up Mojaloop")
-    public void mojaloopSetup()throws JsonProcessingException {
+    public void mojaloopSetup() throws JsonProcessingException {
 
         String payerFsp = mojaloopConfig.payerFspId;
         String payeeFsp = mojaloopConfig.payeeFspId;
 
-        if(!mojaloopDef.isHubAccountTypesAdded()) {
+        if (!mojaloopDef.isHubAccountTypesAdded()) {
 
             logger.info("Calling hub account apis");
 
@@ -73,7 +73,7 @@ public class MojaloopStepDef extends BaseStepDef {
             mojaloopDef.hubReconciliation();
         }
 
-        if(!mojaloopDef.isSettlementModelsCreated()) {
+        if (!mojaloopDef.isSettlementModelsCreated()) {
 
             logger.info("Calling Settlement Models apis");
 
@@ -86,13 +86,13 @@ public class MojaloopStepDef extends BaseStepDef {
         mojaloopDef.addInitialPositionAndLimit(payerFsp);
         mojaloopDef.addInitialPositionAndLimit(payeeFsp);
 
-        if(!mojaloopDef.getCallbackEndpoints(payerFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp)) {
+        if (!mojaloopDef.getCallbackEndpoints(payerFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp)) {
             mojaloopDef.setCallbackEndpoints();
         }
 
         mojaloopDef.recordFunds(payerFsp);
 
-        if(!mojaloopDef.OracleExists()) {
+        if (!mojaloopDef.oracleExists()) {
             mojaloopDef.oracleOnboard();
         }
     }

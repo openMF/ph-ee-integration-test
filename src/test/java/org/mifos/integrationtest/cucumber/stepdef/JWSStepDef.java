@@ -1,23 +1,22 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import io.cucumber.java.en.And;
-import org.mifos.connector.common.util.CertificateUtil;
-import org.mifos.connector.common.util.Constant;
-import org.mifos.connector.common.util.SecurityUtil;
-import org.mifos.integrationtest.config.JWSKeyConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import static com.google.common.truth.Truth.assertThat;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import io.cucumber.java.en.And;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
-
-import static com.google.common.truth.Truth.assertThat;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.mifos.connector.common.util.CertificateUtil;
+import org.mifos.connector.common.util.Constant;
+import org.mifos.connector.common.util.SecurityUtil;
+import org.mifos.integrationtest.config.JWSKeyConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class JWSStepDef extends BaseStepDef {
 

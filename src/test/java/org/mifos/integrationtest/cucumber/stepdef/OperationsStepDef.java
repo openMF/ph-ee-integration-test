@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -9,14 +11,11 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.google.common.truth.Truth.assertThat;
 
 @Slf4j
 public class OperationsStepDef extends BaseStepDef {

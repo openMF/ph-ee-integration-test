@@ -8,6 +8,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.util.UUID;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.mojaloop.AddParticipantRequestBody;
 import org.mifos.integrationtest.common.dto.mojaloop.AddUserAlsRequest;
@@ -27,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 public class MojaloopDef {
 
@@ -45,7 +44,7 @@ public class MojaloopDef {
 
     private static final String CURRENCY = "USD";
 
-    protected String setBodyAddAlsUser(String fspId)throws JsonProcessingException {
+    protected String setBodyAddAlsUser(String fspId) throws JsonProcessingException {
         AddUserAlsRequest addUserAlsRequest = new AddUserAlsRequest();
         addUserAlsRequest.setCurrency(CURRENCY);
         addUserAlsRequest.setFspId(fspId);
@@ -56,16 +55,15 @@ public class MojaloopDef {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         String endpoint = mojaloopConfig.mojaloopHubAccount;
-        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when()
-                                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                                .get(endpoint).andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when().expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
         int count = JsonParser.parseString(response).getAsJsonArray().size();
         logger.info(String.valueOf(count));
-        return count>=2;
+        return count >= 2;
     }
 
-    protected void hubMultilateralSettlement()throws JsonProcessingException {
+    protected void hubMultilateralSettlement() throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
@@ -77,7 +75,7 @@ public class MojaloopDef {
         validateResponse(response, "3003");
     }
 
-    protected void hubReconciliation()throws JsonProcessingException {
+    protected void hubReconciliation() throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
@@ -92,16 +90,15 @@ public class MojaloopDef {
     protected Boolean isSettlementModelsCreated() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         String endpoint = mojaloopConfig.settlementModel;
-        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when()
-                                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                                .get(endpoint).andReturn().asString();
+        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when().expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
         int count = JsonParser.parseString(response).getAsJsonArray().size();
         logger.info(String.valueOf(count));
-        return count>=2;
+        return count >= 2;
     }
 
-    protected void createSettlementModelDeferredNet()throws JsonProcessingException {
+    protected void createSettlementModelDeferredNet() throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
@@ -109,7 +106,7 @@ public class MojaloopDef {
         String requestBody = objectMapper.writeValueAsString(settlementModelRequestBody("DEFERREDNET"));
 
         Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody).when()
-                        .post(endpoint);
+                .post(endpoint);
 
         validateResponse(response, "3000");
     }
@@ -123,57 +120,50 @@ public class MojaloopDef {
         requestBody.setCurrency(CURRENCY);
 
         Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody).when()
-                        .post(endpoint);
+                .post(endpoint);
 
         validateResponse(response, "3000");
     }
 
     protected SettlementModelRequestBody settlementModelRequestBody(String name) {
-        SettlementModelRequestBody requestBody = SettlementModelRequestBody.builder().name(name)
-            .settlementGranularity("NET")
-            .settlementInterchange("MULTILATERAL")
-            .settlementDelay("DEFERRED")
-            .requireLiquidityCheck(true)
-            .ledgerAccountType("POSITION")
-            .autoPositionReset(true)
-            .settlementAccountType("SETTLEMENT")
-            .build();
+        SettlementModelRequestBody requestBody = SettlementModelRequestBody.builder().name(name).settlementGranularity("NET")
+                .settlementInterchange("MULTILATERAL").settlementDelay("DEFERRED").requireLiquidityCheck(true).ledgerAccountType("POSITION")
+                .autoPositionReset(true).settlementAccountType("SETTLEMENT").build();
         return requestBody;
     }
 
-    protected void addFsp(String fsp)throws JsonProcessingException {
+    protected void addFsp(String fsp) throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         String endpoint = mojaloopConfig.participant;
-        String requestBody = objectMapper.writeValueAsString(new AddParticipantRequestBody(fsp,CURRENCY));
+        String requestBody = objectMapper.writeValueAsString(new AddParticipantRequestBody(fsp, CURRENCY));
 
         Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody).when()
-                        .post(endpoint);
+                .post(endpoint);
 
         validateResponse(response, "3000");
     }
 
-    protected void addInitialPositionAndLimit(String fsp)throws JsonProcessingException {
+    protected void addInitialPositionAndLimit(String fsp) throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         String endpoint = mojaloopConfig.initialPositionAndLimitEndpoint.replaceAll("\\{\\{fsp\\}\\}", fsp);
 
         Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl)
-                        .body(getInitialPositionAndLimitRequestBody()).when()
-                        .post(endpoint);
+                .body(getInitialPositionAndLimitRequestBody()).when().post(endpoint);
 
         validateResponse(response, "2001");
     }
 
-    public String getInitialPositionAndLimitRequestBody()throws JsonProcessingException {
+    public String getInitialPositionAndLimitRequestBody() throws JsonProcessingException {
         Limit limit = new Limit("NET_DEBIT_CAP", 1000000L);
         InitialPositionAndLimitRequestBody requestBody = new InitialPositionAndLimitRequestBody(CURRENCY, limit, 0L);
         return objectMapper.writeValueAsString(requestBody);
     }
 
-    protected void addCallbackEndpoint(String client, String type, String value)throws JsonProcessingException {
+    protected void addCallbackEndpoint(String client, String type, String value) throws JsonProcessingException {
 
         value = value.replaceAll("\\{\\{fsp\\}\\}", client);
         CallbackRequestBody requestBody = new CallbackRequestBody(type, value);
@@ -183,24 +173,22 @@ public class MojaloopDef {
         String endpoint = mojaloopConfig.addCallbackEndpoint.replaceAll("\\{\\{fsp\\}\\}", client);
 
         Response responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl)
-                .body(objectMapper.writeValueAsString(requestBody))
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(endpoint).andReturn();
+                .body(objectMapper.writeValueAsString(requestBody)).expect().spec(new ResponseSpecBuilder().expectStatusCode(201).build())
+                .when().post(endpoint).andReturn();
 
     }
 
     protected Boolean getCallbackEndpoints(String client) {
-         RequestSpecification requestSpec = Utils.getDefaultSpec();
-         String endpoint = mojaloopConfig.addCallbackEndpoint.replaceAll("\\{\\{fsp\\}\\}", client);
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        String endpoint = mojaloopConfig.addCallbackEndpoint.replaceAll("\\{\\{fsp\\}\\}", client);
 
-         String responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(endpoint).andReturn().asString();
+        String responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
-         int count = JsonParser.parseString(responseBody).getAsJsonArray().size();
-         logger.info(String.valueOf(count));
-         int callbackEndpointsRegistered = callbackEndpoints.getCallbackEndpoints().size();
-         return count>=callbackEndpointsRegistered;
+        int count = JsonParser.parseString(responseBody).getAsJsonArray().size();
+        logger.info(String.valueOf(count));
+        int callbackEndpointsRegistered = callbackEndpoints.getCallbackEndpoints().size();
+        return count >= callbackEndpointsRegistered;
     }
 
     protected void setCallbackEndpoints() {
@@ -208,17 +196,17 @@ public class MojaloopDef {
         String payerFsp = mojaloopConfig.payerFspId;
         String payeeFsp = mojaloopConfig.payeeFspId;
         callbackEndpoints.getCallbackEndpoints().forEach(callback -> {
-            String value = callback.getValue().replaceAll("\\{\\{CALLBACK_HOST\\}\\}", "http://"+mojaloopConfig.mlConnectorHost);
-             try {
+            String value = callback.getValue().replaceAll("\\{\\{CALLBACK_HOST\\}\\}", "http://" + mojaloopConfig.mlConnectorHost);
+            try {
                 addCallbackEndpoint(payerFsp, callback.getType(), value);
                 addCallbackEndpoint(payeeFsp, callback.getType(), value);
-             } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-             }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
-    protected void recordFunds(String fsp)throws JsonProcessingException {
+    protected void recordFunds(String fsp) throws JsonProcessingException {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
@@ -226,74 +214,60 @@ public class MojaloopDef {
                 .replaceAll("\\{\\{payerfspSettlementAccountId\\}\\}", "4");
         String requestBody = objectMapper.writeValueAsString(getRecordFundsRequestBody());
 
-         Response responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl)
-                         .body(requestBody)
-                         .expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
-                         .post(endpoint).andReturn();
+        Response responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody)
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn();
     }
 
     private RecordFundsRequestBody getRecordFundsRequestBody() {
         Amount amount = new Amount(5000L, CURRENCY);
-        return RecordFundsRequestBody.builder()
-                        .transferId(UUID.randomUUID().toString())
-                        .externalReference("string")
-                        .action("recordFundsIn")
-                        .reason("string")
-                        .amount(amount)
-                        .build();
+        return RecordFundsRequestBody.builder().transferId(UUID.randomUUID().toString()).externalReference("string").action("recordFundsIn")
+                .reason("string").amount(amount).build();
     }
 
-    protected Boolean OracleExists() {
+    protected Boolean oracleExists() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         requestSpec.header("Date", "");
         String endpoint = mojaloopConfig.oracleEndpoint;
-        Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).when()
-                                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                                .get(endpoint);
+        Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).when().expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint);
         int count = JsonParser.parseString(response.getBody().asString()).getAsJsonArray().size();
         logger.info(String.valueOf(count));
-        return count>=1;
+        return count >= 1;
     }
 
-    protected void oracleOnboard()throws JsonProcessingException {
+    protected void oracleOnboard() throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         requestSpec.header("Date", "");
         String endpoint = mojaloopConfig.oracleEndpoint;
         String requestBody = objectMapper.writeValueAsString(getOracleOnboardRequestBody());
 
-        Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).body(requestBody).when()
-                .post(endpoint);
+        Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).body(requestBody)
+                .when().post(endpoint);
 
         validateResponse(response, "2001");
     }
 
     private OracleOnboardRequestBody getOracleOnboardRequestBody() {
         Endpoint endpoint = new Endpoint("http://moja-simulator/oracle", "URL");
-        return OracleOnboardRequestBody.builder()
-                .oracleIdType("MSISDN")
-                .endpoint(endpoint)
-                .currency(CURRENCY)
-                .isDefault(true)
-                .build();
+        return OracleOnboardRequestBody.builder().oracleIdType("MSISDN").endpoint(endpoint).currency(CURRENCY).isDefault(true).build();
     }
 
-    private void validateResponse(Response response,String acceptedErrorCode) {
+    private void validateResponse(Response response, String acceptedErrorCode) {
 
-        if(response.getStatusCode() == 400 || response.getStatusCode() == 500) {
+        if (response.getStatusCode() == 400 || response.getStatusCode() == 500) {
             JsonObject jsonObject = JsonParser.parseString(response.getBody().asString()).getAsJsonObject();
             String errorCode = jsonObject.getAsJsonObject().get("errorInformation").getAsJsonObject().get("errorCode").getAsString();
             String errorDesc = jsonObject.getAsJsonObject().get("errorInformation").getAsJsonObject().get("errorDescription").getAsString();
             logger.info(errorCode);
             logger.info(errorDesc);
-            if(!errorCode.equals(acceptedErrorCode) || !errorDesc.contains("already")) {
+            if (!errorCode.equals(acceptedErrorCode) || !errorDesc.contains("already")) {
 
                 throw new RuntimeException();
             }
-            //todo - validate message as well
-        }
-        else if(!String.valueOf(response.getStatusCode()).matches("2\\d{2}")) {
+            // todo - validate message as well
+        } else if (!String.valueOf(response.getStatusCode()).matches("2\\d{2}")) {
             throw new RuntimeException();
         }
     }

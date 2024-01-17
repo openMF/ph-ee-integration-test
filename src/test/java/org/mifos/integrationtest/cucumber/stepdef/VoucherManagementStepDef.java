@@ -1,5 +1,14 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.HttpMethod.PUT;
+
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -13,20 +22,10 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.mifos.integrationtest.common.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.Random;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.HttpMethod.PUT;
+import org.mifos.integrationtest.common.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class VoucherManagementStepDef extends BaseStepDef {
 
@@ -287,8 +286,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         iCanCreateAnVoucherRequestDTOForVoucherActivation();
         iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(202, "/activateVoucher");
     }
+
     @Before("@createVoucher")
-    public void createVoucher(){
+    public void createVoucher() {
         iCreateAnIdentityMapperDTOForRegisterBeneficiary();
         mockServerStepDef.checkIfMockServerIsInjected();
         mockServerStepDef.startMockServer();
@@ -302,6 +302,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         }
         iShouldBeAbleToExtractResponseBodyFromCallback();
     }
+
     @After("@redeemVoucherFailure")
     public void redeemVoucherFailure() {
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
