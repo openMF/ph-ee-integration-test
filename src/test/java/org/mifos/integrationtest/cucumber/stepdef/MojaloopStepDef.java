@@ -1,7 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.java.en.Then;
+import io.cucumber.java.en.Given;import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -59,6 +59,44 @@ public class MojaloopStepDef extends BaseStepDef{
 
         logger.info(response);
         assertThat(response).isNotNull();
+    }
+
+    @Given("I am setting up Mojaloop")
+    public void mojaloopSetup()throws JsonProcessingException {
+
+        String payerFsp = mojaloopConfig.payerFspId;
+        String payeeFsp = mojaloopConfig.payeeFspId;
+
+        if(!mojaloopDef.isHubAccountTypesAdded()) {
+
+            logger.info("Calling hub account apis");
+
+            mojaloopDef.hubMultilateralSettlement();
+            mojaloopDef.hubReconciliation();
+        }
+
+        if(!mojaloopDef.isSettlementModelsCreated()) {
+
+            logger.info("Calling Settlement Models apis");
+
+            mojaloopDef.createSettlementModelDeferredNet();
+            mojaloopDef.createSettlementModelDeferredNetUSD();
+        }
+
+        mojaloopDef.addFsp(payerFsp);
+        mojaloopDef.addFsp(payeeFsp);
+        mojaloopDef.addInitialPositionAndLimit(payerFsp);
+        mojaloopDef.addInitialPositionAndLimit(payeeFsp);
+
+        if(!mojaloopDef.getCallbackEndpoints(payerFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp)) {
+            mojaloopDef.setCallbackEndpoints();
+        }
+
+        mojaloopDef.recordFunds(payerFsp);
+
+        if(!mojaloopDef.OracleExists()) {
+            mojaloopDef.oracleOnboard();
+        }
     }
 
 }

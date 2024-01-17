@@ -122,6 +122,30 @@ jobs:
           cluster-name: "sit"
           aws-region: "$REGION"
           service-file-path: https://raw.githubusercontent.com/openMF/ph-ee-env-labs/master/.circleci/services.txt
+
+  create-tls-secret-paymenthub-namespace:
+    docker:
+      - image: 'cimg/base:2022.06'
+    environment:
+      TERM: dumb
+      NAMESPACE: paymenthub
+    steps:
+      - setup_remote_docker:
+          version: 20.10.14
+      - kubernetes/install-kubectl
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: "sit"
+          aws-region: "$REGION"
+      - run: |
+          echo "$KEY" | tr '#' '\n' > key.pem
+          echo "$SSL_BUNDLE" | tr '#' '\n' > ssl-bundle.crt
+          openssl x509 -in ssl-bundle.crt -text -noout
+          if kubectl get secret fyn-cert --namespace $NAMESPACE &> /dev/null; then
+            echo "Secret fyn-cert already exists. Skipping creation."
+          else
+            kubectl create secret tls fyn-cert --namespace $NAMESPACE --key=key.pem --cert=ssl-bundle.crt -o yaml
+          fi
+
   create-secret-paymenthub-namespace:
     docker:
       - image: 'cimg/base:2022.06'
@@ -311,5 +335,12 @@ workflows:
             - Helm
             - slack
             - Ngrok
+      - create-tls-secret-paymenthub-namespace:
+          context:
+            - AWS
+            - Helm
+            - slack
+            - Secrets
+            - TLS
 
 

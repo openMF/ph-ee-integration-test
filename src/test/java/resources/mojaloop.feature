@@ -1,7 +1,8 @@
-@wip
+@gov
 Feature: Mojaloop test
 
   Scenario: ML connector partial payee party lookup test
+    Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
@@ -18,6 +19,7 @@ Feature: Mojaloop test
     Then I can stop mock server
 
   Scenario: ML connector partial payee quotation test
+    Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
@@ -34,6 +36,7 @@ Feature: Mojaloop test
     Then I can stop mock server
 
   Scenario: ML connector partial payee transfer test
+    Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
@@ -54,6 +57,7 @@ Feature: Mojaloop test
     Then I can stop mock server
 
   Scenario: Payer Fund Transfer Flow test
+    Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payer"
     When I call the create client endpoint for "payer"
     Then I call the create savings product endpoint for "payer"

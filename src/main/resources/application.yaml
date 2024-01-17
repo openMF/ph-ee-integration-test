@@ -177,8 +177,40 @@ mojaloop:
     payer: "payerfsp"
     payee: "payeefsp"
   contactpoint: http://account-lookup-service.sandbox.fynarfin.io
+  central-ledger-contactpoint: http://central-ledger.sandbox.fynarfin.io
+  account-lookup-admin-contactpoint: http://account-lookup-service-admin.sandbox.fynarfin.io
   endpoint:
     als: /participants/{{identifierType}}/{{identifier}}
+    hub-account: /participants/Hub/accounts
+    settlement-model: /settlementModels
+    participant: /participants
+    position-and-limits: /participants/{{fsp}}/initialPositionAndLimits
+    add-callback: /participants/{{fsp}}/endpoints
+    record-fund: /participants/{{fsp}}/accounts/{{payerfspSettlementAccountId}}
+    oracle: /oracles
+  callback-endpoints:
+    - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT"
+      value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}"
+    - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR"
+      value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+    - type: "FSPIOP_CALLBACK_URL_PARTIES_GET"
+      value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}"
+    - type: "FSPIOP_CALLBACK_URL_PARTIES_PUT"
+      value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}"
+    - type: "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR"
+      value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}/error"
+    - type: "FSPIOP_CALLBACK_URL_QUOTES"
+      value: "{{CALLBACK_HOST}}/switch"
+    - type: "FSPIOP_CALLBACK_URL_TRANSFER_POST"
+      value: "{{CALLBACK_HOST}}/switch/transfers"
+    - type: "FSPIOP_CALLBACK_URL_TRANSFER_PUT"
+      value: "{{CALLBACK_HOST}}/switch/transfers/{{transferId}}"
+    - type: "FSPIOP_CALLBACK_URL_TRANSFER_ERROR"
+      value: "{{CALLBACK_HOST}}/switch/transfers/{{transferId}}/error"
+    - type: "FSPIOP_CALLBACK_URL_TRX_REQ_SERVICE"
+      value: "{{CALLBACK_HOST}}"
+    - type: "FSPIOP_CALLBACK_URL_AUTHORIZATIONS"
+      value: "{{CALLBACK_HOST}}"
 
 ml-connector:
   host:  "mojaloop.sandbox.fynarfin.io"
