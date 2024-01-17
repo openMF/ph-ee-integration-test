@@ -102,6 +102,7 @@ Feature: Mojaloop test
     Then I assert "payee" balance to be 11
 
   Scenario: Bulk Transfer with Mojaloop
+    Given I am setting up Mojaloop
     When I create and setup a "payer" with account balance of 12
     When I create and setup a "payee" with account balance of 10
     Then I add "payer" to als
