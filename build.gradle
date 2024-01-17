@@ -161,6 +161,7 @@ dependencies {
     implementation 'io.cucumber:cucumber-spring:7.8.1'
     testImplementation 'io.cucumber:cucumber-junit:7.8.1'
 
+
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
     checkstyle 'com.puppycrawl.tools:checkstyle:10.9.3'
     checkstyle 'com.github.sevntu-checkstyle:sevntu-checks:1.44.1'
@@ -193,6 +194,7 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
+    maxParallelForks = 4
 }
 task cucumberCli() {
     dependsOn assemble, testClasses
