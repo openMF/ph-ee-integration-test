@@ -9,19 +9,25 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
-import org.mifos.integrationtest.common.dto.mojaloop.Amount;import org.mifos.integrationtest.common.dto.mojaloop.CallbackRequestBody;
 import org.mifos.integrationtest.common.dto.mojaloop.AddParticipantRequestBody;
 import org.mifos.integrationtest.common.dto.mojaloop.AddUserAlsRequest;
-import org.mifos.integrationtest.common.dto.mojaloop.Endpoint;import org.mifos.integrationtest.common.dto.mojaloop.HubAccountSetupRequestBody;
+import org.mifos.integrationtest.common.dto.mojaloop.Amount;
+import org.mifos.integrationtest.common.dto.mojaloop.CallbackRequestBody;
+import org.mifos.integrationtest.common.dto.mojaloop.Endpoint;
+import org.mifos.integrationtest.common.dto.mojaloop.HubAccountSetupRequestBody;
 import org.mifos.integrationtest.common.dto.mojaloop.InitialPositionAndLimitRequestBody;
 import org.mifos.integrationtest.common.dto.mojaloop.Limit;
-import org.mifos.integrationtest.common.dto.mojaloop.OracleOnboardRequestBody;import org.mifos.integrationtest.common.dto.mojaloop.RecordFundsRequestBody;import org.mifos.integrationtest.common.dto.mojaloop.SettlementModelRequestBody;
+import org.mifos.integrationtest.common.dto.mojaloop.OracleOnboardRequestBody;
+import org.mifos.integrationtest.common.dto.mojaloop.RecordFundsRequestBody;
+import org.mifos.integrationtest.common.dto.mojaloop.SettlementModelRequestBody;
 import org.mifos.integrationtest.config.MojaloopCallbackEndpoints;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;import java.util.UUID;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class MojaloopDef {

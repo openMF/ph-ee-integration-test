@@ -3,9 +3,6 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
 import org.apache.fineract.client.models.InteropIdentifierRequestData;
 import org.apache.fineract.client.models.PostClientsRequest;
 import org.apache.fineract.client.models.PostClientsResponse;
@@ -32,6 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class PayerFundTransferDef {

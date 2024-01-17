@@ -30,4 +30,7 @@ public class BatchDTO {
     private BigDecimal successfulAmount;
     private BigDecimal pendingAmount;
     private BigDecimal failedAmount;
+    private BigDecimal approvedAmount;
+    private BigDecimal approvedCount;
+
 }

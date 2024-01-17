@@ -1,16 +1,17 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-import static io.restassured.config.EncoderConfig.encoderConfig;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
-import io.cucumber.java.en.Given;import io.cucumber.java.en.Then;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.google.common.truth.Truth.assertThat;
+import static io.restassured.config.EncoderConfig.encoderConfig;
 
 public class MojaloopStepDef extends BaseStepDef {
 

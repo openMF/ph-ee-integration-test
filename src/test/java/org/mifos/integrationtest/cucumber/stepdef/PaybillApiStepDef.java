@@ -1,10 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -20,9 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;

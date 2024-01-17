@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
@@ -12,6 +10,8 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.PaymentStatusCheckReqDto;
 import org.mifos.integrationtest.config.PaymentStatusCheckConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class PaymentStatusCheckDef extends BaseStepDef {
 

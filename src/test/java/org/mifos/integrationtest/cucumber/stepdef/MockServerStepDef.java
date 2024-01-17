@@ -1,5 +1,16 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.restassured.RestAssured;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.specification.RequestSender;
+import org.mifos.integrationtest.common.HttpMethod;
+import org.springframework.beans.factory.annotation.Value;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
@@ -16,17 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
-
-import io.cucumber.java.ParameterType;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import io.restassured.RestAssured;
-import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.specification.RequestSender;
-import org.mifos.integrationtest.common.HttpMethod;
-import org.springframework.beans.factory.annotation.Value;
 
 public class MockServerStepDef extends BaseStepDef {
 

@@ -13,10 +13,8 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.Bill;
-import org.mifos.integrationtest.common.dto.BillDetails;
 import org.mifos.integrationtest.common.dto.BillRTPReqDTO;
 import org.mifos.integrationtest.common.dto.PayerFSPDetail;
 import org.mifos.integrationtest.common.dto.billPayP2G.BillPaymentsReqDTO;
@@ -27,7 +25,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 
 public class BillPayStepDef extends BaseStepDef {

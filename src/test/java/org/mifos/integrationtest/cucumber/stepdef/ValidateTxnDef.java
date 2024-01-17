@@ -1,10 +1,10 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ValidateTxnDef extends BaseStepDef {
 

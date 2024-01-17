@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -11,6 +9,8 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class ChannelClientIdDef extends BaseStepDef {
 

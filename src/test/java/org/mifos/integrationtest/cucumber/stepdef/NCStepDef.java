@@ -1,7 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.cucumber.java.en.And;
@@ -10,13 +8,16 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.TransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.NetflixConductorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
+
+import static com.google.common.truth.Truth.assertThat;
 
 public class NCStepDef extends BaseStepDef {
 

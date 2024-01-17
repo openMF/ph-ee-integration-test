@@ -1,8 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
-
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.type.TypeReference;
 import io.cucumber.java.After;
@@ -12,8 +9,6 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.List;
-import java.util.UUID;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.common.dto.kong.Access;
@@ -21,6 +16,12 @@ import org.mifos.integrationtest.common.dto.kong.KeycloakUpdateRequest;
 import org.mifos.integrationtest.common.dto.kong.KeycloakUser;
 import org.mifos.integrationtest.config.KeycloakConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.UUID;
+
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 
 public class KeycloakStepDef extends BaseStepDef {
 

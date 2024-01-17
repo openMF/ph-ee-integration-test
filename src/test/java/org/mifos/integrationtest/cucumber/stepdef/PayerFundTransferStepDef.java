@@ -1,8 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.google.common.truth.Truth.assertThat;
-
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,12 +12,6 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
 import org.json.JSONException;
 import org.mifos.connector.common.mojaloop.type.TransferState;
@@ -30,6 +21,16 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.mifos.integrationtest.config.PayerFundTransferConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.google.common.truth.Truth.assertThat;
 
 public class PayerFundTransferStepDef extends BaseStepDef {
 
