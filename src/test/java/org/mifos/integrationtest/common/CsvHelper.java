@@ -1,9 +1,9 @@
 package org.mifos.integrationtest.common;
 
-import com.opencsv.CSVReader;import com.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 import com.opencsv.CSVWriterBuilder;
 import org.springframework.stereotype.Component;
-import java.io.FileReader;import java.io.FileWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 @Component
