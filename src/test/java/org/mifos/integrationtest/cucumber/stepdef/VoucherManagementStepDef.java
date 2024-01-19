@@ -12,6 +12,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;

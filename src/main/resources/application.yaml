@@ -16,6 +16,7 @@ operations-app:
     transfers: "/api/v1/transfers?size=1&page=0"
     variables: "/api/v1/variables"
     transactionRequests: "/api/v1/transactionRequests"
+    actuator: "/actuator/health"
 
 paybill:
   mpesa-connector:
@@ -29,6 +30,8 @@ bulk-processor:
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"
+    actuator: "/actuator/health"
+
 
 channel-connector:
   contactpoint: "https://channel.sandbox.fynarfin.io"
@@ -38,6 +41,8 @@ channel-connector:
     gsma-deposit: "/channel/gsma/deposit"
     collection: "/channel/collection"
     transferReq: "/channel/transactionRequest"
+    actuator: "/actuator/health"
+
 
 max-retry-count: 5
 retry-interval: 15000
@@ -101,6 +106,7 @@ identity-account-mapper:
     account-lookup: /beneficiary
     batch-account-lookup: /accountLookup
     fetch-beneficiary: /beneficiaries
+    actuator: "/actuator/health"
 
 kong:
   admin-contactpoint: "http://kong-admin.sandbox.fynarfin.io"
@@ -134,11 +140,14 @@ voucher-management:
     voucher-lifecycle: /vouchers
     voucher-validity: /voucher/validity
     fetch: /vouchers
+    actuator: "/actuator/health"
+
 
 mock-payment-schema:
   contactpoint: "https://mockpaymentschema.sandbox.fynarfin.io"
   endpoints:
     mock-batch-authorization: "/batches/"
+    actuator: "/actuator/health"
 
 
 netflix-conductor:
@@ -214,6 +223,7 @@ mojaloop:
 
 ml-connector:
   host:  "mojaloop.sandbox.fynarfin.io"
+  contactpoint: "https://mojaloop.sandbox.fynarfin.io"
   endpoint:
     get-party: "/switch/parties/{{identifierType}}/{{identifier}}"
     get-quote: "/switch/quotes"

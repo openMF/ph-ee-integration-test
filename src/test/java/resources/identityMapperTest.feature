@@ -256,4 +256,3 @@ Feature: Identity Account Mapper Api Test
     And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
     And I can stop mock server
 
-

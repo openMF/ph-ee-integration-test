@@ -36,6 +36,10 @@ import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
+
+import org.mifos.integrationtest.common.dto.operationsapp.ActuatorResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
+import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchPaginatedResponse;
 import org.mifos.integrationtest.common.dto.KeycloakTokenResponse;
 import org.mifos.integrationtest.common.dto.billPayP2G.BillPaymentsReqDTO;
@@ -109,6 +113,8 @@ public class BaseStepDef {
     protected static String newPublicKeyString;
     protected static PublicKey publicKey;
     protected static String certificateString;
+
+    protected static String status;
     protected static X509Certificate x509Certificate;
     protected static String jwsDataSeparator = ":";
     protected static String signature;
@@ -116,6 +122,8 @@ public class BaseStepDef {
     protected static String registeringInstituteId;
     protected static String programId;
     protected static BatchDTO batchDTO;
+
+    protected static ActuatorResponse actuatorResponse;
     protected static String dateTime;
     public static BatchTransactionResponse batchTransactionResponse;
     protected static KongConsumer kongConsumer;

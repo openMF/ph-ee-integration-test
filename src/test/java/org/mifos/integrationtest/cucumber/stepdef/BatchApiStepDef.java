@@ -36,6 +36,7 @@ import org.mifos.connector.common.operations.type.TransferStatus;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.common.dto.Party;
+import org.mifos.integrationtest.common.dto.operationsapp.ActuatorResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDetailResponse;
@@ -43,8 +44,11 @@ import org.mifos.integrationtest.common.dto.operationsapp.BatchTransactionRespon
 import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
+import org.mifos.integrationtest.config.ChannelConnectorConfig;
+import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -57,6 +61,14 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Value("${callback_url}")
     public String callbackURL;
+    @Autowired
+    MockPaymentSchemaConfig mockPaymentSchemaConfig;
+
+    @Autowired
+    ChannelConnectorConfig channelConnectorConfig;
+
+    @Autowired
+    Environment environment;
 
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
@@ -646,6 +658,39 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
         assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);}
+
+    @And("I am able to parse actuator response")
+    public void iAmAbleToParseActuatorResponse() {
+        ActuatorResponse actuatorResponse = null;
+        assertThat(BaseStepDef.response).isNotNull();
+        assertThat(BaseStepDef.response).isNotEmpty();
+        try {
+            actuatorResponse = objectMapper.readValue(BaseStepDef.response, ActuatorResponse.class);
+            BaseStepDef.actuatorResponse = actuatorResponse;
+        } catch (Exception e) {
+            logger.error("Error parsing the actuator response", e);
+        }
+        assertThat(BaseStepDef.actuatorResponse).isNotNull();
+    }
+
+    @And("Status of service is {string}")
+    public void statusOfServiceIs(String status) {
+        assertThat(BaseStepDef.actuatorResponse).isNotNull();
+        assertThat(BaseStepDef.actuatorResponse.getStatus()).isEqualTo(status);
+    }
+
+    @When("I call the actuator API with Contactpoint {string} and endpoint {string}")
+    public void iCallTheActuatorAPIWithContactpointAndEndpoint(String config, String endpoint) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+
+        Response resp = RestAssured.given(requestSpec).baseUri(environment.getProperty(config)).expect()
+                .spec(new ResponseSpecBuilder().build()).when()
+                .get(endpoint).then().extract().response();
+
+        BaseStepDef.response = resp.andReturn().asString();
+        BaseStepDef.restResponseObject = resp;
+
+        logger.info("Actuator Response: " + BaseStepDef.response);
     }
 }
