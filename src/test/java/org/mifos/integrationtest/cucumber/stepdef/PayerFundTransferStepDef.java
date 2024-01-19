@@ -15,6 +15,7 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -31,15 +32,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.mifos.integrationtest.config.PayerFundTransferConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.google.common.truth.Truth.assertThat;
 
 public class PayerFundTransferStepDef extends BaseStepDef {
 
@@ -479,7 +471,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     }
 
     @When("I create and setup a {string} with account balance of {int}")
-    public void consolidatedPayerCreationSteps(String client, int amount)throws JsonProcessingException {
+    public void consolidatedPayerCreationSteps(String client, int amount) throws JsonProcessingException {
         setTenantForPayer(client);
         callCreateClientEndpoint(client);
         callCreateSavingsProductEndpoint(client);
@@ -491,28 +483,28 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     }
 
     @Then("Create a csv file with file name {string}")
-    public void createCsvWithHeaders(String fileName)throws IOException {
+    public void createCsvWithHeaders(String fileName) throws IOException {
         String filePath = Utils.getAbsoluteFilePathToResource(fileName);
-        String[] header = {"id", "request_id", "payment_mode", "payer_identifier_type", "payer_identifier",
-                                               "payee_identifier_type", "payee_identifier", "amount", "currency", "note"};
+        String[] header = { "id", "request_id", "payment_mode", "payer_identifier_type", "payer_identifier", "payee_identifier_type",
+                "payee_identifier", "amount", "currency", "note" };
         BaseStepDef.filename = fileName;
         csvHelper.createCsvFileWithHeaders(filePath, header);
     }
 
     @Then("add row to csv with current payer and payee and transfer amount {int} and id {int}")
-    public void addRowToCsvFile(int transferAmount, int id)throws IOException {
+    public void addRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = {String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
-                        BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment"};
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
+                BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(BaseStepDef.filename);
         csvHelper.addRow(filePath, row);
     }
 
     @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
-    public void addLastRowToCsvFile(int transferAmount, int id)throws IOException {
+    public void addLastRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = {String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
-                        BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment"};
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
+                BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(BaseStepDef.filename);
         csvHelper.addLastRow(filePath, row);
     }
