@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonMappingException;
 import io.cucumber.java.en.And;
@@ -28,8 +30,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import static com.google.common.truth.Truth.assertThat;
-
 public class ErrorCodeStepDef extends BaseStepDef {
 
     @Value("${max-retry-count}")
@@ -56,6 +56,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
         logger.info("GSMA transfer Response: {}", BaseStepDef.response);
     }
+
     @When("I call the GSMATransfer Deposit endpoint with expected status of {int}")
     public void iCallTheGSMATransferDepositEndpointWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
@@ -356,8 +357,9 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
-        if(authEnabled)
+        if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+        }
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
@@ -377,6 +379,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
             retryCount++;
         }
     }
+
     @When("I can create GSMATransferDTO with different payer and payee")
     public void iCanCreateGSMATransactionDTOWithDifferentPayerAndPayee() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
@@ -396,24 +399,25 @@ public class ErrorCodeStepDef extends BaseStepDef {
                 postalAddress, subjectName);
         BaseStepDef.gsmaP2PAmtDebit = 11;
         try {
-            ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "USD", "string", "string",
-                    "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
-                    senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
+            ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "USD", "string",
+                    "string", "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string",
+                    receiverKyc, senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
-        public String checkForStatus() {
-            String status = null;
-            try {
-                JSONObject jsonObject = new JSONObject(BaseStepDef.response);
-                JSONArray content = jsonObject.getJSONArray("content");
-                if (content.getJSONObject(0).has("status")) {
-                    status = content.getJSONObject(0).getString("errorInformation");
-                }
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+
+    public String checkForStatus() {
+        String status = null;
+        try {
+            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONArray content = jsonObject.getJSONArray("content");
+            if (content.getJSONObject(0).has("status")) {
+                status = content.getJSONObject(0).getString("errorInformation");
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
-            return status;
+        return status;
     }
 }

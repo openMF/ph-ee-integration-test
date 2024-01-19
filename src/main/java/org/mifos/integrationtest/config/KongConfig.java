@@ -1,9 +1,8 @@
 package org.mifos.integrationtest.config;
 
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class KongConfig {
@@ -54,10 +53,7 @@ public class KongConfig {
 
     @PostConstruct
     private void setup() {
-        serviceUrl = new StringBuilder()
-                .append("https://")
-                .append(serviceHost)
-                .append("/").toString();
+        serviceUrl = new StringBuilder().append("https://").append(serviceHost).append("/").toString();
     }
 
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Limit {
+
     String type;
     Long value;
 }

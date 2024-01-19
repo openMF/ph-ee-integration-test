@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Party {
 
-    String key, value;
+    String key;
+    String value;
 
 }

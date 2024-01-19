@@ -1,7 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -9,13 +10,10 @@ import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class MockFlowTestDef extends BaseStepDef {
 
@@ -61,13 +59,11 @@ public class MockFlowTestDef extends BaseStepDef {
         }
 
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().get(operationsAppConfig.transfersEndpoint)
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
                 .andReturn().asString();
 
         logger.info("GetTxn Request Response: " + BaseStepDef.response);
     }
-
 
     @And("I should have PayeeFspId as {string}")
     public void iShouldHavePayeeFspIdAs(String payeeDfspId) throws JSONException {
@@ -80,6 +76,5 @@ public class MockFlowTestDef extends BaseStepDef {
         assertThat(value).isEqualTo(payeeDfspId);
         assertThat(payeeIdentifier).isEqualTo(BaseStepDef.payerIdentifier);
     }
-
 
 }

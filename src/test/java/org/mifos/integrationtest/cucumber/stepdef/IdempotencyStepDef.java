@@ -1,5 +1,10 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
+import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
+
 import com.google.gson.Gson;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.And;
@@ -8,6 +13,7 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.UUID;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.CollectionHelper;
@@ -15,11 +21,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.mifos.integrationtest.config.GsmaConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
-
-import static com.google.common.truth.Truth.assertThat;
-import static org.mifos.integrationtest.common.Utils.*;
 
 public class IdempotencyStepDef extends BaseStepDef {
 
@@ -66,7 +67,7 @@ public class IdempotencyStepDef extends BaseStepDef {
     }
 
     @And("I should have error as Transaction already Exists")
-    public void iShouldHaveErrorAsTransactionAlreadyExists() throws Throwable {
+    public void iShouldHaveErrorAsTransactionAlreadyExists() throws Exception {
         assertThat(BaseStepDef.response).contains("Transaction already exists");
     }
 

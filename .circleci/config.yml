@@ -65,7 +65,7 @@ jobs:
             docker push "openmf/ph-ee-integration-test:$IMAGE_TAG"
 
           # when: always  # The job will be executed even if there's no match for the tag filter
-  
+
   build_and_push_latest_image:
     executor: docker-executor
     environment:
@@ -81,6 +81,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
+            ./gradlew checkstyleMain
+            ./gradlew checkstyleTest
             ./gradlew bootJar
             docker build -t openmf/ph-ee-integration-test:latest .
             if [ "$CIRCLE_BRANCH" != "master" ]; then
@@ -192,7 +194,7 @@ jobs:
           #sudo apt install -y netcat
           #until nc -vz https://zeebeops.sandbox.fynarfin.io 443; do echo "Waiting for zeebe-ops service"; sleep 2; done;
       - run: |
-          cd ph-ee-env-labs 
+          cd ph-ee-env-labs
           sh orchestration/deployBpmn.sh
   test-chart-gov:
     docker:
@@ -333,5 +335,3 @@ workflows:
             - slack
             - Secrets
             - TLS
-
-

@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.common.dto;
 
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Bill {
+public class CreateVoucherRequestDTO {
 
-    private String billerName;
-    private double amount;
+    public String requestID;
+    public String batchID;
+    public ArrayList<VoucherInstruction> voucherInstructions;
 }

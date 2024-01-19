@@ -1,15 +1,14 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mifos.connector.common.util.CertificateUtil;
-
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import static com.google.common.truth.Truth.assertThat;
+import org.mifos.connector.common.util.CertificateUtil;
 
 public class CertificateStepDef extends BaseStepDef {
 

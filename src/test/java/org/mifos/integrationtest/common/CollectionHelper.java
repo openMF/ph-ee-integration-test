@@ -1,18 +1,19 @@
 package org.mifos.integrationtest.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * { "payer": [ { "key": "MSISDN", "value": "254708374149" }, { "key": "ACCOUNTID", "value": "24450523" } ], "amount": {
  * "amount": "1", "currency": "USD" }, "transactionType": { "scenario": "MPESA", "subScenario": "BUYGOODS", "initiator":
  * "PAYEE", "initiatorType": "BUSINESS" } }
  */
-public class CollectionHelper {
+public final class CollectionHelper {
+
+    private CollectionHelper() {}
 
     public static JSONObject getCollectionRequestBody(String amount, String msisdn, String accountId) throws JSONException {
         List<Pair<String, String>> payers = new ArrayList<>();

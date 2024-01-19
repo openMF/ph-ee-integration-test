@@ -12,5 +12,4 @@ public class MockPaymentSchemaConfig {
     @Value("${mock-payment-schema.endpoints.mock-batch-authorization}")
     public String mockBatchAuthorizationEndpoint;
 
-
 }

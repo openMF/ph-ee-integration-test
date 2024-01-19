@@ -1,20 +1,20 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.UUID;
 import static com.google.common.truth.Truth.assertThat;
 
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
+
 /**
- * This class contains the generic step def which is
- * or can be common for multiple test cases. <br>
+ * This class contains the generic step def which is or can be common for multiple test cases. <br>
  * It's very important to not write any payment schema specific code here.
  *
  * @author danishjamal
  */
 public class GenericStepDef extends BaseStepDef {
+
     @Value("${global_wait_time_ms}")
     private int globalWaitTime;
 

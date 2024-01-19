@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.common.dto.mojaloop;
 
-import lombok.Builder;import lombok.Getter;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

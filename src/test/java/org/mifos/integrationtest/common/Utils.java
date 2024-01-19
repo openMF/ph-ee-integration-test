@@ -3,23 +3,25 @@ package org.mifos.integrationtest.common;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Utils {
+public final class Utils {
 
+    private Utils() {}
+
+    private static final Logger log = LoggerFactory.getLogger(Utils.class);
     public static final String TENANT_PARAM_NAME = "Platform-TenantId";
     public static final String REQUEST_TYPE_PARAM_NAME = "requestType";
     public static final String DEFAULT_TENANT = "gorilla";
@@ -43,7 +45,7 @@ public class Utils {
         try {
             Thread.sleep(seconds * 1000);
         } catch (InterruptedException e) {
-            System.out.println("Unexpected InterruptedException" + e);
+            log.debug("Unexpected InterruptedException {}", e);
             throw new IllegalStateException("Unexpected InterruptedException", e);
         }
     }
@@ -65,7 +67,7 @@ public class Utils {
     public static RequestSpecification getDefaultSpec(String tenant) {
         RequestSpecification requestSpec = getDefaultSpec();
         requestSpec.header(TENANT_PARAM_NAME, tenant);
-//         requestSpec.header(X_CORRELATIONID, "123456789");
+        // requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(CONTENT_TYPE, "application/json");
         return requestSpec;
     }
@@ -103,7 +105,7 @@ public class Utils {
                 line.remove(0);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug(e.getMessage());
         }
         return requestIds;
     }

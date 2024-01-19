@@ -1,14 +1,18 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
 
 @Getter
 @Setter
 public class BatchPaginatedResponse {
 
-    long totalBatches, totalTransactions, totalAmount, totalApprovedCount,
-            totalApprovedAmount, totalSubBatchesCreated;
+    long totalBatches;
+    long totalTransactions;
+    long totalAmount;
+    long totalApprovedCount;
+    long totalApprovedAmount;
+    long totalSubBatchesCreated;
     List<Batch> data;
 }

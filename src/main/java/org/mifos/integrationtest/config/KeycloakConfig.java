@@ -3,8 +3,6 @@ package org.mifos.integrationtest.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class KeycloakConfig {
 
@@ -51,4 +49,3 @@ public class KeycloakConfig {
     public static String headerGrantTypeKey = "grant_type";
 
 }
-

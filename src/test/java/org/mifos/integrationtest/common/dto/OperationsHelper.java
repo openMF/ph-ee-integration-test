@@ -1,13 +1,14 @@
 package org.mifos.integrationtest.common.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+public final class OperationsHelper {
 
-public class OperationsHelper {
+    private OperationsHelper() {}
 
     public static JSONObject getBulkFilterRequestBodyForExternalId(List<String> externalIds) throws JSONException {
         JSONObject body = new JSONObject();
