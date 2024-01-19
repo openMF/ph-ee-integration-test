@@ -32,7 +32,6 @@ import org.mifos.integrationtest.common.dto.kong.KongConsumerKey;
 import org.mifos.integrationtest.common.dto.kong.KongPlugin;
 import org.mifos.integrationtest.common.dto.kong.KongRoute;
 import org.mifos.integrationtest.common.dto.kong.KongService;
-
 import org.mifos.integrationtest.common.dto.operationsapp.ActuatorResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchAndSubBatchSummaryResponse;
 import org.mifos.integrationtest.common.dto.operationsapp.BatchDTO;

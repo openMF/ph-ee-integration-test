@@ -660,7 +660,8 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
         assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);}
+        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+    }
 
     @And("I am able to parse actuator response")
     public void iAmAbleToParseActuatorResponse() {
@@ -687,8 +688,7 @@ public class BatchApiStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
 
         Response resp = RestAssured.given(requestSpec).baseUri(environment.getProperty(config)).expect()
-                .spec(new ResponseSpecBuilder().build()).when()
-                .get(endpoint).then().extract().response();
+                .spec(new ResponseSpecBuilder().build()).when().get(endpoint).then().extract().response();
 
         BaseStepDef.response = resp.andReturn().asString();
         BaseStepDef.restResponseObject = resp;
