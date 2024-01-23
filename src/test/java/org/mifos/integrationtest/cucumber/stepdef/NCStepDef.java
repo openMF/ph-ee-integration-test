@@ -53,8 +53,8 @@ public class NCStepDef extends BaseStepDef {
             collectionRequestBody = TransferHelper.getTransferRequestBody();
         }
 
-        BaseStepDef.requestBody = collectionRequestBody;
-        logger.info(String.valueOf(BaseStepDef.requestBody));
+        scenarioScopeDef.requestBody = collectionRequestBody;
+        logger.info(String.valueOf(scenarioScopeDef.requestBody));
     }
 
     @When("I call the channel transfer API with client correlation id and expected status of {int}")
@@ -62,8 +62,9 @@ public class NCStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
         scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri("http://dpga-connector-chanel.sandbox.fynarfin.io/")
-                .body(BaseStepDef.requestBody.toString()).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+                .body(scenarioScopeDef.requestBody.toString()).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
 
     @When("I call the get workflow API in  with workflow id as path variable")
@@ -72,7 +73,7 @@ public class NCStepDef extends BaseStepDef {
         requestSpec.param("includeTasks", false);
         scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(netflixConductorConfig.conductorServerContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(netflixConductorConfig.workflowEndpoint + "/" + BaseStepDef.transactionId).andReturn().asString();
+                .get(netflixConductorConfig.workflowEndpoint + "/" + scenarioScopeDef.transactionId).andReturn().asString();
     }
 
     @Then("I should get valid status")
@@ -89,7 +90,7 @@ public class NCStepDef extends BaseStepDef {
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeDef.transactionId);
 
         Thread.sleep(5000);
 
@@ -97,7 +98,7 @@ public class NCStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
                 .asString();
 
-        logger.info(BaseStepDef.transactionId);
+        logger.info(scenarioScopeDef.transactionId);
         logger.info("Get Transfer Response: " + scenarioScopeDef.response);
     }
 
@@ -110,7 +111,7 @@ public class NCStepDef extends BaseStepDef {
 
     @Then("I verify that the current balance is {long}")
     public void isAccountBalanceValid(long expectedBalance) {
-        assertThat(BaseStepDef.currentBalance).isEqualTo(expectedBalance);
+        assertThat(scenarioScopeDef.currentBalance).isEqualTo(expectedBalance);
     }
 
 }

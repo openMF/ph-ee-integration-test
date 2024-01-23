@@ -221,8 +221,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(tenant);
         requestSpec.header("transactionId", transactionId);
         scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(BaseStepDef.inboundTransferMockReq).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+                .body(scenarioScopeDef.inboundTransferMockReq).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
         logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
     }
@@ -248,8 +249,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
         requestSpec.header("X-CorrelationID", UUID.randomUUID().toString());
         requestSpec.queryParam("type", "CSV");
         scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .contentType("multipart/form-data").multiPart("file", new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename)))
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .contentType("multipart/form-data")
+                .multiPart("file", new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename))).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
         logger.info("Batch Transactions API Response: " + scenarioScopeDef.response);

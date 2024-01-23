@@ -97,8 +97,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258" with batchId
-                                                                          // variable
+        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258"
+                                                                                           // with batchId
+        // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
         sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
@@ -130,8 +131,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258" with batchId
-                                                                          // variable
+        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258"
+                                                                                           // with batchId
+        // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
         sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
@@ -236,10 +238,10 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @When("I call the redeem voucher API with expected status of {int}")
     public void iCallTheRedeemVoucherAPIWithExpectedStatusOf(int responseCode) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").queryParam("command", "redeem")
-                .header("X-Registering-Institution-ID", registeringInstitutionId).header("X-CallbackURL", "").header("X-Program-ID", "")
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(redeemVoucherBody).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .queryParam("command", "redeem").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", "").header("X-Program-ID", "").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                .body(redeemVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         redeemVoucherResponseBody = scenarioScopeDef.response;
@@ -326,8 +328,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258" with batchId
-                                                                          // variable
+        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258"
+                                                                                           // with batchId
+        // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
         sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
@@ -342,8 +345,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @When("I call the suspend voucher API with expected status of {int} and stub {string}")
     public void iCallTheSuspendVoucherAPIWithExpectedStatusOfAndStub(int responseCode, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json").queryParam("command", "suspend")
-                .header("X-Registering-Institution-ID", registeringInstitutionId)
+        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .queryParam("command", "suspend").header("X-Registering-Institution-ID", registeringInstitutionId)
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Program-ID", "")
                 .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(suspendVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
@@ -360,8 +363,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258" with batchId
-                                                                          // variable
+        sb.append("    \"batchID\": \"").append(scenarioScopeDef.batchId).append("\",\n"); // Replaced "045155518258"
+                                                                                           // with batchId
+        // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
         sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");

@@ -47,47 +47,47 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
     @When("I call the GSMATransfer endpoint with expected status of {int}")
     public void iCallTheGSMATransferEndpointWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         logger.info("body: {}", gsmaTransaction.toString());
         logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(gsmaTransaction).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(channelConnectorConfig.gsmaP2PEndpoint).andReturn().asString();
 
-        logger.info("GSMA transfer Response: {}", BaseStepDef.response);
+        logger.info("GSMA transfer Response: {}", scenarioScopeDef.response);
     }
 
     @When("I call the GSMATransfer Deposit endpoint with expected status of {int}")
     public void iCallTheGSMATransferDepositEndpointWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         logger.info("body: {}", gsmaTransaction.toString());
         logger.info("url: {}", channelConnectorConfig.gsmaP2PEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(gsmaTransaction).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(channelConnectorConfig.gsmaP2PDepositEndpoint).andReturn().asString();
 
-        logger.info("GSMA transfer Response: {}", BaseStepDef.response);
+        logger.info("GSMA transfer Response: {}", scenarioScopeDef.response);
     }
 
     @When("I call the transfer query endpoint with transactionId and expected status of {int}")
     public void iCallTheTransferQueryEndpointWithTransactionIdAndExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endPoint).andReturn().asString();
 
-        logger.info("Transfer query Response: {}", BaseStepDef.response);
+        logger.info("Transfer query Response: {}", scenarioScopeDef.response);
     }
 
     @Then("I should poll the transfer query endpoint with transactionId until errorInformation is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilErrorInformationIsPopulatedForTheTransactionId() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
         // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
@@ -103,10 +103,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+            scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
-            logger.info("Transfer query Response: {}", BaseStepDef.response);
+            logger.info("Transfer query Response: {}", scenarioScopeDef.response);
             checkForCallback();
             retryCount++;
         }
@@ -119,7 +119,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @And("I should be able to parse transactionId from response")
     public void parseTransactionId() {
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
             transactionId = jsonObject.getString("transactionId");
             logger.info("Inbound transfer Id: {}", transactionId);
         } catch (JSONException e) {
@@ -134,7 +134,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void checkForCallback() {
         String responseError;
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
             JSONArray content = jsonObject.getJSONArray("content");
             if (content.getJSONObject(0).has("errorInformation")) {
                 responseError = content.getJSONObject(0).getString("errorInformation");
@@ -160,7 +160,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void iShouldBeAbleToParseErrorCodeFromGSMATransferResponse(String errorCode) {
         PhErrorDTO errorInformation;
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
             errorInformation = objectMapper.readValue(jsonObject.toString(), PhErrorDTO.class);
 
         } catch (JSONException | JsonProcessingException e) {
@@ -355,10 +355,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
     @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
         requestSpec.queryParam("transactionId", transactionId);
         logger.info("Transfer query Response: {}", endPoint);
@@ -371,10 +371,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+            scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
-            logger.info("Transfer query Response: {}", BaseStepDef.response);
+            logger.info("Transfer query Response: {}", scenarioScopeDef.response);
             status = checkForStatus();
             retryCount++;
         }
@@ -397,7 +397,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
                 postalAddress, subjectName);
         Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
                 postalAddress, subjectName);
-        BaseStepDef.gsmaP2PAmtDebit = 11;
+        scenarioScopeDef.gsmaP2PAmtDebit = 11;
         try {
             ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "USD", "string",
                     "string", "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string",
@@ -410,7 +410,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public String checkForStatus() {
         String status = null;
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
             JSONArray content = jsonObject.getJSONArray("content");
             if (content.getJSONObject(0).has("status")) {
                 status = content.getJSONObject(0).getString("errorInformation");

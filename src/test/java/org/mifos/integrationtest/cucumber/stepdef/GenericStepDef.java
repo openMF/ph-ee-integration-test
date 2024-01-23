@@ -25,7 +25,7 @@ public class GenericStepDef extends BaseStepDef {
 
     @Then("I should get non empty response")
     public void nonEmptyResponseCheck() {
-        assertNonEmpty(BaseStepDef.response);
+        assertNonEmpty(scenarioScopeDef.response);
     }
 
     @And("I will sleep for {int} millisecond")
@@ -35,13 +35,13 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I store this time as start time")
     public void storeCurrentTime() {
-        BaseStepDef.dateTime = getCurrentDateInFormat();
+        scenarioScopeDef.dateTime = getCurrentDateInFormat();
     }
 
     private void setTenant(String tenant) {
-        BaseStepDef.tenant = tenant;
-        assertThat(BaseStepDef.tenant).isNotEmpty();
-        BaseStepDef.clientCorrelationId = UUID.randomUUID().toString();
+        scenarioScopeDef.tenant = tenant;
+        assertThat(scenarioScopeDef.tenant).isNotEmpty();
+        scenarioScopeDef.clientCorrelationId = UUID.randomUUID().toString();
     }
 
     private void assertNonEmpty(String data) {

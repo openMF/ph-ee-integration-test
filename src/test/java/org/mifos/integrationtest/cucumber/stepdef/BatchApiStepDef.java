@@ -76,153 +76,153 @@ public class BatchApiStepDef extends BaseStepDef {
     @Given("I have a batch id from previous scenario")
     public void setBatchId() {
         // todo fix this
-        if (BaseStepDef.batchId == null || BaseStepDef.batchId.isEmpty()) {
-            BaseStepDef.batchId = UUID.randomUUID().toString();
+        if (scenarioScopeDef.batchId == null || scenarioScopeDef.batchId.isEmpty()) {
+            scenarioScopeDef.batchId = UUID.randomUUID().toString();
         }
-        assertThat(BaseStepDef.batchId).isNotNull();
+        assertThat(scenarioScopeDef.batchId).isNotNull();
     }
 
     @Given("I have a batch with id {string}")
     public void setBatchId(String batchId) {
-        BaseStepDef.batchId = batchId;
-        assertThat(BaseStepDef.batchId).isNotEmpty();
+        scenarioScopeDef.batchId = batchId;
+        assertThat(scenarioScopeDef.batchId).isNotEmpty();
     }
 
     @Given("I have the demo csv file {string}")
     public void setFilename(String filename) {
-        BaseStepDef.filename = filename;
-        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        scenarioScopeDef.filename = filename;
+        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename));
         assertThat(f.exists()).isTrue();
-        assertThat(BaseStepDef.filename).isNotEmpty();
+        assertThat(scenarioScopeDef.filename).isNotEmpty();
     }
 
     @And("I make sure there is no file")
     public void removeTheFilename() {
         clearFilename();
-        assertThat(BaseStepDef.filename).isNull();
+        assertThat(scenarioScopeDef.filename).isNull();
     }
 
     public void clearFilename() {
-        BaseStepDef.filename = null;
+        scenarioScopeDef.filename = null;
     }
 
     @And("I have the registeringInstituteId {string}")
     public void setRegisteringInstituteId(String registeringInstituteId) {
-        BaseStepDef.registeringInstituteId = registeringInstituteId;
-        assertThat(BaseStepDef.registeringInstituteId).isNotNull();
+        scenarioScopeDef.registeringInstituteId = registeringInstituteId;
+        assertThat(scenarioScopeDef.registeringInstituteId).isNotNull();
     }
 
     @And("I have the programId {string}")
     public void setProgramId(String programId) {
-        BaseStepDef.programId = programId;
-        assertThat(BaseStepDef.programId).isNotNull();
+        scenarioScopeDef.programId = programId;
+        assertThat(scenarioScopeDef.programId).isNotNull();
     }
 
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
-        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+        // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+        logger.info("Calling with batch id: {}", scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchSummaryEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchSummaryEndpoint + "/" + scenarioScopeDef.batchId).andReturn().asString();
 
-        logger.info("Batch Summary Response: " + BaseStepDef.response);
+        logger.info("Batch Summary Response: " + scenarioScopeDef.response);
     }
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
         BatchDTO batchDTO = null;
-        assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response).isNotEmpty();
+        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeDef.response).isNotEmpty();
         try {
-            batchDTO = objectMapper.readValue(BaseStepDef.response, BatchDTO.class);
-            BaseStepDef.batchDTO = batchDTO;
+            batchDTO = objectMapper.readValue(scenarioScopeDef.response, BatchDTO.class);
+            scenarioScopeDef.batchDTO = batchDTO;
         } catch (Exception e) {
             logger.error("Error parsing the batch summary response", e);
         }
-        assertThat(BaseStepDef.batchDTO).isNotNull();
+        assertThat(scenarioScopeDef.batchDTO).isNotNull();
     }
 
     @And("Status of transaction is {string}")
     public void checkIfCreatedAtIsNotNull(String status) {
-        assertThat(BaseStepDef.batchDTO).isNotNull();
-        assertThat(BaseStepDef.batchDTO.getStatus()).isEqualTo(status);
+        assertThat(scenarioScopeDef.batchDTO).isNotNull();
+        assertThat(scenarioScopeDef.batchDTO.getStatus()).isEqualTo(status);
     }
 
     @When("I call the batch details API with expected status of {int}")
     public void callBatchDetailsAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        requestSpec.queryParam("batchId", BaseStepDef.batchId);
+        requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(operationsAppConfig.batchDetailsEndpoint).andReturn().asString();
 
-        logger.info("Batch Details Response: " + BaseStepDef.response);
+        logger.info("Batch Details Response: " + scenarioScopeDef.response);
     }
 
     @When("I call the batch transactions endpoint with expected status of {int} without payload")
     public void iCallTheBatchTransactionsEndpointWithExpectedStatusOfWithoutPayload(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant, scenarioScopeDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integration test");
         requestSpec.header(HEADER_FILENAME, "");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
-        if (StringUtils.isNotBlank(BaseStepDef.filename)) {
-            requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        if (StringUtils.isNotBlank(scenarioScopeDef.filename)) {
+            requestSpec.header(HEADER_FILENAME, scenarioScopeDef.filename);
         }
-        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
-            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        if (scenarioScopeDef.signature != null && !scenarioScopeDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeDef.signature);
         }
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect().when()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint).expect().when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).andReturn().asString();
 
-        logger.info("Batch Transactions without payload Response: " + BaseStepDef.response);
+        logger.info("Batch Transactions without payload Response: " + scenarioScopeDef.response);
     }
 
     @And("I should get batchId in response")
     public void iShouldGetBatchIdInResponse() throws JSONException {
-        JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+        JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
         String pollingPath = (String) jsonObject.get("PollingPath");
         String[] response = pollingPath.split("/");
         logger.info("Batch Id: {}", response[response.length - 1]);
-        BaseStepDef.batchId = response[response.length - 1];
+        scenarioScopeDef.batchId = response[response.length - 1];
 
     }
 
     @When("I should call callbackUrl api")
     public void iShouldCallCallbackUrlApi() throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant, scenarioScopeDef.clientCorrelationId);
         String callbackReq = new String("The Batch Aggregation API was complete");
         logger.info(callbackReq);
-        String jwsSignature = generateSignature(BaseStepDef.clientCorrelationId, BaseStepDef.tenant, callbackReq, false);
+        String jwsSignature = generateSignature(scenarioScopeDef.clientCorrelationId, scenarioScopeDef.tenant, callbackReq, false);
 
         requestSpec.header(HEADER_JWS_SIGNATURE, jwsSignature);
 
-        BaseStepDef.statusCode = RestAssured.given(requestSpec).body(callbackReq).post(bulkProcessorConfig.getCallbackUrl()).andReturn()
-                .getStatusCode();
+        scenarioScopeDef.statusCode = RestAssured.given(requestSpec).body(callbackReq).post(bulkProcessorConfig.getCallbackUrl())
+                .andReturn().getStatusCode();
     }
 
     @And("I have callbackUrl as {string}")
     public void iHaveCallbackUrlAs(String callBackUrl) {
         assertThat(callBackUrl).isNotEmpty();
         bulkProcessorConfig.setCallbackUrl(callBackUrl);
-        BaseStepDef.callbackUrl = callBackUrl;
+        scenarioScopeDef.callbackUrl = callBackUrl;
     }
 
     @Then("I should get expected status of {int}")
     public void iShouldGetExpectedStatusOf(int expectedStatus) throws NoSuchPaddingException, IllegalBlockSizeException, IOException,
             NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        assertThat(BaseStepDef.statusCode).isNotNull();
-        assertThat(BaseStepDef.statusCode).isEqualTo(expectedStatus);
+        assertThat(scenarioScopeDef.statusCode).isNotNull();
+        assertThat(scenarioScopeDef.statusCode).isEqualTo(expectedStatus);
         if (expectedStatus != 200) {
             bulkProcessorConfig.setRetryCount(bulkProcessorConfig.getRetryCount() - 1);
             iShouldCallCallbackUrlApi();
@@ -238,63 +238,63 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I should get non empty response with failure and success percentage")
     public void iShouldGetNonEmptyResponseWithFailureAndSuccessPercentage() {
-        assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response.contains("failPercentage"));
-        assertThat(BaseStepDef.response.contains("successPercentage"));
+        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeDef.response.contains("failPercentage"));
+        assertThat(scenarioScopeDef.response.contains("successPercentage"));
     }
 
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant, scenarioScopeDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
-        requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        requestSpec.header(HEADER_FILENAME, scenarioScopeDef.filename);
         requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
-        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
-            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        if (scenarioScopeDef.signature != null && !scenarioScopeDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeDef.signature);
         }
-        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
-            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        if (StringUtils.isNotBlank(scenarioScopeDef.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeDef.programId);
         }
 
-        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data").multiPart("data", f).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
+        scenarioScopeDef.response = resp.andReturn().asString();
+        scenarioScopeDef.restResponseObject = resp;
 
         Headers allHeaders = resp.getHeaders();
         for (Header header : allHeaders) {
             logger.debug("{}", header.getName());
             logger.debug("{}", header.getValue());
         }
-        logger.info("Batch Transactions Response: " + BaseStepDef.response);
+        logger.info("Batch Transactions Response: " + scenarioScopeDef.response);
     }
 
     @And("I should have {string} and {string} in response")
     public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {
-        assertThat(BaseStepDef.response).contains(pollingpath);
-        assertThat(BaseStepDef.response).contains(suggestedcallback);
+        assertThat(scenarioScopeDef.response).contains(pollingpath);
+        assertThat(scenarioScopeDef.response).contains(suggestedcallback);
 
     }
 
     @And("I have callbackUrl as simulated url")
     public void iHaveCallbackUrlAsSimulatedUrl() {
         bulkProcessorConfig.setCallbackUrl(bulkProcessorConfig.simulateEndpoint);
-        BaseStepDef.callbackUrl = bulkProcessorConfig.getCallbackUrl();
+        scenarioScopeDef.callbackUrl = bulkProcessorConfig.getCallbackUrl();
     }
 
     @And("I fetch batch ID from batch transaction API's response")
     public void iFetchBatchIDFromBatchTransactionAPISResponse() {
-        assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
-        BaseStepDef.batchId = fetchBatchId(BaseStepDef.batchTransactionResponse);
-        logger.info("batchId: {}", batchId);
-        assertThat(batchId).isNotEmpty();
+        assertThat(scenarioScopeDef.batchTransactionResponse).isNotNull();
+        scenarioScopeDef.batchId = fetchBatchId(scenarioScopeDef.batchTransactionResponse);
+        logger.info("batchId: {}", scenarioScopeDef.batchId);
+        assertThat(scenarioScopeDef.batchId).isNotEmpty();
     }
 
     @And("I am able to parse batch transactions response")
@@ -309,65 +309,65 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     private void parseBatchTransactionsResponse() {
-        assertThat(BaseStepDef.response).isNotEmpty();
+        assertThat(scenarioScopeDef.response).isNotEmpty();
         BatchTransactionResponse response = null;
         try {
-            response = objectMapper.readValue(BaseStepDef.response, BatchTransactionResponse.class);
-            BaseStepDef.batchTransactionResponse = response;
+            response = objectMapper.readValue(scenarioScopeDef.response, BatchTransactionResponse.class);
+            scenarioScopeDef.batchTransactionResponse = response;
         } catch (Exception e) {
             logger.error("Error parsing the batch transaction response", e);
         }
-        assertThat(BaseStepDef.batchTransactionResponse).isNotNull();
+        assertThat(scenarioScopeDef.batchTransactionResponse).isNotNull();
     }
 
     @And("I should have matching total txn count and successful txn count in response")
     public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCountInResponse() {
-        assertThat(BaseStepDef.batchDTO).isNotNull();
-        assertThat(BaseStepDef.batchDTO.getTotal()).isNotNull();
-        assertThat(BaseStepDef.batchDTO.getSuccessful()).isNotNull();
-        assertThat(BaseStepDef.batchDTO.getTotal()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchDTO.getSuccessful()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchDTO.getTotal()).isEqualTo(BaseStepDef.batchDTO.getSuccessful());
+        assertThat(scenarioScopeDef.batchDTO).isNotNull();
+        assertThat(scenarioScopeDef.batchDTO.getTotal()).isNotNull();
+        assertThat(scenarioScopeDef.batchDTO.getSuccessful()).isNotNull();
+        assertThat(scenarioScopeDef.batchDTO.getTotal()).isGreaterThan(0);
+        assertThat(scenarioScopeDef.batchDTO.getSuccessful()).isGreaterThan(0);
+        assertThat(scenarioScopeDef.batchDTO.getTotal()).isEqualTo(scenarioScopeDef.batchDTO.getSuccessful());
 
     }
 
     @When("I can assert the approved count as {int} and approved amount as {int}")
     public void iCanAssertTheApprovedCountAsAndApprovedAmountAs(int count, int amount) {
-        BigDecimal approvedCount = BaseStepDef.batchDTO.getApprovedCount();
-        BigDecimal approvedAmount = BaseStepDef.batchDTO.getApprovedAmount();
+        BigDecimal approvedCount = scenarioScopeDef.batchDTO.getApprovedCount();
+        BigDecimal approvedAmount = scenarioScopeDef.batchDTO.getApprovedAmount();
         assertThat(approvedCount).isEqualTo(new BigDecimal(count));
         assertThat(approvedAmount).isEqualTo(new BigDecimal(amount));
     }
 
     @When("I call the batch transactions raw endpoint with expected status of {int}")
     public void callBatchTransactionsRawEndpoint(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant, scenarioScopeDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integartion test");
         requestSpec.header(HEADER_FILENAME, "");
         requestSpec.header(QUERY_PARAM_TYPE, "RAW");
-        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
-            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        if (scenarioScopeDef.signature != null && !scenarioScopeDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeDef.signature);
         }
-        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
-            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        if (StringUtils.isNotBlank(scenarioScopeDef.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeDef.programId);
         }
 
-        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .contentType("application/json").body(BaseStepDef.batchRawRequest).expect()
+                .contentType("application/json").body(scenarioScopeDef.batchRawRequest).expect()
                 // .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
+        scenarioScopeDef.response = resp.andReturn().asString();
+        scenarioScopeDef.restResponseObject = resp;
 
         Headers allHeaders = resp.getHeaders();
         for (Header header : allHeaders) {
             logger.info(" : {}", header.getName());
             logger.info("{}", header.getValue());
         }
-        logger.info("Batch Transactions Response: " + BaseStepDef.response);
+        logger.info("Batch Transactions Response: " + scenarioScopeDef.response);
     }
 
     @And("I can mock the Batch Transaction Request DTO without payer info")
@@ -380,12 +380,12 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchRequestDTO.getAmount()).isNotEmpty();
         assertThat(batchRequestDTO.getSubType()).isNotEmpty();
         assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
-        BaseStepDef.batchRequestDTO = batchRequestDTO;
+        scenarioScopeDef.batchRequestDTO = batchRequestDTO;
 
         List<BatchRequestDTO> batchRequestDTOS = new ArrayList<>();
         batchRequestDTOS.add(batchRequestDTO);
-        BaseStepDef.batchRawRequest = objectMapper.writeValueAsString(batchRequestDTOS);
-        assertThat(BaseStepDef.batchRawRequest).isNotEmpty();
+        scenarioScopeDef.batchRawRequest = objectMapper.writeValueAsString(batchRequestDTOS);
+        assertThat(scenarioScopeDef.batchRawRequest).isNotEmpty();
     }
 
     public BatchDetailResponse parseBatchDetailResponse(String jsonString) {
@@ -400,8 +400,8 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I should get transactions with note set as {string}")
     public void iShouldGetTransactionsWithNoteSetAs(String duplicateTransactionNote) {
-        logger.info(BaseStepDef.response);
-        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(BaseStepDef.response);
+        logger.info(scenarioScopeDef.response);
+        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(scenarioScopeDef.response);
         int duplicateRecordCount = 0;
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
@@ -419,7 +419,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("All the duplicate transaction should have status as Failed")
     public void duplicateTransactionStatusShouldBeFailed() {
-        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(BaseStepDef.response);
+        BatchDetailResponse batchDetailResponse = parseBatchDetailResponse(scenarioScopeDef.response);
         assertThat(batchDetailResponse).isNotNull();
         List<Transfer> transfers = batchDetailResponse.getContent();
 
@@ -441,19 +441,19 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch aggregate API with expected status of {int}")
     public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        logger.info("Calling with batch id: {}", scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchAggregateEndpoint + BaseStepDef.batchId).andReturn().asString();
-        logger.info("Batch Aggregate Response: " + BaseStepDef.response);
+                .get(operationsAppConfig.batchAggregateEndpoint + scenarioScopeDef.batchId).andReturn().asString();
+        logger.info("Batch Aggregate Response: " + scenarioScopeDef.response);
     }
 
     public void batchTearDown() {
-        BaseStepDef.filename = null;
-        BaseStepDef.batchId = null;
-        BaseStepDef.response = null;
+        scenarioScopeDef.filename = null;
+        scenarioScopeDef.batchId = null;
+        scenarioScopeDef.response = null;
     }
 
     public BatchRequestDTO mockBatchTransactionRequestDTO() {
@@ -486,76 +486,76 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Given("I have a batch id {string}")
     public void iHaveABatchId(String batchID) {
-        BaseStepDef.batchId = batchID;
+        scenarioScopeDef.batchId = batchID;
     }
 
     @And("I call the batch summary API for sub batch summary with expected status of {int}")
     public void iCallTheBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
-        logger.info("Calling with batch id: {}", BaseStepDef.batchId);
+        // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+        logger.info("Calling with batch id: {}", scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchSummaryEndpoint + BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchSummaryEndpoint + scenarioScopeDef.batchId).andReturn().asString();
 
-        logger.info("Batch Summary Response: " + BaseStepDef.response);
+        logger.info("Batch Summary Response: " + scenarioScopeDef.response);
     }
 
     @Then("I am able to parse sub batch summary response")
     public void iAmAbleToParseSubBatchSummaryResponse() {
-        batchAndSubBatchSummaryResponse = null;
-        assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response).isNotEmpty();
+        scenarioScopeDef.batchAndSubBatchSummaryResponse = null;
+        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeDef.response).isNotEmpty();
         try {
-            BaseStepDef.batchAndSubBatchSummaryResponse = objectMapper.readValue(BaseStepDef.response,
+            scenarioScopeDef.batchAndSubBatchSummaryResponse = objectMapper.readValue(scenarioScopeDef.response,
                     BatchAndSubBatchSummaryResponse.class);
         } catch (Exception e) {
             logger.error("Error parsing the batch summary response", e);
         }
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse).isNotNull();
     }
 
     @And("I call the sub batch summary API for sub batch summary with expected status of {int}")
     public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        requestSpec.header("X-Correlation-ID", BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        requestSpec.header("X-Correlation-ID", scenarioScopeDef.clientCorrelationId);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
-        logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
+        // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+        logger.info("Calling with batch id: {}", scenarioScopeDef.clientCorrelationId);
         logger.info("Calling with batch id: {}",
-                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId);
+                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchesEndpoint + "/" + scenarioScopeDef.batchId).andReturn().asString();
 
-        logger.info("Sub batch Summary Response: " + BaseStepDef.response);
+        logger.info("Sub batch Summary Response: " + scenarioScopeDef.response);
     }
 
     @And("I should assert total txn count and successful txn count in response")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInResponse() {
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isNotNull();
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse.getTotal())
-                .isEqualTo(BaseStepDef.batchAndSubBatchSummaryResponse.getSuccessful());
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse.getTotal()).isNotNull();
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse.getTotal())
+                .isEqualTo(scenarioScopeDef.batchAndSubBatchSummaryResponse.getSuccessful());
     }
 
     @And("Total transaction in batch should add up to total transaction in each sub batch")
     public void matchTotalSubBatchTxnAndBatchTxnCount() {
-        assertThat(BaseStepDef.batchAndSubBatchSummaryResponse).isNotNull();
-        assertThat(Integer.parseInt(BaseStepDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
-        long batchTotal = BaseStepDef.batchAndSubBatchSummaryResponse.getTotal();
+        assertThat(scenarioScopeDef.batchAndSubBatchSummaryResponse).isNotNull();
+        assertThat(Integer.parseInt(scenarioScopeDef.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
+        long batchTotal = scenarioScopeDef.batchAndSubBatchSummaryResponse.getTotal();
         long subBatchTotal = 0L;
-        for (SubBatchSummary subBatchSummary : BaseStepDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
+        for (SubBatchSummary subBatchSummary : scenarioScopeDef.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
             subBatchTotal += subBatchSummary.getTotal();
         }
         assertThat(batchTotal).isEqualTo(subBatchTotal);
@@ -564,42 +564,42 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I call the payment batch detail API with expected status of {int}")
     public void iCallThePaymentBatchDetailAPIWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
-        requestSpec.header("X-Correlation-ID", BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        requestSpec.header("X-Correlation-ID", scenarioScopeDef.clientCorrelationId);
         requestSpec.queryParam("associations", "all");
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
-        // requestSpec.queryParam("batchId", BaseStepDef.batchId);
-        logger.info("Calling with batch id: {}", BaseStepDef.clientCorrelationId);
+        // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+        logger.info("Calling with batch id: {}", scenarioScopeDef.clientCorrelationId);
         logger.info("Calling with batch id: {}",
-                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId);
+                operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + scenarioScopeDef.batchId);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchesEndpoint + "/" + BaseStepDef.batchId).andReturn().asString();
+                .get(operationsAppConfig.batchesEndpoint + "/" + scenarioScopeDef.batchId).andReturn().asString();
 
-        logger.info("Batch Payment Detail Response: " + BaseStepDef.response);
+        logger.info("Batch Payment Detail Response: " + scenarioScopeDef.response);
     }
 
     @Then("I am able to parse payment batch detail response")
     public void iAmAbleToParsePaymentBatchDetailResponse() {
-        paymentBatchDetail = null;
-        assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response).isNotEmpty();
+        scenarioScopeDef.paymentBatchDetail = null;
+        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeDef.response).isNotEmpty();
         try {
-            BaseStepDef.paymentBatchDetail = objectMapper.readValue(BaseStepDef.response, PaymentBatchDetail.class);
+            scenarioScopeDef.paymentBatchDetail = objectMapper.readValue(scenarioScopeDef.response, PaymentBatchDetail.class);
         } catch (Exception e) {
             logger.error("Error parsing the payment batch detail response", e);
         }
-        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
+        assertThat(scenarioScopeDef.paymentBatchDetail).isNotNull();
     }
 
     @And("I should assert total txn count and successful txn count in payment batch detail response")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponse() {
-        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getSubBatchList().size()).isEqualTo(3);
-        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(12);
+        assertThat(scenarioScopeDef.paymentBatchDetail).isNotNull();
+        assertThat(scenarioScopeDef.paymentBatchDetail.getSubBatchList().size()).isEqualTo(3);
+        assertThat(scenarioScopeDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(12);
     }
 
     @Then("I should be able to extract response body from callback for batch")
@@ -626,61 +626,61 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions endpoint with expected status of {int} and callbackurl as {string}")
     public void iCallTheBatchTransactionsEndpointWithExpectedStatusOfAndCallbackurlAs(int expectedStatus, String callback) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant, BaseStepDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant, scenarioScopeDef.clientCorrelationId);
         requestSpec.header(HEADER_PURPOSE, "Integration test");
-        requestSpec.header(HEADER_FILENAME, BaseStepDef.filename);
+        requestSpec.header(HEADER_FILENAME, scenarioScopeDef.filename);
         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
         requestSpec.header("X-CallbackURL", callbackURL + callback);
-        if (BaseStepDef.signature != null && !BaseStepDef.signature.isEmpty()) {
-            requestSpec.header(HEADER_JWS_SIGNATURE, BaseStepDef.signature);
+        if (scenarioScopeDef.signature != null && !scenarioScopeDef.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeDef.signature);
         }
-        if (StringUtils.isNotBlank(BaseStepDef.registeringInstituteId) && StringUtils.isNotBlank(BaseStepDef.programId)) {
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, BaseStepDef.registeringInstituteId);
-            requestSpec.header(HEADER_PROGRAM_ID, BaseStepDef.programId);
+        if (StringUtils.isNotBlank(scenarioScopeDef.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeDef.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeDef.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeDef.programId);
         }
 
-        File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename));
         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
                 .contentType("multipart/form-data").multiPart("data", f).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
+        scenarioScopeDef.response = resp.andReturn().asString();
+        scenarioScopeDef.restResponseObject = resp;
 
         Headers allHeaders = resp.getHeaders();
         for (Header header : allHeaders) {
             logger.info("{}", header.getName());
             logger.info(header.getValue());
         }
-        logger.info("Batch Transactions Response: " + BaseStepDef.response);
+        logger.info("Batch Transactions Response: " + scenarioScopeDef.response);
     }
 
     @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
-        assertThat(BaseStepDef.paymentBatchDetail).isNotNull();
-        assertThat(BaseStepDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+        assertThat(scenarioScopeDef.paymentBatchDetail).isNotNull();
+        assertThat(scenarioScopeDef.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
     }
 
     @And("I am able to parse actuator response")
     public void iAmAbleToParseActuatorResponse() {
         ActuatorResponse actuatorResponse = null;
-        assertThat(BaseStepDef.response).isNotNull();
-        assertThat(BaseStepDef.response).isNotEmpty();
+        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeDef.response).isNotEmpty();
         try {
-            actuatorResponse = objectMapper.readValue(BaseStepDef.response, ActuatorResponse.class);
-            BaseStepDef.actuatorResponse = actuatorResponse;
+            actuatorResponse = objectMapper.readValue(scenarioScopeDef.response, ActuatorResponse.class);
+            scenarioScopeDef.actuatorResponse = actuatorResponse;
         } catch (Exception e) {
             logger.error("Error parsing the actuator response", e);
         }
-        assertThat(BaseStepDef.actuatorResponse).isNotNull();
+        assertThat(scenarioScopeDef.actuatorResponse).isNotNull();
     }
 
     @And("Status of service is {string}")
     public void statusOfServiceIs(String status) {
-        assertThat(BaseStepDef.actuatorResponse).isNotNull();
-        assertThat(BaseStepDef.actuatorResponse.getStatus()).isEqualTo(status);
+        assertThat(scenarioScopeDef.actuatorResponse).isNotNull();
+        assertThat(scenarioScopeDef.actuatorResponse.getStatus()).isEqualTo(status);
     }
 
     @When("I call the actuator API with Contactpoint {string} and endpoint {string}")
@@ -690,9 +690,9 @@ public class BatchApiStepDef extends BaseStepDef {
         Response resp = RestAssured.given(requestSpec).baseUri(environment.getProperty(config)).expect()
                 .spec(new ResponseSpecBuilder().build()).when().get(endpoint).then().extract().response();
 
-        BaseStepDef.response = resp.andReturn().asString();
-        BaseStepDef.restResponseObject = resp;
+        scenarioScopeDef.response = resp.andReturn().asString();
+        scenarioScopeDef.restResponseObject = resp;
 
-        logger.info("Actuator Response: " + BaseStepDef.response);
+        logger.info("Actuator Response: " + scenarioScopeDef.response);
     }
 }

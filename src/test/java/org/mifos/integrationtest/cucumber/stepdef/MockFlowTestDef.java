@@ -29,16 +29,17 @@ public class MockFlowTestDef extends BaseStepDef {
     @When("I call the outbound transfer endpoint with expected status {int}")
     public void iCallTheOutboundTransferEndpointWithExpectedStatus(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        logger.info("X-CorrelationId: {}", BaseStepDef.clientCorrelationId);
-        requestSpec.header(Utils.X_CORRELATIONID, BaseStepDef.clientCorrelationId);
+        logger.info("X-CorrelationId: {}", scenarioScopeDef.clientCorrelationId);
+        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
         requestSpec.header("X-Registering-Institution-ID", "SocialWelfare");
         scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(BaseStepDef.inboundTransferMockReq).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+                .body(scenarioScopeDef.inboundTransferMockReq).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
         logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
-        BaseStepDef.transactionId = scenarioScopeDef.response.split(":")[1].split(",")[0].split("\"")[1];
-        logger.info("TransactionId: {}", BaseStepDef.transactionId);
+        scenarioScopeDef.transactionId = scenarioScopeDef.response.split(":")[1].split(",")[0].split("\"")[1];
+        logger.info("TransactionId: {}", scenarioScopeDef.transactionId);
     }
 
     @And("I should have PayerFspId as not null")
@@ -54,7 +55,7 @@ public class MockFlowTestDef extends BaseStepDef {
     @When("I call the get txn API with expected status of {int} and txnId")
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnId(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeDef.transactionId);
         requestSpec.queryParam("size", "1");
         requestSpec.header("page", "0");
         if (authEnabled) {
