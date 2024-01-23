@@ -51,30 +51,30 @@ public class InboundStepDef extends BaseStepDef {
 
     @And("I call the inbound transfer endpoint with authentication")
     public void callBatchSummaryAPIWithAuth() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         requestSpec.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
 
         // since after authentication channel can return anything apart from 400 and 401
         ResponseSpecification responseSpecBuilder = new ResponseSpecBuilder().expectStatusCode(anyOf(not(anyOf(is(400), is(401))))).build();
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(mockTransactionChannelRequestDTO).expect().spec(responseSpecBuilder).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
 
     public void callBatchSummaryAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
         BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
-        logger.info("Inbound transfer Response: {}", BaseStepDef.response);
+        logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
     }
 
     @And("I should be able to parse transactionId")
     public void parseTransactionId() {
         String transactionId;
         try {
-            JSONObject jsonObject = new JSONObject(BaseStepDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
             transactionId = jsonObject.getString("transactionId");
         } catch (JSONException e) {
             logger.error("Error parsing the transaction id", e);

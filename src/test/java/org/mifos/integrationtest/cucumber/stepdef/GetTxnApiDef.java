@@ -32,7 +32,7 @@ public class GetTxnApiDef extends BaseStepDef {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
         }
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
 

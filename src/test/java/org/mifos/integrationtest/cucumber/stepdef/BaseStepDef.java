@@ -76,6 +76,9 @@ public class BaseStepDef {
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
 
+    @Autowired
+    ScenarioScopeDef scenarioScopeDef;
+
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
 //    protected static String batchId;
@@ -154,7 +157,7 @@ public class BaseStepDef {
 
         JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder().setClientCorrelationId(clientCorrelationId)
                 .setTenantId(tenant).setIsDataAsFile(isDataAFile)
-                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(BaseStepDef.filename) : data).build();
+                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(scenarioScopeDef.filename) : data).build();
 
         return jsonWebSignature.getSignature(BaseStepDef.privateKeyString);
     }
