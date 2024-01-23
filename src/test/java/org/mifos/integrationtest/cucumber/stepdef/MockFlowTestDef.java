@@ -23,6 +23,9 @@ public class MockFlowTestDef extends BaseStepDef {
     @Autowired
     OperationsAppConfig operationsAppConfig;
 
+    @Autowired
+    ScenarioScopeDef scenarioScopeDef;
+
     @When("I call the outbound transfer endpoint with expected status {int}")
     public void iCallTheOutboundTransferEndpointWithExpectedStatus(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
@@ -74,7 +77,7 @@ public class MockFlowTestDef extends BaseStepDef {
         String value = content.get("payeeDfspId").toString();
         String payeeIdentifier = content.get("payeePartyId").toString();
         assertThat(value).isEqualTo(payeeDfspId);
-        assertThat(payeeIdentifier).isEqualTo(BaseStepDef.payerIdentifier);
+        assertThat(payeeIdentifier).isEqualTo(scenarioScopeDef.payerIdentifier);
     }
 
 }

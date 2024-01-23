@@ -23,6 +23,9 @@ public class NCStepDef extends BaseStepDef {
     @Autowired
     NetflixConductorConfig netflixConductorConfig;
 
+    @Autowired
+    ScenarioScopeDef scenarioScopeDef;
+
     @When("I make a call to nc server health API with expected status 200")
     public void ncHealthAPICall() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
@@ -41,7 +44,7 @@ public class NCStepDef extends BaseStepDef {
 
     @And("I have the request body for transfer")
     public void iHaveRequestBody() throws JSONException {
-        String payerIdentifier = BaseStepDef.payerIdentifier;
+        String payerIdentifier = scenarioScopeDef.payerIdentifier;
         JSONObject collectionRequestBody;
 
         if (payerIdentifier != null) {

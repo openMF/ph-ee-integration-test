@@ -78,13 +78,13 @@ public class BaseStepDef {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    protected static String batchId;
-    protected static String tenant;
-    protected static String response;
-    protected static String request;
-    protected static Integer statusCode;
-    protected static String accessToken;
-    protected static String filename;
+//    protected static String batchId;
+//    protected static String tenant;
+//    protected static String response;
+//    protected static String request;
+//    protected static Integer statusCode;
+//    protected static String accessToken;
+//    protected static String filename;
     protected static String defaultFileName = "ph-ee-bulk-demo-6.csv";
     protected static String requestType;
     protected static String clientCorrelationId;
@@ -127,8 +127,6 @@ public class BaseStepDef {
     protected static BatchRequestDTO batchRequestDTO;
     protected static String batchRawRequest;
     protected static BatchAndSubBatchSummaryResponse batchAndSubBatchSummaryResponse;
-    protected static String payerIdentifier;
-    protected static String payeeIdentifier;
     protected static Long currentBalance;
     protected static String beneficiaryPayeeIdentity;
     protected static String payer_identifier;

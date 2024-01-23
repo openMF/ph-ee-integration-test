@@ -54,6 +54,8 @@ public class GSMATransferStepDef extends BaseStepDef {
     GSMATransferDef gsmaTransferDef;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    ScenarioScopeDef scenarioScopeDef;
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private static String payer_identifier;
     private static String payeeIdentity;
@@ -125,7 +127,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
         payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        BaseStepDef.payerIdentifier = payer_identifier;
+        scenarioScopeDef.payerIdentifier = payer_identifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", payer_identifier);
         // Calling Interop Identifier endpoint
