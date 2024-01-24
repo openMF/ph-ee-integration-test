@@ -62,7 +62,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         if (client.equals("payer")) {
             tenant = transferConfig.payerTenant;
             fundTransferDef.setPayerTenant(tenant);
-            scenarioScopeDef.tenant = tenant;
+            scenarioScopeState.tenant = tenant;
         } else {
             tenant = transferConfig.payeeTenant;
             fundTransferDef.setPayeeTenant(tenant);
@@ -149,10 +149,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         if (client.equals("payer")) {
             payer_identifier = identifier;
-            scenarioScopeDef.payerIdentifier = identifier;
+            scenarioScopeState.payerIdentifier = identifier;
         } else {
             payee_identifier = identifier;
-            scenarioScopeDef.payeeIdentifier = identifier;
+            scenarioScopeState.payeeIdentifier = identifier;
         }
 
         String endpoint = transferConfig.interopIdentifierEndpoint;
@@ -244,7 +244,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I can register the stub for callback endpoint of party lookup")
     public void registerStubForPartyLookup() {
-        String endpoint = "parties/MSISDN/" + scenarioScopeDef.payeeIdentifier;
+        String endpoint = "parties/MSISDN/" + scenarioScopeState.payeeIdentifier;
         mockServerStepDef.startStub(endpoint, HttpMethod.PUT, 200);
     }
 
@@ -270,26 +270,26 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         requestSpec.header("Date", new Date());
         requestSpec.header("Fspiop-Destination", mojaloopConfig.payeeFspId);
         requestSpec.header("Fspiop-Source", mojaloopConfig.payerFspId);
-        requestSpec.header("partyId", scenarioScopeDef.payeeIdentifier);
+        requestSpec.header("partyId", scenarioScopeState.payeeIdentifier);
         requestSpec.header("partyIdType", "MSISDN");
         requestSpec.header("Traceparent", UUID.randomUUID());
         requestSpec.header("X-Lookup-Callback-Url", transferConfig.callbackURL);
 
         String identifier;
         if (client.equals("payer")) {
-            identifier = scenarioScopeDef.payerIdentifier;
+            identifier = scenarioScopeState.payerIdentifier;
         } else {
-            identifier = scenarioScopeDef.payeeIdentifier;
+            identifier = scenarioScopeState.payeeIdentifier;
         }
 
         String endpoint = mojaloopConfig.mlConnectorGetPartyEndpoint;
         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", identifier);
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().get(endpoint).andReturn().asString();
 
-        assertThat(scenarioScopeDef.response).isNotNull();
+        assertThat(scenarioScopeState.response).isNotNull();
     }
 
     @Then("I call the get quotation api in ml connector for {string}")
@@ -301,12 +301,12 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         String quoteRequestBody;
         if (client.equals("payer")) {
-            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest(scenarioScopeDef.payerIdentifier, "1234", "1", quoteId);
+            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest(scenarioScopeState.payerIdentifier, "1234", "1", quoteId);
         } else {
-            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest("1234", scenarioScopeDef.payeeIdentifier, "1", quoteId);
+            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest("1234", scenarioScopeState.payeeIdentifier, "1", quoteId);
         }
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
                 .body(quoteRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
                 .post(mojaloopConfig.mlConnectorGetQuoteEndpoint).andReturn().asString();
 
@@ -324,7 +324,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String condition = jsonObject.get("condition").getAsString();
         String transferRequestBody = fundTransferDef.setBodyPayeeTransferRequest("1", ilpPacket, condition);
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
                 .body(transferRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
                 .post(mojaloopConfig.mlConnectorTransferEndpoint).andReturn().asString();
 
@@ -385,8 +385,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         // requestSpec.header("Platform-TenantId", transferConfig.payerTenant);
 
         String requestBody = TransferHelper
-                .getTransferRequestBody(scenarioScopeDef.payerIdentifier, scenarioScopeDef.payeeIdentifier, amount).toString();
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .getTransferRequestBody(scenarioScopeState.payerIdentifier, scenarioScopeState.payeeIdentifier, amount).toString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(requestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
@@ -396,21 +396,21 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
-        requestSpec.queryParam("transactionId", scenarioScopeDef.transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
                 .asString();
 
-        logger.info(scenarioScopeDef.transactionId);
-        logger.info("Get Transfer Response: " + scenarioScopeDef.response);
+        logger.info(scenarioScopeState.transactionId);
+        logger.info("Get Transfer Response: " + scenarioScopeState.response);
     }
 
     @Then("I check for error related to {}")
     public void checkForError(String action) {
-        JsonObject jsonObject = JsonParser.parseString(scenarioScopeDef.response).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 
         JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
 
@@ -423,9 +423,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void checkSubPartStatus(String variable, String expectedValue) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
-        String endpoint = operationsAppConfig.variablesEndpoint + "/" + scenarioScopeDef.transactionId;
+        String endpoint = operationsAppConfig.variablesEndpoint + "/" + scenarioScopeState.transactionId;
         String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
@@ -460,9 +460,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
-        scenarioScopeDef.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
-        logger.info(String.valueOf(scenarioScopeDef.currentBalance));
-        assertThat(scenarioScopeDef.currentBalance).isEqualTo(amount);
+        scenarioScopeState.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
+        logger.info(String.valueOf(scenarioScopeState.currentBalance));
+        assertThat(scenarioScopeState.currentBalance).isEqualTo(amount);
     }
 
 }

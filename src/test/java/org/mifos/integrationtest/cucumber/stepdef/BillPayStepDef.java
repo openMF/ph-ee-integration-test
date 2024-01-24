@@ -59,37 +59,37 @@ public class BillPayStepDef extends BaseStepDef {
     @When("I call the get bills api with billid with expected status of {int} and callbackurl as {string}")
     public void iCallTheGetBillsApiWithBillidWithExpectedStatusOf(int expectedStatus, String callbackUrl)
             throws JsonProcessingException, JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
 
-        requestSpec.header("X-CorrelationID", scenarioScopeDef.clientCorrelationId.toString());
+        requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId.toString());
         requestSpec.header("X-CallbackURL", billPayConnectorConfig.callbackURL + callbackUrl);
         requestSpec.header("X-PayerFSP-Id", "lion");
         requestSpec.queryParam("fields", "inquiry");
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(billPayConnectorConfig.inquiryEndpoint.replace("{billId}", billId)).andReturn().asString();
 
-        logger.info("Bill Pay response: {}", scenarioScopeDef.response);
-        JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
-        scenarioScopeDef.transactionId = jsonObject.getString("transactionId");
-        assertThat(scenarioScopeDef.transactionId.equals("NA")).isFalse();
+        logger.info("Bill Pay response: {}", scenarioScopeState.response);
+        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+        scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+        assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
 
     }
 
     @And("I should get transactionId in response")
     public void iShouldGetBatchIdInResponse() throws JSONException {
-        JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
-        scenarioScopeDef.transactionId = jsonObject.getString("transactionId");
+        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+        scenarioScopeState.transactionId = jsonObject.getString("transactionId");
 
     }
 
     @And("I should have startedAt and completedAt and workflowInstanceKey in response and not null")
     public void iShouldHaveStartedAtAndCompletedAtAndWorkflowInstanceKeyInResponse() throws JSONException {
-        assertThat(scenarioScopeDef.response).containsMatch("startedAt");
-        assertThat(scenarioScopeDef.response).containsMatch("completedAt");
-        assertThat(scenarioScopeDef.response).containsMatch("workflowInstanceKey");
+        assertThat(scenarioScopeState.response).containsMatch("startedAt");
+        assertThat(scenarioScopeState.response).containsMatch("completedAt");
+        assertThat(scenarioScopeState.response).containsMatch("workflowInstanceKey");
 
-        JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
+        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
         JSONArray jsonArray = (JSONArray) jsonObject.get("content");
         JSONObject content = (JSONObject) jsonArray.get(0);
         String value = content.get("startedAt").toString();
@@ -104,65 +104,65 @@ public class BillPayStepDef extends BaseStepDef {
     @And("I can mock payment notification request")
     public void iCanMockPaymentNotificationRequest() throws JsonProcessingException {
         StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{").append("\"clientCorrelationId\": " + "\"" + scenarioScopeDef.clientCorrelationId + "\"" + ",")
+        jsonBuilder.append("{").append("\"clientCorrelationId\": " + "\"" + scenarioScopeState.clientCorrelationId + "\"" + ",")
                 .append("\"billInquiryRequestId\": \"27710101999\",")
                 .append("\"billInquiryRequestId\": " + "\"" + UUID.randomUUID() + "\"" + ",")
                 .append("\"billId\": " + "\"" + BaseStepDef.billId + "\"" + ",")
                 .append("\"paymentReferenceID\": " + "\"" + UUID.randomUUID() + "\"").append("}");
         String json = jsonBuilder.toString();
         billPaymentsReqDTO = objectMapper.readValue(json, BillPaymentsReqDTO.class);
-        scenarioScopeDef.inboundTransferReqP2G = billPaymentsReqDTO;
-        logger.info("inboundTransferReqP2G: {}", scenarioScopeDef.inboundTransferReqP2G);
-        assertThat(scenarioScopeDef.inboundTransferReqP2G).isNotNull();
+        scenarioScopeState.inboundTransferReqP2G = billPaymentsReqDTO;
+        logger.info("inboundTransferReqP2G: {}", scenarioScopeState.inboundTransferReqP2G);
+        assertThat(scenarioScopeState.inboundTransferReqP2G).isNotNull();
 
     }
 
     @When("I call the payment notification api expected status of {int} and callbackurl as {string}")
     public void iCallThePaymentNotificationApiExpectedStatusOf(int expectedStatus, String callbackurl) throws JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header("X-Platform-TenantId", scenarioScopeDef.tenant);
-        requestSpec.header("X-CorrelationID", scenarioScopeDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header("X-Platform-TenantId", scenarioScopeState.tenant);
+        requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId);
         requestSpec.header("X-PayerFSP-Id", "lion");
         requestSpec.queryParam("fields", "inquiry");
         requestSpec.header("X-CallbackURL", billPayConnectorConfig.callbackURL + callbackurl);
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint)
-                .body(scenarioScopeDef.inboundTransferReqP2G).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint)
+                .body(scenarioScopeState.inboundTransferReqP2G).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(billPayConnectorConfig.paymentsEndpoint).andReturn().asString();
 
-        logger.info("Payment notiifcation response: {}", scenarioScopeDef.response);
-        JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
-        scenarioScopeDef.transactionId = jsonObject.getString("transactionId");
-        assertThat(scenarioScopeDef.transactionId.equals("NA")).isFalse();
+        logger.info("Payment notiifcation response: {}", scenarioScopeState.response);
+        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+        scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+        assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
     }
 
     @When("I call the mock get bills api from PBB to Biller with billid with expected status of {int}")
     public void iCallTheMockGetBillsApiPBBToBillerAggWithBillidWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header("X-Platform-TenantId", scenarioScopeDef.tenant);
-        requestSpec.header("X-CorrelationID", scenarioScopeDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header("X-Platform-TenantId", scenarioScopeState.tenant);
+        requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId);
         requestSpec.header("X-PayerFSP-Id", "lion");
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(billPayConnectorConfig.inquiryEndpoint.replace("{billId}", billId)).andReturn().asString();
 
-        logger.info("Txn Req response: {}", scenarioScopeDef.response);
+        logger.info("Txn Req response: {}", scenarioScopeState.response);
 
     }
 
     @When("I call the mock bills payment api from PBB to Biller with billid with expected status of {int}")
     public void iCallTheMockBillsPaymentApiFromPBBToBillerWithBillidWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header("X-Platform-TenantId", scenarioScopeDef.tenant);
-        requestSpec.header("X-CorrelationID", scenarioScopeDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header("X-Platform-TenantId", scenarioScopeState.tenant);
+        requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId);
         requestSpec.header("X-PayerFSP-Id", "lion");
         requestSpec.header("X-CallbackURL", "https://webhook.site/b44174ab-04b4-4b0d-8426-a3c54bc2f794");
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint)
-                .body(scenarioScopeDef.inboundTransferReqP2G).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint)
+                .body(scenarioScopeState.inboundTransferReqP2G).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(billPayConnectorConfig.paymentsEndpoint).andReturn().asString();
 
-        logger.info("Txn Req response: {}", scenarioScopeDef.response);
+        logger.info("Txn Req response: {}", scenarioScopeState.response);
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with code in body")
@@ -252,14 +252,14 @@ public class BillPayStepDef extends BaseStepDef {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonPayload = objectMapper.writeValueAsString(billRTPReqDTO);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-Callback-URL", billPayConnectorConfig.callbackURL + stub).header("X-Biller-Id", billerId)
-                .header("X-Client-Correlation-ID", scenarioScopeDef.clientCorrelationId)
-                .header("X-Platform-TenantId", scenarioScopeDef.tenant).baseUri(billPayConnectorConfig.billPayContactPoint)
+                .header("X-Client-Correlation-ID", scenarioScopeState.clientCorrelationId)
+                .header("X-Platform-TenantId", scenarioScopeState.tenant).baseUri(billPayConnectorConfig.billPayContactPoint)
                 .body(billRTPReqDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(billPayConnectorConfig.billerRtpEndpoint).andReturn().asString();
 
-        logger.info("RTP Response: {}", scenarioScopeDef.response);
+        logger.info("RTP Response: {}", scenarioScopeState.response);
     }
 
     @And("I have a billerId as {string}")

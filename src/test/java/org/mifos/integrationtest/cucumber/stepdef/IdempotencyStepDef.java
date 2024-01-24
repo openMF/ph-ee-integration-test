@@ -35,9 +35,9 @@ public class IdempotencyStepDef extends BaseStepDef {
 
     @When("I call collection api with client correlation id expected status {int}")
     public void iCallCollectionApiWithClientCorrelationIdExpectedStatus(int expectedStatus) throws JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
-        logger.info("X-CorrelationId: {}", scenarioScopeDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
+        logger.info("X-CorrelationId: {}", scenarioScopeState.clientCorrelationId);
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
         String json = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(collectionRequestBody.toString()).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
@@ -48,27 +48,27 @@ public class IdempotencyStepDef extends BaseStepDef {
 
     @When("I call collection api to fail with client correlation id expected status {int}")
     public void iCallCollectionApiWithClientCorrelationIdErrorExpectedStatus(int expectedStatus) throws JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(collectionRequestBody.toString()).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.collectionEndpoint).andReturn().asString();
         // CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
-        assertThat(scenarioScopeDef.response).isNotEmpty();
+        assertThat(scenarioScopeState.response).isNotEmpty();
     }
 
     @Given("I have same clientCorrelationId")
     public void iHaveSameClientCorrelationId() {
-        if (scenarioScopeDef.clientCorrelationId == null || scenarioScopeDef.clientCorrelationId.isEmpty()) {
-            scenarioScopeDef.clientCorrelationId = "123";
+        if (scenarioScopeState.clientCorrelationId == null || scenarioScopeState.clientCorrelationId.isEmpty()) {
+            scenarioScopeState.clientCorrelationId = "123";
         }
-        assertThat(scenarioScopeDef.clientCorrelationId).isNotNull();
+        assertThat(scenarioScopeState.clientCorrelationId).isNotNull();
     }
 
     @And("I should have error as Transaction already Exists")
     public void iShouldHaveErrorAsTransactionAlreadyExists() throws Exception {
-        assertThat(scenarioScopeDef.response).contains("Transaction already exists");
+        assertThat(scenarioScopeState.response).contains("Transaction already exists");
     }
 
     @When("I call gsma transaction api with client correlation id expected status {int}")
@@ -81,7 +81,7 @@ public class IdempotencyStepDef extends BaseStepDef {
         gsmaTransferStepDef.callDepositAccountEndpoint("deposit", 11);
         gsmaTransferStepDef.setHeaders("mifos", "gorilla", 11);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec.header(X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
+        requestSpec.header(X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
@@ -99,7 +99,7 @@ public class IdempotencyStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("amsName", gsmaTransferDef.amsName);
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
-        requestSpec.header(X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
+        requestSpec.header(X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
@@ -113,31 +113,31 @@ public class IdempotencyStepDef extends BaseStepDef {
 
     @When("I call inbound transfer api with client correlation id expected status {int}")
     public void iCallInboundTransferApiWithClientCorrelationIdExpectedStatus(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(scenarioScopeDef.inboundTransferMockReq).expect()
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(scenarioScopeState.inboundTransferMockReq).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
-        logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
+        logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
     }
 
     @When("I call Inbound transaction Req api with client correlation id expected status {int}")
     public void iCallInboundTransferReqApiWithClientCorrelationIdExpectedStatus(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeDef.clientCorrelationId);
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(scenarioScopeDef.inboundTransferMockReq).expect()
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(scenarioScopeState.inboundTransferMockReq).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(channelConnectorConfig.transferReqEndpoint).andReturn().asString();
 
-        logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
+        logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
     }
 
     @Given("I create a new clientCorrelationId")
     public void iCreateANewClientCorrelationId() {
-        scenarioScopeDef.clientCorrelationId = UUID.randomUUID().toString();
-        assertThat(scenarioScopeDef.clientCorrelationId).isNotNull();
+        scenarioScopeState.clientCorrelationId = UUID.randomUUID().toString();
+        assertThat(scenarioScopeState.clientCorrelationId).isNotNull();
     }
 }

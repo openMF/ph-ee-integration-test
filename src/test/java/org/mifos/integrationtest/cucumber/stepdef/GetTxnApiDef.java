@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class GetTxnApiDef extends BaseStepDef {
 
     @Autowired
-    ScenarioScopeDef scenarioScopeDef;
+    ScenarioScopeState scenarioScopeState;
     private String clientCorrelationId = "123456789";
 
     @Value("${operations-app.auth.enabled}")
@@ -27,48 +27,48 @@ public class GetTxnApiDef extends BaseStepDef {
 
     @When("I call the get txn API with expected status of {int}")
     public void callTxnReqApi(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
 
-        logger.info("GetTxn Request Response: " + scenarioScopeDef.response);
+        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
     }
 
     @And("I should have clientCorrelationId in response")
     public void checkClientCorrelationId() {
-        assertThat(scenarioScopeDef.response).containsMatch("clientCorrelationId");
+        assertThat(scenarioScopeState.response).containsMatch("clientCorrelationId");
     }
 
     @When("I call the get txn API with date {string} and {string} expected status of {int}")
     public void callTxnReqApiwithParams(String startDate, String endDate, int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
         requestSpec.queryParam("startFrom", startDate);
         requestSpec.queryParam("startTo", endDate);
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
 
-        logger.info("GetTxn Request Response: " + scenarioScopeDef.response);
+        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
 
     }
 
     @And("I should have startedAt and completedAt in response")
     public void checkDate() {
-        assertThat(scenarioScopeDef.response).containsMatch("startedAt");
-        assertThat(scenarioScopeDef.response).containsMatch("completedAt");
+        assertThat(scenarioScopeState.response).containsMatch("startedAt");
+        assertThat(scenarioScopeState.response).containsMatch("completedAt");
     }
 
     @And("I call collection api with expected status {int}")
     public void iCallCollectionApiWithExpectedStatus(int expectedStatus) throws JSONException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         requestSpec.header(Utils.X_CORRELATIONID, clientCorrelationId);
         JSONObject collectionRequestBody = CollectionHelper.getCollectionRequestBody("1", "254708374149", "24450523");
         logger.info(String.valueOf(collectionRequestBody));

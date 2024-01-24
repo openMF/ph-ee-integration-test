@@ -52,72 +52,72 @@ public class OperationsStepDef extends BaseStepDef {
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
-        log.info("Query params: {}", scenarioScopeDef.batchesEndpointQueryParam);
-        callBatchesEndpoint(expectedStatus, scenarioScopeDef.batchesEndpointQueryParam);
+        log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
+        callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
     }
 
     @And("The count of batches should be {int}")
     public void assertCountOfBatches(int expectedCount) {
-        assertThat(scenarioScopeDef.batchesResponse).isNotNull();
-        assertThat(scenarioScopeDef.batchesResponse.getData()).isNotNull();
-        assertThat(scenarioScopeDef.batchesResponse.getData().size()).isEqualTo(expectedCount);
+        assertThat(scenarioScopeState.batchesResponse).isNotNull();
+        assertThat(scenarioScopeState.batchesResponse.getData()).isNotNull();
+        assertThat(scenarioScopeState.batchesResponse.getData().size()).isEqualTo(expectedCount);
     }
 
     @Then("I am able to parse batch paginated response into DTO")
     public void parseBatchPaginatedDto() {
-        assertThat(scenarioScopeDef.response).isNotNull();
-        parseBatchesResponse(scenarioScopeDef.response);
+        assertThat(scenarioScopeState.response).isNotNull();
+        parseBatchesResponse(scenarioScopeState.response);
     }
 
     @And("I add the query param key: {string} value: {string}")
     public void updateQueryParam(String key, Object value) {
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, key, value);
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, key, value);
     }
 
     @And("I add batchId query param")
     public void addBatchIdQueryParam() {
-        assertNotNull(scenarioScopeDef.batchId);
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, "batchId", scenarioScopeDef.batchId);
+        assertNotNull(scenarioScopeState.batchId);
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "batchId", scenarioScopeState.batchId);
     }
 
     @And("I add date from filter")
     public void addDateFromFilter() {
-        String date = scenarioScopeDef.dateTime;
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, "dateFrom", date);
+        String date = scenarioScopeState.dateTime;
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "dateFrom", date);
     }
 
     @And("I add date to filter")
     public void addDateToFilter() {
         String date = BaseStepDef.getCurrentDateInFormat();
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, "dateTo", date);
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "dateTo", date);
     }
 
     @And("I add limit filter {int}")
     public void addLimitFilter(int limit) {
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, "limit", limit);
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "limit", limit);
     }
 
     @And("I add offset filter {int}")
     public void addOffsetFilter(int offset) {
-        updateQueryParam(scenarioScopeDef.batchesEndpointQueryParam, "offset", offset);
+        updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "offset", offset);
     }
 
     @Then("I am able to assert {int} totalBatches")
     public void assertTotalSubBatches(int count) {
-        assertThat(scenarioScopeDef.batchesResponse.getTotalBatches()).isEqualTo(count);
+        assertThat(scenarioScopeState.batchesResponse.getTotalBatches()).isEqualTo(count);
     }
 
     private void batchDbSetup() {
         // instantiate the shared query param variable if null
-        if (scenarioScopeDef.batchesEndpointQueryParam == null) {
-            scenarioScopeDef.batchesEndpointQueryParam = new HashMap<>();
+        if (scenarioScopeState.batchesEndpointQueryParam == null) {
+            scenarioScopeState.batchesEndpointQueryParam = new HashMap<>();
         }
     }
 
     private void batchDbTearDown() {
         // clearing the query parameter shared variable
-        if (scenarioScopeDef.batchesEndpointQueryParam.size() > 0) {
-            scenarioScopeDef.batchesEndpointQueryParam.clear();
+        if (scenarioScopeState.batchesEndpointQueryParam.size() > 0) {
+            scenarioScopeState.batchesEndpointQueryParam.clear();
         }
     }
 
@@ -126,25 +126,25 @@ public class OperationsStepDef extends BaseStepDef {
     }
 
     private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams) {
-        log.info("Tenant I am passing is: {}", scenarioScopeDef.tenant);
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        log.info("Tenant I am passing is: {}", scenarioScopeState.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
         if (queryParams != null) {
             queryParams.forEach(requestSpec::queryParam);
         }
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatusCode).build()).when()
                 .get(operationsAppConfig.batchesEndpoint).andReturn().asString();
 
-        logger.info("Batches api Response: " + scenarioScopeDef.response);
+        logger.info("Batches api Response: " + scenarioScopeState.response);
     }
 
     private void parseBatchesResponse(String response) {
         try {
-            scenarioScopeDef.batchesResponse = objectMapper.readValue(response, BatchPaginatedResponse.class);
+            scenarioScopeState.batchesResponse = objectMapper.readValue(response, BatchPaginatedResponse.class);
         } catch (Exception e) {
             log.error(e.getLocalizedMessage());
         }

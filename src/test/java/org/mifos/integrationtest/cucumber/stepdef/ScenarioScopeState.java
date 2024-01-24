@@ -24,7 +24,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ScenarioScopeDef {
+public class ScenarioScopeState {
 
     protected String payerIdentifier;
     protected String payeeIdentifier;

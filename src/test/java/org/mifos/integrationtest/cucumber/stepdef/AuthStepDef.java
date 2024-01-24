@@ -28,13 +28,13 @@ public class AuthStepDef extends BaseStepDef {
     @When("I call the operations-app auth endpoint with username: {string} and password: {string}")
     public void authenticateWithUsernameAndPassword(String username, String password) {
         if (authEnabled) {
-            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("Authorization", authHeader);
             requestSpec.queryParam("username", username);
             requestSpec.queryParam("password", password);
             requestSpec.queryParam("grant_type", "password");
 
-            scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}")
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}")
                     .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint)
                     .andReturn().asString();
         }
@@ -44,7 +44,7 @@ public class AuthStepDef extends BaseStepDef {
     @Then("I should get a valid token")
     public void checkToken() {
         if (authEnabled) {
-            HashMap<String, Object> authResponse = new Gson().fromJson(scenarioScopeDef.response, HashMap.class);
+            HashMap<String, Object> authResponse = new Gson().fromJson(scenarioScopeState.response, HashMap.class);
             String token;
             try {
                 token = (String) authResponse.get("access_token");
@@ -52,21 +52,21 @@ public class AuthStepDef extends BaseStepDef {
                 token = null;
             }
             assertThat(token).isNotEmpty();
-            scenarioScopeDef.accessToken = token;
-            logger.info("Access token: " + scenarioScopeDef.accessToken);
+            scenarioScopeState.accessToken = token;
+            logger.info("Access token: " + scenarioScopeState.accessToken);
         }
     }
 
     @When("I call the auth endpoint")
     public void iCallTheAuthEndpoint() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         requestSpec.header("Authorization", "Basic Y2xpZW50Og==");
         requestSpec.queryParam("username", operationsAppConfig.username);
         requestSpec.queryParam("password", operationsAppConfig.password);
         requestSpec.queryParam("grant_type", "password");
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}").expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint).andReturn()
-                .asString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).body("{}")
+                .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(operationsAppConfig.authEndpoint)
+                .andReturn().asString();
     }
 }

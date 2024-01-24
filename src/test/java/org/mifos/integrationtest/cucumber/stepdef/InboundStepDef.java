@@ -36,7 +36,7 @@ public class InboundStepDef extends BaseStepDef {
         String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
-        scenarioScopeDef.inboundTransferMockReq = mockTransactionChannelRequestDTO;
+        scenarioScopeState.inboundTransferMockReq = mockTransactionChannelRequestDTO;
     }
 
     @When("I call the inbound transfer endpoint with expected status of {int}")
@@ -51,30 +51,30 @@ public class InboundStepDef extends BaseStepDef {
 
     @And("I call the inbound transfer endpoint with authentication")
     public void callBatchSummaryAPIWithAuth() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        requestSpec.header("Authorization", "Bearer " + scenarioScopeDef.keycloakTokenResponse.getAccessToken());
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        requestSpec.header("Authorization", "Bearer " + scenarioScopeState.keycloakTokenResponse.getAccessToken());
 
         // since after authentication channel can return anything apart from 400 and 401
         ResponseSpecification responseSpecBuilder = new ResponseSpecBuilder().expectStatusCode(anyOf(not(anyOf(is(400), is(401))))).build();
 
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(mockTransactionChannelRequestDTO).expect().spec(responseSpecBuilder).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
 
     public void callBatchSummaryAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeDef.tenant);
-        scenarioScopeDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
-        logger.info("Inbound transfer Response: {}", scenarioScopeDef.response);
+        logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
     }
 
     @And("I should be able to parse transactionId")
     public void parseTransactionId() {
         String transactionId;
         try {
-            JSONObject jsonObject = new JSONObject(scenarioScopeDef.response);
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             transactionId = jsonObject.getString("transactionId");
         } catch (JSONException e) {
             logger.error("Error parsing the transaction id", e);
@@ -91,14 +91,14 @@ public class InboundStepDef extends BaseStepDef {
         jsonBuilder.append("{").append("\"payer\": {").append("\"partyIdInfo\": {").append("\"partyIdType\": \"MSISDN\",")
                 .append("\"partyIdentifier\": \"27710101999\"").append("}").append("},").append("\"payee\": {").append("\"partyIdInfo\": {")
                 .append("\"partyIdType\": \"MSISDN\",").append("\"partyIdentifier\": ").append("\"")
-                .append(scenarioScopeDef.beneficiaryPayeeIdentity).append("\"") // Replace with the variable here
+                .append(scenarioScopeState.beneficiaryPayeeIdentity).append("\"") // Replace with the variable here
                 .append("}").append("},").append("\"amount\": {").append("\"amount\": 2240,").append("\"currency\": \"TZS\"").append("}")
                 .append("}");
 
         String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
-        scenarioScopeDef.inboundTransferMockReq = mockTransactionChannelRequestDTO;
+        scenarioScopeState.inboundTransferMockReq = mockTransactionChannelRequestDTO;
     }
 
 }

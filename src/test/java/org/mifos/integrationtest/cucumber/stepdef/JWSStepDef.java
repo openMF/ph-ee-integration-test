@@ -25,39 +25,39 @@ public class JWSStepDef extends BaseStepDef {
 
     @And("I generate clientCorrelationId")
     public void setClientCorrelationId() {
-        scenarioScopeDef.clientCorrelationId = UUID.randomUUID().toString();
-        assertThat(scenarioScopeDef.clientCorrelationId).isNotEmpty();
+        scenarioScopeState.clientCorrelationId = UUID.randomUUID().toString();
+        assertThat(scenarioScopeState.clientCorrelationId).isNotEmpty();
     }
 
     @And("I generate signature")
     public void generateSignatureStep() throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException,
             BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        if (scenarioScopeDef.filename != null) {
-            scenarioScopeDef.signature = generateSignature(scenarioScopeDef.clientCorrelationId, scenarioScopeDef.tenant,
-                    scenarioScopeDef.filename, true);
+        if (scenarioScopeState.filename != null) {
+            scenarioScopeState.signature = generateSignature(scenarioScopeState.clientCorrelationId, scenarioScopeState.tenant,
+                    scenarioScopeState.filename, true);
         } else {
-            scenarioScopeDef.signature = generateSignature(scenarioScopeDef.clientCorrelationId, scenarioScopeDef.tenant,
-                    scenarioScopeDef.batchRawRequest, false);
+            scenarioScopeState.signature = generateSignature(scenarioScopeState.clientCorrelationId, scenarioScopeState.tenant,
+                    scenarioScopeState.batchRawRequest, false);
         }
-        assertThat(scenarioScopeDef.signature).isNotEmpty();
-        logger.info("Generated signature: {}", scenarioScopeDef.signature);
+        assertThat(scenarioScopeState.signature).isNotEmpty();
+        logger.info("Generated signature: {}", scenarioScopeState.signature);
     }
 
     @And("The response should have non empty header X-SIGNATURE")
     public void checkNonEmptySignatureKey() {
-        assertThat(scenarioScopeDef.restResponseObject).isNotNull();
-        String signatureHeaderValue = scenarioScopeDef.restResponseObject.getHeader(Constant.HEADER_JWS);
+        assertThat(scenarioScopeState.restResponseObject).isNotNull();
+        String signatureHeaderValue = scenarioScopeState.restResponseObject.getHeader(Constant.HEADER_JWS);
         logger.info("Response signature: {}", signatureHeaderValue);
         assertThat(signatureHeaderValue).isNotEmpty();
-        scenarioScopeDef.signature = signatureHeaderValue;
+        scenarioScopeState.signature = signatureHeaderValue;
     }
 
     @And("The signature should be able successfully validated against certificate")
     public void verifyResponseSignature() {
-        assertThat(scenarioScopeDef.restResponseObject).isNotNull();
+        assertThat(scenarioScopeState.restResponseObject).isNotNull();
         assertThat(jwsKeyConfig).isNotNull();
-        String data = scenarioScopeDef.response;
-        String signature = scenarioScopeDef.restResponseObject.getHeader(Constant.HEADER_JWS);
+        String data = scenarioScopeState.response;
+        String signature = scenarioScopeState.restResponseObject.getHeader(Constant.HEADER_JWS);
 
         Boolean isValidSignature = null;
         try {

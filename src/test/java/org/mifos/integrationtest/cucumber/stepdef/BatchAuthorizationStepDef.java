@@ -30,13 +30,13 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     IdentityMapperConfig identityMapperConfig;
 
     @Autowired
-    ScenarioScopeDef scenarioScopeDef;
+    ScenarioScopeState scenarioScopeState;
 
     private static AuthorizationRequest authorizationRequest;
 
     @Then("I should get batch status as {string}")
     public void iShouldGetBatchStatusAs(String status) {
-        String response = scenarioScopeDef.response;
+        String response = scenarioScopeState.response;
         BatchSummaryResponse batchSummaryResponse;
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -55,13 +55,13 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
     @When("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")
     public void iCallTheAuthorizationAPIWithBatchIdAsAndExpectedStatusOfAndStub(String batchId, int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Client-Correlation-ID", "998877")
                 .queryParam("command", "authorize").baseUri(mockPaymentSchemaConfig.mockPaymentSchemaContactPoint)
                 .body(authorizationRequest).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(mockPaymentSchemaConfig.mockBatchAuthorizationEndpoint + batchId).andReturn().asString();
 
-        logger.info("Authorization Response: {}", scenarioScopeDef.response);
+        logger.info("Authorization Response: {}", scenarioScopeState.response);
     }
 
     @When("I create an AuthorizationRequest for Batch Authorization with batch ID as {string}, payerIdentifier as {string}, currency as {string} and amount as {string}")
