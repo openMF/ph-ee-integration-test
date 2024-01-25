@@ -23,17 +23,20 @@ public class NCStepDef extends BaseStepDef {
     @Autowired
     NetflixConductorConfig netflixConductorConfig;
 
+    @Autowired
+    ScenarioScopeState scenarioScopeState;
+
     @When("I make a call to nc server health API with expected status 200")
     public void ncHealthAPICall() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(netflixConductorConfig.conductorServerContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(netflixConductorConfig.conductorServerContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(netflixConductorConfig.healthEndpoint).andReturn()
                 .asString();
     }
 
     @Then("I get the value of Healthy as true in response")
     public void checkHealthyState() throws JSONException {
-        JSONObject response = new JSONObject(BaseStepDef.response);
+        JSONObject response = new JSONObject(scenarioScopeState.response);
         assertThat(response).isNotNull();
         String healthStatus = response.getString("healthy");
         assertThat(healthStatus).isEqualTo("true");
@@ -41,7 +44,7 @@ public class NCStepDef extends BaseStepDef {
 
     @And("I have the request body for transfer")
     public void iHaveRequestBody() throws JSONException {
-        String payerIdentifier = BaseStepDef.payerIdentifier;
+        String payerIdentifier = scenarioScopeState.payerIdentifier;
         JSONObject collectionRequestBody;
 
         if (payerIdentifier != null) {
@@ -50,31 +53,32 @@ public class NCStepDef extends BaseStepDef {
             collectionRequestBody = TransferHelper.getTransferRequestBody();
         }
 
-        BaseStepDef.requestBody = collectionRequestBody;
-        logger.info(String.valueOf(BaseStepDef.requestBody));
+        scenarioScopeState.requestBody = collectionRequestBody;
+        logger.info(String.valueOf(scenarioScopeState.requestBody));
     }
 
     @When("I call the channel transfer API with client correlation id and expected status of {int}")
     public void channelTransferAPICall(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri("http://dpga-connector-chanel.sandbox.fynarfin.io/")
-                .body(BaseStepDef.requestBody.toString()).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("http://dpga-connector-chanel.sandbox.fynarfin.io/")
+                .body(scenarioScopeState.requestBody.toString()).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
     }
 
     @When("I call the get workflow API in  with workflow id as path variable")
     public void getWorkflow() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.param("includeTasks", false);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(netflixConductorConfig.conductorServerContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(netflixConductorConfig.conductorServerContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .get(netflixConductorConfig.workflowEndpoint + "/" + BaseStepDef.transactionId).andReturn().asString();
+                .get(netflixConductorConfig.workflowEndpoint + "/" + scenarioScopeState.transactionId).andReturn().asString();
     }
 
     @Then("I should get valid status")
     public void checkStatus() throws JSONException {
-        JSONObject response = new JSONObject(BaseStepDef.response);
+        JSONObject response = new JSONObject(scenarioScopeState.response);
         assertThat(response).isNotNull();
         String status = response.getString("status");
         assertThat(status).isAnyOf("COMPLETED", "TERMINATED", "RUNNING");
@@ -82,32 +86,32 @@ public class NCStepDef extends BaseStepDef {
 
     @When("I call the get transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
-        requestSpec.queryParam("transactionId", BaseStepDef.transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
         Thread.sleep(5000);
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
                 .asString();
 
-        logger.info(BaseStepDef.transactionId);
-        logger.info("Get Transfer Response: " + BaseStepDef.response);
+        logger.info(scenarioScopeState.transactionId);
+        logger.info("Get Transfer Response: " + scenarioScopeState.response);
     }
 
     @Then("I should get transfer state as completed")
     public void assertValues() throws JSONException {
-        JsonObject jsonObject = JsonParser.parseString(BaseStepDef.response).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
         String status = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("status").getAsString();
         assertThat(status).isAnyOf("COMPLETED", "TERMINATED");
     }
 
     @Then("I verify that the current balance is {long}")
     public void isAccountBalanceValid(long expectedBalance) {
-        assertThat(BaseStepDef.currentBalance).isEqualTo(expectedBalance);
+        assertThat(scenarioScopeState.currentBalance).isEqualTo(expectedBalance);
     }
 
 }

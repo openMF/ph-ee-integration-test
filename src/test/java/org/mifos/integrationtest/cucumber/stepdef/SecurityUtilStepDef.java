@@ -25,64 +25,64 @@ public class SecurityUtilStepDef extends BaseStepDef {
     @Given("generate random data")
     public void generateRandomData() {
         // Write code here that turns the phrase above into concrete actions
-        randomData = UUID.randomUUID().toString();
-        logger.debug("Random data: {}", randomData);
+        scenarioScopeState.randomData = UUID.randomUUID().toString();
+        logger.debug("Random data: {}", scenarioScopeState.randomData);
     }
 
     @When("encrypt the data with the {string}")
     public void encryptTheDataWithThe(String encryptionKey) throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        encryptedData = SecurityUtil.encryptUsingPublicKey(randomData, encryptionKey);
-        logger.debug("Encrypted data: {}", encryptedData);
+        scenarioScopeState.encryptedData = SecurityUtil.encryptUsingPublicKey(scenarioScopeState.randomData, encryptionKey);
+        logger.debug("Encrypted data: {}", scenarioScopeState.encryptedData);
     }
 
     @Then("encrypted data is not null")
     public void encryptedDataIsNotNull() {
-        assertThat(encryptedData).isNotNull();
+        assertThat(scenarioScopeState.encryptedData).isNotNull();
     }
 
     @When("encrypted data is decrypted using the {string}")
     public void encryptedDataIsDecryptedUsingThe(String decryptionKey) throws NoSuchPaddingException, IllegalBlockSizeException,
             NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
-        decryptedData = SecurityUtil.decryptUsingPrivateKey(encryptedData, decryptionKey);
-        logger.debug("Decrypted data: {} ", decryptedData);
+        scenarioScopeState.decryptedData = SecurityUtil.decryptUsingPrivateKey(scenarioScopeState.encryptedData, decryptionKey);
+        logger.debug("Decrypted data: {} ", scenarioScopeState.decryptedData);
     }
 
     @Then("compare the decrypted data with the original data")
     public void compareTheDecryptedDataWithTheOriginalData() {
-        assertThat(decryptedData).isEqualTo(randomData);
+        assertThat(scenarioScopeState.decryptedData).isEqualTo(scenarioScopeState.randomData);
     }
 
     @Given("I have public key {string}")
     public void setPublicKey(String publicKeyString) {
-        BaseStepDef.publicKeyString = publicKeyString;
-        assertThat(BaseStepDef.publicKeyString).isNotEmpty();
+        scenarioScopeState.publicKeyString = publicKeyString;
+        assertThat(scenarioScopeState.publicKeyString).isNotEmpty();
     }
 
     @And("I have private key")
     public void setPrivateKey() {
         assertThat(jwsKeyConfig).isNotNull();
-        BaseStepDef.privateKeyString = jwsKeyConfig.privateKey;
-        assertThat(BaseStepDef.privateKeyString).isNotEmpty();
+        scenarioScopeState.privateKeyString = jwsKeyConfig.privateKey;
+        assertThat(scenarioScopeState.privateKeyString).isNotEmpty();
     }
 
     @When("I get the publicKey object from string")
     public void getPublicKeyObject() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        BaseStepDef.publicKey = SecurityUtil.getPublicKeyFromString(BaseStepDef.publicKeyString);
-        assertThat(BaseStepDef.publicKey).isNotNull();
+        scenarioScopeState.publicKey = SecurityUtil.getPublicKeyFromString(scenarioScopeState.publicKeyString);
+        assertThat(scenarioScopeState.publicKey).isNotNull();
     }
 
     @Then("I should be able to get string from publicKey object")
     public void getPublicKeyStringFromPublicKey() {
-        String pkString = SecurityUtil.getStringFromPublicKey(this.publicKey);
+        String pkString = SecurityUtil.getStringFromPublicKey(this.scenarioScopeState.publicKey);
         assertThat(pkString).isNotEmpty();
-        BaseStepDef.newPublicKeyString = pkString;
+        scenarioScopeState.newPublicKeyString = pkString;
         logger.debug("Parsed public key: {}", pkString);
     }
 
     @And("It should be equal to original key")
     public void comparePublicKeyString() {
-        assertThat(BaseStepDef.publicKeyString).isEqualTo(BaseStepDef.newPublicKeyString);
+        assertThat(scenarioScopeState.publicKeyString).isEqualTo(scenarioScopeState.newPublicKeyString);
     }
 
 }

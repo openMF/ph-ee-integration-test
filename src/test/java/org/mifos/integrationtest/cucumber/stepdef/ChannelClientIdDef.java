@@ -24,41 +24,41 @@ public class ChannelClientIdDef extends BaseStepDef {
 
     @And("I have request type as {string}")
     public void iHaveRequestTypeAs(String requestType) {
-        BaseStepDef.requestType = requestType;
+        scenarioScopeState.requestType = requestType;
         channelConnectorConfig.setRequestType(requestType);
-        assertThat(BaseStepDef.requestType).isNotEmpty();
+        assertThat(scenarioScopeState.requestType).isNotEmpty();
     }
 
     @And("I should have clientRefId in response")
     public void iShouldHaveClientRefIdInResponse() {
-        assertThat(BaseStepDef.response).containsMatch("clientRefId");
+        assertThat(scenarioScopeState.response).containsMatch("clientRefId");
     }
 
     @When("I call the transfer API with expected status of {int}")
     public void iCallTheTransferAPIWithExpectedStatusOf(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
 
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
                 .andReturn().asString();
 
-        logger.info("Inbound transfer Response: {}", BaseStepDef.response);
+        logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
     }
 
     @When("I call the txn State with client correlation id as {int} expected status of {int}")
     public void iCallTheTxnStateWithClientCorrelationIdAsExpectedStatusOf(int XClientCorrelationId, int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
         requestSpec.header(Utils.REQUEST_TYPE_PARAM_NAME, channelConnectorConfig.getRequestType());
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get("/channel/txnState/" + XClientCorrelationId).andReturn().asString();
 
-        logger.info("Txn Req response: {}", BaseStepDef.response);
+        logger.info("Txn Req response: {}", scenarioScopeState.response);
     }
 }

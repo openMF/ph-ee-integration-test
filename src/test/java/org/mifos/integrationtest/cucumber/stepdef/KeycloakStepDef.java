@@ -33,26 +33,26 @@ public class KeycloakStepDef extends BaseStepDef {
         String username = UUID.randomUUID().toString();
         doAdminAuthentication();
         createUser(username);
-        BaseStepDef.keycloakUser = fetchKeycloakUserUsingUsername(username);
-        logger.debug("Keycloak user: {}", objectMapper.writeValueAsString(BaseStepDef.keycloakUser));
+        scenarioScopeState.keycloakUser = fetchKeycloakUserUsingUsername(username);
+        logger.debug("Keycloak user: {}", objectMapper.writeValueAsString(scenarioScopeState.keycloakUser));
         BaseStepDef.keycloakCurrentUserPassword = "password";
-        resetUserPassword(BaseStepDef.keycloakUser.getId(), BaseStepDef.keycloakCurrentUserPassword);
+        resetUserPassword(scenarioScopeState.keycloakUser.getId(), BaseStepDef.keycloakCurrentUserPassword);
     }
 
     @After("@keycloak-user-teardown")
     public void keycloakUserTeardown() {
         logger.info("Running keycloak-user-teardown");
         doAdminAuthentication();
-        deleteUser(BaseStepDef.keycloakUser.getId());
+        deleteUser(scenarioScopeState.keycloakUser.getId());
     }
 
     @And("I authenticate with new keycloak user")
     public void authenticateCurrentKeycloakUser() throws JsonProcessingException {
-        if (BaseStepDef.keycloakUser == null || BaseStepDef.keycloakCurrentUserPassword == null) {
+        if (scenarioScopeState.keycloakUser == null || BaseStepDef.keycloakCurrentUserPassword == null) {
             throw new RuntimeException(
                     "Current keycloak user or password is not present." + "Make sure to call create the new user using admin step");
         }
-        getTokenFromKeycloakUser(BaseStepDef.keycloakUser.username, BaseStepDef.keycloakCurrentUserPassword);
+        getTokenFromKeycloakUser(scenarioScopeState.keycloakUser.username, BaseStepDef.keycloakCurrentUserPassword);
     }
 
     @When("I call the keycloak auth api with {string} username and {string} password")
@@ -63,17 +63,17 @@ public class KeycloakStepDef extends BaseStepDef {
                 .formParam(KeycloakConfig.headerClientIdKey, keycloakConfig.clientId)
                 .formParam(KeycloakConfig.headerClientSecretKey, keycloakConfig.clientSecret)
                 .formParam(KeycloakConfig.headerGrantTypeKey, keycloakConfig.grantType);
-        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(keycloakConfig.tokenEndpoint, keycloakConfig.realm).andReturn().asString();
         try {
-            BaseStepDef.keycloakTokenResponse = objectMapper.readValue(BaseStepDef.response, KeycloakTokenResponse.class);
+            scenarioScopeState.keycloakTokenResponse = objectMapper.readValue(scenarioScopeState.response, KeycloakTokenResponse.class);
         } catch (Exception e) {
-            BaseStepDef.keycloakTokenResponse = null;
+            scenarioScopeState.keycloakTokenResponse = null;
         }
-        logger.debug("Auth response {}", BaseStepDef.response);
-        assertThat(BaseStepDef.keycloakTokenResponse).isNotNull();
-        assertThat(BaseStepDef.keycloakTokenResponse.getAccessToken()).isNotNull();
+        logger.debug("Auth response {}", scenarioScopeState.response);
+        assertThat(scenarioScopeState.keycloakTokenResponse).isNotNull();
+        assertThat(scenarioScopeState.keycloakTokenResponse.getAccessToken()).isNotNull();
     }
 
     public void doAdminAuthentication() {
@@ -84,47 +84,47 @@ public class KeycloakStepDef extends BaseStepDef {
     public void deleteUser(String userId) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification.header(CONTENT_TYPE, "application/json");
-        if (BaseStepDef.keycloakTokenResponse != null) {
-            requestSpecification.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
+        if (scenarioScopeState.keycloakTokenResponse != null) {
+            requestSpecification.header("Authorization", "Bearer " + scenarioScopeState.keycloakTokenResponse.getAccessToken());
         }
 
-        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint).body(keycloakUser)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(204).build()).when()
+        scenarioScopeState.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
+                .body(scenarioScopeState.keycloakUser).expect().spec(new ResponseSpecBuilder().expectStatusCode(204).build()).when()
                 .delete(keycloakConfig.userEndpoint + "/{userId}", keycloakConfig.realm, userId).andReturn().asString();
     }
 
     public void createUser(String username) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification.header(CONTENT_TYPE, "application/json");
-        if (BaseStepDef.keycloakTokenResponse != null) {
-            requestSpecification.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
+        if (scenarioScopeState.keycloakTokenResponse != null) {
+            requestSpecification.header("Authorization", "Bearer " + scenarioScopeState.keycloakTokenResponse.getAccessToken());
         }
 
         KeycloakUser keycloakUser = getDefaultKeycloakUser();
         keycloakUser.setUsername(username);
 
-        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint).body(keycloakUser)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
+        scenarioScopeState.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
+                .body(keycloakUser).expect().spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
                 .post(keycloakConfig.userEndpoint, keycloakConfig.realm).andReturn().asString();
     }
 
     public KeycloakUser fetchKeycloakUserUsingUsername(String username) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification.header(CONTENT_TYPE, "application/json");
-        if (BaseStepDef.keycloakTokenResponse != null) {
-            requestSpecification.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
+        if (scenarioScopeState.keycloakTokenResponse != null) {
+            requestSpecification.header("Authorization", "Bearer " + scenarioScopeState.keycloakTokenResponse.getAccessToken());
         }
 
         KeycloakUser keycloakUser = getDefaultKeycloakUser();
         keycloakUser.setUsername(username);
 
-        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
+        scenarioScopeState.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
                 .queryParam("search", username).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .get(keycloakConfig.userEndpoint, keycloakConfig.realm).andReturn().asString();
 
         List<KeycloakUser> parsedUsers = null;
         try {
-            parsedUsers = objectMapper.readValue(BaseStepDef.response, new TypeReference<List<KeycloakUser>>() {});
+            parsedUsers = objectMapper.readValue(scenarioScopeState.response, new TypeReference<List<KeycloakUser>>() {});
             if (parsedUsers.size() == 1) {
                 return parsedUsers.get(0);
             }
@@ -137,13 +137,13 @@ public class KeycloakStepDef extends BaseStepDef {
     public void resetUserPassword(String userId, String password) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
         requestSpecification.header(CONTENT_TYPE, "application/json");
-        if (BaseStepDef.keycloakTokenResponse != null) {
-            requestSpecification.header("Authorization", "Bearer " + keycloakTokenResponse.getAccessToken());
+        if (scenarioScopeState.keycloakTokenResponse != null) {
+            requestSpecification.header("Authorization", "Bearer " + scenarioScopeState.keycloakTokenResponse.getAccessToken());
         }
         KeycloakUpdateRequest keycloakUpdateRequest = getDefaultKeycloakResetPasswordObject();
         keycloakUpdateRequest.setValue(password);
 
-        BaseStepDef.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
+        scenarioScopeState.response = RestAssured.given(requestSpecification).baseUri(keycloakConfig.keycloakContactPoint)
                 .body(keycloakUpdateRequest).expect().spec(new ResponseSpecBuilder().expectStatusCode(204).build()).when()
                 .put(keycloakConfig.userPasswordResetEndpoint, keycloakConfig.realm, userId).andReturn().asString();
     }

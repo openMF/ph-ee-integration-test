@@ -21,16 +21,19 @@ public class MojaloopStepDef extends BaseStepDef {
     @Autowired
     MojaloopDef mojaloopDef;
 
+    @Autowired
+    ScenarioScopeState scenarioScopeState;
+
     @Then("I add {string} to als")
     public void addUsersToALS(String client) throws JsonProcessingException {
 
         String clientIdentifierId;
         String fspId;
         if (client.equals("payer")) {
-            clientIdentifierId = BaseStepDef.payerIdentifier;
+            clientIdentifierId = scenarioScopeState.payerIdentifier;
             fspId = mojaloopConfig.payerFspId;
         } else {
-            clientIdentifierId = BaseStepDef.payeeIdentifier;
+            clientIdentifierId = scenarioScopeState.payeeIdentifier;
             fspId = mojaloopConfig.payeeFspId;
         }
 

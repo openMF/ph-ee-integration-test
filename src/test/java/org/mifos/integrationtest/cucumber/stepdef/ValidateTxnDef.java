@@ -24,7 +24,7 @@ public class ValidateTxnDef extends BaseStepDef {
         String json = jsonBuilder.toString();
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
-        BaseStepDef.inboundTransferMockReq = mockTransactionChannelRequestDTO;
+        scenarioScopeState.inboundTransferMockReq = mockTransactionChannelRequestDTO;
     }
 
 }

@@ -54,6 +54,8 @@ public class GSMATransferStepDef extends BaseStepDef {
     GSMATransferDef gsmaTransferDef;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    ScenarioScopeState scenarioScopeState;
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private static String payer_identifier;
     private static String payeeIdentity;
@@ -125,7 +127,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
         payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        BaseStepDef.payerIdentifier = payer_identifier;
+        scenarioScopeState.payerIdentifier = payer_identifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", payer_identifier);
         // Calling Interop Identifier endpoint
@@ -392,61 +394,61 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Then("I call the balance api for payer balance")
     public void iCallTheBalanceApiForPayerBalance() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty);
         logger.info("Endpoint: " + finalEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + BaseStepDef.response);
-        InteropAccountDTO interopAccountDTO = objectMapper.readValue(BaseStepDef.response, InteropAccountDTO.class);
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() <= amountDeposited).isTrue();
 
     }
 
     @Then("I call the balance api for payee balance")
     public void iCallTheBalanceApiForPayeeBalance() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}", creditParty);
         logger.info("Endpoint: " + finalEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + BaseStepDef.response);
-        InteropAccountDTO interopAccountDTO = objectMapper.readValue(BaseStepDef.response, InteropAccountDTO.class);
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() >= amountDeposited).isTrue();
 
     }
 
     @Then("I call the balance api for payer balance after debit")
     public void iCallTheBalanceApiForPayerBalanceAfterDebit() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty);
         logger.info("Endpoint: " + finalEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + BaseStepDef.response);
-        InteropAccountDTO interopAccountDTO = objectMapper.readValue(BaseStepDef.response, InteropAccountDTO.class);
-        assertThat(interopAccountDTO.getAvailableBalance().intValue() == amountDeposited - BaseStepDef.gsmaP2PAmtDebit).isTrue();
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
+        assertThat(interopAccountDTO.getAvailableBalance().intValue() == amountDeposited - scenarioScopeState.gsmaP2PAmtDebit).isTrue();
 
     }
 
     @Then("I call the balance api for payee balance after credit")
     public void iCallTheBalanceApiForPayeeBalanceAfterCredit() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}", creditParty);
         logger.info("Endpoint: " + finalEndpoint);
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + BaseStepDef.response);
-        InteropAccountDTO interopAccountDTO = objectMapper.readValue(BaseStepDef.response, InteropAccountDTO.class);
-        assertThat(interopAccountDTO.getAvailableBalance().intValue() == amountDeposited + BaseStepDef.gsmaP2PAmtDebit).isTrue();
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
+        assertThat(interopAccountDTO.getAvailableBalance().intValue() == amountDeposited + scenarioScopeState.gsmaP2PAmtDebit).isTrue();
 
     }
 
@@ -482,20 +484,20 @@ public class GSMATransferStepDef extends BaseStepDef {
     @When("I call the register beneficiary API with expected status of {int} and callback stub {string}")
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-Registering-Institution-ID", registeringInstitutionId)
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
                 .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
-        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+        logger.info("Identity Mapper Response: {}", scenarioScopeState.response);
     }
 
     @Then("I call the account lookup API with expected status of {int} and callback stub {string}")
     public void iCallTheAccountLookupAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
         requestId = generateUniqueNumber(10);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-Registering-Institution-ID", registeringInstitutionId)
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
                 .queryParam("paymentModality", "01").queryParam("requestId", requestId)
@@ -503,7 +505,7 @@ public class GSMATransferStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-        logger.info("Identity Mapper Response: {}", BaseStepDef.response);
+        logger.info("Identity Mapper Response: {}", scenarioScopeState.response);
     }
 
     @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
@@ -574,17 +576,17 @@ public class GSMATransferStepDef extends BaseStepDef {
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
-        BaseStepDef.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
-        logger.info(String.valueOf(BaseStepDef.currentBalance));
+        scenarioScopeState.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
+        logger.info(String.valueOf(scenarioScopeState.currentBalance));
     }
 
     @When("I create a set of debit and credit party from file {string}")
     public void iCreateASetOfDebitAndCreditPartyFromFile(String filename) {
         try {
-            BaseStepDef.filename = filename;
-            File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+            scenarioScopeState.filename = filename;
+            File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
             assertThat(f.exists()).isTrue();
-            assertThat(BaseStepDef.filename).isNotEmpty();
+            assertThat(scenarioScopeState.filename).isNotEmpty();
             Scanner scanner = new Scanner(f);
             String line = scanner.nextLine();
             while (scanner.hasNextLine() && !line.isEmpty()) {
@@ -606,17 +608,17 @@ public class GSMATransferStepDef extends BaseStepDef {
     @And("I parse amount to be debited and credited from file {string}")
     public void iParseAmountToBeDebitedAndCreditedFromFile(String filename) {
         try {
-            BaseStepDef.filename = filename;
-            File f = new File(Utils.getAbsoluteFilePathToResource(BaseStepDef.filename));
+            scenarioScopeState.filename = filename;
+            File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
             assertThat(f.exists()).isTrue();
-            assertThat(BaseStepDef.filename).isNotEmpty();
+            assertThat(scenarioScopeState.filename).isNotEmpty();
             Scanner scanner = new Scanner(f);
             String line = scanner.nextLine();
             while (scanner.hasNextLine() && !line.isEmpty()) {
                 String line2 = scanner.nextLine();
                 String[] parts = line2.split(",");
-                BaseStepDef.gsmaP2PAmtDebit = BaseStepDef.gsmaP2PAmtDebit + Integer.parseInt(parts[7]);
-                assertThat(BaseStepDef.gsmaP2PAmtDebit).isNotNull();
+                scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + Integer.parseInt(parts[7]);
+                assertThat(scenarioScopeState.gsmaP2PAmtDebit).isNotNull();
             }
             scanner.close();
         } catch (FileNotFoundException e) {

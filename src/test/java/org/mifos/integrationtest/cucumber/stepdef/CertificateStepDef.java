@@ -14,12 +14,12 @@ public class CertificateStepDef extends BaseStepDef {
 
     @Given("I have X509 certificate {string}")
     public void setX509CertificateString(String certificate) {
-        BaseStepDef.certificateString = certificate;
+        scenarioScopeState.certificateString = certificate;
     }
 
     @When("I have null certificate")
     public void assertNullCertificate() {
-        assertThat(BaseStepDef.certificateString).isNotEmpty();
+        assertThat(scenarioScopeState.certificateString).isNotEmpty();
     }
 
     @Then("I should be able to parse the certificate using CertificateUtils")
@@ -35,16 +35,16 @@ public class CertificateStepDef extends BaseStepDef {
 
     @When("I parse the public key")
     public void fetchPublicKeyFromX509Certificate() {
-        BaseStepDef.publicKey = CertificateUtil.parseRSAPublicKey(BaseStepDef.x509Certificate);
+        scenarioScopeState.publicKey = CertificateUtil.parseRSAPublicKey(BaseStepDef.x509Certificate);
     }
 
     @Then("Public key should be non empty")
     public void publicKeyNotEmptyCheck() {
-        assertThat(BaseStepDef.publicKey).isNotNull();
+        assertThat(scenarioScopeState.publicKey).isNotNull();
     }
 
     public X509Certificate parseCertificate() throws CertificateException {
-        return CertificateUtil.parseX509Certificate(BaseStepDef.certificateString);
+        return CertificateUtil.parseX509Certificate(scenarioScopeState.certificateString);
     }
 
 }

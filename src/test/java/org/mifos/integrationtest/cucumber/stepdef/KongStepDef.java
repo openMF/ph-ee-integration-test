@@ -54,20 +54,20 @@ public class KongStepDef extends BaseStepDef {
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
 
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(consumer)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.consumerEndpoint).andReturn()
                 .asString();
 
-        logger.debug("Create new consumer response from kong: {}", BaseStepDef.response);
+        logger.debug("Create new consumer response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongConsumer = objectMapper.readValue(BaseStepDef.response, KongConsumer.class);
-            logger.debug("Kong consumer: {}", objectMapper.writeValueAsString(BaseStepDef.kongConsumer));
+            scenarioScopeState.kongConsumer = objectMapper.readValue(scenarioScopeState.response, KongConsumer.class);
+            logger.debug("Kong consumer: {}", objectMapper.writeValueAsString(scenarioScopeState.kongConsumer));
         } catch (Exception e) {
-            BaseStepDef.kongConsumer = null;
+            scenarioScopeState.kongConsumer = null;
         }
 
-        assertThat(BaseStepDef.kongConsumer).isNotNull();
+        assertThat(scenarioScopeState.kongConsumer).isNotNull();
     }
 
     @And("I am able to create a key for above consumer")
@@ -77,26 +77,26 @@ public class KongStepDef extends BaseStepDef {
         consumerKey.setId(UUID.randomUUID().toString());
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(consumerKey)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.createKeyEndpoint, BaseStepDef.kongConsumer.getUsername()).andReturn().asString();
+                .post(kongConfig.createKeyEndpoint, scenarioScopeState.kongConsumer.getUsername()).andReturn().asString();
 
-        logger.debug("Create new key response from kong: {}", BaseStepDef.response);
+        logger.debug("Create new key response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongConsumerKey = objectMapper.readValue(BaseStepDef.response, KongConsumerKey.class);
-            logger.debug("Kong consumer key: {}", objectMapper.writeValueAsString(BaseStepDef.kongConsumerKey));
+            scenarioScopeState.kongConsumerKey = objectMapper.readValue(scenarioScopeState.response, KongConsumerKey.class);
+            logger.debug("Kong consumer key: {}", objectMapper.writeValueAsString(scenarioScopeState.kongConsumerKey));
         } catch (Exception e) {
-            BaseStepDef.kongConsumerKey = null;
+            scenarioScopeState.kongConsumerKey = null;
         }
 
-        assertThat(BaseStepDef.kongConsumerKey).isNotNull();
+        assertThat(scenarioScopeState.kongConsumerKey).isNotNull();
     }
 
     @And("I register a service in kong")
     public void registerService() throws JsonProcessingException {
         registerService(kongConfig.serviceUrl, "https");
-        assertThat(BaseStepDef.kongService).isNotNull();
+        assertThat(scenarioScopeState.kongService).isNotNull();
     }
 
     @And("I register a route to above service in kong")
@@ -111,8 +111,8 @@ public class KongStepDef extends BaseStepDef {
             {
                 add(kongConfig.routeHost);
             }
-        }, BaseStepDef.kongService.getId());
-        assertThat(BaseStepDef.kongRoute).isNotNull();
+        }, scenarioScopeState.kongService.getId());
+        assertThat(scenarioScopeState.kongRoute).isNotNull();
     }
 
     @And("I add the key-auth plugin in above service")
@@ -128,24 +128,24 @@ public class KongStepDef extends BaseStepDef {
                 });
             }
         };
-        enablePluginForService(BaseStepDef.kongService.getId(), "key-auth", config);
-        assertThat(BaseStepDef.kongPlugin).isNotNull();
+        enablePluginForService(scenarioScopeState.kongService.getId(), "key-auth", config);
+        assertThat(scenarioScopeState.kongPlugin).isNotNull();
     }
 
     @Then("When I call the service endpoint with api key I should get {int}")
     public void callServiceEndpoint(int expectedStatus) {
-        logger.debug("Key: {}", BaseStepDef.kongConsumerKey.getKey());
+        logger.debug("Key: {}", scenarioScopeState.kongConsumerKey.getKey());
         logger.debug("Host: {}", kongConfig.routeHost);
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
         try {
             Response resp = RestAssured.given(baseReqSpec).baseUri("https://" + kongConfig.routeHost)
-                    .header(kongConfig.apiKeyHeader, BaseStepDef.kongConsumerKey.getKey()).expect()
+                    .header(kongConfig.apiKeyHeader, scenarioScopeState.kongConsumerKey.getKey()).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get("/actuator/health/liveness")
                     .andReturn();
-            BaseStepDef.response = resp.asString();
+            scenarioScopeState.response = resp.asString();
 
             logger.debug("Status Code: {}", resp.getStatusCode());
-            logger.debug("Response: {}", BaseStepDef.response);
+            logger.debug("Response: {}", scenarioScopeState.response);
         } catch (Exception e) {
             logger.debug("{}", e.getMessage());
             clearKongData();
@@ -171,7 +171,7 @@ public class KongStepDef extends BaseStepDef {
     @And("I register service with url {string} and {string} protocol")
     public void commonRegisterService(String serviceUrl, String protocol) throws JsonProcessingException {
         registerService(serviceUrl, protocol);
-        assertThat(BaseStepDef.kongService).isNotNull();
+        assertThat(scenarioScopeState.kongService).isNotNull();
     }
 
     @And("I register channel route using config")
@@ -191,8 +191,8 @@ public class KongStepDef extends BaseStepDef {
             {
                 add(routeHost);
             }
-        }, BaseStepDef.kongService.getId());
-        assertThat(BaseStepDef.kongRoute).isNotNull();
+        }, scenarioScopeState.kongService.getId());
+        assertThat(scenarioScopeState.kongRoute).isNotNull();
     }
 
     @And("I enable oidc plugin")
@@ -209,8 +209,8 @@ public class KongStepDef extends BaseStepDef {
                 put("realm", keycloakConfig.realm);
             }
         };
-        enablePluginForService(BaseStepDef.kongService.getId(), "oidc", config);
-        assertThat(BaseStepDef.kongPlugin).isNotNull();
+        enablePluginForService(scenarioScopeState.kongService.getId(), "oidc", config);
+        assertThat(scenarioScopeState.kongPlugin).isNotNull();
     }
 
     public void registerService(String serviceUrl, String protocol) throws JsonProcessingException {
@@ -221,17 +221,17 @@ public class KongStepDef extends BaseStepDef {
         service.setProtocol(protocol);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(service)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.servicesEndpoint).andReturn()
                 .asString();
 
-        logger.debug("Create new service response from kong: {}", BaseStepDef.response);
+        logger.debug("Create new service response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongService = objectMapper.readValue(BaseStepDef.response, KongService.class);
-            logger.debug("Kong service: {}", objectMapper.writeValueAsString(BaseStepDef.kongService));
+            scenarioScopeState.kongService = objectMapper.readValue(scenarioScopeState.response, KongService.class);
+            logger.debug("Kong service: {}", objectMapper.writeValueAsString(scenarioScopeState.kongService));
         } catch (Exception e) {
-            BaseStepDef.kongService = null;
+            scenarioScopeState.kongService = null;
         }
     }
 
@@ -244,17 +244,17 @@ public class KongStepDef extends BaseStepDef {
         route.setHosts(routeHosts);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(route)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.createRouteEndpoint, serviceId)
                 .andReturn().asString();
 
-        logger.debug("Create new route response from kong: {}", BaseStepDef.response);
+        logger.debug("Create new route response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongRoute = objectMapper.readValue(BaseStepDef.response, KongRoute.class);
-            logger.debug("Kong route: {}", objectMapper.writeValueAsString(BaseStepDef.kongRoute));
+            scenarioScopeState.kongRoute = objectMapper.readValue(scenarioScopeState.response, KongRoute.class);
+            logger.debug("Kong route: {}", objectMapper.writeValueAsString(scenarioScopeState.kongRoute));
         } catch (Exception e) {
-            BaseStepDef.kongRoute = null;
+            scenarioScopeState.kongRoute = null;
         }
     }
 
@@ -266,38 +266,38 @@ public class KongStepDef extends BaseStepDef {
         kongPlugin.setConfig(config);
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.createPluginEndpoint, serviceId)
                 .andReturn().asString();
 
-        logger.debug("Enable plugin response from kong: {}", BaseStepDef.response);
+        logger.debug("Enable plugin response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
-            logger.debug("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
+            scenarioScopeState.kongPlugin = objectMapper.readValue(scenarioScopeState.response, KongPlugin.class);
+            logger.debug("Kong plugin: {}", objectMapper.writeValueAsString(scenarioScopeState.kongPlugin));
         } catch (Exception e) {
-            BaseStepDef.kongPlugin = null;
+            scenarioScopeState.kongPlugin = null;
         }
     }
 
     // cals respective methods for clearing kong related resources
     private void clearKongData() {
-        if (BaseStepDef.kongConsumer != null) {
-            deleteConsumer(BaseStepDef.kongConsumer.getId());
-            BaseStepDef.kongConsumer = null;
-            BaseStepDef.kongConsumerKey = null;
+        if (scenarioScopeState.kongConsumer != null) {
+            deleteConsumer(scenarioScopeState.kongConsumer.getId());
+            scenarioScopeState.kongConsumer = null;
+            scenarioScopeState.kongConsumerKey = null;
         }
-        if (BaseStepDef.kongPlugin != null && StringUtils.isNotBlank(BaseStepDef.kongPlugin.getId())) {
-            deletePlugin(BaseStepDef.kongPlugin.getId());
-            BaseStepDef.kongPlugin = null;
+        if (scenarioScopeState.kongPlugin != null && StringUtils.isNotBlank(scenarioScopeState.kongPlugin.getId())) {
+            deletePlugin(scenarioScopeState.kongPlugin.getId());
+            scenarioScopeState.kongPlugin = null;
         }
-        if (BaseStepDef.kongRoute != null) {
-            deleteRoute(BaseStepDef.kongRoute.getId());
-            BaseStepDef.kongRoute = null;
+        if (scenarioScopeState.kongRoute != null) {
+            deleteRoute(scenarioScopeState.kongRoute.getId());
+            scenarioScopeState.kongRoute = null;
         }
-        if (BaseStepDef.kongService != null) {
-            deleteService(BaseStepDef.kongService.getId());
-            BaseStepDef.kongService = null;
+        if (scenarioScopeState.kongService != null) {
+            deleteService(scenarioScopeState.kongService.getId());
+            scenarioScopeState.kongService = null;
         }
     }
 
@@ -349,20 +349,20 @@ public class KongStepDef extends BaseStepDef {
         });
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when()
-                .post(kongConfig.createPluginEndpoint, BaseStepDef.kongService.getId()).andReturn().asString();
+                .post(kongConfig.createPluginEndpoint, scenarioScopeState.kongService.getId()).andReturn().asString();
 
-        logger.info("Enable ratelimiter plugin response from kong: {}", BaseStepDef.response);
+        logger.info("Enable ratelimiter plugin response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
-            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
+            scenarioScopeState.kongPlugin = objectMapper.readValue(scenarioScopeState.response, KongPlugin.class);
+            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(scenarioScopeState.kongPlugin));
         } catch (Exception e) {
-            BaseStepDef.kongPlugin = null;
+            scenarioScopeState.kongPlugin = null;
         }
 
-        assertThat(BaseStepDef.kongPlugin).isNotNull();
+        assertThat(scenarioScopeState.kongPlugin).isNotNull();
     }
 
     @And("I add the ratelimiter plugin in kong")
@@ -382,24 +382,24 @@ public class KongStepDef extends BaseStepDef {
         });
 
         RequestSpecification baseReqSpec = Utils.getDefaultSpec();
-        BaseStepDef.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
+        scenarioScopeState.response = RestAssured.given(baseReqSpec).baseUri(kongConfig.adminContactPoint)
                 .header("Content-Type", "application/json").body(objectMapper.writeValueAsString(kongPlugin)).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(201).build()).when().post(kongConfig.pluginsEndpoint).andReturn()
                 .asString();
 
-        logger.info("Creating ratelimiter plugin response from kong: {}", BaseStepDef.response);
+        logger.info("Creating ratelimiter plugin response from kong: {}", scenarioScopeState.response);
         try {
-            BaseStepDef.kongPlugin = objectMapper.readValue(BaseStepDef.response, KongPlugin.class);
-            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(BaseStepDef.kongPlugin));
+            scenarioScopeState.kongPlugin = objectMapper.readValue(scenarioScopeState.response, KongPlugin.class);
+            logger.info("Kong plugin: {}", objectMapper.writeValueAsString(scenarioScopeState.kongPlugin));
         } catch (Exception e) {
-            BaseStepDef.kongPlugin = null;
+            scenarioScopeState.kongPlugin = null;
         }
 
-        assertThat(BaseStepDef.kongPlugin).isNotNull();
+        assertThat(scenarioScopeState.kongPlugin).isNotNull();
     }
 
     @And("I should have {string} in response body")
     public void iShouldHaveInResponseBody(String expectedResponse) {
-        assertThat(BaseStepDef.response).contains(expectedResponse);
+        assertThat(scenarioScopeState.response).contains(expectedResponse);
     }
 }

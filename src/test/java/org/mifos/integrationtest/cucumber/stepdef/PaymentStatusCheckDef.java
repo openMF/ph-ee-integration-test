@@ -22,8 +22,8 @@ public class PaymentStatusCheckDef extends BaseStepDef {
 
     @And("I extracted clientCorrelationId from response")
     public void iExtractedClientCorrelationIdFromResponse() {
-        assertThat(BaseStepDef.clientCorrelationId).isNotNull();
-        paymentStatusCheckConfig.requestIds.add(BaseStepDef.clientCorrelationId);
+        assertThat(scenarioScopeState.clientCorrelationId).isNotNull();
+        paymentStatusCheckConfig.requestIds.add(scenarioScopeState.clientCorrelationId);
     }
 
     @When("I should have clean request id list")
@@ -43,24 +43,24 @@ public class PaymentStatusCheckDef extends BaseStepDef {
         jsonBuilder.append("\"payeePartyIds\": []");
         jsonBuilder.append("}");
         String jsonString = jsonBuilder.toString();
-        BaseStepDef.paymentStatusCheckReqDto = jsonString;
-        assertThat(BaseStepDef.paymentStatusCheckReqDto).isNotNull();
-        logger.info("Payment Status Check Request Body: " + BaseStepDef.paymentStatusCheckReqDto);
+        scenarioScopeState.paymentStatusCheckReqDto = jsonString;
+        assertThat(scenarioScopeState.paymentStatusCheckReqDto).isNotNull();
+        logger.info("Payment Status Check Request Body: " + scenarioScopeState.paymentStatusCheckReqDto);
 
     }
 
     @When("I call the payment status check endpoint with expected status {int}")
     public void iCallThePaymentStatusCheckEndpointWithExpectedStatus(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(BaseStepDef.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
-        BaseStepDef.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint)
-                .body(BaseStepDef.paymentStatusCheckReqDto).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint)
+                .body(scenarioScopeState.paymentStatusCheckReqDto).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().post(operationsAppConfig.transfersEndpoint)
                 .andReturn().asString();
 
-        logger.info("Batch Details Response: " + BaseStepDef.response);
+        logger.info("Batch Details Response: " + scenarioScopeState.response);
     }
 
     @And("I extracted clientCorrelationId from the demo csv file {string}")
