@@ -169,7 +169,6 @@ dependencies {
     implementation 'org.mifos:openapi-java-client:2.0.3-SNAPSHOT'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.awaitility:awaitility:4.2.0'
-
 }
 
 tasks.named('test') {
