@@ -32,7 +32,7 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I will sleep for {int} millisecond")
     public void iWillSleepForSecs(int time) throws InterruptedException {
-        await().atMost(time + globalWaitTime, MILLISECONDS).until(() -> true);
+        Thread.sleep(time + globalWaitTime);
     }
 
     @And("I store this time as start time")
