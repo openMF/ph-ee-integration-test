@@ -14,8 +14,12 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
+import org.awaitility.core.ConditionTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 public final class Utils {
 
@@ -43,10 +47,10 @@ public final class Utils {
 
     public static void sleep(int seconds) {
         try {
-            Thread.sleep(seconds * 1000);
-        } catch (InterruptedException e) {
-            log.debug("Unexpected InterruptedException {}", e);
-            throw new IllegalStateException("Unexpected InterruptedException", e);
+            await().atMost(seconds, SECONDS).pollInterval(1, SECONDS).until(() -> true);
+        } catch (ConditionTimeoutException e) {
+            log.debug("Unexpected ConditionTimeoutException {}", e);
+            throw new IllegalStateException("Unexpected ConditionTimeoutException", e);
         }
     }
 

@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
@@ -62,13 +64,18 @@ public class ChannelCollectionStepDef extends BaseStepDef {
         }
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        Thread.sleep(10000);
+        await().atMost(10, SECONDS).pollInterval(1, SECONDS).untilAsserted(() -> {
+            scenarioScopeState.response = RestAssured.given(requestSpec)
+                    .baseUri(operationsAppConfig.operationAppContactPoint)
+                    .expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
+                    .when()
+                    .get(operationsAppConfig.transactionRequestsEndpoint)
+                    .andReturn()
+                    .asString();
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transactionRequestsEndpoint)
-                .andReturn().asString();
-
-        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+        });
     }
 
     @Then("I should get transaction state as completed and externalId not null")

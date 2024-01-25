@@ -7,6 +7,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.HttpMethod.PUT;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
@@ -295,12 +297,10 @@ public class VoucherManagementStepDef extends BaseStepDef {
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        iShouldBeAbleToExtractResponseBodyFromCallback();
+        await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> {
+            iShouldBeAbleToExtractResponseBodyFromCallback();
+            return true; // Replace this with the actual condition you are waiting for
+        });
         iCanCreateAnVoucherRequestDTOForVoucherActivation();
         iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(202, "/activateVoucher");
     }
@@ -313,11 +313,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> true);
         iShouldBeAbleToExtractResponseBodyFromCallback();
     }
 

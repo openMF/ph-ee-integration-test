@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -30,7 +32,7 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I will sleep for {int} millisecond")
     public void iWillSleepForSecs(int time) throws InterruptedException {
-        Thread.sleep(time + globalWaitTime);
+        await().atMost(time + globalWaitTime, MILLISECONDS).until(() -> true);
     }
 
     @And("I store this time as start time")
