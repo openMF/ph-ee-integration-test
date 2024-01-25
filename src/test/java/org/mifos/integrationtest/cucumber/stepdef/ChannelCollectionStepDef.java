@@ -65,14 +65,9 @@ public class ChannelCollectionStepDef extends BaseStepDef {
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
         await().atMost(10, SECONDS).pollInterval(1, SECONDS).untilAsserted(() -> {
-            scenarioScopeState.response = RestAssured.given(requestSpec)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                    .when()
-                    .get(operationsAppConfig.transactionRequestsEndpoint)
-                    .andReturn()
-                    .asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                    .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
 
             logger.info("GetTxn Request Response: " + scenarioScopeState.response);
         });

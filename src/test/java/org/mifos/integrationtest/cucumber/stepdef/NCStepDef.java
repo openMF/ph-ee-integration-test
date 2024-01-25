@@ -13,7 +13,6 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import java.util.UUID;
-
 import org.awaitility.core.ConditionTimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,11 +97,9 @@ public class NCStepDef extends BaseStepDef {
 
         try {
             await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> {
-                scenarioScopeState.response = RestAssured.given(requestSpec)
-                        .baseUri(operationsAppConfig.dpgOperationAppContactPoint)
-                        .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                        .when().get(operationsAppConfig.transfersEndpoint)
-                        .andReturn().asString();
+                scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint)
+                        .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                        .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
 
                 logger.info(scenarioScopeState.transactionId);
                 logger.info("Get Transfer Response: " + scenarioScopeState.response);
