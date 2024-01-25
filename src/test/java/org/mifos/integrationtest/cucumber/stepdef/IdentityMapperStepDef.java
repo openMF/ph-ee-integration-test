@@ -7,6 +7,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import org.awaitility.core.ConditionTimeoutException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -164,9 +168,10 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
             try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                await().atMost(2000, MILLISECONDS).until(() -> true);
+            } catch (ConditionTimeoutException e) {
+                // Handle the timeout exception
+                throw new RuntimeException("Timeout waiting for condition", e);
             }
 
         }
