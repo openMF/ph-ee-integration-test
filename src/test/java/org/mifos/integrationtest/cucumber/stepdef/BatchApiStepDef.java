@@ -140,16 +140,18 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
-        BatchDTO batchDTO = null;
-        assertThat(scenarioScopeState.response).isNotNull();
-        assertThat(scenarioScopeState.response).isNotEmpty();
-        try {
-            batchDTO = objectMapper.readValue(scenarioScopeState.response, BatchDTO.class);
-            scenarioScopeState.batchDTO = batchDTO;
-        } catch (Exception e) {
-            logger.error("Error parsing the batch summary response", e);
-        }
-        assertThat(scenarioScopeState.batchDTO).isNotNull();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            BatchDTO batchDTO = null;
+            assertThat(scenarioScopeState.response).isNotNull();
+            assertThat(scenarioScopeState.response).isNotEmpty();
+            try {
+                batchDTO = objectMapper.readValue(scenarioScopeState.response, BatchDTO.class);
+                scenarioScopeState.batchDTO = batchDTO;
+            } catch (Exception e) {
+                logger.error("Error parsing the batch summary response", e);
+            }
+            assertThat(scenarioScopeState.batchDTO).isNotNull();
+        });
     }
 
     @And("Status of transaction is {string}")
