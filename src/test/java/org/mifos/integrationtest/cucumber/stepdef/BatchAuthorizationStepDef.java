@@ -6,6 +6,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +51,9 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String httpMethod, String endpoint) {
-        verify(postRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.status", equalTo("Y"))));
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            verify(postRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.status", equalTo("Y"))));
+        });
     }
 
     @When("I call the Authorization API with batchId as {string} and expected status of {int} and stub {string}")

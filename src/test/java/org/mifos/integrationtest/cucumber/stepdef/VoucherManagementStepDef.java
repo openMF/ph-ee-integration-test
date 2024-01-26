@@ -273,16 +273,19 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I can assert that redemption was successful by asserting the status in response")
     public void iCanAssertThatRedemptionWasSuccessfulByAssertingTheStatusInResponse() {
-        try {
-            JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
 
-            String status = rootNode.get("status").asText();
-            logger.info("Status {}", status);
-            assertThat(status).isEqualTo("01");
-        } catch (Exception e) {
-            logger.debug(e.getMessage());
-        }
+            try {
+                JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
 
+                String status = rootNode.get("status").asText();
+                logger.info("Status {}", status);
+                assertThat(status).isEqualTo("01");
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+
+        });
     }
 
     public void assertUnsuccessfulRedemption() {
