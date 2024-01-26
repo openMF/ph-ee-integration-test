@@ -7,7 +7,6 @@ import static org.awaitility.Awaitility.await;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import java.util.UUID;
-
 import org.awaitility.core.ConditionTimeoutException;
 import org.springframework.beans.factory.annotation.Value;
 
