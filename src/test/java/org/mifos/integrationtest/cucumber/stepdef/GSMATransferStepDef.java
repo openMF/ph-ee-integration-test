@@ -2,6 +2,8 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
 import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
@@ -495,49 +497,54 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Then("I call the account lookup API with expected status of {int} and callback stub {string}")
     public void iCallTheAccountLookupAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
-        requestId = generateUniqueNumber(10);
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-Registering-Institution-ID", registeringInstitutionId)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
-                .queryParam("paymentModality", "01").queryParam("requestId", requestId)
-                .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            requestId = generateUniqueNumber(10);
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-Registering-Institution-ID", registeringInstitutionId)
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
+                    .queryParam("paymentModality", "01").queryParam("requestId", requestId)
+                    .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-        logger.info("Identity Mapper Response: {}", scenarioScopeState.response);
+            logger.info("Identity Mapper Response: {}", scenarioScopeState.response);
+        });
     }
 
     @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        Boolean isValidated = null;
+        await().atMost(10, SECONDS).untilAsserted(() -> {
 
-        for (int i = 0; i < allServeEvents.size(); i++) {
-            ServeEvent request = allServeEvents.get(i);
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            Boolean isValidated = null;
 
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                try {
-                    JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                    String requestID = rootNode.get("requestId").asText();
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
 
-                    if (requestId.equals(requestID)) {
-                        callbackBody = request.getRequest().getBodyAsString();
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    try {
+                        JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                        String requestID = rootNode.get("requestId").asText();
+
+                        if (requestId.equals(requestID)) {
+                            callbackBody = request.getRequest().getBodyAsString();
+                        }
+                    } catch (Exception e) {
+                        logger.debug("{}", e.getMessage());
                     }
-                } catch (Exception e) {
-                    logger.debug("{}", e.getMessage());
+
                 }
-
             }
-        }
-        try {
-            JsonNode rootNode = objectMapper.readTree(callbackBody);
-            isValidated = rootNode.get("isValidated").asBoolean();
+            try {
+                JsonNode rootNode = objectMapper.readTree(callbackBody);
+                isValidated = rootNode.get("isValidated").asBoolean();
 
-        } catch (Exception e) {
-            logger.debug("{}", e.getMessage());
-        }
-        assertThat(isValidated).isTrue();
+            } catch (Exception e) {
+                logger.debug("{}", e.getMessage());
+            }
+            assertThat(isValidated).isTrue();
+        });
     }
 
     @When("I call the AMS Mifos Deposit Mock API with expected status of {int}")

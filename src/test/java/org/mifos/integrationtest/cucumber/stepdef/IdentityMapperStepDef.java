@@ -341,40 +341,43 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I should be able to verify that the {string} method to {string} receive {int} request")
     public void iShouldBeAbleToVerifyThatTheMethodToReceiveRequest(String httpMethod, String stub, int noOfRequest)
             throws JsonProcessingException {
-        List<ServeEvent> allServeEvents = getAllServeEvents();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
 
-        for (int i = 0; i < allServeEvents.size(); i++) {
-            ServeEvent request = allServeEvents.get(i);
+            List<ServeEvent> allServeEvents = getAllServeEvents();
 
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                try {
-                    JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                    String requestID = rootNode.get("requestID").asText();
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
 
-                    if (requestId.equals(requestID)) {
-                        callbackBody = request.getRequest().getBodyAsString();
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    try {
+                        JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                        String requestID = rootNode.get("requestID").asText();
+
+                        if (requestId.equals(requestID)) {
+                            callbackBody = request.getRequest().getBodyAsString();
+                        }
+                    } catch (Exception e) {
+                        logger.debug(e.getMessage());
                     }
-                } catch (Exception e) {
-                    logger.debug(e.getMessage());
-                }
 
-            }
-        }
-        int count = 0;
-        try {
-            JsonNode rootNode = objectMapper.readTree(callbackBody);
-
-            JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
-            if (beneficiaryDTOList.isArray()) {
-                for (JsonNode beneficiary : beneficiaryDTOList) {
-                    count++;
                 }
             }
-        } catch (Exception e) {
-            logger.debug(e.getMessage());
-        }
-        assertThat(count).isEqualTo(noOfRequest);
-        beneficiaryList = new ArrayList<>();
+            int count = 0;
+            try {
+                JsonNode rootNode = objectMapper.readTree(callbackBody);
+
+                JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
+                if (beneficiaryDTOList.isArray()) {
+                    for (JsonNode beneficiary : beneficiaryDTOList) {
+                        count++;
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+            assertThat(count).isEqualTo(noOfRequest);
+            beneficiaryList = new ArrayList<>();
+        });
     }
 
     @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string}")

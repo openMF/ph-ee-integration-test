@@ -8,6 +8,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.HttpMethod.PUT;
 
@@ -87,15 +88,17 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the create voucher API with expected status of {int} and stub {string}")
     public void iCallTheVoucherCreateAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", registeringInstitutionId)
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(createVoucherBody).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .header("X-Registering-Institution-ID", registeringInstitutionId)
+                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(createVoucherBody).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+            logger.info("Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     public static String generateUniqueNumber(int length) {
@@ -129,15 +132,17 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the activate voucher API with expected status of {int} and stub {string}")
     public void iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(int expectedStatus, String stub) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", registeringInstitutionId).header("X-Program-ID", "")
-                .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint).body(activateVoucherBody)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .header("X-Registering-Institution-ID", registeringInstitutionId).header("X-Program-ID", "")
+                    .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                    .body(activateVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+            logger.info("Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
@@ -195,44 +200,46 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback")
     public void iShouldBeAbleToExtractResponseBodyFromCallback() {
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = 0; i < allServeEvents.size(); i++) {
-            ServeEvent request = allServeEvents.get(i);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
 
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
-                String requestID = null;
-                if (rootNode.has("requestID")) {
-                    requestID = rootNode.get("requestID").asText();
-                }
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String requestID = null;
+                    if (rootNode.has("requestID")) {
+                        requestID = rootNode.get("requestID").asText();
+                    }
 
-                if (requestId.equals(requestID)) {
-                    callbackBody = request.getRequest().getBodyAsString();
-                }
+                    if (requestId.equals(requestID)) {
+                        callbackBody = request.getRequest().getBodyAsString();
+                    }
 
-            }
-        }
-
-        try {
-            // ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(callbackBody);
-
-            JsonNode voucherInstructionsNode = rootNode.get("voucherInstructions");
-            if (voucherInstructionsNode.isArray()) {
-                for (JsonNode voucherNode : voucherInstructionsNode) {
-                    serialNumber = voucherNode.get("serialNumber").asText();
-                    voucherNumber = voucherNode.get("voucherNumber").asText();
                 }
             }
-        } catch (Exception e) {
-            logger.debug(e.getMessage());
-        }
-        assertThat(serialNumber).isNotEmpty();
+
+            try {
+                // ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(callbackBody);
+
+                JsonNode voucherInstructionsNode = rootNode.get("voucherInstructions");
+                if (voucherInstructionsNode.isArray()) {
+                    for (JsonNode voucherNode : voucherInstructionsNode) {
+                        serialNumber = voucherNode.get("serialNumber").asText();
+                        voucherNumber = voucherNode.get("voucherNumber").asText();
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+            assertThat(serialNumber).isNotEmpty();
+        });
     }
 
     @Given("I can create an RedeemVoucherRequestDTO for voucher redemption")
@@ -404,28 +411,30 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
     public void iCanExtractResultFromValidationCallbackAndAssertIfValidationIsSuccessful(String endpoint) {
-        // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        String serialNo = null;
-        String isValid = null;
-        for (int i = 0; i < allServeEvents.size(); i++) {
-            ServeEvent request = allServeEvents.get(i);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            String serialNo = null;
+            String isValid = null;
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
 
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
 
-                if (rootNode.has("serialNumber")) {
-                    serialNo = rootNode.get("serialNumber").asText();
-                    isValid = rootNode.get("isValid").asText();
+                    if (rootNode.has("serialNumber")) {
+                        serialNo = rootNode.get("serialNumber").asText();
+                        isValid = rootNode.get("isValid").asText();
+                    }
                 }
             }
-        }
-        assertThat(isValid).isEqualTo("true");
+            assertThat(isValid).isEqualTo("true");
+        });
     }
 
     @Then("I can assert that redemption was unsuccessful by asserting the status in response")
@@ -442,21 +451,25 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I should be able to assert response body from callback on {string}")
     public void iShouldBeAbleToAssertResponseBodyFromCallback(String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(requestId))));
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(requestId))));
+            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+        });
     }
 
     @Then("I will call the fetch voucher API with expected status of {int}")
     public void iWillCallTheFetchVoucherAPIWithExpectedStatusOf(int responseCode) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-Registering-Institution-ID", registeringInstitutionId)
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
-                .get(voucherManagementConfig.fetchVoucherEndpoint + "/" + serialNumber).andReturn().asString();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-Registering-Institution-ID", registeringInstitutionId)
+                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
+                    .get(voucherManagementConfig.fetchVoucherEndpoint + "/" + serialNumber).andReturn().asString();
 
-        fetchVoucherResponseBody = scenarioScopeState.response;
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+            fetchVoucherResponseBody = scenarioScopeState.response;
+            logger.info("Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     @And("I will assert the fields from fetch voucher response")

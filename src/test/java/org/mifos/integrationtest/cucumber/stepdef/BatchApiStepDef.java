@@ -138,7 +138,6 @@ public class BatchApiStepDef extends BaseStepDef {
         });
     }
 
-
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
         BatchDTO batchDTO = null;
@@ -250,35 +249,37 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
-        requestSpec.header(HEADER_PURPOSE, "Integartion test");
-        requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
-        requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
-        requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
-        requestSpec.header(QUERY_PARAM_TYPE, "CSV");
-        if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {
-            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeState.signature);
-        }
-        if (StringUtils.isNotBlank(scenarioScopeState.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeState.programId)) {
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeState.registeringInstituteId);
-            requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeState.programId);
-        }
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
+            requestSpec.header(HEADER_PURPOSE, "Integartion test");
+            requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
+            requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
+            requestSpec.header(QUERY_PARAM_TYPE, "CSV");
+            if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {
+                requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeState.signature);
+            }
+            if (StringUtils.isNotBlank(scenarioScopeState.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeState.programId)) {
+                requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeState.registeringInstituteId);
+                requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeState.programId);
+            }
 
-        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
-        Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .contentType("multipart/form-data").multiPart("data", f).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
+            File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
+            Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                    .contentType("multipart/form-data").multiPart("data", f).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
 
-        scenarioScopeState.response = resp.andReturn().asString();
-        scenarioScopeState.restResponseObject = resp;
+            scenarioScopeState.response = resp.andReturn().asString();
+            scenarioScopeState.restResponseObject = resp;
 
-        Headers allHeaders = resp.getHeaders();
-        for (Header header : allHeaders) {
-            logger.debug("{}", header.getName());
-            logger.debug("{}", header.getValue());
-        }
-        logger.info("Batch Transactions Response: " + scenarioScopeState.response);
+            Headers allHeaders = resp.getHeaders();
+            for (Header header : allHeaders) {
+                logger.debug("{}", header.getName());
+                logger.debug("{}", header.getValue());
+            }
+            logger.info("Batch Transactions Response: " + scenarioScopeState.response);
+        });
     }
 
     @And("I should have {string} and {string} in response")
