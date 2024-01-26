@@ -8,6 +8,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
@@ -172,13 +173,17 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+        });
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+        });
     }
 
     public static String generateUniqueNumber(int length) {

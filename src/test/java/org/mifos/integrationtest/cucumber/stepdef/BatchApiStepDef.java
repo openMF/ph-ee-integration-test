@@ -2,6 +2,8 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.HEADER_FILENAME;
 import static org.mifos.integrationtest.common.Utils.HEADER_JWS_SIGNATURE;
 import static org.mifos.integrationtest.common.Utils.HEADER_PROGRAM_ID;
@@ -120,19 +122,22 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
-        // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
-        logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
+        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+            logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.batchSummaryEndpoint + "/" + scenarioScopeState.batchId).andReturn().asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.batchSummaryEndpoint + "/" + scenarioScopeState.batchId).andReturn().asString();
 
-        logger.info("Batch Summary Response: " + scenarioScopeState.response);
+            logger.info("Batch Summary Response: " + scenarioScopeState.response);
+        });
     }
+
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
