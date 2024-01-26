@@ -32,7 +32,7 @@ public class GenericStepDef extends BaseStepDef {
     }
 
     @And("I will sleep for {int} millisecond")
-    public void iWillSleepForSecs(int time) throws ConditionTimeoutException {
+    public void iWillSleepForSecs(int time) {
         await().atMost(time + globalWaitTime, MILLISECONDS).until(() -> true);
     }
 
