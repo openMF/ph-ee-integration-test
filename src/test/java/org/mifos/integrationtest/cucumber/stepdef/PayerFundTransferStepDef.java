@@ -487,25 +487,25 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String filePath = Utils.getAbsoluteFilePathToResource(fileName);
         String[] header = { "id", "request_id", "payment_mode", "payer_identifier_type", "payer_identifier", "payee_identifier_type",
                 "payee_identifier", "amount", "currency", "note" };
-        BaseStepDef.filename = fileName;
+        scenarioScopeState.filename = fileName;
         csvHelper.createCsvFileWithHeaders(filePath, header);
     }
 
     @Then("add row to csv with current payer and payee and transfer amount {int} and id {int}")
     public void addRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
-                BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
-        String filePath = Utils.getAbsoluteFilePathToResource(BaseStepDef.filename);
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
+                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
     }
 
     @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", BaseStepDef.payerIdentifier, "msisdn",
-                BaseStepDef.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
-        String filePath = Utils.getAbsoluteFilePathToResource(BaseStepDef.filename);
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
+                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addLastRow(filePath, row);
     }
 
