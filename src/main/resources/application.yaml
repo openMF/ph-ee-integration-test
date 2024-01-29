@@ -233,7 +233,7 @@ ml-connector:
     get-quote: "/switch/quotes"
     transfer: "switch/transfers"
 
-global_wait_time_ms : 10000
+global_wait_time_ms : 20000
 
 
 billPay:
