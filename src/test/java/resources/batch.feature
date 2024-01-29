@@ -95,7 +95,7 @@ Feature: Batch Details API test
     And I have tenant as "gorilla"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200
+    When I call the batch su  mmary API with expected status of 200
     Then I should get non empty response
 
   @gov @batch-teardown

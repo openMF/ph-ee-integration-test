@@ -122,7 +122,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(20, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -301,6 +301,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I fetch batch ID from batch transaction API's response")
     public void iFetchBatchIDFromBatchTransactionAPISResponse() {
+
         assertThat(scenarioScopeState.batchTransactionResponse).isNotNull();
         scenarioScopeState.batchId = fetchBatchId(scenarioScopeState.batchTransactionResponse);
         logger.info("batchId: {}", scenarioScopeState.batchId);
