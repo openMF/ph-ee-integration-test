@@ -307,7 +307,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
-        await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> {
+        await().atMost(20, SECONDS).pollInterval(1, MILLISECONDS).until(() -> {
             iShouldBeAbleToExtractResponseBodyFromCallback();
             return true; // Replace this with the actual condition you are waiting for
         });

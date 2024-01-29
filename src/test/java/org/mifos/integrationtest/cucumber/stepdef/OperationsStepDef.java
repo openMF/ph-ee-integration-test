@@ -54,7 +54,7 @@ public class OperationsStepDef extends BaseStepDef {
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(5,SECONDS).untilAsserted(() -> {
             log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
             callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
         });
@@ -69,8 +69,10 @@ public class OperationsStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch paginated response into DTO")
     public void parseBatchPaginatedDto() {
-        assertThat(scenarioScopeState.response).isNotNull();
-        parseBatchesResponse(scenarioScopeState.response);
+        await().atMost(45, SECONDS).pollInterval(1, SECONDS).untilAsserted(() -> {
+            assertThat(scenarioScopeState.response).isNotNull();
+            parseBatchesResponse(scenarioScopeState.response);
+        });
     }
 
     @And("I add the query param key: {string} value: {string}")

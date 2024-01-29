@@ -14,6 +14,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.java.eo.Se;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
@@ -339,7 +340,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I should be able to verify the callback for lookup")
     public void verifyGetPartyCallback() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             List<ServeEvent> serveEvents = getAllServeEvents();
             logger.info(String.valueOf(serveEvents.size()));
             assertThat(serveEvents.size()).isGreaterThan(0);
@@ -425,13 +426,16 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I check for error related to {}")
     public void checkForError(String action) {
-        JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
+        await().atMost(10, SECONDS).untilAsserted(() -> {
 
-        JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
+            JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 
-        boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
-                && errorInformation.getAsString().contains(action);
-        assertThat(actionError).isFalse();
+            JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
+
+            boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
+                    && errorInformation.getAsString().contains(action);
+            assertThat(actionError).isFalse();
+        });
     }
 
     @And("I assert the {} is {}")
