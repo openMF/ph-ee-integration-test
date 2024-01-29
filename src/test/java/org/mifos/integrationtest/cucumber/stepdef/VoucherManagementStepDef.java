@@ -51,7 +51,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
-        requestId= generateUniqueNumber(12);
+        requestId = generateUniqueNumber(12);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
@@ -468,7 +468,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an negative VoucherRequestDTO for voucher creation")
     public void createNegativeVoucherRequestDTO() {
-        requestId= generateUniqueNumber(12);
+        requestId = generateUniqueNumber(12);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
@@ -499,7 +499,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             assertThat(errorDescriptionResponse).isEqualTo("The request is invalid");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("{}", e);
         }
     }
 }
