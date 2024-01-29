@@ -455,12 +455,12 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         } else {
             savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
         }
-        transferConfig.savingsApproveEndpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+        String endpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
                 savingsAccountResponse.getSavingsId().toString());
 
-        logger.info(transferConfig.savingsApproveEndpoint);
+        logger.info(endpoint);
         String responseBody = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(transferConfig.savingsApproveEndpoint).andReturn()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn()
                 .asString();
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
