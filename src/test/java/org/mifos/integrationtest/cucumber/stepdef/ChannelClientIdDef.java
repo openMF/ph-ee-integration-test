@@ -48,8 +48,8 @@ public class ChannelClientIdDef extends BaseStepDef {
         logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
     }
 
-    @When("I call the txn State with client correlation id as {int} expected status of {int}")
-    public void iCallTheTxnStateWithClientCorrelationIdAsExpectedStatusOf(int XClientCorrelationId, int expectedStatus) {
+    @When("I call the txn State with client correlation id as {string} expected status of {int}")
+    public void iCallTheTxnStateWithClientCorrelationIdAsExpectedStatusOf(String XClientCorrelationId, int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
