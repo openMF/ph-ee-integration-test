@@ -42,7 +42,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     private static String requestId;
     private static String agentId;
     private static String fetchVoucherResponseBody;
-    private static String createVoucherResponseBody;
     @Autowired
     MockServerStepDef mockServerStepDef;
 
@@ -80,8 +79,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
-        createVoucherResponseBody = scenarioScopeState.response;
         logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
 
@@ -490,7 +487,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @And("I should be able to assert the create voucher validation for negative response")
     public void iWillAssertTheFieldsFromCreateVoucherValidationResponse() {
         try {
-            JsonNode rootNode = objectMapper.readTree(createVoucherResponseBody);
+            JsonNode rootNode = objectMapper.readTree(scenarioScopeState.response);
 
             String errorCodeResponse = rootNode.get("errorCode").asText();
             String errorDescriptionResponse = rootNode.get("errorDescription").asText();

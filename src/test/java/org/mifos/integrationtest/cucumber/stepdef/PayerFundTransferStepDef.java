@@ -460,8 +460,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         logger.info(endpoint);
         String responseBody = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn()
-                .asString();
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
 
@@ -494,8 +493,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("add row to csv with current payer and payee and transfer amount {int} and id {int}")
     public void addRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
-                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier,
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
     }
@@ -503,8 +502,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
-                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier,
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addLastRow(filePath, row);
     }
