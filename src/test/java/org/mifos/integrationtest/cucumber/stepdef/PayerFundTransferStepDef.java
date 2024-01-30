@@ -15,6 +15,7 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import org.apache.fineract.client.models.PostSavingsAccountsResponse;
 import org.json.JSONException;
 import org.mifos.connector.common.mojaloop.type.TransferState;
+import org.mifos.integrationtest.common.CsvHelper;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.mifos.integrationtest.common.TransferHelper;
 import org.mifos.integrationtest.common.Utils;
@@ -52,6 +54,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Autowired
     MockServerStepDef mockServerStepDef;
+
+    @Autowired
+    CsvHelper csvHelper;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
 
@@ -450,12 +455,12 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         } else {
             savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
         }
-        transferConfig.savingsApproveEndpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
+        String endpoint = transferConfig.savingsApproveEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
                 savingsAccountResponse.getSavingsId().toString());
 
-        logger.info(transferConfig.savingsApproveEndpoint);
+        logger.info(endpoint);
         String responseBody = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(transferConfig.savingsApproveEndpoint).andReturn()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn()
                 .asString();
 
         JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
@@ -463,6 +468,45 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.currentBalance = jsonObject.get("summary").getAsJsonObject().get("accountBalance").getAsLong();
         logger.info(String.valueOf(scenarioScopeState.currentBalance));
         assertThat(scenarioScopeState.currentBalance).isEqualTo(amount);
+    }
+
+    @When("I create and setup a {string} with account balance of {int}")
+    public void consolidatedPayerCreationSteps(String client, int amount) throws JsonProcessingException {
+        setTenantForPayer(client);
+        callCreateClientEndpoint(client);
+        callCreateSavingsProductEndpoint(client);
+        callCreateSavingsAccountEndpoint(client);
+        callCreateInteropIdentifierEndpoint(client);
+        callApproveSavingsEndpoint("approve", client);
+        callSavingsActivateEndpoint("activate", client);
+        callDepositAccountEndpoint("deposit", amount, client);
+    }
+
+    @Then("Create a csv file with file name {string}")
+    public void createCsvWithHeaders(String fileName) throws IOException {
+        String filePath = Utils.getAbsoluteFilePathToResource(fileName);
+        String[] header = { "id", "request_id", "payment_mode", "payer_identifier_type", "payer_identifier", "payee_identifier_type",
+                "payee_identifier", "amount", "currency", "note" };
+        scenarioScopeState.filename = fileName;
+        csvHelper.createCsvFileWithHeaders(filePath, header);
+    }
+
+    @Then("add row to csv with current payer and payee and transfer amount {int} and id {int}")
+    public void addRowToCsvFile(int transferAmount, int id) throws IOException {
+
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
+                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addRow(filePath, row);
+    }
+
+    @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
+    public void addLastRowToCsvFile(int transferAmount, int id) throws IOException {
+
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier, "msisdn",
+                scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addLastRow(filePath, row);
     }
 
 }

@@ -148,7 +148,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation "com.github.tomakehurst:wiremock-jre8:2.35.0"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.mifos:ph-ee-connector-common:1.7.1-rc.1'
+    implementation 'org.mifos:ph-ee-connector-common:1.8.1-SNAPSHOT'
     testImplementation "com.google.truth:truth:1.1.3"
     testImplementation 'com.google.code.gson:gson:2.9.0'
     testImplementation('io.rest-assured:rest-assured:5.1.1') {
@@ -168,6 +168,8 @@ dependencies {
     implementation 'com.diffplug.spotless:spotless-plugin-gradle:6.17.0'
     implementation 'org.mifos:openapi-java-client:2.0.3-SNAPSHOT'
     testImplementation 'org.hamcrest:hamcrest:2.2'
+
+    implementation 'com.opencsv:opencsv:5.5.2'
 }
 
 tasks.named('test') {
