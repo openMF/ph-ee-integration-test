@@ -54,7 +54,7 @@ public class OperationsStepDef extends BaseStepDef {
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(5,SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
             callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
         });
