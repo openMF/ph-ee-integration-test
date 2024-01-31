@@ -226,7 +226,6 @@ jobs:
             export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
             echo -n "Public url ."
             echo $CALLBACK_URL
-            ./gradlew test -Dcucumber.filter.tags="@gov"
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
@@ -261,11 +260,15 @@ jobs:
             export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
             echo -n "Public url ."
             echo $CALLBACK_URL
+            ./gradlew test -Dcucumber.filter.tags="@gov"
+            mkdir -p test_restlts
+            cp build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml test_results/test_go.xml
             ./gradlew test -Dcucumber.filter.tags="@amsIntegration"
+            cp build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml test_results/test_ams.xml
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test
+          path: test_restlts
 workflows:
   deploy:
     jobs:
