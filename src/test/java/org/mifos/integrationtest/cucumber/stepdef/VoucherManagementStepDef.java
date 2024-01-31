@@ -12,6 +12,7 @@ import static org.mifos.integrationtest.common.HttpMethod.PUT;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -21,9 +22,16 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.mifos.connector.common.vouchers.dto.RequestDTO;
+import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.ErrorDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VoucherManagementStepDef extends BaseStepDef {
@@ -51,22 +59,46 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         requestId = generateUniqueNumber(12);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
-        sb.append("    \"voucherInstructions\": [\n");
-        sb.append("        {\n");
-        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
-        sb.append("            \"groupCode\": \"021\",\n");
-        sb.append("            \"currency\": \"SGD\",\n");
-        sb.append("            \"amount\": 9000,\n");
-        sb.append("            \"payeeFunctionalID\": \"63310590322288932682\",\n");
-        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
-        sb.append("        }\n");
-        sb.append("    ]\n");
-        sb.append("}");
-        createVoucherBody = sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("{\n");
+//        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
+//        sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
+//        sb.append("    \"voucherInstructions\": [\n");
+//        sb.append("        {\n");
+//        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
+//        sb.append("            \"groupCode\": \"021\",\n");
+//        sb.append("            \"currency\": \"SGD\",\n");
+//        sb.append("            \"amount\": 9000,\n");
+//        sb.append("            \"payeeFunctionalID\": \"63310590322288932682\",\n");
+//        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
+//        sb.append("        }\n");
+//        sb.append("    ]\n");
+//        sb.append("}");
+//        createVoucherBody = sb.toString();
+
+        RequestDTO voucherDTO = new RequestDTO();
+        voucherDTO.setRequestID(requestId);
+        voucherDTO.setBatchID(generateUniqueNumber(10));
+
+        VoucherInstruction voucherInstruction = new VoucherInstruction();
+        voucherInstruction.setInstructionID(generateUniqueNumber(16));
+        voucherInstruction.setGroupCode("021");
+        voucherInstruction.setCurrency("SGD");
+        voucherInstruction.setAmount(BigDecimal.valueOf(9000));
+        voucherInstruction.setPayeeFunctionalID("63310590322288932682");
+        voucherInstruction.setNarration("Social Support Payment for the Month of Jan");
+
+        ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
+        voucherInstructions.add(voucherInstruction);
+
+        voucherDTO.setVoucherInstructions(voucherInstructions);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            createVoucherBody = objectMapper.writeValueAsString(voucherDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
     }
 
     @When("I call the create voucher API with expected status of {int} and stub {string}")
@@ -465,23 +497,53 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an negative VoucherRequestDTO for voucher creation")
     public void createNegativeVoucherRequestDTO() {
-        requestId = generateUniqueNumber(12);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
-        sb.append("    \"voucherInstructions\": [\n");
-        sb.append("        {\n");
-        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
-        sb.append("            \"groupCode\": \"0215\",\n");
-        sb.append("            \"currency\": \"SGDP\",\n");
-        sb.append("            \"amount\": -9000,\n");
-        sb.append("            \"payeeFunctionalID\": \"6331059032228893278594709682\",\n");
-        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
-        sb.append("        }\n");
-        sb.append("    ]\n");
-        sb.append("}");
-        createVoucherBody = sb.toString();
+        requestId = generateUniqueNumber(18);
+
+        // Create RequestDTO instance
+        RequestDTO requestDTO = new RequestDTO();
+        requestDTO.setRequestID(requestId);
+        requestDTO.setBatchID(generateUniqueNumber(10));
+
+        VoucherInstruction voucherInstruction = new VoucherInstruction();
+        voucherInstruction.setInstructionID(generateUniqueNumber(16));
+        voucherInstruction.setGroupCode("0215");
+        voucherInstruction.setCurrency("SGDP");
+        voucherInstruction.setAmount(BigDecimal.valueOf(-9000));
+        voucherInstruction.setPayeeFunctionalID("6331059032228893278594709682");
+        voucherInstruction.setNarration("Social Support Payment for the Month of Jan");
+
+        ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
+        voucherInstructions.add(voucherInstruction);
+        requestDTO.setVoucherInstructions(voucherInstructions);
+
+//
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("{\n");
+//        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
+//        sb.append("    \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
+//        sb.append("    \"voucherInstructions\": [\n");
+//        sb.append("        {\n");
+//        sb.append("            \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
+//        sb.append("            \"groupCode\": \"0215\",\n");
+//        sb.append("            \"currency\": \"SGDP\",\n");
+//        sb.append("            \"amount\": -9000,\n");
+//        sb.append("            \"payeeFunctionalID\": \"6331059032228893278594709682\",\n");
+//        sb.append("            \"narration\": \"Social Support Payment for the Month of Jan\"\n");
+//        sb.append("        }\n");
+//        sb.append("    ]\n");
+//        sb.append("}");
+//        createVoucherBody = sb.toString();
+
+//        logger.info("Request DTO  is : {}", requestDTO);
+//        logger.info("VoucherList is : {}", voucherInstructions);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            createVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+           logger.error("Unable to convert the DTO : {}", e);
+        }
+
     }
 
     @And("I should be able to assert the create voucher validation for negative response")
@@ -489,14 +551,16 @@ public class VoucherManagementStepDef extends BaseStepDef {
         try {
             JsonNode rootNode = objectMapper.readTree(scenarioScopeState.response);
 
-            String errorCodeResponse = rootNode.get("errorCode").asText();
-            String errorDescriptionResponse = rootNode.get("errorDescription").asText();
+//            String errorCodeResponse = rootNode.get("errorCode").asText();
+//            String errorDescriptionResponse = rootNode.get("errorDescription").asText();
 
-            assertThat(errorCodeResponse).isEqualTo("error.msg.schema.validation.errors");
-            assertThat(errorDescriptionResponse).isEqualTo("The request is invalid");
+            ErrorDetails errorDetails = objectMapper.treeToValue(rootNode, ErrorDetails.class);
+
+            assertThat(errorDetails.getErrorCode()).isEqualTo("error.msg.schema.validation.errors");
+            assertThat(errorDetails.getErrorDescription()).isEqualTo("The request is invalid");
 
         } catch (Exception e) {
-            logger.info("{}", e);
+            logger.info("An error occurred : {}", e);
         }
     }
 }

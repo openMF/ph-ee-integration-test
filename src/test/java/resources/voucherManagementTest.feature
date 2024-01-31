@@ -1,4 +1,4 @@
-@gov
+@voucher
 Feature: Voucher Management Api Test
 
    Scenario: Create Voucher Api Test
