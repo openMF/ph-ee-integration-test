@@ -57,22 +57,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         requestId = generateUniqueNumber(12);
-        // StringBuilder sb = new StringBuilder();
-        // sb.append("{\n");
-        // sb.append(" \"requestID\": \"").append(requestId).append("\",\n");
-        // sb.append(" \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
-        // sb.append(" \"voucherInstructions\": [\n");
-        // sb.append(" {\n");
-        // sb.append(" \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
-        // sb.append(" \"groupCode\": \"021\",\n");
-        // sb.append(" \"currency\": \"SGD\",\n");
-        // sb.append(" \"amount\": 9000,\n");
-        // sb.append(" \"payeeFunctionalID\": \"63310590322288932682\",\n");
-        // sb.append(" \"narration\": \"Social Support Payment for the Month of Jan\"\n");
-        // sb.append(" }\n");
-        // sb.append(" ]\n");
-        // sb.append("}");
-        // createVoucherBody = sb.toString();
 
         RequestDTO voucherDTO = new RequestDTO();
         voucherDTO.setRequestID(requestId);
@@ -497,7 +481,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void createNegativeVoucherRequestDTO() {
         requestId = generateUniqueNumber(18);
 
-        // Create RequestDTO instance
         RequestDTO requestDTO = new RequestDTO();
         requestDTO.setRequestID(requestId);
         requestDTO.setBatchID(generateUniqueNumber(10));
@@ -514,27 +497,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
         voucherInstructions.add(voucherInstruction);
         requestDTO.setVoucherInstructions(voucherInstructions);
 
-        //
-        // StringBuilder sb = new StringBuilder();
-        // sb.append("{\n");
-        // sb.append(" \"requestID\": \"").append(requestId).append("\",\n");
-        // sb.append(" \"batchID\": \"").append(generateUniqueNumber(10)).append("\",\n");
-        // sb.append(" \"voucherInstructions\": [\n");
-        // sb.append(" {\n");
-        // sb.append(" \"instructionID\": \"").append(generateUniqueNumber(16)).append("\",\n");
-        // sb.append(" \"groupCode\": \"0215\",\n");
-        // sb.append(" \"currency\": \"SGDP\",\n");
-        // sb.append(" \"amount\": -9000,\n");
-        // sb.append(" \"payeeFunctionalID\": \"6331059032228893278594709682\",\n");
-        // sb.append(" \"narration\": \"Social Support Payment for the Month of Jan\"\n");
-        // sb.append(" }\n");
-        // sb.append(" ]\n");
-        // sb.append("}");
-        // createVoucherBody = sb.toString();
-
-        // logger.info("Request DTO is : {}", requestDTO);
-        // logger.info("VoucherList is : {}", voucherInstructions);
-
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             createVoucherBody = objectMapper.writeValueAsString(requestDTO);
@@ -548,9 +510,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iWillAssertTheFieldsFromCreateVoucherValidationResponse() {
         try {
             JsonNode rootNode = objectMapper.readTree(scenarioScopeState.response);
-
-            // String errorCodeResponse = rootNode.get("errorCode").asText();
-            // String errorDescriptionResponse = rootNode.get("errorDescription").asText();
 
             ErrorDetails errorDetails = objectMapper.treeToValue(rootNode, ErrorDetails.class);
 
