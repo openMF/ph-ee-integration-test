@@ -261,12 +261,13 @@ jobs:
             echo -n "Public url ."
             echo $CALLBACK_URL
             mkdir -p test_restlts
-            sh gradlew test -Dcucumber.filter.tags="@amsIntegration" || echo 'mm'
+            b=`sh gradlew test -Dcucumber.filter.tags="@amsIntegration"` 
             cp build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml test_results/test_ams.xml
-            sh gradlew test -Dcucumber.filter.tags="@gov" || echo 'mm'
+            a= `sh gradlew test -Dcucumber.filter.tags="@gov"`
             cp build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml test_results/test_go.xml
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
+            
       - store_test_results:
           path: test_restlts
 workflows:
