@@ -265,7 +265,7 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test
 workflows:
   deploy:
     jobs:
