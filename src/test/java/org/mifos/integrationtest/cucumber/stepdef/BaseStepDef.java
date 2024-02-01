@@ -66,7 +66,7 @@ public class BaseStepDef {
     protected static X509Certificate x509Certificate;
     protected static String jwsDataSeparator = ":";
     protected static String dateFormat = "yyyy-MM-dd HH:mm:ss";
-protected static String keycloakCurrentUserPassword = "password";
+    protected static String keycloakCurrentUserPassword = "password";
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");

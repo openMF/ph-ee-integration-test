@@ -1,5 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -12,12 +14,12 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.MultiPartSpecification;
 import io.restassured.specification.RequestSpecification;
 import java.io.File;
-import java.io.IOException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.net.URL;
 import java.util.StringJoiner;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -28,8 +30,6 @@ import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class BulkPaymentStepDef extends BaseStepDef {
 
@@ -47,7 +47,7 @@ public class BulkPaymentStepDef extends BaseStepDef {
     OperationsAppConfig operationsAppConfig;
 
     @Given("the CSV file is available")
-    public boolean isCsvFileAvailable(){
+    public boolean isCsvFileAvailable() {
         String fileName = "bulk-payment.csv";
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL resource = classLoader.getResource(fileName);
@@ -64,15 +64,9 @@ public class BulkPaymentStepDef extends BaseStepDef {
         String fileContent = getFileContent("bulk-payment.csv");
         logger.info("file content: " + fileContent);
         RequestSpecification requestSpec = getDefaultSpec();
-        String response =  RestAssured.given(requestSpec)
-                .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                .multiPart(getMultiPart(fileContent))
-                .queryParam("type", "csv")
-                .headers(headers)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                .when()
-                .post(bulkProcessorConfig.bulkTransactionEndpoint)
+        String response = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                .multiPart(getMultiPart(fileContent)).queryParam("type", "csv").headers(headers).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(bulkProcessorConfig.bulkTransactionEndpoint)
                 .andReturn().asString();
         batchId = fetchBatchId(response);
         logger.info(batchId);
@@ -80,7 +74,7 @@ public class BulkPaymentStepDef extends BaseStepDef {
     }
 
     @Given("the batch ID for the submitted CSV file")
-    public void isBatchIdAvailable(){
+    public void isBatchIdAvailable() {
         assertThat(batchId).isNotEmpty();
     }
 
@@ -93,29 +87,23 @@ public class BulkPaymentStepDef extends BaseStepDef {
         headers.put("Platform-TenantId", tenant);
         RequestSpecification requestSpec = getDefaultSpec();
 
-        for(int index = 0; index < retries; index++) {
-            String response =  RestAssured.given(requestSpec)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .param("batchId", batchId)
-                    .headers(headers)
-                    .expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build())
-                    .when()
-                    .get(operationsAppConfig.batchSummaryEndpoint)
-                    .andReturn().asString();
+        for (int index = 0; index < retries; index++) {
+            String response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).param("batchId", batchId)
+                    .headers(headers).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                    .get(operationsAppConfig.batchSummaryEndpoint).andReturn().asString();
             Gson gson = new Gson();
             BatchSummaryResponse batchSummaryResponse = gson.fromJson(response, BatchSummaryResponse.class);
             assertThat(batchSummaryResponse).isNotNull();
 
-            if(batchSummaryResponse.getTotal() != 0){
-                completionPercent = (int) (batchSummaryResponse.getSuccessful()/ batchSummaryResponse.getTotal() * 100);
+            if (batchSummaryResponse.getTotal() != 0) {
+                completionPercent = (int) (batchSummaryResponse.getSuccessful() / batchSummaryResponse.getTotal() * 100);
             }
             Utils.sleep(intervalInSeconds);
         }
     }
 
     @Then("successful transactions percentage should be greater than or equal to minimum threshold")
-    public void batchSummarySuccessful(){
+    public void batchSummarySuccessful() {
         assertThat(completionPercent).isNotNull();
         assertThat(completionPercent).isGreaterThan(thresholdPercent);
     }
@@ -127,11 +115,7 @@ public class BulkPaymentStepDef extends BaseStepDef {
     }
 
     private MultiPartSpecification getMultiPart(String fileContent) {
-        return new MultiPartSpecBuilder(fileContent.getBytes()).
-                fileName("test.csv").
-                controlName("file").
-                mimeType("text/plain").
-                build();
+        return new MultiPartSpecBuilder(fileContent.getBytes()).fileName("test.csv").controlName("file").mimeType("text/plain").build();
     }
 
     private String getFileContent(String filePath) {
