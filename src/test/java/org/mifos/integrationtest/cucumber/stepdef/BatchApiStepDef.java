@@ -695,6 +695,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
         logger.info("Actuator Response: " + scenarioScopeState.response);
     }
+
     @And("I can mock the Batch Transaction Request DTO without closed loop")
     public void iCanMockTheBatchTransactionRequestDTOWithoutClosedLoop() throws JsonProcessingException {
         BatchRequestDTO batchRequestDTO = mockBatchTransactionRequestDTO("closedloop");

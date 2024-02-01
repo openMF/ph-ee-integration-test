@@ -17,6 +17,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.mifos.connector.common.util.JsonWebSignature;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
@@ -59,12 +60,13 @@ public class BaseStepDef {
     ScenarioScopeState scenarioScopeState;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    protected static BatchRequestDTO batchRequestDTO;
+    protected static String batchRawRequest;
     protected static String defaultFileName = "ph-ee-bulk-demo-6.csv";
     protected static X509Certificate x509Certificate;
     protected static String jwsDataSeparator = ":";
     protected static String dateFormat = "yyyy-MM-dd HH:mm:ss";
-    protected static String keycloakCurrentUserPassword = "password";
+protected static String keycloakCurrentUserPassword = "password";
 
     protected static String getCurrentDateInFormat() {
         ZoneId zoneId = ZoneId.of("Asia/Kolkata");
