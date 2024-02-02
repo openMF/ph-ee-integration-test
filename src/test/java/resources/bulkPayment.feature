@@ -1,4 +1,4 @@
-@gov
+@bulk
 Feature: Test ability to make payment to individual with bank account
 
   Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
