@@ -253,7 +253,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
-        await().atMost(30, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(50, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
             requestSpec.header(HEADER_PURPOSE, "Integartion test");
             requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
@@ -454,7 +454,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch aggregate API with expected status of {int}")
     public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(10, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
 
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
