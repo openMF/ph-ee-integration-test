@@ -42,6 +42,8 @@ public class ScenarioScopeState {
     protected TransactionChannelRequestDTO inboundTransferMockReq;
     protected String paymentStatusCheckReqDto;
     protected BillPaymentsReqDTO inboundTransferReqP2G;
+
+    protected String billId;
     protected String callbackUrl;
     protected KeycloakTokenResponse keycloakTokenResponse;
     protected String randomData;

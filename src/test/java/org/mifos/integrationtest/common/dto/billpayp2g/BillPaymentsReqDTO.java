@@ -24,6 +24,16 @@ public class BillPaymentsReqDTO implements Serializable {
     private String billId;
     private String paymentReferenceID;
 
+    private String clientCorrelationId;
+
+    public String getClientCorrelationId() {
+        return clientCorrelationId;
+    }
+
+    public void setClientCorrelationId(String clientCorrelationId) {
+        this.clientCorrelationId = clientCorrelationId;
+    }
+
     public String getBillInquiryRequestId() {
         return billInquiryRequestId;
     }
