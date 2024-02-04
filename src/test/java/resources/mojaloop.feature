@@ -1,4 +1,4 @@
-@gov
+@gov @ext
 Feature: Mojaloop test
 
   Scenario: ML connector partial payee party lookup test
