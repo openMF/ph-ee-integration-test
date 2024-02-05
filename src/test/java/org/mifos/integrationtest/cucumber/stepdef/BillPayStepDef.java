@@ -24,7 +24,9 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mifos.connector.common.channel.dto.PhErrorDTO;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.common.dto.Alias;
 import org.mifos.integrationtest.common.dto.Bill;
 import org.mifos.integrationtest.common.dto.BillRTPReqDTO;
 import org.mifos.integrationtest.common.dto.PayerFSPDetail;
@@ -42,6 +44,7 @@ public class BillPayStepDef extends BaseStepDef {
     private static String billerId;
     private static BillRTPReqDTO billRTPReqDTO;
     private static String billId = "12345";
+    private static String rtpResponse;
 
     @Then("I can create DTO for Biller RTP Request")
     public void iCanCreateDTOForBillerRTPRequest() {
@@ -269,6 +272,7 @@ public class BillPayStepDef extends BaseStepDef {
                 .body(billRTPReqDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(billPayConnectorConfig.billerRtpEndpoint).andReturn().asString();
 
+        rtpResponse = scenarioScopeState.response;
         logger.info("RTP Response: {}", scenarioScopeState.response);
     }
 
@@ -527,5 +531,84 @@ public class BillPayStepDef extends BaseStepDef {
 
         }
         assertThat(flag).isTrue();
+    }
+
+    @Then("I can create DTO for Biller RTP Request without alias details")
+    public void iCanCreateDTOForBillerRTPRequestWithoutAliasDetails() {
+        Bill bill = new Bill("Test", 100.0);
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", new Alias(), bill);
+    }
+
+    @And("I can extract the error from response body and assert the error information")
+    public void iCanExtractTheErrorFromResponseBodyAndAssertTheErrorInformation() {
+        PhErrorDTO errorInformation;
+        try {
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            errorInformation = objectMapper.readValue(jsonObject.toString(), PhErrorDTO.class);
+
+        } catch (JSONException | JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        assertThat(errorInformation.getErrorCode()).isNotNull();
+    }
+
+    @Then("I can create DTO for Biller RTP Request with incorrect rtp type")
+    public void iCanCreateDTOForBillerRTPRequestWithIncorrectRtpType() {
+        Bill bill = new Bill("Test", 100.0);
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "03", new Alias(), bill);
+    }
+
+    @Then("I can create DTO for Biller RTP Request with incorrect rtp information")
+    public void iCanCreateDTOForBillerRTPRequestWithIncorrectRtpInformation() {
+        Bill bill = new Bill("Test", 100.0);
+        PayerFSPDetail payerFSPDetail = new PayerFSPDetail("lion", "1223455");
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "01", payerFSPDetail, bill);
+    }
+
+    @Then("I can create DTO for Biller RTP Request with incorrect alias details")
+    public void iCanCreateDTOForBillerRTPRequestWithIncorrectAliasDetails() {
+        Bill bill = new Bill("Test", 100.0);
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "03", new Alias("05", "12345"), bill);
+    }
+
+    @Then("I can create DTO for Biller RTP Request to mock payer fi unreachable")
+    public void iCanCreateDTOForBillerRTPRequestToMockPayerFiUnreachable() {
+        Bill bill = new Bill("Test", 100.0);
+        PayerFSPDetail payerFSPDetail = new PayerFSPDetail("rhino", "122333");
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", payerFSPDetail, bill);
+    }
+
+    @Then("I can create DTO for Biller RTP Request to mock payer fsp failed to debit amount")
+    public void iCanCreateDTOForBillerRTPRequestToMockPayerFspFailedToDebitAmount() {
+        Bill bill = new Bill("Test", 100.0);
+        PayerFSPDetail payerFSPDetail = new PayerFSPDetail("rhino", "1223334444");
+        billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", payerFSPDetail, bill);
+    }
+
+    @And("I can extract the error from callback body")
+    public void iCanExtractTheErrorFromCallbackBody() {
+        boolean flag = false;
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+            ServeEvent request = allServeEvents.get(i);
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                flag = true;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBody());
+                    logger.info("Rootnode value:" + rootNode);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                if (rootNode != null && rootNode.has("errorMessage")) {
+                    String errorMessage = null;
+                    if (rootNode.has("errorMessage")) {
+                        errorMessage = rootNode.get("errorMessage").asText();
+                    }
+                    assertThat(errorMessage).isNotEmpty();
+
+                }
+            }
+        }
     }
 }
