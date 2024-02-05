@@ -372,7 +372,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I can mock the Batch Transaction Request DTO without payer info")
     public void mockBatchTransactionRequestDTOWithoutPayer() throws JsonProcessingException {
-        BatchRequestDTO batchRequestDTO = mockBatchTransactionRequestDTO();
+        BatchRequestDTO batchRequestDTO = mockBatchTransactionRequestDTO("mojaloop");
         batchRequestDTO = setCreditPartyInMockBatchTransactionRequestDTO(batchRequestDTO);
         batchRequestDTO = setDebitPartyInMockBatchTransactionRequestDTO(batchRequestDTO);
         assertThat(batchRequestDTO).isNotNull();
@@ -456,11 +456,11 @@ public class BatchApiStepDef extends BaseStepDef {
         scenarioScopeState.response = null;
     }
 
-    public BatchRequestDTO mockBatchTransactionRequestDTO() {
+    public BatchRequestDTO mockBatchTransactionRequestDTO(String paymentMode) {
         BatchRequestDTO batchRequestDTO = new BatchRequestDTO();
         batchRequestDTO.setAmount("100");
         batchRequestDTO.setCurrency("USD");
-        batchRequestDTO.setSubType("mojaloop");
+        batchRequestDTO.setSubType(paymentMode);
         batchRequestDTO.setDescriptionText("Integration test");
         return batchRequestDTO;
     }
@@ -694,5 +694,23 @@ public class BatchApiStepDef extends BaseStepDef {
         scenarioScopeState.restResponseObject = resp;
 
         logger.info("Actuator Response: " + scenarioScopeState.response);
+    }
+
+    @And("I can mock the Batch Transaction Request DTO without closed loop")
+    public void iCanMockTheBatchTransactionRequestDTOWithoutClosedLoop() throws JsonProcessingException {
+        BatchRequestDTO batchRequestDTO = mockBatchTransactionRequestDTO("closedloop");
+        batchRequestDTO = setCreditPartyInMockBatchTransactionRequestDTO(batchRequestDTO);
+        batchRequestDTO = setDebitPartyInMockBatchTransactionRequestDTO(batchRequestDTO);
+        assertThat(batchRequestDTO).isNotNull();
+        assertThat(batchRequestDTO.getCurrency()).isNotEmpty();
+        assertThat(batchRequestDTO.getAmount()).isNotEmpty();
+        assertThat(batchRequestDTO.getSubType()).isNotEmpty();
+        assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
+        BaseStepDef.batchRequestDTO = batchRequestDTO;
+
+        List<BatchRequestDTO> batchRequestDTOS = new ArrayList<>();
+        batchRequestDTOS.add(batchRequestDTO);
+        BaseStepDef.batchRawRequest = objectMapper.writeValueAsString(batchRequestDTOS);
+        assertThat(BaseStepDef.batchRawRequest).isNotEmpty();
     }
 }
