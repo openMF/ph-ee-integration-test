@@ -25,6 +25,7 @@ public class BillRTPReqDTO {
         this.requestType = requestType;
         this.payerFspDetail = payerFSPDetail;
     }
+
     public BillRTPReqDTO(String clientCorrelationId, String billId, String requestType, Alias alias, Bill bill) {
         this.clientCorrelationId = clientCorrelationId;
         this.bill = bill;
