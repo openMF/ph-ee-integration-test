@@ -603,12 +603,13 @@ public class BillPayStepDef extends BaseStepDef {
                     throw new RuntimeException(e);
                 }
                 if (rootNode != null && rootNode.has("errorMessage")) {
-                    String error = null;
-                    if (rootNode.has("errorMessage")) {
-                        error = rootNode.get("errorMessage").asText();
+                    if(request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
+                        String error = null;
+                        if (rootNode.has("errorMessage")) {
+                            error = rootNode.get("errorMessage").asText();
+                        }
+                        assertThat(error).isEqualTo(errorMessage);
                     }
-                    assertThat(error).isEqualTo(errorMessage);
-
                 }
             }
         }
