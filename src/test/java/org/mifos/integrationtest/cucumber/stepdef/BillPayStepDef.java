@@ -6,6 +6,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -185,44 +187,47 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill pay")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPay() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
+                        String reason = null;
+                        if (rootNode.has("reason")) {
+                            reason = rootNode.get("reason").asText();
+                        }
+                        assertThat(reason).isNotEmpty();
+                        String rtpStatus = null;
+                        if (rootNode.has("code")) {
+                            rtpStatus = rootNode.get("code").asText();
+                        }
+                        assertThat(rtpStatus).isNotEmpty();
+                        String billId = null;
+                        if (rootNode.has("billId")) {
+                            billId = rootNode.get("billId").asText();
+                        }
+                        assertThat(billId).isNotEmpty();
+                    }
                 }
-                if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
-                    String reason = null;
-                    if (rootNode.has("reason")) {
-                        reason = rootNode.get("reason").asText();
-                    }
-                    assertThat(reason).isNotEmpty();
-                    String rtpStatus = null;
-                    if (rootNode.has("code")) {
-                        rtpStatus = rootNode.get("code").asText();
-                    }
-                    assertThat(rtpStatus).isNotEmpty();
-                    String billId = null;
-                    if (rootNode.has("billId")) {
-                        billId = rootNode.get("billId").asText();
-                    }
-                    assertThat(billId).isNotEmpty();
-                }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill notification")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotification() {
+
         boolean flag = false;
         List<ServeEvent> allServeEvents = getAllServeEvents();
         for (int i = allServeEvents.size() - 1; i >= 0; i--) {

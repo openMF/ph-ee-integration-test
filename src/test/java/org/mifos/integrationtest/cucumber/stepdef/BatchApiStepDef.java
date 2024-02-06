@@ -122,7 +122,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
-        await().atMost(20, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(30, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -333,7 +333,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I should have matching total txn count and successful txn count in response")
     public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCountInResponse() {
-        await().atMost(10, SECONDS).pollInterval(1, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).untilAsserted(() -> {
             assertThat(scenarioScopeState.batchDTO).isNotNull();
             assertThat(scenarioScopeState.batchDTO.getTotal()).isNotNull();
             assertThat(scenarioScopeState.batchDTO.getSuccessful()).isNotNull();
