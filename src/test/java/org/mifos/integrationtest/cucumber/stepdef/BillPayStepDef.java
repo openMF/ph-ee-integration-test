@@ -539,7 +539,6 @@ public class BillPayStepDef extends BaseStepDef {
         billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", new Alias(), bill);
     }
 
-
     @Then("I can create DTO for Biller RTP Request with incorrect rtp type")
     public void iCanCreateDTOForBillerRTPRequestWithIncorrectRtpType() {
         Bill bill = new Bill("Test", 100.0);
@@ -573,7 +572,6 @@ public class BillPayStepDef extends BaseStepDef {
         billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", payerFSPDetail, bill);
     }
 
-
     @And("I can extract the error from response body and assert the error information as {string}")
     public void iCanExtractTheErrorFromResponseBodyAndAssertTheErrorInformationAs(String errorMessage) {
         PhErrorDTO errorInformation;
@@ -603,7 +601,7 @@ public class BillPayStepDef extends BaseStepDef {
                     throw new RuntimeException(e);
                 }
                 if (rootNode != null && rootNode.has("errorMessage")) {
-                    if(request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
+                    if (request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
                         String error = null;
                         if (rootNode.has("errorMessage")) {
                             error = rootNode.get("errorMessage").asText();
