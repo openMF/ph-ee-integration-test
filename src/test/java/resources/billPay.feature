@@ -202,8 +202,8 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request without alias details
-    And I can call the biller RTP request API with expected status of 400 and "/test" endpoint
-    And I can extract the error from response body and assert the error information
+    And I can call the biller RTP request API with expected status of 400 and "/aliasSpecification" endpoint
+    And I can extract the error from response body and assert the error information as "Payer Fsp details cannot be null or empty"
 
   @gov
   Scenario: RTP-003 Request to Pay is unsuccessful because RtP type does not match with the information provided
@@ -212,8 +212,8 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect rtp information
-    And I can call the biller RTP request API with expected status of 400 and "/test" endpoint
-    And I can extract the error from response body and assert the error information
+    And I can call the biller RTP request API with expected status of 400 and "/informationMismatch" endpoint
+    And I can extract the error from response body and assert the error information as "Alias cannot be null or empty"
 
   @gov
   Scenario: RTP-004 Request to Pay is unsuccessful because of invalid RTP type (alias or bank account)
@@ -222,8 +222,8 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect rtp type
-    And I can call the biller RTP request API with expected status of 400 and "/test" endpoint
-    And I can extract the error from response body and assert the error information
+    And I can call the biller RTP request API with expected status of 400 and "/invalidRtp" endpoint
+    And I can extract the error from response body and assert the error information as "Request Type is Invalid"
 
   @gov
   Scenario: RTP-005 Request to Pay is unsuccessful because of  Alias type and Alias information mismatch
@@ -232,8 +232,8 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect alias details
-    And I can call the biller RTP request API with expected status of 400 and "/test" endpoint
-    And I can extract the error from response body and assert the error information
+    And I can call the biller RTP request API with expected status of 400 and "/aliasMismatch" endpoint
+    And I can extract the error from response body and assert the error information as "Request Type is Invalid"
 
   @gov
   Scenario: RTP-006 Request to Pay is unsuccessful because of invalid/incorrect BIC
@@ -242,35 +242,35 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request without alias details
-    And I can call the biller RTP request API with expected status of 400 and "/test" endpoint
-    And I can extract the error from response body and assert the error information
+    And I can call the biller RTP request API with expected status of 400 and "/invalidBic" endpoint
+    And I can extract the error from response body and assert the error information as "Payer Fsp details cannot be null or empty"
 
   @gov
   Scenario: RTP-008 Request to Pay is unsuccessful because the specified account of the Payer FI was unreachable - did not respond (Txn timed out)
 
     Given I can inject MockServer
     And I can start mock server
-    And I can register the stub with "/test" endpoint for "POST" request with status of 200
+    And I can register the stub with "/payerUnreachable" endpoint for "POST" request with status of 200
     Given I have tenant as "gorilla"
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request to mock payer fi unreachable
-    And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
+    And I can call the biller RTP request API with expected status of 202 and "/payerUnreachable" endpoint
     Then I will sleep for 3000 millisecond
-    And I can extract the error from callback body
+    And I can extract the error from callback body and assert error message as "Payer FI was unreachable"
 
   @gov
   Scenario: RTP-009 Request to Pay is unsuccessful because the Payer FSP is unable to debit amount (insufficient amount/ blocked account/ account hold etc)
   (Payer FSP declines)
     Given I can inject MockServer
     And I can start mock server
-    And I can register the stub with "/test" endpoint for "POST" request with status of 200
+    And I can register the stub with "/debitFailed" endpoint for "POST" request with status of 200
     Given I have tenant as "gorilla"
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request to mock payer fsp failed to debit amount
-    And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
+    And I can call the biller RTP request API with expected status of 202 and "/debitFailed" endpoint
     Then I will sleep for 3000 millisecond
-    And I can extract the error from callback body
+    And I can extract the error from callback body and assert error message as "Payer FSP is unable to debit amount"

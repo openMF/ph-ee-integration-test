@@ -539,18 +539,6 @@ public class BillPayStepDef extends BaseStepDef {
         billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", new Alias(), bill);
     }
 
-    @And("I can extract the error from response body and assert the error information")
-    public void iCanExtractTheErrorFromResponseBodyAndAssertTheErrorInformation() {
-        PhErrorDTO errorInformation;
-        try {
-            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            errorInformation = objectMapper.readValue(jsonObject.toString(), PhErrorDTO.class);
-
-        } catch (JSONException | JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        assertThat(errorInformation.getErrorCode()).isNotNull();
-    }
 
     @Then("I can create DTO for Biller RTP Request with incorrect rtp type")
     public void iCanCreateDTOForBillerRTPRequestWithIncorrectRtpType() {
@@ -585,8 +573,22 @@ public class BillPayStepDef extends BaseStepDef {
         billRTPReqDTO = new BillRTPReqDTO("123445", billId, "00", payerFSPDetail, bill);
     }
 
-    @And("I can extract the error from callback body")
-    public void iCanExtractTheErrorFromCallbackBody() {
+
+    @And("I can extract the error from response body and assert the error information as {string}")
+    public void iCanExtractTheErrorFromResponseBodyAndAssertTheErrorInformationAs(String errorMessage) {
+        PhErrorDTO errorInformation;
+        try {
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            errorInformation = objectMapper.readValue(jsonObject.toString(), PhErrorDTO.class);
+
+        } catch (JSONException | JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        assertThat(errorInformation.getErrors().get(0).getErrorDescription()).isEqualTo(errorMessage);
+    }
+
+    @And("I can extract the error from callback body and assert error message as {string}")
+    public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
         boolean flag = false;
         List<ServeEvent> allServeEvents = getAllServeEvents();
         for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -601,11 +603,11 @@ public class BillPayStepDef extends BaseStepDef {
                     throw new RuntimeException(e);
                 }
                 if (rootNode != null && rootNode.has("errorMessage")) {
-                    String errorMessage = null;
+                    String error = null;
                     if (rootNode.has("errorMessage")) {
-                        errorMessage = rootNode.get("errorMessage").asText();
+                        error = rootNode.get("errorMessage").asText();
                     }
-                    assertThat(errorMessage).isNotEmpty();
+                    assertThat(error).isEqualTo(errorMessage);
 
                 }
             }
