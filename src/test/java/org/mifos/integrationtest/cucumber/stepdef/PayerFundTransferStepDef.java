@@ -339,7 +339,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I should be able to verify the callback for lookup")
     public void verifyGetPartyCallback() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             List<ServeEvent> serveEvents = getAllServeEvents();
             logger.info(String.valueOf(serveEvents.size()));
             assertThat(serveEvents.size()).isGreaterThan(0);
@@ -352,12 +351,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                         .get("firstName").getAsString();
                 assertThat(firstName).isNotNull();
             });
-        });
     }
 
     @Then("I should be able to verify the callback for quotation")
     public void verifyGetQuotationCallback() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
             List<ServeEvent> serveEvents = getAllServeEvents();
             logger.info(String.valueOf(serveEvents.size()));
             assertThat(serveEvents.size()).isGreaterThan(0);
@@ -370,12 +367,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 String amount = jsonObject.getAsJsonObject("payeeReceiveAmount").get("amount").getAsString();
                 assertThat(amount).isEqualTo("1");
             });
-        });
     }
 
     @Then("I should be able to verify the callback for transfer")
     public void verifyGetTransferCallback() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
             List<ServeEvent> serveEvents = getAllServeEvents();
             logger.info(String.valueOf(serveEvents.size()));
             assertThat(serveEvents.size()).isGreaterThan(0);
@@ -387,7 +382,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 String transferState = jsonObject.get("transferState").getAsString();
                 assertThat(transferState).isEqualTo(TransferState.COMMITTED.toString());
             });
-        });
     }
 
     @Then("I call the payer fund transfer api to transfer amount {string} from payer to payee")
@@ -407,7 +401,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @When("I call the transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+//        await().atMost(10, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -420,7 +414,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
             logger.info(scenarioScopeState.transactionId);
             logger.info("Get Transfer Response: " + scenarioScopeState.response);
-        });
     }
 
     @Then("I check for error related to {}")
