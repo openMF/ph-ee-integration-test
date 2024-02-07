@@ -47,10 +47,10 @@ public final class Utils {
 
     public static void sleep(int seconds) {
         try {
-            await().atMost(seconds, SECONDS).pollInterval(1, SECONDS).until(() -> true);
-        } catch (ConditionTimeoutException e) {
-            log.debug("Unexpected ConditionTimeoutException {}", e);
-            throw new IllegalStateException("Unexpected ConditionTimeoutException", e);
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            log.debug("Unexpected InterruptedException {}", e);
+            throw new IllegalStateException("Unexpected InterruptedException", e);
         }
     }
 
