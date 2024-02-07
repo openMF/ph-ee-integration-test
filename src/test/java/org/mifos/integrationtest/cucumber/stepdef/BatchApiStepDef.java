@@ -454,7 +454,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch aggregate API with expected status of {int}")
     public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
-//        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
 
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
@@ -463,7 +463,7 @@ public class BatchApiStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(operationsAppConfig.batchAggregateEndpoint + scenarioScopeState.batchId).andReturn().asString();
             logger.info("Batch Aggregate Response: " + scenarioScopeState.response);
-//        });
+        });
     }
 
     public void batchTearDown() {
