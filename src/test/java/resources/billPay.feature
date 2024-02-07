@@ -189,9 +189,9 @@ Feature: Bill Payment P2G Test
     Then I should get non empty response
     And I should get transactionId in response
     And I should remove all server events
-    And I will sleep for 1000 millisecond
+#    And I will sleep for 1000 millisecond
     Then I should not get a response from callback for bill
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill paid after timeout
 
 

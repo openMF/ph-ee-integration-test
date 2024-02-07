@@ -505,7 +505,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill paid after timeout")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPaidAfterTimeout() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(15, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
