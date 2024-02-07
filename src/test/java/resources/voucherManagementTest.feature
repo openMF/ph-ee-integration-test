@@ -7,7 +7,7 @@ Feature: Voucher Management Api Test
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
      Given I can create an VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 202 and stub "/createVoucher"
-     Then I will sleep for 10000 millisecond
+#     Then I will sleep for 10000 millisecond
      Then I should be able to extract response body from callback
 
   @createVoucher
@@ -15,7 +15,7 @@ Feature: Voucher Management Api Test
     Given I can create an VoucherRequestDTO for voucher activation
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
-    Then I will sleep for 5000 millisecond
+#    Then I will sleep for 5000 millisecond
     Then I should be able to assert response body from callback on "/activateVoucher"
 
   @createAndActivateVoucher
@@ -29,14 +29,14 @@ Feature: Voucher Management Api Test
     Given I can create an VoucherRequestDTO for voucher cancellation
     And I can register the stub with "/cancelVoucher" endpoint for "PUT" request with status of 200
     When I call the cancel voucher API with expected status of 202 and stub "/cancelVoucher"
-    Then I will sleep for 3000 millisecond
+#    Then I will sleep for 3000 millisecond
 
   @createAndActivateVoucher @redeemVoucherFailure
   Scenario: Suspend Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
-    Then I will sleep for 2000 millisecond
+#    Then I will sleep for 2000 millisecond
 
   @createAndActivateVoucher @redeemVoucherSuccess
   Scenario: Reactivate Voucher Api Test

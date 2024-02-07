@@ -596,29 +596,31 @@ public class BillPayStepDef extends BaseStepDef {
 
     @And("I can extract the error from callback body and assert error message as {string}")
     public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("errorMessage")) {
-                    if (request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
-                        String error = null;
-                        if (rootNode.has("errorMessage")) {
-                            error = rootNode.get("errorMessage").asText();
+        await().atMost(5, SECONDS).pollDelay(3, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("errorMessage")) {
+                        if (request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
+                            String error = null;
+                            if (rootNode.has("errorMessage")) {
+                                error = rootNode.get("errorMessage").asText();
+                            }
+                            assertThat(error).isEqualTo(errorMessage);
                         }
-                        assertThat(error).isEqualTo(errorMessage);
                     }
                 }
             }
-        }
+        });
     }
 }
