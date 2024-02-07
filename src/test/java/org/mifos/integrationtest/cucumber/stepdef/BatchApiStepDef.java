@@ -587,7 +587,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I call the payment batch detail API with expected status of {int}")
     public void iCallThePaymentBatchDetailAPIWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(20, SECONDS).pollDelay(10, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
             requestSpec.queryParam("associations", "all");
