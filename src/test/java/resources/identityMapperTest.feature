@@ -203,9 +203,9 @@ Feature: Identity Account Mapper Api Test
     When I call the register beneficiary API with "SocialWelfare" as registering institution id expected status of 202 and stub "/registerBeneficiaryApiTest"
     And I create an IdentityMapperDTO for adding 2 beneficiary
     And I create request body for batch account lookup API
-    Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/batchAccountLookup"
+    Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/beneficiaryNotRegistered"
     Then I will sleep for 3000 millisecond
-    And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
+    And I should be able to verify that the "PUT" method to "/beneficiaryNotRegistered" receive 8 request
 
   Scenario: PPV-02 Batch Account Lookup API
     When I create an IdentityMapperDTO for adding 8 beneficiary
