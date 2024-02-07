@@ -52,7 +52,7 @@ Feature: Voucher Management Api Test
   Scenario: Validity Check Voucher Api Test
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
     And I call the validity check API with expected status of 202 and stub "/validity"
-    And I will sleep for 3000 millisecond
+#    And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
 
   @createAndActivateVoucher

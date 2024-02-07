@@ -132,7 +132,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the activate voucher API with expected status of {int} and stub {string}")
     public void iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(int expectedStatus, String stub) {
-        await().atMost(20, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
@@ -142,7 +141,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
                     .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
             logger.info("Voucher Response: {}", scenarioScopeState.response);
-        });
     }
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
@@ -416,7 +414,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
     public void iCanExtractResultFromValidationCallbackAndAssertIfValidationIsSuccessful(String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(10, SECONDS).pollDelay(3,SECONDS).untilAsserted(() -> {
             // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
             List<ServeEvent> allServeEvents = getAllServeEvents();
             String serialNo = null;
