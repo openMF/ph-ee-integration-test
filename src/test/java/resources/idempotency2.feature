@@ -4,7 +4,7 @@ Feature: Client Correlation Id Idempotency Test
 
   Scenario: IT-002 Gsma Transaction API Idempotency Test
     Given I create a new clientCorrelationId
-    And I have tenant as "gorilla"
+    Given I have BB1 tenant
     When I call gsma transaction api with client correlation id expected status 200
     Given I have same clientCorrelationId
     When I call gsma transaction to fail with client correlation id expected status 400

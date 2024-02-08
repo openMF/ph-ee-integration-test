@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import java.util.UUID;
+import org.mifos.integrationtest.config.TenantConfig;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -20,6 +21,12 @@ public class GenericStepDef extends BaseStepDef {
 
     @And("I have tenant as {string}")
     public void setTenantAnd(String tenant) {
+        setTenant(tenant);
+    }
+
+    @And("I have BB1 tenant")
+    public void setTenantAnd() {
+        String tenant = TenantConfig.getPaymentBB2();
         setTenant(tenant);
     }
 

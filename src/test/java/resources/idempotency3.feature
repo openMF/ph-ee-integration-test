@@ -5,7 +5,7 @@ Feature: Client Correlation Id Idempotency Test
 
   Scenario: IT-003 Inbound Transfer API Idempotency Test
     Given I create a new clientCorrelationId
-    And I have tenant as "gorilla"
+    Given I have BB1 tenant
     Given I can mock TransactionChannelRequestDTO
     When I call inbound transfer api with client correlation id expected status 200
     Given I have same clientCorrelationId

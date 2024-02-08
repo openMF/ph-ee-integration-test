@@ -7,7 +7,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "001"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
@@ -22,7 +22,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billNotification" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have bill id as "001"
     And I generate clientCorrelationId
     And I can mock payment notification request
@@ -39,13 +39,13 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     And I can register the stub with "/billNotification" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "001"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
     And I should get transactionId in response
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have bill id as "001"
     And I generate clientCorrelationId
     And I can mock payment notification request
@@ -61,7 +61,7 @@ Feature: Bill Payment P2G Test
       #this is an component test for bill inquiry stage w/o rtp, includes bill inquiry api from PBB to Bill Agg with mock
       #response for bill inquiry api from Bill Agg to PBB to PFI
   Scenario: Bill Inquiry API for P2G (PBB to Biller/Agg)
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "001"
     When I call the mock get bills api from PBB to Biller with billid with expected status of 200
@@ -71,7 +71,7 @@ Feature: Bill Payment P2G Test
    #this is an component test for bill inquiry stage w/o rtp, includes bill inquiry api from PBB to Bill Agg with mock
    #response for bill inquiry api from Bill Agg to PBB to PFI
   Scenario: Bill Payments API for P2G (PBB to Biller/Agg)
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "001"
     And I can mock payment notification request
@@ -83,7 +83,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/test" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -97,7 +97,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "101"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
@@ -111,7 +111,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "002"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
@@ -125,7 +125,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiryInvalid" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "003"
     When I call the get bills api with billid with expected status of 404 and callbackurl as "/billInquiryInvalid"
@@ -137,7 +137,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiryEmpty" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I create a new clientCorrelationId
     And I have bill id as "004"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiryEmpty"
@@ -151,7 +151,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billNotificationMissing" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have bill id as "001"
     And I generate clientCorrelationId
     And I can mock payment notification request with missing values
@@ -166,7 +166,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billNotificationPaid" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have bill id as "003"
     And I generate clientCorrelationId
     And I can mock payment notification request
@@ -181,7 +181,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billNotificationsTimeout" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have bill id as "005"
     And I generate clientCorrelationId
     And I can mock payment notification request
@@ -197,7 +197,7 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-002 Request to Pay is unsuccessful because RtP type of Alias is not specified
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -207,7 +207,7 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-003 Request to Pay is unsuccessful because RtP type does not match with the information provided
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -217,7 +217,7 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-004 Request to Pay is unsuccessful because of invalid RTP type (alias or bank account)
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -227,7 +227,7 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-005 Request to Pay is unsuccessful because of  Alias type and Alias information mismatch
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -237,7 +237,7 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-006 Request to Pay is unsuccessful because of invalid/incorrect BIC
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -251,7 +251,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/payerUnreachable" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
@@ -266,7 +266,7 @@ Feature: Bill Payment P2G Test
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/debitFailed" endpoint for "POST" request with status of 200
-    Given I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId

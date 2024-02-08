@@ -3,7 +3,7 @@ Feature: Json Web Signature test
 
   Scenario: JWS-001 Test the jws for batchTransactions
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
-    And I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
@@ -12,7 +12,7 @@ Feature: Json Web Signature test
 
   Scenario: JWS-002 Test the jws in response for batchTransactions
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
-    And I have tenant as "gorilla"
+    Given I have BB1 tenant
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
