@@ -51,7 +51,7 @@ public class GenericStepDef extends BaseStepDef {
         scenarioScopeState.clientCorrelationId = UUID.randomUUID().toString();
     }
 
-    private void setPaymentBB2(String paymentBB2){
+    private void setPaymentBB2(String paymentBB2) {
         scenarioScopeState.paymentBB2 = paymentBB2;
     }
 
