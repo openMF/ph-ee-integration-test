@@ -25,9 +25,9 @@ public class GenericStepDef extends BaseStepDef {
     }
 
     @And("I have BB1 tenant")
-    public void setTenantAnd() {
-        String tenant = TenantConfig.getPaymentBB2();
-        setTenant(tenant);
+    public void setPaymentBB2And() {
+        String paymentBB2 = TenantConfig.getPaymentBB2();
+        setTenant(paymentBB2);
     }
 
     @Then("I should get non empty response")

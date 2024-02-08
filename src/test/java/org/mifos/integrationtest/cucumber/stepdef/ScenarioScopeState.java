@@ -31,6 +31,7 @@ public class ScenarioScopeState {
 
     protected String batchId;
     protected String tenant;
+    protected String paymentBB2;
     protected String response;
     protected String request;
     protected Integer statusCode;
