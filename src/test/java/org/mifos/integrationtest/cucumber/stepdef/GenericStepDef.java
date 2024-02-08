@@ -28,6 +28,7 @@ public class GenericStepDef extends BaseStepDef {
     public void setPaymentBB2And() {
         String paymentBB2 = TenantConfig.getPaymentBB2();
         setPaymentBB2(paymentBB2);
+        logger.info("Dhruv is here: {}",paymentBB2);
     }
 
     @Then("I should get non empty response")

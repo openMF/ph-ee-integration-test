@@ -394,7 +394,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Then("I call the balance api for payer balance")
     public void iCallTheBalanceApiForPayerBalance() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.paymentBB2);
         String finalEndpoint = amsBalanceEndpoint;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty);
