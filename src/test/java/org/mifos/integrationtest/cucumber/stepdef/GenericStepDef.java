@@ -27,7 +27,7 @@ public class GenericStepDef extends BaseStepDef {
     @And("I have BB1 tenant")
     public void setPaymentBB2And() {
         String paymentBB2 = TenantConfig.getPaymentBB2();
-        setTenant(paymentBB2);
+        setPaymentBB2(paymentBB2);
     }
 
     @Then("I should get non empty response")
@@ -49,6 +49,10 @@ public class GenericStepDef extends BaseStepDef {
         scenarioScopeState.tenant = tenant;
         assertThat(scenarioScopeState.tenant).isNotEmpty();
         scenarioScopeState.clientCorrelationId = UUID.randomUUID().toString();
+    }
+
+    private void setPaymentBB2(String paymentBB2){
+        scenarioScopeState.paymentBB2 = paymentBB2;
     }
 
     private void assertNonEmpty(String data) {
