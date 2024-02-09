@@ -256,3 +256,8 @@ tenants:
 
   - name: payerfsp
     value: lion
+tenantconfig:
+  tenants:
+    paymentbb1: rhino
+    paymentbb2: gorilla
+    payerfsp: lion

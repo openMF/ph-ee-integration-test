@@ -1,44 +1,26 @@
 package org.mifos.integrationtest.config;
 
-import java.util.List;
+import java.util.HashMap;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "tenants")
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "tenantconfig")
 public class TenantConfig {
 
-    private List<TenantProperties> tenant;
-
-    public List<TenantProperties> getTenant() {
-        return tenant;
+    public void setTenants(HashMap<String, String> tenants) {
+        this.tenants = tenants;
     }
 
-    public void setTenant(List<TenantProperties> tenant) {
-        this.tenant = tenant;
+    public HashMap<String, String> getTenants() {
+        return tenants;
     }
 
-    public static class TenantProperties {
-
-        private String name;
-        private String value;
-
-        // Getters and setters
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
+    public String getTenant(String key) {
+        return tenants.get(key);
     }
+
+    private HashMap<String, String> tenants;
 }
