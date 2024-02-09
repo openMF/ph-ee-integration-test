@@ -1,4 +1,4 @@
-@iam
+@gov
 Feature: Identity Account Mapper Api Test
 
   Background: I will start mock server and register stub
