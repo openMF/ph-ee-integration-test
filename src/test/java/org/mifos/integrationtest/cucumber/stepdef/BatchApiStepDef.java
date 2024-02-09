@@ -39,11 +39,9 @@ import java.util.UUID;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.csv.CSVParser;
-
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -779,10 +777,10 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I create a list of payee identifiers from csv file")
     public void iCreateAListOfPayeeIdentifiersFromCsvFile() {
-        String csvFile =  Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        String csvFile = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         scenarioScopeState.payeeIdentifiers = new ArrayList<>();
         try (Reader reader = new FileReader(csvFile);
-             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+                CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
             for (CSVRecord csvRecord : csvParser) {
                 String payeeIdentifier = csvRecord.get("payee_identifier");
                 scenarioScopeState.payeeIdentifiers.add(payeeIdentifier);

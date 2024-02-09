@@ -6,8 +6,6 @@ import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
