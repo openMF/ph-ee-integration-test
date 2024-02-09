@@ -242,7 +242,7 @@ Feature: Identity Account Mapper Api Test
     Given I create an IdentityMapperDTO for Register Beneficiary from csv file
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
 #    And I will sleep for 3000 millisecond
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key

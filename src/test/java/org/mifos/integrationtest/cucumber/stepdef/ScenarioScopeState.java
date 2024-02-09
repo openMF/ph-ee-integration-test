@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 @ScenarioScope
 public class ScenarioScopeState {
 
+    protected String paymentBB2;
     protected String payerIdentifier;
     protected String payeeIdentifier;
 

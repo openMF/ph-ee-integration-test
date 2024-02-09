@@ -18,17 +18,22 @@ Feature: GSMA Outbound Transfer test
     Then I call the credit interop identifier endpoint with MSISDN
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
+<<<<<<< HEAD
     Then I call the deposit account endpoint for "payer" with command "deposit" for amount 100
     Given I have tenant as "gorilla"
+=======
+    Then I call the deposit account endpoint with command "deposit" for amount 100
+    Given I have tenant as "paymentBB1"
+>>>>>>> 2e5ef1c (PHEE-568 Make Tenants and FSPs configurable in Integration Tests)
     Then I call the balance api for payer balance
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB1"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer endpoint with expected status of 200
     And I should be able to parse transactionId from response
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB1"
     When I call the transfer query endpoint with transactionId and expected status of 200
     Then I will sleep for 1000 millisecond
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB1"
     Then I call the balance api for payer balance after debit
 
   Scenario: GSMA Deposit Transfer test
@@ -49,13 +54,13 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint with command "deposit" for amount 100
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer Deposit endpoint with expected status of 200
     Then I will sleep for 1000 millisecond
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance after credit
 
   Scenario: GSMA Deposit-Withdrawal Transfer test
@@ -76,20 +81,20 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payee" with command "deposit" for amount 100
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer endpoint with expected status of 200
     And I should be able to parse transactionId from response
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I call the transfer query endpoint with transactionId and expected status of 200
     Then I will sleep for 5000 millisecond
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance after credit
 
   @batch-teardown
