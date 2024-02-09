@@ -312,17 +312,17 @@ workflows:
             - AWS
             - Helm
             - slack
-#      - test-chart-ams:
-#          requires:
-#            - deploying-bpmns
-#          context:
-#            - AWS
-#            - Helm
-#            - slack
-#            - Ngrok
-      - test-chart-gov:
+      - test-chart-ams:
           requires:
             - deploying-bpmns
+          context:
+            - AWS
+            - Helm
+            - slack
+            - Ngrok
+      - test-chart-gov:
+          requires:
+            - test-chart-ams
           context:
             - AWS
             - Helm
