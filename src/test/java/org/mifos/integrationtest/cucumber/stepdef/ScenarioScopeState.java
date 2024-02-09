@@ -4,7 +4,10 @@ import io.cucumber.spring.ScenarioScope;
 import io.restassured.response.Response;
 import java.security.PublicKey;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.json.JSONObject;
 import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
@@ -88,6 +91,7 @@ public class ScenarioScopeState {
     protected KongPlugin kongPlugin;
     protected BatchPaginatedResponse batchesResponse;
     protected int gsmaP2PAmtDebit;
+    protected List<String> payeeIdentifiers;
 
     protected int initialBalForPayer;
     protected int initialBalForPayee;

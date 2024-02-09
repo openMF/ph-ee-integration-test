@@ -502,4 +502,14 @@ public class IdentityMapperStepDef extends BaseStepDef {
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 
+    @And("I create a IdentityMapperDTO for registering beneficiary")
+    public void iCreateAIdentityMapperDTOForRegisteringBeneficiary() {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (String payeeIdentifier: scenarioScopeState.payeeIdentifiers){
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", null, "gorilla");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
 }
