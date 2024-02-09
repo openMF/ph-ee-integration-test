@@ -194,7 +194,7 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-    maxParallelForks = 4
+    maxParallelForks = 1
 }
 task cucumberCli() {
     dependsOn assemble, testClasses
