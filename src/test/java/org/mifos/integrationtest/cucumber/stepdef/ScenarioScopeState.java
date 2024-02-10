@@ -1,5 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
+import io.cucumber.spring.ScenarioScope;
 import io.restassured.response.Response;
 import java.security.PublicKey;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.PaymentBatchDetail;
 import org.springframework.stereotype.Component;
 
 @Component
+@ScenarioScope
 public class ScenarioScopeState {
 
     protected String payerIdentifier;
