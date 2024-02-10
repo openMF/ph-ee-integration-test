@@ -7,7 +7,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.HttpMethod.PUT;
@@ -415,28 +414,28 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
     public void iCanExtractResultFromValidationCallbackAndAssertIfValidationIsSuccessful(String endpoint) {
-            // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
-            List<ServeEvent> allServeEvents = getAllServeEvents();
-            String serialNo = null;
-            String isValid = null;
-            for (int i = 0; i < allServeEvents.size(); i++) {
-                ServeEvent request = allServeEvents.get(i);
+        // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
+        List<ServeEvent> allServeEvents = getAllServeEvents();
+        String serialNo = null;
+        String isValid = null;
+        for (int i = 0; i < allServeEvents.size(); i++) {
+            ServeEvent request = allServeEvents.get(i);
 
-                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                    JsonNode rootNode = null;
-                    try {
-                        rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
+            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                JsonNode rootNode = null;
+                try {
+                    rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
 
-                    if (rootNode.has("serialNumber")) {
-                        serialNo = rootNode.get("serialNumber").asText();
-                        isValid = rootNode.get("isValid").asText();
-                    }
+                if (rootNode.has("serialNumber")) {
+                    serialNo = rootNode.get("serialNumber").asText();
+                    isValid = rootNode.get("isValid").asText();
                 }
             }
-            assertThat(isValid).isEqualTo("true");
+        }
+        assertThat(isValid).isEqualTo("true");
     }
 
     @Then("I can assert that redemption was unsuccessful by asserting the status in response")
