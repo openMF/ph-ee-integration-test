@@ -505,7 +505,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create a IdentityMapperDTO for registering beneficiary")
     public void iCreateAIdentityMapperDTOForRegisteringBeneficiary() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        String[] payeeFspArray = {"payeefsp1", "payeefsp2", "payeefsp3"};
+        String[] payeeFspArray = { "payeefsp1", "payeefsp2", "payeefsp3" };
         int fspIndex = 0;
         for (String payeeIdentifier : scenarioScopeState.payeeIdentifiers) {
             if (fspIndex >= payeeFspArray.length) {

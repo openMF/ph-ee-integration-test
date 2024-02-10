@@ -1,15 +1,15 @@
 package org.mifos.integrationtest.config;
 
+import java.util.HashMap;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
 
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "payeefspconfig")
 public class PayeeFspConfig {
+
     public void setFsps(HashMap<String, String> fsps) {
         this.fsps = fsps;
     }
