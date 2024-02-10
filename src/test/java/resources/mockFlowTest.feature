@@ -52,7 +52,7 @@ Feature: Mock Flow Test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
     Then I will sleep for 5000 millisecond
-    When I call the batch summary API with expected status of 200
+    When I call the batch summary API with expected status of 200 with total 3 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response

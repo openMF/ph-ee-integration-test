@@ -166,7 +166,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-            await().atMost(awaitMost, MILLISECONDS).until(() -> true);
+            await().atMost(awaitMost, SECONDS).until(() -> true);
 
         }
     }
