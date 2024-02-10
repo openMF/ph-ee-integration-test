@@ -166,14 +166,14 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-            await().atMost(2000, MILLISECONDS).until(() -> true);
+            await().atMost(awaitMost, MILLISECONDS).until(() -> true);
 
         }
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
         });
@@ -181,7 +181,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
         });
     }
@@ -341,7 +341,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I should be able to verify that the {string} method to {string} receive {int} request")
     public void iShouldBeAbleToVerifyThatTheMethodToReceiveRequest(String httpMethod, String stub, int noOfRequest)
             throws JsonProcessingException {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
             List<ServeEvent> allServeEvents = getAllServeEvents();
 

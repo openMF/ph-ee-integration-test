@@ -15,6 +15,8 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+
+import io.cucumber.java.sl.In;
 import org.mifos.connector.common.util.JsonWebSignature;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
@@ -55,6 +57,15 @@ public class BaseStepDef {
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
+
+    @Value("${awaitly.maxWaitTime}")
+    public Long awaitMost;
+
+    @Value("${awaitly.pollDelaySeconds}")
+    public Long pollDelay;
+
+    @Value("${awaitly.pollIntervalSeconds}")
+    public Long pollInterval;
 
     @Autowired
     ScenarioScopeState scenarioScopeState;

@@ -204,7 +204,7 @@ Feature: Identity Account Mapper Api Test
     And I create an IdentityMapperDTO for adding 2 beneficiary
     And I create request body for batch account lookup API
     Then I call bulk account lookup API with these 10 beneficiaries and "SocialWelfare" as registering institution id and stub "/beneficiaryNotRegistered"
-    Then I will sleep for 3000 millisecond
+#    Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/beneficiaryNotRegistered" receive 8 request
 
   Scenario: PPV-02 Batch Account Lookup API

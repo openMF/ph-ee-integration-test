@@ -187,7 +187,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill pay")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPay() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -227,7 +227,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill notification")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotification() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -289,7 +289,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @And("I can extract the callback body and assert the rtpStatus")
     public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -334,7 +334,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for biller unidentified")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillerUnidentified() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -370,7 +370,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill invalid")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillInvalid() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -413,7 +413,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for empty bill id")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForEmptyBillId() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -452,7 +452,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill notification with missing values")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotificationWithMissingValues() throws JSONException {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             scenarioScopeState.transactionId = jsonObject.getString("transactionId");
@@ -464,7 +464,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill already paid")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillAlreadyPaid() {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -510,7 +510,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should not get a response from callback for bill")
     public void iShouldNotBeAbleToExtractResponseBodyFromCallbackForBill() {
-        await().atMost(5, SECONDS).pollDelay(2, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             assertThat(allServeEvents.size()).isEqualTo(0);
@@ -519,7 +519,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill paid after timeout")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPaidAfterTimeout() {
-        await().atMost(15, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
@@ -610,7 +610,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @And("I can extract the error from callback body and assert error message as {string}")
     public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
-        await().atMost(5, SECONDS).pollDelay(3, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {

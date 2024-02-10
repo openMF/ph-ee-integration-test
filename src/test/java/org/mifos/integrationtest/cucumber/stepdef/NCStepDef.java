@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 import com.google.gson.JsonObject;
@@ -96,7 +97,7 @@ public class NCStepDef extends BaseStepDef {
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
         try {
-            await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> {
+            await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).until(() -> {
                 scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint)
                         .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                         .get(operationsAppConfig.transfersEndpoint).andReturn().asString();

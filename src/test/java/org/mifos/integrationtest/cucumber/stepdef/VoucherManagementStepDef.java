@@ -88,7 +88,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the create voucher API with expected status of {int} and stub {string}")
     public void iCallTheVoucherCreateAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
@@ -198,7 +198,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback")
     public void iShouldBeAbleToExtractResponseBodyFromCallback() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             List<ServeEvent> allServeEvents = getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
@@ -272,7 +272,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I can assert that redemption was successful by asserting the status in response")
     public void iCanAssertThatRedemptionWasSuccessfulByAssertingTheStatusInResponse() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
             try {
                 JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
@@ -306,7 +306,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
-        await().atMost(20, SECONDS).pollInterval(1, MILLISECONDS).until(() -> {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).until(() -> {
             iShouldBeAbleToExtractResponseBodyFromCallback();
             return true; // Replace this with the actual condition you are waiting for
         });
@@ -322,7 +322,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
         iCallTheVoucherCreateAPIWithExpectedStatusOf(202, "/createVoucher");
-        await().atMost(5000, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> true);
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).until(() -> true);
         iShouldBeAbleToExtractResponseBodyFromCallback();
     }
 
@@ -363,7 +363,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the suspend voucher API with expected status of {int} and stub {string}")
     public void iCallTheSuspendVoucherAPIWithExpectedStatusOfAndStub(int responseCode, String stub) {
-        await().atMost(20, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .queryParam("command", "suspend").header("X-Registering-Institution-ID", registeringInstitutionId)
@@ -453,7 +453,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I should be able to assert response body from callback on {string}")
     public void iShouldBeAbleToAssertResponseBodyFromCallback(String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(requestId))));
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
         });
@@ -461,7 +461,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I will call the fetch voucher API with expected status of {int}")
     public void iWillCallTheFetchVoucherAPIWithExpectedStatusOf(int responseCode) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-Registering-Institution-ID", registeringInstitutionId)

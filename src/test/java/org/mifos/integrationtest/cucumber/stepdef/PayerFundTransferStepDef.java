@@ -418,7 +418,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I check for error related to {}")
     public void checkForError(String action) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
             JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 

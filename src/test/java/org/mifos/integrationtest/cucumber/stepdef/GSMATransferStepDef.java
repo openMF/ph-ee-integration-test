@@ -497,7 +497,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Then("I call the account lookup API with expected status of {int} and callback stub {string}")
     public void iCallTheAccountLookupAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             requestId = generateUniqueNumber(10);
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
@@ -514,7 +514,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
             List<ServeEvent> allServeEvents = getAllServeEvents();
             Boolean isValidated = null;

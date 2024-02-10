@@ -2,6 +2,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
@@ -115,7 +116,7 @@ public class ErrorCodeStepDef extends BaseStepDef {
     }
 
     public void iWillSleepForSecs(int time) throws InterruptedException {
-        await().atMost(time, MILLISECONDS).pollInterval(1, MILLISECONDS).until(() -> true);
+        await().atMost(time, MILLISECONDS).pollInterval(pollInterval, SECONDS).until(() -> true);
     }
 
     @And("I should be able to parse transactionId from response")

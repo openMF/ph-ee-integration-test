@@ -122,7 +122,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch summary API with expected status of {int}")
     public void callBatchSummaryAPI(int expectedStatus) {
-        await().atMost(30, SECONDS).pollDelay(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -140,7 +140,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             BatchDTO batchDTO = null;
             assertThat(scenarioScopeState.response).isNotNull();
             assertThat(scenarioScopeState.response).isNotEmpty();
@@ -162,7 +162,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch details API with expected status of {int}")
     public void callBatchDetailsAPI(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -253,7 +253,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
-        await().atMost(50, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
             requestSpec.header(HEADER_PURPOSE, "Integartion test");
             requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
@@ -333,7 +333,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I should have matching total txn count and successful txn count in response")
     public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCountInResponse() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             assertThat(scenarioScopeState.batchDTO).isNotNull();
             assertThat(scenarioScopeState.batchDTO.getTotal()).isNotNull();
             assertThat(scenarioScopeState.batchDTO.getSuccessful()).isNotNull();
@@ -454,7 +454,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch aggregate API with expected status of {int}")
     public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
 
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
@@ -537,7 +537,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I call the sub batch summary API for sub batch summary with expected status of {int}")
     public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(10, SECONDS).pollDelay(5, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
             if (authEnabled) {
@@ -558,7 +558,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I should assert total txn count and successful txn count in response")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInResponse() {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal()).isNotNull();
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
@@ -571,7 +571,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("Total transaction in batch should add up to total transaction in each sub batch")
     public void matchTotalSubBatchTxnAndBatchTxnCount() {
-        await().atMost(40, SECONDS).pollInterval(1, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
             assertThat(Integer.parseInt(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
@@ -587,7 +587,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I call the payment batch detail API with expected status of {int}")
     public void iCallThePaymentBatchDetailAPIWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(20, SECONDS).pollDelay(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
             requestSpec.queryParam("associations", "all");

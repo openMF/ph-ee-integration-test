@@ -51,7 +51,7 @@ public class BatchAuthorizationStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with authorization status")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithAuthorizationStatus(String httpMethod, String endpoint) {
-        await().atMost(10, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             verify(postRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.status", equalTo("Y"))));
         });
     }

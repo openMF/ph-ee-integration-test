@@ -242,3 +242,8 @@ billPay:
     inquiry: /bills/{billId}
     payments: /paymentNotifications
     billerRtpRequest: /billTransferRequests
+
+awaitly:
+  maxWaitTime: 50
+  pollDelaySeconds: 2
+  pollIntervalSeconds: 1
