@@ -314,3 +314,5 @@ Feature: Batch Details API test
     When I call the actuator API with Contactpoint "voucher-management.contactpoint" and endpoint "/actuator/health"
     Then I am able to parse actuator response
     And Status of service is "UP"
+
+
