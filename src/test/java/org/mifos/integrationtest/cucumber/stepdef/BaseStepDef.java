@@ -24,6 +24,7 @@ import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.mifos.integrationtest.config.TenantConfig;
+import org.mifos.integrationtest.config.PayeeFspConfig;
 import org.mifos.integrationtest.config.VoucherManagementConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,9 @@ public class BaseStepDef {
 
     @Autowired
     TenantConfig tenantConfig;
+
+    @Autowired
+    PayeeFspConfig payeeFspConfig;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
