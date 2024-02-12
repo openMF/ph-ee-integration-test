@@ -140,6 +140,27 @@ public class BatchApiStepDef extends BaseStepDef {
         });
     }
 
+    @When("I call the batch summary API for gsma with expected status of {int} with total {int} txns")
+    public void callBatchSummaryAPIGSMA(int expectedStatus, int totalTxns) {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+            logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
+
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.batchSummaryEndpoint + "/" + scenarioScopeState.batchId).andReturn().asString();
+
+            logger.info("Batch Summary Response: " + scenarioScopeState.response);
+            BatchDTO res = objectMapper.readValue(scenarioScopeState.response, BatchDTO.class);
+            assertThat(res.getTotal()).isEqualTo(totalTxns);
+            assertThat(res.getTotal()).isEqualTo(res.getSuccessful());
+        });
+    }
+
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {

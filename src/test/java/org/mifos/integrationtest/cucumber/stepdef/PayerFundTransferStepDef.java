@@ -481,6 +481,13 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
         callDepositAccountEndpoint("deposit", amount, client);
+        if (client.equals("payer")) {
+            scenarioScopeState.initialBalForPayer = amount;
+            assertThat(scenarioScopeState.initialBalForPayer).isNotNull();
+        } else if (client.equals("payee")) {
+            scenarioScopeState.initialBalForPayee = amount;
+            assertThat(scenarioScopeState.initialBalForPayee).isNotNull();
+        }
     }
 
     @Then("Create a csv file with file name {string}")
@@ -492,22 +499,52 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         csvHelper.createCsvFileWithHeaders(filePath, header);
     }
 
-    @Then("add row to csv with current payer and payee and transfer amount {int} and id {int}")
-    public void addRowToCsvFile(int transferAmount, int id) throws IOException {
+    @Then("add row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
+    public void addRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier,
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
                 "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
+        scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
+        if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null) {
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[4];
+        }
+        scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
-    @Then("add last row to csv with current payer and payee and transfer amount {int} and id {int}")
-    public void addLastRowToCsvFile(int transferAmount, int id) throws IOException {
+    @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
+    public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), "mojaloop", "msisdn", scenarioScopeState.payerIdentifier,
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
                 "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addLastRow(filePath, row);
+        scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
+        scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
+
+    }
+
+    @When("I create and setup a {string} with id {string} and account balance of {int}")
+    public void consolidatedPayeeCreationSteps(String client, String id, int amount) throws JsonProcessingException {
+        setTenantForPayer(client);
+        callCreateClientEndpoint(client);
+        callCreateSavingsProductEndpoint(client);
+        callCreateSavingsAccountEndpoint(client);
+        callCreateInteropIdentifierEndpoint(client);
+        callApproveSavingsEndpoint("approve", client);
+        callSavingsActivateEndpoint("activate", client);
+        callDepositAccountEndpoint("deposit", amount, client);
+        if (client.equals("payer")) {
+            scenarioScopeState.initialBalForPayer = amount;
+            assertThat(scenarioScopeState.initialBalForPayer).isNotNull();
+        } else if (client.equals("payee")) {
+            if (scenarioScopeState.initialBalForPayeeForBatch == null) {
+                scenarioScopeState.initialBalForPayeeForBatch = new int[4];
+            }
+            scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
+        }
     }
 
 }
