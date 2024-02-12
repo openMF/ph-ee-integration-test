@@ -56,6 +56,15 @@ public class BaseStepDef {
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;
 
+    @Value("${awaitly.maxWaitTime}")
+    public Long awaitMost;
+
+    @Value("${awaitly.pollDelaySeconds}")
+    public Long pollDelay;
+
+    @Value("${awaitly.pollIntervalSeconds}")
+    public Long pollInterval;
+
     @Autowired
     ScenarioScopeState scenarioScopeState;
 

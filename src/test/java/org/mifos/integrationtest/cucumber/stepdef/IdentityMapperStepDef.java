@@ -7,7 +7,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.tomakehurst.wiremock.client.VerificationException;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -163,24 +167,32 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
         }
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            try {
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+                assertTrue(true);
+            } catch (VerificationException e) {
+                assertTrue(false);// failure
+            }
+        });
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            try {
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                assertTrue(true);
+            } catch (VerificationException e) {
+                assertTrue(false);
+            }
+        });
     }
 
     public static String generateUniqueNumber(int length) {
@@ -338,40 +350,43 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I should be able to verify that the {string} method to {string} receive {int} request")
     public void iShouldBeAbleToVerifyThatTheMethodToReceiveRequest(String httpMethod, String stub, int noOfRequest)
             throws JsonProcessingException {
-        List<ServeEvent> allServeEvents = getAllServeEvents();
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
-        for (int i = 0; i < allServeEvents.size(); i++) {
-            ServeEvent request = allServeEvents.get(i);
+            List<ServeEvent> allServeEvents = getAllServeEvents();
 
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                try {
-                    JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
-                    String requestID = rootNode.get("requestID").asText();
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
 
-                    if (requestId.equals(requestID)) {
-                        callbackBody = request.getRequest().getBodyAsString();
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    try {
+                        JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                        String requestID = rootNode.get("requestID").asText();
+
+                        if (requestId.equals(requestID)) {
+                            callbackBody = request.getRequest().getBodyAsString();
+                        }
+                    } catch (Exception e) {
+                        logger.debug(e.getMessage());
                     }
-                } catch (Exception e) {
-                    logger.debug(e.getMessage());
-                }
 
-            }
-        }
-        int count = 0;
-        try {
-            JsonNode rootNode = objectMapper.readTree(callbackBody);
-
-            JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
-            if (beneficiaryDTOList.isArray()) {
-                for (JsonNode beneficiary : beneficiaryDTOList) {
-                    count++;
                 }
             }
-        } catch (Exception e) {
-            logger.debug(e.getMessage());
-        }
-        assertThat(count).isEqualTo(noOfRequest);
-        beneficiaryList = new ArrayList<>();
+            int count = 0;
+            try {
+                JsonNode rootNode = objectMapper.readTree(callbackBody);
+
+                JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
+                if (beneficiaryDTOList.isArray()) {
+                    for (JsonNode beneficiary : beneficiaryDTOList) {
+                        count++;
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+            assertThat(count).isEqualTo(noOfRequest);
+            beneficiaryList = new ArrayList<>();
+        });
     }
 
     @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string}")

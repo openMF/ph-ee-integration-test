@@ -15,6 +15,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 import io.cucumber.java.ParameterType;
@@ -94,20 +96,22 @@ public class MockServerStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {httpMethod} method to {string} endpoint received {int} request")
     public void verifyStub(HttpMethod httpMethod, String endpoint, int numberOfRequest) {
-        switch (httpMethod) {
-            case GET -> {
-                verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            switch (httpMethod) {
+                case GET -> {
+                    verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+                }
+                case POST -> {
+                    verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+                }
+                case PUT -> {
+                    verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+                }
+                case DELETE -> {
+                    verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+                }
             }
-            case POST -> {
-                verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
-            }
-            case PUT -> {
-                verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
-            }
-            case DELETE -> {
-                verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
-            }
-        }
+        });
     }
 
     @And("I can start mock server")

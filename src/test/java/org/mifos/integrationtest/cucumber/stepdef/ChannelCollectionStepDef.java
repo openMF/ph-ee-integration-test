@@ -62,8 +62,6 @@ public class ChannelCollectionStepDef extends BaseStepDef {
         }
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        Thread.sleep(10000);
-
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transactionRequestsEndpoint)
                 .andReturn().asString();

@@ -23,7 +23,7 @@ Feature: Operations APP related feature
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
     Then I will sleep for 2000 millisecond
-    When I call the batch summary API with expected status of 200
+    When I call the batch summary API with expected status of 200 with total 10 txns
     Then I am able to parse batch summary response
     And I should get non empty response
     Then I add batchId query param

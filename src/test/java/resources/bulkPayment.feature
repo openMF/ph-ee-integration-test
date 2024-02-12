@@ -11,9 +11,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
+#    Then I will sleep for 10000 millisecond
     Given I have tenant as "lion"
-    When I call the batch summary API with expected status of 200
+    When I call the batch summary API with expected status of 200 with total 6 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response

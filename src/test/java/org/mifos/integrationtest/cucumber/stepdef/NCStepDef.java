@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -11,6 +13,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import java.util.UUID;
+import org.awaitility.core.ConditionTimeoutException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.TransferHelper;
@@ -92,11 +95,20 @@ public class NCStepDef extends BaseStepDef {
         }
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        Thread.sleep(5000);
+        try {
+            await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).until(() -> {
+                scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint)
+                        .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                        .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.dpgOperationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
-                .asString();
+                logger.info(scenarioScopeState.transactionId);
+                logger.info("Get Transfer Response: " + scenarioScopeState.response);
+                return true; // Replace this with the actual condition you are waiting for
+            });
+        } catch (ConditionTimeoutException e) {
+            logger.debug("Timeout waiting for condition", e);
+            throw new IllegalStateException("Timeout waiting for condition", e);
+        }
 
         logger.info(scenarioScopeState.transactionId);
         logger.info("Get Transfer Response: " + scenarioScopeState.response);

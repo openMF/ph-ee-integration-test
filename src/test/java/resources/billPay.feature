@@ -13,7 +13,7 @@ Feature: Bill Payment P2G Test
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill pay
 
   @gov
@@ -29,7 +29,7 @@ Feature: Bill Payment P2G Test
     When I call the payment notification api expected status of 202 and callbackurl as "/billNotification"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill notification
 
 
@@ -52,7 +52,7 @@ Feature: Bill Payment P2G Test
     When I call the payment notification api expected status of 202 and callbackurl as "/billNotification"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     When I make the "POST" request to "/billNotification" endpoint with expected status of 200
     Then I should be able to extract response body from callback for bill pay
     When I make the "POST" request to "/billInquiry" endpoint with expected status of 200
@@ -89,7 +89,7 @@ Feature: Bill Payment P2G Test
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request
     And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
-    Then I will sleep for 8000 millisecond
+#    Then I will sleep for 8000 millisecond
     And I can extract the callback body and assert the rtpStatus
 
   @gov
@@ -103,7 +103,7 @@ Feature: Bill Payment P2G Test
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for biller unidentified
 
   @gov
@@ -117,7 +117,7 @@ Feature: Bill Payment P2G Test
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill invalid
 
   @gov
@@ -143,7 +143,7 @@ Feature: Bill Payment P2G Test
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiryEmpty"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for empty bill id
 
   @gov
@@ -158,7 +158,7 @@ Feature: Bill Payment P2G Test
     When I call the payment notification api expected status of 404 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill notification with missing values
 
   @gov
@@ -173,7 +173,7 @@ Feature: Bill Payment P2G Test
     When I call the payment notification api expected status of 202 and callbackurl as "/billNotificationPaid"
     Then I should get non empty response
     And I should get transactionId in response
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill already paid
 
   @gov
@@ -189,9 +189,9 @@ Feature: Bill Payment P2G Test
     Then I should get non empty response
     And I should get transactionId in response
     And I should remove all server events
-    And I will sleep for 1000 millisecond
+#    And I will sleep for 1000 millisecond
     Then I should not get a response from callback for bill
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill paid after timeout
 
 
@@ -257,7 +257,7 @@ Feature: Bill Payment P2G Test
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request to mock payer fi unreachable
     And I can call the biller RTP request API with expected status of 202 and "/payerUnreachable" endpoint
-    Then I will sleep for 3000 millisecond
+#    Then I will sleep for 3000 millisecond
     And I can extract the error from callback body and assert error message as "Payer FI was unreachable"
 
   @gov
@@ -272,5 +272,5 @@ Feature: Bill Payment P2G Test
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request to mock payer fsp failed to debit amount
     And I can call the biller RTP request API with expected status of 202 and "/debitFailed" endpoint
-    Then I will sleep for 3000 millisecond
+#    Then I will sleep for 3000 millisecond
     And I can extract the error from callback body and assert error message as "Payer FSP is unable to debit amount"

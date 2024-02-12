@@ -399,6 +399,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @When("I call the transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
+        // await().atMost(10, SECONDS).untilAsserted(() -> {
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -415,6 +416,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I check for error related to {}")
     public void checkForError(String action) {
+
         JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 
         JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");

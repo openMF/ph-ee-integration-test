@@ -6,6 +6,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -185,78 +187,82 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for bill pay")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPay() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
+                        String reason = null;
+                        if (rootNode.has("reason")) {
+                            reason = rootNode.get("reason").asText();
+                        }
+                        assertThat(reason).isNotEmpty();
+                        String rtpStatus = null;
+                        if (rootNode.has("code")) {
+                            rtpStatus = rootNode.get("code").asText();
+                        }
+                        assertThat(rtpStatus).isNotEmpty();
+                        String billId = null;
+                        if (rootNode.has("billId")) {
+                            billId = rootNode.get("billId").asText();
+                        }
+                        assertThat(billId).isNotEmpty();
+                    }
                 }
-                if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
-                    String reason = null;
-                    if (rootNode.has("reason")) {
-                        reason = rootNode.get("reason").asText();
-                    }
-                    assertThat(reason).isNotEmpty();
-                    String rtpStatus = null;
-                    if (rootNode.has("code")) {
-                        rtpStatus = rootNode.get("code").asText();
-                    }
-                    assertThat(rtpStatus).isNotEmpty();
-                    String billId = null;
-                    if (rootNode.has("billId")) {
-                        billId = rootNode.get("billId").asText();
-                    }
-                    assertThat(billId).isNotEmpty();
-                }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill notification")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotification() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
+                        String requestId = null;
+                        if (rootNode.has("billRequestId")) {
+                            requestId = rootNode.get("billRequestId").asText();
+                        }
+                        assertThat("billRequestId").isNotEmpty();
+                        String rtpStatus = null;
+                        if (rootNode.has("code")) {
+                            rtpStatus = rootNode.get("code").asText();
+                        }
+                        assertThat(rtpStatus).isNotEmpty();
+                        String billId = null;
+                        if (rootNode.has("billId")) {
+                            billId = rootNode.get("billId").asText();
+                        }
+                        assertThat(billId).isNotEmpty();
+                    }
                 }
-                if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals("001")) {
-                    String requestId = null;
-                    if (rootNode.has("billRequestId")) {
-                        requestId = rootNode.get("billRequestId").asText();
-                    }
-                    assertThat("billRequestId").isNotEmpty();
-                    String rtpStatus = null;
-                    if (rootNode.has("code")) {
-                        rtpStatus = rootNode.get("code").asText();
-                    }
-                    assertThat(rtpStatus).isNotEmpty();
-                    String billId = null;
-                    if (rootNode.has("billId")) {
-                        billId = rootNode.get("billId").asText();
-                    }
-                    assertThat(billId).isNotEmpty();
-                }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @And("I can call the biller RTP request API with expected status of {int} and {string} endpoint")
@@ -283,113 +289,119 @@ public class BillPayStepDef extends BaseStepDef {
 
     @And("I can extract the callback body and assert the rtpStatus")
     public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals(billId)) {
+                        String requestId = null;
+                        if (rootNode.has("requestId")) {
+                            requestId = rootNode.get("requestId").asText();
+                        }
+                        assertThat(requestId).isNotEmpty();
+                        String rtpStatus = null;
+                        if (rootNode.has("rtpStatus")) {
+                            rtpStatus = rootNode.get("rtpStatus").asText();
+                        }
+                        assertThat(rtpStatus).isNotEmpty();
+                        String rtpId = null;
+                        if (rootNode.has("rtpId")) {
+                            rtpId = rootNode.get("rtpId").asText();
+                        }
+                        assertThat(rtpId).isNotEmpty();
+                        String billId = null;
+                        if (rootNode.has("billId")) {
+                            billId = rootNode.get("billId").asText();
+                        }
+                        assertThat(billId).isNotEmpty();
+                    }
                 }
-                if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals(billId)) {
-                    String requestId = null;
-                    if (rootNode.has("requestId")) {
-                        requestId = rootNode.get("requestId").asText();
-                    }
-                    assertThat(requestId).isNotEmpty();
-                    String rtpStatus = null;
-                    if (rootNode.has("rtpStatus")) {
-                        rtpStatus = rootNode.get("rtpStatus").asText();
-                    }
-                    assertThat(rtpStatus).isNotEmpty();
-                    String rtpId = null;
-                    if (rootNode.has("rtpId")) {
-                        rtpId = rootNode.get("rtpId").asText();
-                    }
-                    assertThat(rtpId).isNotEmpty();
-                    String billId = null;
-                    if (rootNode.has("billId")) {
-                        billId = rootNode.get("billId").asText();
-                    }
-                    assertThat(billId).isNotEmpty();
-                }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for biller unidentified")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillerUnidentified() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("responseCode") && rootNode.get("responseCode").asText().equals("01")) {
-                    String responseDescription = null;
-                    if (rootNode.has("responseDescription")) {
-                        responseDescription = rootNode.get("responseDescription").asText();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                    assertThat(responseDescription).isNotEmpty();
-                    assertThat(responseDescription).contains("Unindentified Biller");
-                    String responseCode = null;
-                    if (rootNode.has("responseCode")) {
-                        responseCode = rootNode.get("responseCode").asText();
+                    if (rootNode != null && rootNode.has("responseCode") && rootNode.get("responseCode").asText().equals("01")) {
+                        String responseDescription = null;
+                        if (rootNode.has("responseDescription")) {
+                            responseDescription = rootNode.get("responseDescription").asText();
+                        }
+                        assertThat(responseDescription).isNotEmpty();
+                        assertThat(responseDescription).contains("Unindentified Biller");
+                        String responseCode = null;
+                        if (rootNode.has("responseCode")) {
+                            responseCode = rootNode.get("responseCode").asText();
+                        }
+                        assertThat(responseCode).isNotEmpty();
                     }
-                    assertThat(responseCode).isNotEmpty();
                 }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill invalid")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillInvalid() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
-                    String reason = null;
-                    if (rootNode.has("reason")) {
-                        reason = rootNode.get("reason").asText();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                    assertThat(reason).isNotEmpty();
-                    assertThat(reason).contains("Invalid Bill ID");
-                    String code = null;
-                    if (rootNode.has("code")) {
-                        code = rootNode.get("code").asText();
+                    if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
+                        String reason = null;
+                        if (rootNode.has("reason")) {
+                            reason = rootNode.get("reason").asText();
+                        }
+                        assertThat(reason).isNotEmpty();
+                        assertThat(reason).contains("Invalid Bill ID");
+                        String code = null;
+                        if (rootNode.has("code")) {
+                            code = rootNode.get("code").asText();
+                        }
+                        assertThat(code).isNotEmpty();
                     }
-                    assertThat(code).isNotEmpty();
                 }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @And("I should get Payer FSP not found in response")
@@ -401,84 +413,91 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback for empty bill id")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForEmptyBillId() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
-                    if (rootNode.get("clientCorrelationId").asText().equals(scenarioScopeState.clientCorrelationId)) {
-                        String reason = null;
-                        if (rootNode.has("reason")) {
-                            reason = rootNode.get("reason").asText();
-                        }
-                        assertThat(reason).isNotEmpty();
-                        assertThat(reason).contains("Empty Bill ID");
-                        String code = null;
-                        if (rootNode.has("code")) {
-                            code = rootNode.get("code").asText();
-                        }
-                        assertThat(code).isNotEmpty();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                    if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
+                        if (rootNode.get("clientCorrelationId").asText().equals(scenarioScopeState.clientCorrelationId)) {
+                            String reason = null;
+                            if (rootNode.has("reason")) {
+                                reason = rootNode.get("reason").asText();
+                            }
+                            assertThat(reason).isNotEmpty();
+                            assertThat(reason).contains("Empty Bill ID");
+                            String code = null;
+                            if (rootNode.has("code")) {
+                                code = rootNode.get("code").asText();
+                            }
+                            assertThat(code).isNotEmpty();
+                        }
+                    }
+
                 }
 
             }
-
-        }
-        assertThat(flag).isTrue();
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill notification with missing values")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotificationWithMissingValues() throws JSONException {
-        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-        scenarioScopeState.transactionId = jsonObject.getString("transactionId");
-        assertThat(
-                scenarioScopeState.transactionId.equals("Invalid Request: Mandatory Fields Missing, Missing field is billInquiryRequestId"))
-                .isTrue();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            assertThat(scenarioScopeState.transactionId
+                    .equals("Invalid Request: Mandatory Fields Missing, Missing field is billInquiryRequestId")).isTrue();
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill already paid")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillAlreadyPaid() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
-                    if (rootNode.has("requestID") && rootNode.get("requestID").asText().equals(scenarioScopeState.clientCorrelationId)) {
-                        String reason = null;
-                        if (rootNode.has("reason")) {
-                            reason = rootNode.get("reason").asText();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
+                        if (rootNode.has("requestID")
+                                && rootNode.get("requestID").asText().equals(scenarioScopeState.clientCorrelationId)) {
+                            String reason = null;
+                            if (rootNode.has("reason")) {
+                                reason = rootNode.get("reason").asText();
+                            }
+                            assertThat(reason).isNotEmpty();
+                            assertThat(reason).contains("Bill Payment Failed: Bill Already Paid");
+                            String code = null;
+                            if (rootNode.has("code")) {
+                                code = rootNode.get("code").asText();
+                            }
+                            assertThat(code).isNotEmpty();
                         }
-                        assertThat(reason).isNotEmpty();
-                        assertThat(reason).contains("Bill Payment Failed: Bill Already Paid");
-                        String code = null;
-                        if (rootNode.has("code")) {
-                            code = rootNode.get("code").asText();
-                        }
-                        assertThat(code).isNotEmpty();
                     }
                 }
-            }
 
-        }
-        assertThat(flag).isTrue();
+            }
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I should remove all server events")
@@ -491,46 +510,50 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should not get a response from callback for bill")
     public void iShouldNotBeAbleToExtractResponseBodyFromCallbackForBill() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        assertThat(allServeEvents.size()).isEqualTo(0);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            assertThat(allServeEvents.size()).isEqualTo(0);
+        });
     }
 
     @Then("I should be able to extract response body from callback for bill paid after timeout")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPaidAfterTimeout() {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
-                    if (rootNode.get("requestID").asText().equals(scenarioScopeState.clientCorrelationId)) {
-                        String reason = null;
-                        if (rootNode.has("reason")) {
-                            reason = rootNode.get("reason").asText();
-                        }
-                        assertThat(reason).isNotEmpty();
-                        assertThat(reason).contains("Bill Payment Failed: Bill Paid After Timeout");
-                        String code = null;
-                        if (rootNode.has("code")) {
-                            code = rootNode.get("code").asText();
-                        }
-                        assertThat(code).isNotEmpty();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
+                    if (rootNode != null && rootNode.has("code") && rootNode.get("code").asText().equals("01")) {
+                        if (rootNode.get("requestID").asText().equals(scenarioScopeState.clientCorrelationId)) {
+                            String reason = null;
+                            if (rootNode.has("reason")) {
+                                reason = rootNode.get("reason").asText();
+                            }
+                            assertThat(reason).isNotEmpty();
+                            assertThat(reason).contains("Bill Payment Failed: Bill Paid After Timeout");
+                            String code = null;
+                            if (rootNode.has("code")) {
+                                code = rootNode.get("code").asText();
+                            }
+                            assertThat(code).isNotEmpty();
+                        }
+                    }
+
                 }
 
             }
-
-        }
-        assertThat(flag).isTrue();
+            assertThat(flag).isTrue();
+        });
     }
 
     @Then("I can create DTO for Biller RTP Request without alias details")
@@ -587,29 +610,31 @@ public class BillPayStepDef extends BaseStepDef {
 
     @And("I can extract the error from callback body and assert error message as {string}")
     public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
-        boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
-        for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-            ServeEvent request = allServeEvents.get(i);
-            if (!(request.getRequest().getBodyAsString()).isEmpty()) {
-                JsonNode rootNode = null;
-                flag = true;
-                try {
-                    rootNode = objectMapper.readTree(request.getRequest().getBody());
-                    logger.info("Rootnode value:" + rootNode);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if (rootNode != null && rootNode.has("errorMessage")) {
-                    if (request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
-                        String error = null;
-                        if (rootNode.has("errorMessage")) {
-                            error = rootNode.get("errorMessage").asText();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    JsonNode rootNode = null;
+                    flag = true;
+                    try {
+                        rootNode = objectMapper.readTree(request.getRequest().getBody());
+                        logger.info("Rootnode value:" + rootNode);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (rootNode != null && rootNode.has("errorMessage")) {
+                        if (request.getRequest().getHeader("X-Client-Correlation-ID").equals(scenarioScopeState.clientCorrelationId)) {
+                            String error = null;
+                            if (rootNode.has("errorMessage")) {
+                                error = rootNode.get("errorMessage").asText();
+                            }
+                            assertThat(error).isEqualTo(errorMessage);
                         }
-                        assertThat(error).isEqualTo(errorMessage);
                     }
                 }
             }
-        }
+        });
     }
 }

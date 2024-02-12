@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -52,8 +54,10 @@ public class OperationsStepDef extends BaseStepDef {
 
     @When("I call the batches endpoint with expected status of {int}")
     public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
-        log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
-        callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
+            callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
+        });
     }
 
     @And("The count of batches should be {int}")

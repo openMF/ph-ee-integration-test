@@ -34,10 +34,10 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 5000 millisecond
+#    Then I will sleep for 5000 millisecond
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200
+    When I call the batch summary API with expected status of 200 with total 0 txns
     Then I should get non empty response
 
   @gov @batch-teardown
@@ -54,7 +54,7 @@ Feature: Batch Details API test
     And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200
+    When I call the batch details API with expected status of 200 with total 12 txns
     Then I should get non empty response
 
 
@@ -91,11 +91,11 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 8000 millisecond
+#    Then I will sleep for 8000 millisecond
     And I have tenant as "gorilla"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200
+    When I call the batch summary API with expected status of 200 with total 5 txns
     Then I should get non empty response
 
   @gov @batch-teardown
@@ -140,7 +140,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200
+    When I call the batch details API with expected status of 200 with total 12 txns
     Then I should get non empty response with failure and success percentage
 
   @gov @batch-teardown
@@ -155,8 +155,8 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 15000 millisecond
-    When I call the batch summary API with expected status of 200
+#    Then I will sleep for 15000 millisecond
+    When I call the batch summary API with expected status of 200 with total 10 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
 
@@ -170,8 +170,8 @@ Feature: Batch Details API test
     When I call the batch transactions raw endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
-    When I call the batch summary API with expected status of 200
+#    Then I will sleep for 10000 millisecond
+    When I call the batch summary API with expected status of 200 with total 2 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
@@ -187,8 +187,8 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
-    When I call the batch aggregate API with expected status of 200
+#    Then I will sleep for 10000 millisecond
+    When I call the batch aggregate API with expected status of 200 with total 3 txns
     Then I should get non empty response
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
@@ -205,7 +205,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
+#    Then I will sleep for 10000 millisecond
     And I call the sub batch summary API for sub batch summary with expected status of 200
     Then I am able to parse sub batch summary response
     And I should assert total txn count and successful txn count in response
@@ -221,8 +221,8 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
-    When I call the batch summary API with expected status of 200
+#    Then I will sleep for 10000 millisecond
+    When I call the batch summary API with expected status of 200 with total 12 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
@@ -242,8 +242,8 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
-    And I call the payment batch detail API with expected status of 200
+#    Then I will sleep for 10000 millisecond
+    And I call the payment batch detail API with expected status of 200 with total 12 txns
     Then I am able to parse payment batch detail response
     And I should assert total txn count and successful txn count in payment batch detail response
 
@@ -257,8 +257,8 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 10000 millisecond
-    And I call the batch details API with expected status of 200
+#    Then I will sleep for 10000 millisecond
+    And I call the batch details API with expected status of 200 with total 3 txns
     Then I should get transactions with note set as "Duplicate transaction"
     And All the duplicate transaction should have status as Failed
 
@@ -269,7 +269,7 @@ Feature: Batch Details API test
     Then I will update the  mock server and register stub as done
     When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
-    And I will sleep for 5000 millisecond
+#    And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
 
   @gov
@@ -286,9 +286,9 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202 and callbackurl as "/callback"
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 5000 millisecond
-    When I call the batch summary API with expected status of 200
-    And I will sleep for 15000 millisecond
+#    Then I will sleep for 5000 millisecond
+    When I call the batch summary API with expected status of 200 with total 3 txns
+#    And I will sleep for 15000 millisecond
     Then I should be able to extract response body from callback for batch
     When I make the "POST" request to "/callback" endpoint with expected status of 200
     Then I should be able to extract response body from callback for batch
