@@ -244,6 +244,6 @@ billPay:
     billerRtpRequest: /billTransferRequests
 
 awaitly:
-  maxWaitTime: 30
-  pollDelaySeconds: 2
+  maxWaitTime: 20
+  pollDelaySeconds: 1
   pollIntervalSeconds: 1
