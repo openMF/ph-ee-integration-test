@@ -52,6 +52,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Autowired
     GsmaConfig gsmaConfig;
+
     @Autowired
     GSMATransferDef gsmaTransferDef;
     @Autowired
