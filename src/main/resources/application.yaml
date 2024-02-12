@@ -247,15 +247,7 @@ awaitly:
   maxWaitTime: 20
   pollDelaySeconds: 1
   pollIntervalSeconds: 1
-tenants:
-  - name: paymentbb1
-    value: rhino
 
-  - name: paymentbb2
-    value: gorilla
-
-  - name: payerfsp
-    value: lion
 tenantconfig:
   tenants:
     paymentbb1: rhino
