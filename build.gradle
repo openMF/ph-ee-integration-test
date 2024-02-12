@@ -193,6 +193,7 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
+    systemProperty "cucumber.execution.parallel.enabled", System.getProperty("cucumber.execution.parallel.enabled")
 }
 task cucumberCli() {
     dependsOn assemble, testClasses
@@ -201,6 +202,8 @@ task cucumberCli() {
             main = "io.cucumber.core.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
+                '--threads',
+                '4',
                 '--plugin',
                 'html:cucumber-report',
                 '--plugin',
