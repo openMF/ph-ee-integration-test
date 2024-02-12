@@ -27,7 +27,7 @@ Feature: GSMA Outbound Transfer test
     And I should be able to parse transactionId from response
     Given I have tenant as "paymentBB2"
     When I call the transfer query endpoint with transactionId and expected status of 200
-    Then I will sleep for 1000 millisecond
+#    Then I will sleep for 1000 millisecond
     Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
 
@@ -54,7 +54,7 @@ Feature: GSMA Outbound Transfer test
     Given I have tenant as "payerFSP"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer Deposit endpoint with expected status of 200
-    Then I will sleep for 1000 millisecond
+#    Then I will sleep for 1000 millisecond
     Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance after credit
 
@@ -86,7 +86,7 @@ Feature: GSMA Outbound Transfer test
     And I should be able to parse transactionId from response
     Given I have tenant as "paymentBB2"
     When I call the transfer query endpoint with transactionId and expected status of 200
-    Then I will sleep for 5000 millisecond
+#    Then I will sleep for 5000 millisecond
     Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
     Given I have tenant as "payerFSP"

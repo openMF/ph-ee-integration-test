@@ -2,6 +2,8 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
@@ -399,19 +401,20 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @When("I call the transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
-        // await().atMost(10, SECONDS).untilAsserted(() -> {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
-        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
+//        await().atMost(10, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
-                .asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
+                    .asString();
 
-        logger.info(scenarioScopeState.transactionId);
-        logger.info("Get Transfer Response: " + scenarioScopeState.response);
+            logger.info(scenarioScopeState.transactionId);
+            logger.info("Get Transfer Response: " + scenarioScopeState.response);
+//        });
     }
 
     @Then("I check for error related to {}")

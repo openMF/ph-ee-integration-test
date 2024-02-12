@@ -96,7 +96,7 @@ public class MockServerStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {httpMethod} method to {string} endpoint received {int} request")
     public void verifyStub(HttpMethod httpMethod, String endpoint, int numberOfRequest) {
-        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+//        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
                     verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
@@ -111,7 +111,7 @@ public class MockServerStepDef extends BaseStepDef {
                     verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
-        });
+//        });
     }
 
     @And("I can start mock server")

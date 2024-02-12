@@ -451,18 +451,20 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @Then("I call the balance api for payer balance after debit")
     public void iCallTheBalanceApiForPayerBalanceAfterDebit() throws JsonProcessingException {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        String finalEndpoint = amsBalanceEndpoint;
-        finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
-        finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty.isEmpty() ? scenarioScopeState.payerIdentifier : debitParty);
-        logger.info("Endpoint: " + finalEndpoint);
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
-        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
-        assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayer
-                - scenarioScopeState.gsmaP2PAmtDebit).isTrue();
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            String finalEndpoint = amsBalanceEndpoint;
+            finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
+            finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty.isEmpty() ? scenarioScopeState.payerIdentifier : debitParty);
+            logger.info("Endpoint: " + finalEndpoint);
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
+            logger.info("Balance Response: " + scenarioScopeState.response);
+            InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
+            assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayer
+                    - scenarioScopeState.gsmaP2PAmtDebit).isTrue();
 
+        });
     }
 
     @Then("I call the balance api for payee balance after credit")
