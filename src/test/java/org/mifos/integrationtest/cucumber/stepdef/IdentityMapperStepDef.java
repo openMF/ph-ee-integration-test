@@ -9,7 +9,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.tomakehurst.wiremock.client.VerificationException;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
@@ -165,23 +167,31 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
-            await().atMost(awaitMost, SECONDS).until(() -> true);
-
         }
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            try{
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+            assertTrue(true);}
+            catch (VerificationException e){
+                assertTrue(false);//failure
+            }
         });
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with same payeeIdentity")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+            try {
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                assertTrue(true);
+            }catch (VerificationException e){
+                assertTrue(false);
+            }
         });
     }
 

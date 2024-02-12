@@ -418,7 +418,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I check for error related to {}")
     public void checkForError(String action) {
-        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
             JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 
@@ -427,7 +426,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
                     && errorInformation.getAsString().contains(action);
             assertThat(actionError).isFalse();
-        });
     }
 
     @And("I assert the {} is {}")

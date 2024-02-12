@@ -583,8 +583,6 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("Total transaction in batch should add up to total transaction in each sub batch")
     public void matchTotalSubBatchTxnAndBatchTxnCount() {
-        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
-
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
             assertThat(Integer.parseInt(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
             long batchTotal = scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal();
@@ -593,8 +591,6 @@ public class BatchApiStepDef extends BaseStepDef {
                 subBatchTotal += subBatchSummary.getTotal();
             }
             assertThat(batchTotal).isEqualTo(subBatchTotal);
-
-        });
     }
 
     @And("I call the payment batch detail API with expected status of {int} with total {int} txns")

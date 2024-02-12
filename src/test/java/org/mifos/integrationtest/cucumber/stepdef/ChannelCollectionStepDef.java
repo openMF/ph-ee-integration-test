@@ -64,13 +64,11 @@ public class ChannelCollectionStepDef extends BaseStepDef {
         }
         requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
-        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                     .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
 
             logger.info("GetTxn Request Response: " + scenarioScopeState.response);
-        });
     }
 
     @Then("I should get transaction state as completed and externalId not null")
