@@ -124,10 +124,10 @@ public class GSMATransferStepDef extends BaseStepDef {
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
-        scenarioScopeState.payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        scenarioScopeState.payerIdentifier = scenarioScopeState.payer_identifier;
+        scenarioScopeState.payerIdentifier = savingsAccountResponse.getSavingsId().toString();
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", scenarioScopeState.payer_identifier);
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}",
+                scenarioScopeState.payerIdentifier);
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -496,7 +496,8 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         scenarioScopeState.payeeIdentity = generateUniqueNumber(16);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "01", scenarioScopeState.payer_identifier, "gorilla");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "01", scenarioScopeState.payerIdentifier,
+                "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
         scenarioScopeState.requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(scenarioScopeState.requestId, "", beneficiaryDTOList);
@@ -529,9 +530,9 @@ public class GSMATransferStepDef extends BaseStepDef {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-Registering-Institution-ID", registeringInstitutionId)
-                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", scenarioScopeState.payeeIdentity)
-                    .queryParam("paymentModality", "01").queryParam("requestId", scenarioScopeState.requestId)
-                    .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .queryParam("payeeIdentity", scenarioScopeState.payeeIdentity).queryParam("paymentModality", "01")
+                    .queryParam("requestId", scenarioScopeState.requestId).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 

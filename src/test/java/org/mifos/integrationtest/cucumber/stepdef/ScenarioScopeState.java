@@ -36,7 +36,6 @@ public class ScenarioScopeState {
     protected String response;
     protected String request;
 
-    protected String payer_identifier;
     protected String payeeIdentity;
     protected String requestId;
     protected String callbackBody;
