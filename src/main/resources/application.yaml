@@ -256,6 +256,6 @@ tenantconfig:
 
 payeefspconfig:
   fsps:
-    payeefsp1: "Pluto"
-    payeefsp2: "Venus"
-    payeefsp3: "Jupiter"
+    payeefsp1: "pluto"
+    payeefsp2: "venus"
+    payeefsp3: "jupiter"
