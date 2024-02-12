@@ -10,7 +10,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mifos.integrationtest.common.HttpMethod.PUT;
 
 import com.github.tomakehurst.wiremock.client.VerificationException;
@@ -90,15 +89,15 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the create voucher API with expected status of {int} and stub {string}")
     public void iCallTheVoucherCreateAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-            RequestSpecification requestSpec = Utils.getDefaultSpec();
-            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                    .header("X-Registering-Institution-ID", registeringInstitutionId)
-                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(createVoucherBody).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                    .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                .header("X-Registering-Institution-ID", registeringInstitutionId)
+                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(createVoucherBody).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
-            logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
 
     public static String generateUniqueNumber(int length) {
@@ -359,16 +358,16 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the suspend voucher API with expected status of {int} and stub {string}")
     public void iCallTheSuspendVoucherAPIWithExpectedStatusOfAndStub(int responseCode, String stub) {
-            RequestSpecification requestSpec = Utils.getDefaultSpec();
-            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                    .queryParam("command", "suspend").header("X-Registering-Institution-ID", registeringInstitutionId)
-                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Program-ID", "")
-                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(suspendVoucherBody).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
-                    .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                .queryParam("command", "suspend").header("X-Registering-Institution-ID", registeringInstitutionId)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Program-ID", "")
+                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(suspendVoucherBody).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
+                .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
-            redeemVoucherResponseBody = scenarioScopeState.response;
-            logger.info("Voucher Response: {}", scenarioScopeState.response);
+        redeemVoucherResponseBody = scenarioScopeState.response;
+        logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
 
     @And("I can create an VoucherRequestDTO for voucher reactivation")
@@ -409,7 +408,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
     public void iCanExtractResultFromValidationCallbackAndAssertIfValidationIsSuccessful(String endpoint) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
             List<ServeEvent> allServeEvents = getAllServeEvents();
@@ -454,16 +453,16 @@ public class VoucherManagementStepDef extends BaseStepDef {
             try {
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(requestId))));
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
-                assertTrue(true);//success
-            } catch (VerificationException e){
-                assertTrue(false);//failure
+                assertTrue(true);// success
+            } catch (VerificationException e) {
+                assertTrue(false);// failure
             }
         });
     }
 
     @Then("I will call the fetch voucher API with expected status of {int}")
     public void iWillCallTheFetchVoucherAPIWithExpectedStatusOf(int responseCode) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-Registering-Institution-ID", registeringInstitutionId)

@@ -173,12 +173,12 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            try{
-            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-            verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
-            assertTrue(true);}
-            catch (VerificationException e){
-                assertTrue(false);//failure
+            try {
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+                assertTrue(true);
+            } catch (VerificationException e) {
+                assertTrue(false);// failure
             }
         });
     }
@@ -189,7 +189,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             try {
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
                 assertTrue(true);
-            }catch (VerificationException e){
+            } catch (VerificationException e) {
                 assertTrue(false);
             }
         });

@@ -2,8 +2,6 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
@@ -419,13 +417,13 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("I check for error related to {}")
     public void checkForError(String action) {
 
-            JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(scenarioScopeState.response).getAsJsonObject();
 
-            JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
+        JsonElement errorInformation = jsonObject.getAsJsonArray("content").get(0).getAsJsonObject().get("errorInformation");
 
-            boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
-                    && errorInformation.getAsString().contains(action);
-            assertThat(actionError).isFalse();
+        boolean actionError = (errorInformation != null) && (errorInformation.isJsonObject() || errorInformation.isJsonArray())
+                && errorInformation.getAsString().contains(action);
+        assertThat(actionError).isFalse();
     }
 
     @And("I assert the {} is {}")

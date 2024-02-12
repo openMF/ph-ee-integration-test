@@ -69,8 +69,8 @@ public class OperationsStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch paginated response into DTO")
     public void parseBatchPaginatedDto() {
-            assertThat(scenarioScopeState.response).isNotNull();
-            parseBatchesResponse(scenarioScopeState.response);
+        assertThat(scenarioScopeState.response).isNotNull();
+        parseBatchesResponse(scenarioScopeState.response);
     }
 
     @And("I add the query param key: {string} value: {string}")
