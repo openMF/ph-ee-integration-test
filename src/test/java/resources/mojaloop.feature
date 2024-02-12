@@ -108,15 +108,15 @@ Feature: Mojaloop test
     Then I add "payer" to als
     Then I add "payee" to als
     Then Create a csv file with file name "batchTransaction.csv"
-    Then add row to csv with current payer and payee and transfer amount 3 and id 0
+    Then add row to csv with current payer and payee, payment mode as "mojaloop" and transfer amount 3 and id 0
     Then I add "payer" to als
     When I create and setup a "payer" with account balance of 120
-    Then add row to csv with current payer and payee and transfer amount 2 and id 1
+    Then add row to csv with current payer and payee, payment mode as "mojaloop" and transfer amount 2 and id 1
     When I create and setup a "payer" with account balance of 66
     When I create and setup a "payee" with account balance of 10
     Then I add "payer" to als
     Then I add "payee" to als
-    Then add last row to csv with current payer and payee and transfer amount 1 and id 2
+    Then add last row to csv with current payer and payee, payment mode as "mojaloop" and transfer amount 1 and id 2
 
     And I generate clientCorrelationId
     And I have private key

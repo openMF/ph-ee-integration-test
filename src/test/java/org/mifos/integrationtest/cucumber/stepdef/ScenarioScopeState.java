@@ -84,4 +84,11 @@ public class ScenarioScopeState {
     protected BatchPaginatedResponse batchesResponse;
     protected int gsmaP2PAmtDebit;
 
+    protected int initialBalForPayer;
+    protected int initialBalForPayee;
+
+    protected String[] payeeIdentifierforBatch;
+    protected int[] initialBalForPayeeForBatch;
+    protected int[] gsmaP2PAmtDebitForBatch;
+
 }
