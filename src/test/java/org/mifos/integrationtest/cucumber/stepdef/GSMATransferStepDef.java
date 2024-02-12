@@ -59,12 +59,9 @@ public class GSMATransferStepDef extends BaseStepDef {
     @Autowired
     ScenarioScopeState scenarioScopeState;
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    private static String payer_identifier;
-    private static String payeeIdentity;
-    private static String requestId;
+
     private static AccountMapperRequestDTO registerBeneficiaryBody = null;
     private static String registeringInstitutionId = "SocialWelfare";
-    private static String callbackBody;
 
     @Given("I have Fineract-Platform-TenantId as {string}")
     public void setTenantLoan(String tenant) {
@@ -126,10 +123,10 @@ public class GSMATransferStepDef extends BaseStepDef {
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
-        payer_identifier = savingsAccountResponse.getSavingsId().toString();
-        scenarioScopeState.payerIdentifier = payer_identifier;
+        scenarioScopeState.payer_identifier = savingsAccountResponse.getSavingsId().toString();
+        scenarioScopeState.payerIdentifier = scenarioScopeState.payer_identifier;
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", payer_identifier);
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}", scenarioScopeState.payer_identifier);
         // Calling Interop Identifier endpoint
         gsmaTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(gsmaConfig.savingsBaseUrl)
                 .body(gsmaTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -497,11 +494,11 @@ public class GSMATransferStepDef extends BaseStepDef {
     @Then("I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        payeeIdentity = generateUniqueNumber(16);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "01", payer_identifier, "gorilla");
+        scenarioScopeState.payeeIdentity = generateUniqueNumber(16);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "01", scenarioScopeState.payer_identifier, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
-        requestId = generateUniqueNumber(12);
-        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, "", beneficiaryDTOList);
+        scenarioScopeState.requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(scenarioScopeState.requestId, "", beneficiaryDTOList);
     }
 
     public static String generateUniqueNumber(int length) {
@@ -527,12 +524,12 @@ public class GSMATransferStepDef extends BaseStepDef {
     @Then("I call the account lookup API with expected status of {int} and callback stub {string}")
     public void iCallTheAccountLookupAPIWithExpectedStatusOfAndCallbackStub(int expectedStatus, String stub) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            requestId = generateUniqueNumber(10);
+            scenarioScopeState.requestId = generateUniqueNumber(10);
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-Registering-Institution-ID", registeringInstitutionId)
-                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", payeeIdentity)
-                    .queryParam("paymentModality", "01").queryParam("requestId", requestId)
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).queryParam("payeeIdentity", scenarioScopeState.payeeIdentity)
+                    .queryParam("paymentModality", "01").queryParam("requestId", scenarioScopeState.requestId)
                     .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
@@ -556,8 +553,8 @@ public class GSMATransferStepDef extends BaseStepDef {
                         JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
                         String requestID = rootNode.get("requestId").asText();
 
-                        if (requestId.equals(requestID)) {
-                            callbackBody = request.getRequest().getBodyAsString();
+                        if (scenarioScopeState.requestId.equals(requestID)) {
+                            scenarioScopeState.callbackBody = request.getRequest().getBodyAsString();
                         }
                     } catch (Exception e) {
                         logger.debug("{}", e.getMessage());
@@ -566,7 +563,7 @@ public class GSMATransferStepDef extends BaseStepDef {
                 }
             }
             try {
-                JsonNode rootNode = objectMapper.readTree(callbackBody);
+                JsonNode rootNode = objectMapper.readTree(scenarioScopeState.callbackBody);
                 isValidated = rootNode.get("isValidated").asBoolean();
 
             } catch (Exception e) {
