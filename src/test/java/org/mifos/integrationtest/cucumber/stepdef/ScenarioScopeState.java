@@ -35,6 +35,11 @@ public class ScenarioScopeState {
     protected String tenant;
     protected String response;
     protected String request;
+
+    protected String payeeIdentity;
+    protected String requestId;
+    protected String callbackBody;
+
     protected Integer statusCode;
     protected String accessToken;
     protected String filename;

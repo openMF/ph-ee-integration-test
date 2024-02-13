@@ -13,14 +13,14 @@ Feature: Mock Flow Test
     Then I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step
     When I call the register beneficiary API with expected status of 202 and callback stub "/registerBeneficiaryApiTest"
     And I will sleep for 3000 millisecond
-    Then I have tenant as "lion"
+    Then I have tenant as "payerFSP"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO for account lookup
     And I create a new clientCorrelationId
     When I call the outbound transfer endpoint with expected status 200
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
-    And I have tenant as "lion"
+    And I have tenant as "payerFSP"
     Then I will sleep for 20000 millisecond
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
@@ -28,14 +28,14 @@ Feature: Mock Flow Test
     And I should have PayeeFspId as "gorilla"
 
   Scenario: MFT-001 Test for minimal mock fund transfer flow
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO
     And I create a new clientCorrelationId
     When I call the outbound transfer endpoint with expected status 200
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
-    And I have tenant as "rhino"
+    And I have tenant as "paymentBB1"
     Then I will sleep for 2000 millisecond
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
@@ -43,7 +43,7 @@ Feature: Mock Flow Test
     And I should have PayerFspId as not null
 
   Scenario: MFT-002 Test for minimal mock fund transfer flow with batch transactions
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key

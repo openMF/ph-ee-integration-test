@@ -19,16 +19,16 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payer" with command "deposit" for amount 100
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer endpoint with expected status of 200
     And I should be able to parse transactionId from response
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I call the transfer query endpoint with transactionId and expected status of 200
     Then I will sleep for 1000 millisecond
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
 
   Scenario: GSMA Deposit Transfer test
@@ -49,13 +49,13 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint with command "deposit" for amount 100
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer Deposit endpoint with expected status of 200
     Then I will sleep for 1000 millisecond
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance after credit
 
   Scenario: GSMA Deposit-Withdrawal Transfer test
@@ -76,42 +76,42 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payee" with command "deposit" for amount 100
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer endpoint with expected status of 200
     And I should be able to parse transactionId from response
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     When I call the transfer query endpoint with transactionId and expected status of 200
     Then I will sleep for 5000 millisecond
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee balance after credit
 
   @batch-teardown
   Scenario: Bulk Transfer with GSMA
     Given I have Fineract-Platform-TenantId as "gorilla"
     When I create and setup a "payer" with account balance of 100
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance
     When I create and setup a "payee" with id "1" and account balance of 10
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee "1" balance
     Then Create a csv file with file name "batchTransactionGsma.csv"
     Then add row to csv with current payer and payee, payment mode as "gsma" and transfer amount 10 and id 0
     When I create and setup a "payee" with id "2" and account balance of 20
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee "2" balance
     Then add row to csv with current payer and payee, payment mode as "gsma" and transfer amount 5 and id 1
     When I create and setup a "payee" with id "3" and account balance of 30
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee "3" balance
     Then add last row to csv with current payer and payee, payment mode as "gsma" and transfer amount 1 and id 2
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "batchTransactionGsma.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -124,11 +124,11 @@ Feature: GSMA Outbound Transfer test
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance after debit
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee with id "1" balance after credit
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee with id "2" balance after credit
-    Given I have tenant as "lion"
+    Given I have tenant as "payerFSP"
     Then I call the balance api for payee with id "3" balance after credit

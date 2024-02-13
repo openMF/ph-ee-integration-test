@@ -3,7 +3,7 @@ Feature: Operations APP related feature
 
   @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API no filter test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batches endpoint with expected status of 200
@@ -12,7 +12,7 @@ Feature: Operations APP related feature
 
   @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API batchId filter test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
@@ -39,7 +39,7 @@ Feature: Operations APP related feature
   @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API pagination test
     # Batch 1 call
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
@@ -78,7 +78,7 @@ Feature: Operations APP related feature
   @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API date filter test
     Given I will sleep for 5000 millisecond
-    And I have tenant as "rhino"
+    And I have tenant as "paymentBB1"
     And I store this time as start time
     # Batch 1 call
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"

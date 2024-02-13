@@ -3,7 +3,7 @@ Feature: Authentication test for services routed through kong & keycloak
 
   @keycloak-user-setup @keycloak-user-teardown @kong-teardown
   Scenario: Unauthorized channel-connector test
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     And I can mock TransactionChannelRequestDTO
     And I register channel service using config
     And I will sleep for 2000 millisecond
@@ -16,7 +16,7 @@ Feature: Authentication test for services routed through kong & keycloak
 
   @keycloak-user-setup @keycloak-user-teardown @kong-teardown
   Scenario: Authorized channel-connector test
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     And I can mock TransactionChannelRequestDTO
     And I register channel service using config
     And I will sleep for 2000 millisecond

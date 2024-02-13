@@ -247,3 +247,9 @@ awaitly:
   maxWaitTime: 20
   pollDelaySeconds: 1
   pollIntervalSeconds: 1
+
+tenantconfig:
+  tenants:
+    paymentbb1: rhino
+    paymentbb2: gorilla
+    payerfsp: wakanda

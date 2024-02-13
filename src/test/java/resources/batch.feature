@@ -3,7 +3,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-001 Batch transactions API Test
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -14,7 +14,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-002 Batch transactions API Test with polling callback url
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
@@ -25,7 +25,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-003 Batch summary API Test
     Given I have a batch id from previous scenario
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -43,7 +43,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-004 Batch Details API Test
     Given I have a batch id from previous scenario
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -60,7 +60,7 @@ Feature: Batch Details API test
 
   	@gov @batch-teardown
     Scenario: BD-005 Batch transaction API Test for Synchronous File Validation with empty file
-      Given I have tenant as "gorilla"
+      Given I have tenant as "paymentBB2"
       And I make sure there is no file
       And I generate clientCorrelationId
       And I have private key
@@ -71,7 +71,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-006 Batch transaction API Test for Synchronous File Validation with invalid file
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demoErrorSync-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -82,7 +82,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-007 Batch transaction API Test for Asynchronous File Validation
-    Given I have tenant as "gorilla"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demoErrorAsync-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -92,7 +92,7 @@ Feature: Batch Details API test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 8000 millisecond
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batch summary API with expected status of 200 with total 5 txns
@@ -101,7 +101,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-008 Batch Phased Callback API Test Success
     Given I have a batch id from previous scenario
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have callbackUrl as simulated url
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
@@ -116,7 +116,7 @@ Feature: Batch Details API test
   @govtodo @batch-teardown
   Scenario: BD-009 Batch Phased Callback API Test Failure
     Given I have a batch id from previous scenario
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -131,7 +131,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-010 Batch summary with failure percent API Test
     Given I have a batch id from previous scenario
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I generate clientCorrelationId
     And I have private key
@@ -145,7 +145,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
 	And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
@@ -162,7 +162,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-012 Batch Transaction REST Api test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I create a new clientCorrelationId
 	And I can mock the Batch Transaction Request DTO without payer info
     And I have private key
@@ -178,7 +178,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-013 Batch aggregate API Test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -196,7 +196,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -212,7 +212,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-015 Batch splitting test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -233,7 +233,7 @@ Feature: Batch Details API test
 
   @gov
   Scenario: BD-016 Payment Batch Detail API Test
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -250,7 +250,7 @@ Feature: Batch Details API test
   @gov @batch-teardown
   Scenario: BD-017 Batch test for de-duplicating payments
     Given I have the demo csv file "deduplication-test.csv"
-    And I have tenant as "gorilla"
+    And I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
@@ -278,7 +278,7 @@ Feature: Batch Details API test
     And I can start mock server
     And I can register the stub with "/callback" endpoint for "POST" request with status of 200
     Then I will update the  mock server and register stub as done
-    Given I have tenant as "rhino"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key

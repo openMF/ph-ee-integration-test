@@ -5,6 +5,8 @@ import static com.google.common.truth.Truth.assertThat;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import java.util.UUID;
+import org.mifos.integrationtest.config.TenantConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
@@ -15,12 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class GenericStepDef extends BaseStepDef {
 
+    @Autowired
+    TenantConfig tenantConfig;
+
     @Value("${global_wait_time_ms}")
     private int globalWaitTime;
 
     @And("I have tenant as {string}")
-    public void setTenantAnd(String tenant) {
-        setTenant(tenant);
+    public void tenantAnd(String tenant) {
+        scenarioScopeState.tenant = tenantConfig.getTenant(tenant.toLowerCase());
     }
 
     @Then("I should get non empty response")
