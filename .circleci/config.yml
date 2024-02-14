@@ -116,7 +116,7 @@ jobs:
       - image: 'cimg/python:3.10'
     steps:
       - mifos-orb/docker-image-availability-check-and-upgrade:
-          namespace: paymenthub1
+          namespace: paymenthub
           chart-base-url: https://fynarfin.io/images
           chart-name: ph-ee-g2psandbox-fynarfin
           chart-version: 0.2.0
@@ -130,7 +130,7 @@ jobs:
       - image: 'cimg/base:2022.06'
     environment:
       TERM: dumb
-      NAMESPACE: paymenthub1
+      NAMESPACE: paymenthub
     steps:
       - setup_remote_docker:
           version: 20.10.14
@@ -153,7 +153,7 @@ jobs:
       - image: 'cimg/base:2022.06'
     environment:
       TERM: dumb
-      NAMESPACE: paymenthub1
+      NAMESPACE: paymenthub
     steps:
       - setup_remote_docker:
           version: 20.10.14
