@@ -23,7 +23,7 @@ import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
-import org.mifos.integrationtest.config.PayeeFspConfig;
+import org.mifos.integrationtest.config.FspConfig;
 import org.mifos.integrationtest.config.TenantConfig;
 import org.mifos.integrationtest.config.VoucherManagementConfig;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class BaseStepDef {
     TenantConfig tenantConfig;
 
     @Autowired
-    PayeeFspConfig payeeFspConfig;
+    FspConfig payeeFspConfig;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;

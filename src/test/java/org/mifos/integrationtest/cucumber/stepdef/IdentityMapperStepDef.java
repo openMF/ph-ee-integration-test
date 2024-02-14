@@ -512,7 +512,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                 fspIndex = 0;
             }
             String payeeFsp = payeeFspArray[fspIndex];
-            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", null, payeeFspConfig.getFsp(payeeFsp));
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", null, payeeFspConfig.getPayeeFsp(payeeFsp));
             beneficiaryDTOList.add(beneficiaryDTO);
             fspIndex++;
         }

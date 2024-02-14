@@ -254,8 +254,11 @@ tenantconfig:
     paymentbb2: gorilla
     payerfsp: wakanda
 
-payeefspconfig:
-  fsps:
+fspconfig:
+  payeefsp:
     payeefsp1: "pluto"
     payeefsp2: "venus"
     payeefsp3: "jupiter"
+  payerfsp:
+    payerfsp1: "wakanda"
+
