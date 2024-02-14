@@ -11,7 +11,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "lion"
+    Given I have Fineract-Platform-TenantId as "wakanda"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -41,7 +41,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payee" with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "lion"
+    Given I have Fineract-Platform-TenantId as "wakanda"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -68,7 +68,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payer" with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "lion"
+    Given I have Fineract-Platform-TenantId as "wakanda"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
