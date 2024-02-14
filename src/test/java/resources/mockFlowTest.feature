@@ -3,7 +3,7 @@ Feature: Mock Flow Test
 
 
   Scenario: Test for minimal mock fund transfer account lookup flow
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -25,7 +25,7 @@ Feature: Mock Flow Test
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
     And I should have startedAt and completedAt in response
-    And I should have PayeeFspId as "gorilla"
+    And I should have PayeeFspId as "pluto"
 
   Scenario: MFT-001 Test for minimal mock fund transfer flow
     Given I have tenant as "paymentBB1"

@@ -216,7 +216,7 @@ Feature: Identity Account Mapper Api Test
     And I should be able to verify that the "PUT" method to "/batchAccountLookup" receive 8 request
 
   Scenario: PPV-003 Account lookup with GSMA
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint

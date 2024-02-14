@@ -68,9 +68,9 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void setTenantLoan(String tenant) {
         // Setting tenant
         if (tenant.equals("payeefsp1") || tenant.equals("payeefsp2") || tenant.equals("payeefsp2")) {
-            scenarioScopeState.tenant = payeeFspConfig.getPayerFsp(tenant.toLowerCase());
-        } else {
             scenarioScopeState.tenant = payeeFspConfig.getPayeeFsp(tenant.toLowerCase());
+        } else {
+            scenarioScopeState.tenant = payerFspConfig.getPayerFsp(tenant.toLowerCase());
         }
 
     }
