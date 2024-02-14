@@ -7,7 +7,7 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     And I can register the stub with "/loanCallback" endpoint for "POST" request with status of 200
 
   Scenario: Savings account Creation Test
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -23,7 +23,7 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
 
 
   Scenario: Loan account Creation Test
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     And I call the create loan product endpoint
     When I call the create loan account
     Then I approve the loan account with command "approve" for amount 7800

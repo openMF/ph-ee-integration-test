@@ -2,7 +2,7 @@
 Feature: GSMA Outbound Transfer test
 
   Scenario: GSMA Withdrawal Transfer testx (Payer Debit only)
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
@@ -11,7 +11,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "wakanda"
+    Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -32,7 +32,7 @@ Feature: GSMA Outbound Transfer test
     Then I call the balance api for payer balance after debit
 
   Scenario: GSMA Deposit Transfer test
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
@@ -41,7 +41,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payee" with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "wakanda"
+    Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -59,7 +59,7 @@ Feature: GSMA Outbound Transfer test
     Then I call the balance api for payee balance after credit
 
   Scenario: GSMA Deposit-Withdrawal Transfer test
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
@@ -68,7 +68,7 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payer" with command "deposit" for amount 100
-    Given I have Fineract-Platform-TenantId as "wakanda"
+    Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint
@@ -94,7 +94,7 @@ Feature: GSMA Outbound Transfer test
 
   @batch-teardown
   Scenario: Bulk Transfer with GSMA
-    Given I have Fineract-Platform-TenantId as "gorilla"
+    Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I create and setup a "payer" with account balance of 100
     Given I have tenant as "paymentBB2"
     Then I call the balance api for payer balance
