@@ -20,6 +20,7 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.BatchRequestDTO;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
+import org.mifos.integrationtest.config.FspConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
 import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
@@ -56,6 +57,9 @@ public class BaseStepDef {
 
     @Autowired
     TenantConfig tenantConfig;
+
+    @Autowired
+    FspConfig payeeFspConfig;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;

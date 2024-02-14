@@ -502,4 +502,62 @@ public class IdentityMapperStepDef extends BaseStepDef {
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 
+    @And("I create a IdentityMapperDTO for registering beneficiary")
+    public void iCreateAIdentityMapperDTOForRegisteringBeneficiary() {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        String[] payeeFspArray = { "payeefsp1", "payeefsp2", "payeefsp3" };
+        int fspIndex = 0;
+        for (String payeeIdentifier : scenarioScopeState.payeeIdentifiers) {
+            if (fspIndex >= payeeFspArray.length) {
+                fspIndex = 0;
+            }
+            String payeeFsp = payeeFspArray[fspIndex];
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", null, payeeFspConfig.getPayeeFsp(payeeFsp));
+            beneficiaryDTOList.add(beneficiaryDTO);
+            fspIndex++;
+        }
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @And("I should be able to verify that the {string} method to {string} endpoint received a request with successfull registration")
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSuccessfullRegistration(String httpMethod, String stub) {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+
+            for (int i = 0; i < allServeEvents.size(); i++) {
+                ServeEvent request = allServeEvents.get(i);
+
+                if (!(request.getRequest().getBodyAsString()).isEmpty()) {
+                    try {
+                        JsonNode rootNode = objectMapper.readTree(request.getRequest().getBodyAsString());
+                        String requestID = rootNode.get("requestID").asText();
+
+                        if (requestId.equals(requestID)) {
+                            callbackBody = request.getRequest().getBodyAsString();
+                        }
+                    } catch (Exception e) {
+                        logger.debug(e.getMessage());
+                    }
+
+                }
+            }
+            int count = 0;
+            try {
+                JsonNode rootNode = objectMapper.readTree(callbackBody);
+
+                JsonNode beneficiaryDTOList = rootNode.get("beneficiaryDTOList");
+                if (beneficiaryDTOList.isArray()) {
+                    for (JsonNode beneficiary : beneficiaryDTOList) {
+                        count++;
+                    }
+                }
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+            }
+            assertThat(count).isEqualTo(0);
+            beneficiaryList = new ArrayList<>();
+        });
+    }
 }
