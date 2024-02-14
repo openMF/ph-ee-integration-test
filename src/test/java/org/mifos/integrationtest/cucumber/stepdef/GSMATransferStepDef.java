@@ -65,14 +65,15 @@ public class GSMATransferStepDef extends BaseStepDef {
     private static String registeringInstitutionId = "SocialWelfare";
 
     @Given("I have Fineract-Platform-TenantId as {string}")
-    public void setTenantLoan(String tenant) {
+    public void setTenantLoan(String fspId) {
         // Setting tenant
-        if (tenant.equals("payeefsp1") || tenant.equals("payeefsp2") || tenant.equals("payeefsp2")) {
-            scenarioScopeState.tenant = payeeFspConfig.getPayeeFsp(tenant.toLowerCase());
+        if (fspId.equals("payeefsp1") || fspId.equals("payeefsp2") || fspId.equals("payeefsp3")) {
+            scenarioScopeState.fspId = payeeFspConfig.getPayeeFsp(fspId.toLowerCase());
         } else {
-            scenarioScopeState.tenant = payerFspConfig.getPayerFsp(tenant.toLowerCase());
+            scenarioScopeState.fspId = payeeFspConfig.getPayerFsp(fspId.toLowerCase());
         }
-
+        assertThat(scenarioScopeState.fspId).isNotEmpty();
+        gsmaTransferDef.setTenant(scenarioScopeState.fspId);
     }
 
     @When("I call the create payer client endpoint")
