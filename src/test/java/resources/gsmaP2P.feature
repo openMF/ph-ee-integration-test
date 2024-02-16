@@ -76,11 +76,11 @@ Feature: GSMA Outbound Transfer test
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
     Then I call the deposit account endpoint for "payee" with command "deposit" for amount 100
-    Given I have tenant as "payerfsp1"
+    Given I have tenant as "payerfsp"
     Then I call the balance api for payer balance
     Given I have tenant as "payeefsp1"
     Then I call the balance api for payee balance
-    Given I have tenant as "payerfsp1"
+    Given I have tenant as "payerfsp"
     When I can create GSMATransferDTO with different payer and payee
     Then I call the GSMATransfer endpoint with expected status of 200
     And I should be able to parse transactionId from response
