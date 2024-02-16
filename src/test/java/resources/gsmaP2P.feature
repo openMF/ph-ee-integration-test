@@ -94,7 +94,7 @@ Feature: GSMA Outbound Transfer test
 
   @batch-teardown
   Scenario: Bulk Transfer with GSMA
-    Given I have Fineract-Platform-TenantId as "payerfsp"
+    Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create and setup a "payer" with account balance of 100
     Given I have tenant as "payerfsp"
     Then I call the balance api for payer balance
