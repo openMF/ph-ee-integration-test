@@ -132,3 +132,4 @@ Feature: GSMA Outbound Transfer test
     Then I call the balance api for payee with id "2" balance after credit
     Given I have tenant as "payerFSP"
     Then I call the balance api for payee with id "3" balance after credit
+
