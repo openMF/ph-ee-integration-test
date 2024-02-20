@@ -183,7 +183,7 @@ config:
 payerFundTransfer:
   tenant:
     payer: "gorilla"
-    payee: "lion"
+    payee: "jupiter"
 
 mojaloop:
   fspid:
@@ -250,9 +250,12 @@ awaitly:
 
 tenantconfig:
   tenants:
-    paymentbb1: rhino
-    paymentbb2: gorilla
-    payerfsp: wakanda
+    paymentbb1: "rhino"
+    paymentbb2: "gorilla"
+    payerfsp: "wakanda"
+    payeefsp1: "pluto"
+    payeefsp2: "venus"
+    payeefsp3: "jupiter"
 
 fspconfig:
   payeefsp:
@@ -261,4 +264,5 @@ fspconfig:
     payeefsp3: "jupiter"
   payerfsp:
     payerfsp1: "wakanda"
+    payerfsp2: "gorilla"
 

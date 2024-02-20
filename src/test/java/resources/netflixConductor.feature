@@ -6,7 +6,7 @@ Feature: DPGA API test
     Then I get the value of Healthy as true in response
 
   Scenario: dpga transfer api test with ams withdrawal verification
-    Given I have Fineract-Platform-TenantId as "lion"
+    Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
     When I call the create savings account endpoint

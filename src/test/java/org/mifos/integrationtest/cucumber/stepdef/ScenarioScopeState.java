@@ -32,6 +32,8 @@ public class ScenarioScopeState {
     protected String payerIdentifier;
     protected String payeeIdentifier;
 
+    protected String fspId;
+
     protected String batchId;
     protected String tenant;
     protected String response;
