@@ -244,8 +244,8 @@ billPay:
     billerRtpRequest: /billTransferRequests
 
 awaitly:
-  maxWaitTime: 20
-  pollDelaySeconds: 1
+  maxWaitTime: 25
+  pollDelaySeconds: 2
   pollIntervalSeconds: 1
 
 tenantconfig:
