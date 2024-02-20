@@ -145,7 +145,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
 	And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
     And I have the programId "SocialWelfare"
@@ -162,7 +162,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-012 Batch Transaction REST Api test
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
 	And I can mock the Batch Transaction Request DTO without payer info
     And I have private key
@@ -171,14 +171,14 @@ Feature: Batch Details API test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 10000 millisecond
-    When I call the batch summary API with expected status of 200 with total 2 txns
+    When I call the batch summary API with expected status of 200 with total 1 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
   @gov @batch-teardown
   Scenario: BD-013 Batch aggregate API Test
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -196,7 +196,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
@@ -212,7 +212,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-015 Batch splitting test
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
     And I create a new clientCorrelationId
     And I have private key
