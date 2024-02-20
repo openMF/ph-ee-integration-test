@@ -264,4 +264,5 @@ fspconfig:
     payeefsp3: "jupiter"
   payerfsp:
     payerfsp1: "wakanda"
+    payerfsp2: "gorilla"
 
