@@ -24,7 +24,7 @@ public class GenericStepDef extends BaseStepDef {
     private int globalWaitTime;
 
     @And("I have tenant as {string}")
-    public void tenantAnd(String tenant) {
+    public void payeefsp3tenantAnd(String tenant) {
         scenarioScopeState.tenant = tenantConfig.getTenant(tenant.toLowerCase());
     }
 
