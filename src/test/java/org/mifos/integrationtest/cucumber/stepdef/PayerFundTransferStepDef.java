@@ -449,10 +449,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("I assert {string} balance to be {long}")
     public void getCurrentBalance(String client, Long amount) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        if(client.equals("payer")) {
+        if (client.equals("payer")) {
             fundTransferDef.tenant = fundTransferDef.payerTenant;
-        }
-        else {
+        } else {
             fundTransferDef.tenant = fundTransferDef.payeeTenant;
         }
         requestSpec = fundTransferDef.setHeaders(requestSpec);
