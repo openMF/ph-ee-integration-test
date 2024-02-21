@@ -508,7 +508,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         csvHelper.addRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
         if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null) {
-            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[4];
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[10];
         }
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
