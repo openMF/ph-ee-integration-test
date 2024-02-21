@@ -36,7 +36,6 @@ Feature: Mock Flow Test
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
     And I have tenant as "paymentBB2"
-    Then I will sleep for 2000 millisecond
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
     And I should have startedAt and completedAt in response
@@ -51,7 +50,6 @@ Feature: Mock Flow Test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    Then I will sleep for 5000 millisecond
     When I call the batch summary API with expected status of 200 with total 3 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"

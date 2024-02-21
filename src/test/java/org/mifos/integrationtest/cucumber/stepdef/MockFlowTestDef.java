@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
@@ -54,19 +56,23 @@ public class MockFlowTestDef extends BaseStepDef {
 
     @When("I call the get txn API with expected status of {int} and txnId")
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnId(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
-        requestSpec.queryParam("size", "1");
-        requestSpec.header("page", "0");
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
+            requestSpec.queryParam("size", "1");
+            requestSpec.header("page", "0");
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
-                .andReturn().asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
+                    .andReturn().asString();
 
-        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            assertThat(scenarioScopeState.response).containsMatch("startedAt");
+            assertThat(scenarioScopeState.response).containsMatch("completedAt");
+        });
     }
 
     @And("I should have PayeeFspId as {string}")
