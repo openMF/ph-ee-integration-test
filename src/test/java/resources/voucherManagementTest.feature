@@ -62,7 +62,7 @@ Feature: Voucher Management Api Test
     And I will assert the fields from fetch voucher response
     And I can stop mock server
 
-  Scenario: Error Validity check for Create Voucher API for negative request body
+  Scenario: VC-001,002,003,004,005 Error Validity check for Create Voucher API for negative request body
     Given I can create an negative VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
