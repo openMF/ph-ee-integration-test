@@ -118,6 +118,7 @@ Feature: Mojaloop test
     Then I add "payee" to als
     Then add last row to csv with current payer and payee, payment mode as "mojaloop" and transfer amount 1 and id 2
 
+    Given I have Fineract-Platform-TenantId for "payer"
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
@@ -125,7 +126,7 @@ Feature: Mojaloop test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
     Then I will sleep for 10000 millisecond
-    When I call the batch aggregate API with expected status of 200 with total 2 txns
+    When I call the batch aggregate API with expected status of 200 with total 3 txns
     Then I should get non empty response
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
