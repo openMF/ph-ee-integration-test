@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -60,14 +62,18 @@ public class InboundStepDef extends BaseStepDef {
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(mockTransactionChannelRequestDTO).expect().spec(responseSpecBuilder).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+        assertNonEmpty(scenarioScopeState.response);
     }
 
     public void callBatchSummaryAPI(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
-        logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                    .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                    .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+            logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
+            assertNonEmpty(scenarioScopeState.response);
+        });
     }
 
     @And("I should be able to parse transactionId")
@@ -99,6 +105,10 @@ public class InboundStepDef extends BaseStepDef {
         mockTransactionChannelRequestDTO = objectMapper.readValue(json, TransactionChannelRequestDTO.class);
         assertThat(mockTransactionChannelRequestDTO).isNotNull();
         scenarioScopeState.inboundTransferMockReq = mockTransactionChannelRequestDTO;
+    }
+
+    private void assertNonEmpty(String data) {
+        assertThat(data).isNotNull();
     }
 
 }
