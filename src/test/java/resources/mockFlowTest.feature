@@ -12,7 +12,6 @@ Feature: Mock Flow Test
     When I activate the account with command "activate"
     Then I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step
     When I call the register beneficiary API with expected status of 202 and callback stub "/registerBeneficiaryApiTest"
-    And I will sleep for 3000 millisecond
     Then I have tenant as "payerFSP"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO for account lookup
@@ -21,7 +20,6 @@ Feature: Mock Flow Test
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
     And I have tenant as "payerFSP"
-    Then I will sleep for 20000 millisecond
     When I call the get txn API with expected status of 200 and txnId
     Then I should get non empty response
     And I should have startedAt and completedAt in response
