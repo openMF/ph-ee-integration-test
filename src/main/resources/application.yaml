@@ -182,7 +182,7 @@ config:
 
 payerFundTransfer:
   tenant:
-    payer: "gorilla"
+    payer: "wakanda"
     payee: "jupiter"
 
 mojaloop:

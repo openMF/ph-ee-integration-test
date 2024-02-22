@@ -71,6 +71,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         } else {
             tenant = transferConfig.payeeTenant;
             fundTransferDef.setPayeeTenant(tenant);
+            scenarioScopeState.tenant = tenant;
         }
         assertThat(tenant).isNotEmpty();
         fundTransferDef.setTenant(tenant);
@@ -448,7 +449,11 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("I assert {string} balance to be {long}")
     public void getCurrentBalance(String client, Long amount) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        fundTransferDef.tenant = fundTransferDef.payerTenant;
+        if (client.equals("payer")) {
+            fundTransferDef.tenant = fundTransferDef.payerTenant;
+        } else {
+            fundTransferDef.tenant = fundTransferDef.payeeTenant;
+        }
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         // Setting account ID in path
         PostSavingsAccountsResponse savingsAccountResponse;
