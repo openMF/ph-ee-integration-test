@@ -2,6 +2,8 @@ package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
@@ -338,48 +340,54 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I should be able to verify the callback for lookup")
     public void verifyGetPartyCallback() {
-        List<ServeEvent> serveEvents = getAllServeEvents();
-        logger.info(String.valueOf(serveEvents.size()));
-        assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0, 1).forEach(serveEvent -> {
-            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
-                logger.info(serveEvent.getRequest().getBodyAsString());
-            }
-            JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
-            String firstName = jsonObject.getAsJsonObject("party").getAsJsonObject("personalInfo").getAsJsonObject("complexName")
-                    .get("firstName").getAsString();
-            assertThat(firstName).isNotNull();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            List<ServeEvent> serveEvents = getAllServeEvents();
+            logger.info(String.valueOf(serveEvents.size()));
+            assertThat(serveEvents.size()).isGreaterThan(0);
+            serveEvents.subList(0, 1).forEach(serveEvent -> {
+                if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+                    logger.info(serveEvent.getRequest().getBodyAsString());
+                }
+                JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
+                String firstName = jsonObject.getAsJsonObject("party").getAsJsonObject("personalInfo").getAsJsonObject("complexName")
+                        .get("firstName").getAsString();
+                assertThat(firstName).isNotNull();
+            });
         });
     }
 
     @Then("I should be able to verify the callback for quotation")
     public void verifyGetQuotationCallback() {
-        List<ServeEvent> serveEvents = getAllServeEvents();
-        logger.info(String.valueOf(serveEvents.size()));
-        assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0, 1).forEach(serveEvent -> {
-            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
-                logger.info(serveEvent.getRequest().getBodyAsString());
-            }
-            quotationCallback = serveEvent.getRequest().getBodyAsString();
-            JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
-            String amount = jsonObject.getAsJsonObject("payeeReceiveAmount").get("amount").getAsString();
-            assertThat(amount).isEqualTo("1");
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            List<ServeEvent> serveEvents = getAllServeEvents();
+            logger.info(String.valueOf(serveEvents.size()));
+            assertThat(serveEvents.size()).isGreaterThan(0);
+            serveEvents.subList(0, 1).forEach(serveEvent -> {
+                if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+                    logger.info(serveEvent.getRequest().getBodyAsString());
+                }
+                quotationCallback = serveEvent.getRequest().getBodyAsString();
+                JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
+                String amount = jsonObject.getAsJsonObject("payeeReceiveAmount").get("amount").getAsString();
+                assertThat(amount).isEqualTo("1");
+            });
         });
     }
 
     @Then("I should be able to verify the callback for transfer")
     public void verifyGetTransferCallback() {
-        List<ServeEvent> serveEvents = getAllServeEvents();
-        logger.info(String.valueOf(serveEvents.size()));
-        assertThat(serveEvents.size()).isGreaterThan(0);
-        serveEvents.subList(0, 1).forEach(serveEvent -> {
-            if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
-                logger.info(serveEvent.getRequest().getBodyAsString());
-            }
-            JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
-            String transferState = jsonObject.get("transferState").getAsString();
-            assertThat(transferState).isEqualTo(TransferState.COMMITTED.toString());
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            List<ServeEvent> serveEvents = getAllServeEvents();
+            logger.info(String.valueOf(serveEvents.size()));
+            assertThat(serveEvents.size()).isGreaterThan(0);
+            serveEvents.subList(0, 1).forEach(serveEvent -> {
+                if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
+                    logger.info(serveEvent.getRequest().getBodyAsString());
+                }
+                JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
+                String transferState = jsonObject.get("transferState").getAsString();
+                assertThat(transferState).isEqualTo(TransferState.COMMITTED.toString());
+            });
         });
     }
 
