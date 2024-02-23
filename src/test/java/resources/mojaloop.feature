@@ -82,7 +82,7 @@ Feature: Mojaloop test
     Then I call the payer fund transfer api to transfer amount "1" from payer to payee
     Then I should get transaction id in response
 
-    Then I will sleep for 10000 millisecond
+#    Then I will sleep for 10000 millisecond
 
     When I call the transfer API in ops app with transactionId as parameter
 
