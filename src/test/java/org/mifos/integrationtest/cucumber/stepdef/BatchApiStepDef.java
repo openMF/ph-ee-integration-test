@@ -168,7 +168,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(5,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
             BatchDTO batchDTO = null;
             assertThat(scenarioScopeState.response).isNotNull();
             assertThat(scenarioScopeState.response).isNotEmpty();
@@ -486,7 +486,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch aggregate API with expected status of {int} with total {int} txns")
     public void iCallTheBatchAggregateAPIWithExpectedStatusOf(int expectedStatus, int totalTxns) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(5, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
