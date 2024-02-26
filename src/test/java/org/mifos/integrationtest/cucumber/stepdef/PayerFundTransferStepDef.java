@@ -408,7 +408,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @When("I call the transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -416,8 +416,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
 
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint).andReturn()
-                    .asString();
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint)
+                    .andReturn().asString();
 
             logger.info(scenarioScopeState.transactionId);
             logger.info("Get Transfer Response: " + scenarioScopeState.response);

@@ -168,7 +168,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse batch summary response")
     public void parseBatchSummaryResponse() {
-        await().atMost(awaitMost, SECONDS).pollDelay(5,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(5, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             BatchDTO batchDTO = null;
             assertThat(scenarioScopeState.response).isNotNull();
             assertThat(scenarioScopeState.response).isNotEmpty();
