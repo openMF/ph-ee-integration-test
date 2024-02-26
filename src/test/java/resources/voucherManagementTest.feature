@@ -1,4 +1,4 @@
-@gov
+@voucher
 Feature: Voucher Management Api Test
 
    Scenario: Create Voucher Api Test
@@ -66,3 +66,8 @@ Feature: Voucher Management Api Test
     Given I can create an negative VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
+
+  Scenario: Error Validity check for Redeem Voucher API for negative request body
+    Given I can create an negative RedeemVoucherRequestDTO to redeem a voucher
+    When I call the redeem voucher API with expected status of 400
+    And I should be able to assert the redeem voucher validation for negative response

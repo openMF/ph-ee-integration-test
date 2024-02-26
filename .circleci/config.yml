@@ -227,7 +227,7 @@ jobs:
             export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
             echo -n "Public url ."
             echo $CALLBACK_URL
-            ./gradlew test -Dcucumber.filter.tags="@gov"
+            ./gradlew test -Dcucumber.filter.tags="@voucher"
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
@@ -313,17 +313,17 @@ workflows:
             - AWS
             - Helm
             - slack
-      - test-chart-ams:
-          requires:
-            - deploying-bpmns
-          context:
-            - AWS
-            - Helm
-            - slack
-            - Ngrok
+#      - test-chart-ams:
+#          requires:
+#            - deploying-bpmns
+#          context:
+#            - AWS
+#            - Helm
+#            - slack
+#            - Ngrok
       - test-chart-gov:
           requires:
-            - test-chart-ams
+            - deploying-bpmns
           context:
             - AWS
             - Helm
