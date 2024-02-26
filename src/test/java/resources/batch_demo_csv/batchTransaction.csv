@@ -1,4 +1,0 @@
-id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
-0,b9327677-8f85-4361-bfbc-461f6784e02f,mojaloop,msisdn,828,msisdn,487,3,USD,Test Payee Payment
-1,b1d84069-94cd-49a6-8e46-27fc989b5707,mojaloop,msisdn,829,msisdn,487,2,USD,Test Payee Payment
-2,65fa9408-a7da-4299-a19d-0b36ba939046,mojaloop,msisdn,830,msisdn,488,1,USD,Test Payee Payment
