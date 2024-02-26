@@ -146,7 +146,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @When("I can create an VoucherRequestDTO for voucher cancellation")
     public void iCanCreateAnVoucherRequestDTOForVoucherCancellation() {
         requestId = generateUniqueNumber(12);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(serialNumber);
@@ -245,10 +244,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption() {
         requestId = generateUniqueNumber(12);
         agentId = generateUniqueNumber(10);
-        serialNumber = generateUniqueNumber(10);
-        voucherNumber = generateUniqueNumber(6);
 
-        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, "", voucherNumber);
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, serialNumber, voucherNumber);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
