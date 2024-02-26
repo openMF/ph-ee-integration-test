@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import org.mifos.connector.common.vouchers.dto.RedeemVoucherRequestDTO;
 import org.mifos.connector.common.vouchers.dto.RequestDTO;
 import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
