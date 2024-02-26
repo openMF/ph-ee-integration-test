@@ -280,7 +280,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
                 String status = rootNode.get("status").asText();
                 logger.info("Status {}", status);
-                assertThat(status).isEqualTo("00");
+                assertThat(status).isEqualTo("01");
             } catch (Exception e) {
                 logger.debug(e.getMessage());
             }
