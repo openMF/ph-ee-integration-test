@@ -66,8 +66,8 @@ public class MockFlowTestDef extends BaseStepDef {
             }
 
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(operationsAppConfig.transfersEndpoint)
-                    .andReturn().asString();
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
 
             logger.info("GetTxn Request Response: " + scenarioScopeState.response);
             assertThat(scenarioScopeState.response).containsMatch("startedAt");

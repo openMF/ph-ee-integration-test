@@ -25,14 +25,14 @@ Feature: Voucher Management Api Test
     Then I can assert that redemption was successful by asserting the status in response
 
   @createAndActivateVoucher @redeemVoucherFailure
-  Scenario: Cancel Voucher Api Test
+  Scenario: VR-006 Cancel Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher cancellation
     And I can register the stub with "/cancelVoucher" endpoint for "PUT" request with status of 200
     When I call the cancel voucher API with expected status of 202 and stub "/cancelVoucher"
 #    Then I will sleep for 3000 millisecond
 
   @createAndActivateVoucher @redeemVoucherFailure
-  Scenario: Suspend Voucher Api Test
+  Scenario: VR-002 Suspend Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
@@ -66,3 +66,13 @@ Feature: Voucher Management Api Test
     Given I can create an negative VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
+
+  Scenario: VR-003 Error Validity check for Redeem Voucher API for negative request body
+    Given I can create an negative RedeemVoucherRequestDTO to redeem a voucher
+    When I call the redeem voucher API with expected status of 400
+    And I should be able to assert the redeem voucher validation for negative response
+
+  @createAndActivateVoucher @redeemVoucherFailure
+  Scenario: VR-005 Redeem Voucher Api Negative Test when voucher is already redeemed
+    Given I can create an RedeemVoucherRequestDTO for voucher redemption
+    When I call the redeem voucher API with expected status of 200

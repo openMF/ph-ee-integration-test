@@ -69,8 +69,9 @@ public class InboundStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
-                    .body(mockTransactionChannelRequestDTO).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                    .when().post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+                    .body(mockTransactionChannelRequestDTO).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
             logger.info("Inbound transfer Response: {}", scenarioScopeState.response);
             assertNonEmpty(scenarioScopeState.response);
         });

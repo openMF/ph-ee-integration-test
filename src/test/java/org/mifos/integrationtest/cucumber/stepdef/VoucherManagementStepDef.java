@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.mifos.connector.common.vouchers.dto.RedeemVoucherRequestDTO;
 import org.mifos.connector.common.vouchers.dto.RequestDTO;
 import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
 import org.mifos.integrationtest.common.Utils;
@@ -110,23 +111,23 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher activation")
     public void iCanCreateAnVoucherRequestDTOForVoucherActivation() {
-        requestId = generateUniqueNumber(16);
-        scenarioScopeState.batchId = generateUniqueNumber(14);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeState.batchId).append("\",\n"); // Replaced "045155518258"
-                                                                                             // with batchId
-        // variable
-        sb.append("    \"voucherInstructions\": [\n");
-        sb.append("        {\n");
-        sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
-        sb.append("            \"status\": \"02\"\n");
-        sb.append("        }\n");
-        sb.append("    ]\n");
-        sb.append("}");
+        requestId = generateUniqueNumber(12);
+        scenarioScopeState.batchId = generateUniqueNumber(10);
 
-        activateVoucherBody = sb.toString();
+        VoucherInstruction voucherInstruction = new VoucherInstruction();
+        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setStatus("02");
+
+        ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
+        voucherInstructions.add(voucherInstruction);
+
+        RequestDTO requestDTO = new RequestDTO(requestId, scenarioScopeState.batchId, voucherInstructions);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            activateVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
     }
 
     @When("I call the activate voucher API with expected status of {int} and stub {string}")
@@ -144,23 +145,22 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
     public void iCanCreateAnVoucherRequestDTOForVoucherCancellation() {
-        requestId = generateUniqueNumber(16);
-        scenarioScopeState.batchId = generateUniqueNumber(14);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeState.batchId).append("\",\n"); // Replaced "045155518258"
-                                                                                             // with batchId
-        // variable
-        sb.append("    \"voucherInstructions\": [\n");
-        sb.append("        {\n");
-        sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
-        sb.append("            \"status\": \"03\"\n");
-        sb.append("        }\n");
-        sb.append("    ]\n");
-        sb.append("}");
+        requestId = generateUniqueNumber(12);
 
-        cancelVoucherBody = sb.toString();
+        VoucherInstruction voucherInstruction = new VoucherInstruction();
+        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setStatus("03");
+
+        ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
+        voucherInstructions.add(voucherInstruction);
+
+        RequestDTO requestDTO = new RequestDTO(requestId, scenarioScopeState.batchId, voucherInstructions);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            cancelVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in cancel voucher callback body")
@@ -242,18 +242,17 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an RedeemVoucherRequestDTO for voucher redemption")
     public void iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption() {
-        requestId = generateUniqueNumber(16);
+        requestId = generateUniqueNumber(12);
         agentId = generateUniqueNumber(10);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("  \"requestID\": \"").append(requestId).append("\",\n"); // Replaced "849324499155" with requestId
-                                                                            // variable
-        sb.append("  \"agentID\": \"").append(agentId).append("\",\n"); // Replaced "1234567890" with agentId variable
-        sb.append("  \"voucherSerialNumber\": \"").append(serialNumber).append("\",\n");
-        sb.append("  \"voucherSecretNumber\": \"").append(voucherNumber).append("\"\n");
-        sb.append("}");
 
-        redeemVoucherBody = sb.toString();
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, serialNumber, voucherNumber);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            redeemVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
     }
 
     @When("I call the redeem voucher API with expected status of {int}")
@@ -337,23 +336,23 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an VoucherRequestDTO for voucher suspension")
     public void iCanCreateAnVoucherRequestDTOForVoucherSuspension() {
-        requestId = generateUniqueNumber(16);
-        scenarioScopeState.batchId = generateUniqueNumber(14);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append("    \"requestID\": \"").append(requestId).append("\",\n");
-        sb.append("    \"batchID\": \"").append(scenarioScopeState.batchId).append("\",\n"); // Replaced "045155518258"
-                                                                                             // with batchId
-        // variable
-        sb.append("    \"voucherInstructions\": [\n");
-        sb.append("        {\n");
-        sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
-        sb.append("            \"status\": \"06\"\n");
-        sb.append("        }\n");
-        sb.append("    ]\n");
-        sb.append("}");
+        requestId = generateUniqueNumber(12);
+        scenarioScopeState.batchId = generateUniqueNumber(10);
 
-        suspendVoucherBody = sb.toString();
+        VoucherInstruction voucherInstruction = new VoucherInstruction();
+        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setStatus("06");
+
+        ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
+        voucherInstructions.add(voucherInstruction);
+
+        RequestDTO requestDTO = new RequestDTO(requestId, scenarioScopeState.batchId, voucherInstructions);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            suspendVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
     }
 
     @When("I call the suspend voucher API with expected status of {int} and stub {string}")
@@ -532,4 +531,35 @@ public class VoucherManagementStepDef extends BaseStepDef {
             logger.info("An error occurred : {}", e);
         }
     }
+
+    @Given("I can create an negative RedeemVoucherRequestDTO to redeem a voucher")
+    public void createNegativeRedeemVoucherRequestDTO() {
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO();
+        requestDTO.setRequestId(generateUniqueNumber(18));
+        requestDTO.setAgentId(generateUniqueNumber(15));
+        requestDTO.setVoucherSecretNumber(generateUniqueNumber(10));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            redeemVoucherBody = objectMapper.writeValueAsString(requestDTO);
+        } catch (JsonProcessingException e) {
+            logger.error("Unable to convert the DTO : {}", e);
+        }
+    }
+
+    @And("I should be able to assert the redeem voucher validation for negative response")
+    public void iWillAssertTheFieldsFromRedeemVoucherValidationResponse() {
+        try {
+            JsonNode rootNode = objectMapper.readTree(scenarioScopeState.response);
+
+            ErrorDetails errorDetails = objectMapper.treeToValue(rootNode, ErrorDetails.class);
+
+            assertThat(errorDetails.getErrorCode()).isEqualTo("error.msg.redeem.voucher.validation.errors");
+            assertThat(errorDetails.getErrorDescription()).isEqualTo("Redeem voucher validation failed");
+
+        } catch (Exception e) {
+            logger.info("An error occurred : {}", e);
+        }
+    }
+
 }
