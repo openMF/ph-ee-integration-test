@@ -270,7 +270,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I can assert that redemption was successful by asserting the status in response")
     public void iCanAssertThatRedemptionWasSuccessfulByAssertingTheStatusInResponse() {
-        await().atMost(awaitMost, SECONDS).pollDelay(5, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(35, SECONDS).pollDelay(7, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             try {
                 JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
