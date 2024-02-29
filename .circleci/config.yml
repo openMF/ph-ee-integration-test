@@ -200,6 +200,7 @@ jobs:
   test-chart-gov:
     docker:
       - image: cimg/openjdk:17.0.0-node
+    parallelism: 4
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
