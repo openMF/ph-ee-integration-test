@@ -31,7 +31,7 @@ Feature: Identity Account Mapper Api Test
 #    Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/updatePaymentModalityApiTest" endpoint received a request with required parameter in body
 
-  Scenario: PPV-11 Account Lookup Api Test
+  Scenario: PPV-11/IAM-004 Account Lookup Api Test
     When I call the account lookup API with expected status of 202 and stub "/accountLookupTest"
 #    Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with same payeeIdentity
@@ -255,4 +255,48 @@ Feature: Identity Account Mapper Api Test
     Then I am able to parse payment batch detail response
     And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
     And I can stop mock server
+
+  Scenario: RB-011 Attempt to Register a 5 Beneficiary - 4 with a valid RegistrationInstitution and 1 with a invalid RegistrationInstitution not available in PayBB
+    When I create an IdentityMapperDTO for 4 Register Beneficiary with payment modality as "VOUCHER" and 1 with invalid functionalID
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with no of failed cases as 1
+
+  Scenario: RB-012 Attempt to Register a 5 Beneficiary - 4 with a valid format of FunctionalID and 1 with a invalid FunctionalID (not properly formatted)
+    When I create an IdentityMapperDTO for 4 Register Beneficiary with payment modality as "VOUCHER" and 1 with invalid functionalID
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with no of failed cases as 1
+
+  Scenario: RB-013 Attempt to Register a 5 Beneficiary - 4 with a valid format of FunctionalID and 1 with a invalid FunctionalID (not properly formatted)
+    When I create an IdentityMapperDTO for 2 Register Beneficiary with payment modality as "VOUCHER" and 1 with invalid payment modality
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with no of failed cases as 1
+
+  Scenario: RB-015 Attempt to register 10 Beneficiary, 8 Beneficiaries have been registered  - 2 of them have been already registered (duplication of beneficiaries functional ID)
+    When I create an IdentityMapperDTO for 2 Register Beneficiary with payment modality as "VOUCHER"
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+    When I create an IdentityMapperDTO for 8 Register Beneficiary with payment modality as "VOUCHER"
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
+
+  Scenario: UB-014 Attempt to update 10 Beneficiaries, 8 are successfully registered while 2 have invalid financial address. (not in correct format)
+    When I create an IdentityMapperDTO for 10 Register Beneficiary with payment modality as "ACCOUNT_ID"
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+    When I create an IdentityMapperDTO for 8 update Beneficiary with correct financial address code and 2 with incorrect Financial address
+    When I call the update beneficiary API with expected status of 202 and stub "/updateBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/updateBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
+
+  Scenario: UB-015 Attempt to update 10 Beneficiaries, 8 are successfully registered while 2 have invalid payment modality (not equal to 01,02,03,04,05).
+    When I create an IdentityMapperDTO for 10 Register Beneficiary with no payment modality
+    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
+    When I create an IdentityMapperDTO for 8 update Beneficiary with correct payment modality and 2 with incorrect payment modality
+    When I call the update beneficiary API with expected status of 202 and stub "/updateBeneficiaryApiTest"
+#    Then I will sleep for 3000 millisecond
+    Then I should be able to verify that the "PUT" method to "/updateBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
+
+
 

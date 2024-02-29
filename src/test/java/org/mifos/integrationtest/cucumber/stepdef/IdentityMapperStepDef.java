@@ -560,4 +560,93 @@ public class IdentityMapperStepDef extends BaseStepDef {
             beneficiaryList = new ArrayList<>();
         });
     }
+
+    @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string} and {int} with invalid payment modality")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithPaymentModalityAsAndWithInvalidPaymentModality(int noOfBeneficiary, String paymentModality, int arg2) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < noOfBeneficiary; i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), getPaymentModality(paymentModality), "12345678",
+                    "ABCDEF");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), "11", "12345678",
+                "ABCDEF");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string} and {int} with invalid functionalID")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithPaymentModalityAsAndWithInvalidFunctionalID(int noOfBeneficiary, String paymentModality, int arg2) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < noOfBeneficiary; i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), getPaymentModality(paymentModality), "12345678",
+                    "ABCDEF");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(16), "11", "12345678",
+                "ABCDEF");
+        beneficiaryDTOList.add(beneficiaryDTO);
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @Then("I should be able to verify that the {string} method to {string} endpoint received a request with no of failed cases as {int}")
+    public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithNoOfFailedCasesAs(String method, String endpoint, int noOfFailedCases) {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            try {
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo(String.valueOf(noOfFailedCases)))));
+                assertTrue(true);
+            } catch (VerificationException e) {
+                assertTrue(false);// failure
+            }
+        });
+    }
+
+    @When("I create an IdentityMapperDTO for {int} Register Beneficiary with no payment modality")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithNoPaymentModality(int noOfBeneficiary) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < noOfBeneficiary; i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), "", "",
+                    "");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I create an IdentityMapperDTO for {int} update Beneficiary with correct payment modality and {int} with incorrect payment modality")
+    public void iCreateAnIdentityMapperDTOForUpdateBeneficiaryWithCorrectPaymentModalityAndWithIncorrectPaymentModality(int correctPaymentModality, int incorrectPaymentModality) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < correctPaymentModality; i++) {
+            BeneficiaryDTO beneficiaryDTO = registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setPaymentModality("00");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        for (int i = correctPaymentModality; i < correctPaymentModality+incorrectPaymentModality; i++) {
+            BeneficiaryDTO beneficiaryDTO = registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setPaymentModality("11");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @When("I create an IdentityMapperDTO for {int} update Beneficiary with correct financial address code and {int} with incorrect Financial address")
+    public void iCreateAnIdentityMapperDTOForUpdateBeneficiaryWithCorrectFinancialAddressCodeAndWithIncorrectFinancialAddress(int correctFinancialAddress, int incorrectFinancialAddress) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < correctFinancialAddress; i++) {
+            BeneficiaryDTO beneficiaryDTO = registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setFinancialAddress(generateUniqueNumber(10));
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        for (int i = correctFinancialAddress; i < correctFinancialAddress+incorrectFinancialAddress; i++) {
+            BeneficiaryDTO beneficiaryDTO = registerBeneficiaryBody.getBeneficiaries().get(i);
+            beneficiaryDTO.setFinancialAddress(generateUniqueNumber(10));
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
 }
