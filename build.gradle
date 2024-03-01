@@ -206,8 +206,8 @@ test {
     maxParallelForks = Runtime.runtime.availableProcessors()
     systemProperty "cucumber.execution.parallel.enabled", "true"
     systemProperty "cucumber.execution.parallel.config.strategy", "fixed"
-    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "4"
-    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "4"
+    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "2"
+    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "2"
 }
 
 task cucumberCli() {
