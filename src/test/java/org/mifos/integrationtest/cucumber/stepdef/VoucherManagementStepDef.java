@@ -98,7 +98,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Create Voucher Response: {}", scenarioScopeState.response);
     }
 
     public static String generateUniqueNumber(int length) {
@@ -140,7 +140,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Activate Voucher Response: {}", scenarioScopeState.response);
     }
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
@@ -265,12 +265,12 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         redeemVoucherResponseBody = scenarioScopeState.response;
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Redeem Voucher Response: {}", scenarioScopeState.response);
     }
 
     @Then("I can assert that redemption was successful by asserting the status in response")
     public void iCanAssertThatRedemptionWasSuccessfulByAssertingTheStatusInResponse() {
-        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             try {
                 JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
@@ -278,6 +278,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 String status = rootNode.get("status").asText();
                 logger.info("Status {}", status);
                 assertThat(status).isEqualTo("01");
+                logger.info("Response for successful redemption {}:", redeemVoucherResponseBody);
             } catch (Exception e) {
                 logger.debug(e.getMessage());
             }
@@ -366,7 +367,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         redeemVoucherResponseBody = scenarioScopeState.response;
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Suspend Voucher Response: {}", scenarioScopeState.response);
     }
 
     @And("I can create an VoucherRequestDTO for voucher reactivation")
@@ -402,7 +403,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .get(voucherManagementConfig.voucherValidityEndpoint).andReturn().asString();
 
         redeemVoucherResponseBody = scenarioScopeState.response;
-        logger.info("Voucher Response: {}", scenarioScopeState.response);
+        logger.info("Validity Voucher Response: {}", scenarioScopeState.response);
     }
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
