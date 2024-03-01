@@ -176,10 +176,6 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    maxParallelForks = 4
-    systemProperty "cucumber.execution.parallel.enabled", "true"
-    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
-    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
 }
 
 
@@ -198,10 +194,15 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-    maxParallelForks = 4
+    maxParallelForks = 2
     systemProperty "cucumber.execution.parallel.enabled", "true"
     systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
-    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "4"
+    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
+    doLast {
+        println "Cucumber Parallel Config: ${System.getProperty('cucumber.execution.parallel.enabled')}"
+        println "Cucumber Parallel Strategy: ${System.getProperty('cucumber.execution.parallel.config.strategy')}"
+        println "Cucumber Parallel Factor: ${System.getProperty('cucumber.execution.parallel.config.dynamic.factor')}"
+    }
 }
 
 task cucumberCli() {
