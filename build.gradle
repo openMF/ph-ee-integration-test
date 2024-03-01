@@ -203,11 +203,13 @@ test {
 //    systemProperty "cucumber.execution.parallel.enabled", "true"
 //    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
 //    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
-    maxParallelForks = Runtime.runtime.availableProcessors()
-    systemProperty "cucumber.execution.parallel.enabled", "true"
-    systemProperty "cucumber.execution.parallel.config.strategy", "fixed"
-    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "2"
-    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "2"
+//    maxParallelForks = Runtime.runtime.availableProcessors()
+//    systemProperty "cucumber.execution.parallel.enabled", "true"
+//    systemProperty "cucumber.execution.parallel.config.strategy", "fixed"
+//    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "2"
+//    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "2"
+    systemProperty "junit.jupiter.execution.parallel.enabled", "true"
+    systemProperty "junit.jupiter.execution.parallel.mode.default", "concurrent"
 }
 
 task cucumberCli() {
