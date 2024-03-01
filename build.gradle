@@ -172,6 +172,8 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.5.2'
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 tasks.named('test') {
@@ -194,15 +196,10 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-    maxParallelForks = 2
+    maxParallelForks = 4
     systemProperty "cucumber.execution.parallel.enabled", "true"
     systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
-    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
-    doLast {
-        println "Cucumber Parallel Config: ${System.getProperty('cucumber.execution.parallel.enabled')}"
-        println "Cucumber Parallel Strategy: ${System.getProperty('cucumber.execution.parallel.config.strategy')}"
-        println "Cucumber Parallel Factor: ${System.getProperty('cucumber.execution.parallel.config.dynamic.factor')}"
-    }
+//    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
 }
 
 task cucumberCli() {
