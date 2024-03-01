@@ -160,6 +160,7 @@ dependencies {
     implementation 'io.cucumber:cucumber-java:7.8.1'
     implementation 'io.cucumber:cucumber-spring:7.8.1'
     testImplementation 'io.cucumber:cucumber-junit:7.8.1'
+    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.8.1'
 
 
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
@@ -174,6 +175,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.platform:junit-platform-suite:1.10.1'
 }
 
 tasks.named('test') {
@@ -194,9 +196,10 @@ configurations {
 }
 
 test {
+    useJUnitPlatform()
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-    maxParallelForks = 4
+    maxParallelForks = 2
     systemProperty "cucumber.execution.parallel.enabled", "true"
     systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
 //    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
