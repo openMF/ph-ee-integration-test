@@ -3,6 +3,7 @@ package org.mifos.integrationtest.cucumber.stepdef;
 import io.cucumber.spring.ScenarioScope;
 import io.restassured.response.Response;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,5 +100,6 @@ public class ScenarioScopeState {
     protected String[] payeeIdentifierforBatch;
     protected int[] initialBalForPayeeForBatch;
     protected int[] gsmaP2PAmtDebitForBatch;
+    protected List<String> registeredBeneficiary = new ArrayList<>();
 
 }

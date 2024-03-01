@@ -505,9 +505,9 @@ public class GSMATransferStepDef extends BaseStepDef {
     @Then("I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        scenarioScopeState.payeeIdentity = generateUniqueNumber(16);
+        scenarioScopeState.payeeIdentity = generateUniqueNumber(12);
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "01", scenarioScopeState.payerIdentifier,
-                "gorilla");
+                scenarioScopeState.fspId);
         beneficiaryDTOList.add(beneficiaryDTO);
         scenarioScopeState.requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(scenarioScopeState.requestId, "", beneficiaryDTOList);
