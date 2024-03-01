@@ -270,7 +270,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I can assert that redemption was successful by asserting the status in response")
     public void iCanAssertThatRedemptionWasSuccessfulByAssertingTheStatusInResponse() {
-        await().atMost(35, SECONDS).pollDelay(7, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             try {
                 JsonNode rootNode = objectMapper.readTree(redeemVoucherResponseBody);
@@ -408,7 +408,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")
     public void iCanExtractResultFromValidationCallbackAndAssertIfValidationIsSuccessful(String endpoint) {
-        await().atMost(awaitMost, SECONDS).pollDelay(5, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
             List<ServeEvent> allServeEvents = getAllServeEvents();
