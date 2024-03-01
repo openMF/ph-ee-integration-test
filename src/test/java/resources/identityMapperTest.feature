@@ -254,7 +254,7 @@ Feature: Identity Account Mapper Api Test
     And I call the payment batch detail API with expected status of 200 with total 3 txns
     Then I am able to parse payment batch detail response
     And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
-    And I can stop mock server
+
 
   Scenario: RB-011 Attempt to Register a 5 Beneficiary - 4 with a valid RegistrationInstitution and 1 with a invalid RegistrationInstitution not available in PayBB
     When I create an IdentityMapperDTO for 4 Register Beneficiary with payment modality as "VOUCHER" and 1 with invalid functionalID
@@ -277,7 +277,7 @@ Feature: Identity Account Mapper Api Test
   Scenario: RB-015 Attempt to register 10 Beneficiary, 8 Beneficiaries have been registered  - 2 of them have been already registered (duplication of beneficiaries functional ID)
     When I create an IdentityMapperDTO for 2 Register Beneficiary with payment modality as "VOUCHER"
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
-    When I create an IdentityMapperDTO for 8 Register Beneficiary with payment modality as "VOUCHER"
+    When I create an IdentityMapperDTO for 8 Register Beneficiary with payment modality as "VOUCHER" and 2 existing beneficiary
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
 #    Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/registerBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
@@ -297,6 +297,7 @@ Feature: Identity Account Mapper Api Test
     When I call the update beneficiary API with expected status of 202 and stub "/updateBeneficiaryApiTest"
 #    Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/updateBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
+    And I can stop mock server
 
 
 

@@ -109,7 +109,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create an IdentityMapperDTO for Register Beneficiary")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        payeeIdentity = generateUniqueNumber(16);
+        payeeIdentity = generateUniqueNumber(12);
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, null, null, null);
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(12);
@@ -121,9 +121,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForAddPaymentModality() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
 
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "12345678", null);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, "00", "12345678", "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
-        requestId = generateUniqueNumber(18);
+        requestId = generateUniqueNumber(12);
         addPaymentModalityBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
 
     }
@@ -310,11 +310,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForAddingBeneficiary(int count) {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(18), null, null, null);
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), null, null, null);
             beneficiaryList.add(beneficiaryDTO);
             beneficiaryDTOList.add(beneficiaryDTO);
         }
-        requestId = generateUniqueNumber(14);
+        requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
     }
 
@@ -347,7 +347,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create request body for batch account lookup API")
     public void iCreateRequestBodyForBatchAccountLookupAPI() {
         batchAccountLookupBody = null;
-        requestId = generateUniqueNumber(14);
+        requestId = generateUniqueNumber(12);
         batchAccountLookupBody = new AccountMapperRequestDTO(requestId, "", beneficiaryList);
     }
 
@@ -396,9 +396,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string}")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithPaymentModalityAs(int noOfBeneficiary, String paymentModality) {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        scenarioScopeState.registeredBeneficiary = new ArrayList<>();
         for (int i = 0; i < noOfBeneficiary; i++) {
-            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), getPaymentModality(paymentModality), "12345678",
-                    "ABCDEF");
+            String payeeIdentity = generateUniqueNumber(12);
+            scenarioScopeState.registeredBeneficiary.add(payeeIdentity);
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentity, getPaymentModality(paymentModality), "12345678", "ABCDEF");
             beneficiaryDTOList.add(beneficiaryDTO);
         }
         requestId = generateUniqueNumber(10);
@@ -652,6 +654,29 @@ public class IdentityMapperStepDef extends BaseStepDef {
         for (int i = correctFinancialAddress; i < correctFinancialAddress + incorrectFinancialAddress; i++) {
             BeneficiaryDTO beneficiaryDTO = registerBeneficiaryBody.getBeneficiaries().get(i);
             beneficiaryDTO.setFinancialAddress(generateUniqueNumber(40));
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        requestId = generateUniqueNumber(10);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @Then("I add the {int} registered beneficiary in the DTO")
+    public void iAddTheRegisteredBeneficiaryInTheDTO(int noOfRegisteredBeneficiary) {
+
+    }
+
+    @When("I create an IdentityMapperDTO for {int} Register Beneficiary with payment modality as {string} and {int} existing beneficiary")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithPaymentModalityAsAndExistingBeneficiary(int noOfBeneficiary,
+            String paymentModality, int noOfRegisteredBeneficiary) {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        for (int i = 0; i < noOfBeneficiary; i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), getPaymentModality(paymentModality), "12345678",
+                    "ABCDEF");
+            beneficiaryDTOList.add(beneficiaryDTO);
+        }
+        for (int i = 0; i < noOfRegisteredBeneficiary; i++) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.registeredBeneficiary.get(i),
+                    getPaymentModality(paymentModality), "12345678", "ABCDEF");
             beneficiaryDTOList.add(beneficiaryDTO);
         }
         requestId = generateUniqueNumber(10);
