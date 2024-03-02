@@ -192,6 +192,7 @@ configurations {
         theme 'mocha'
         showSkipped false
         showStackTraces true
+
     }
 }
 
@@ -199,40 +200,13 @@ test {
     useJUnitPlatform()
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-//    maxParallelForks = 2
-//    systemProperty "cucumber.execution.parallel.enabled", "true"
-//    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
-//    systemProperty "cucumber.execution.parallel.config.dynamic.factor", "2"
-//    maxParallelForks = Runtime.runtime.availableProcessors()
-//    systemProperty "cucumber.execution.parallel.enabled", "true"
+    systemProperty "cucumber.execution.parallel.enabled", "true"
+    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
+    maxParallelForks = Runtime.runtime.availableProcessors()
 //    systemProperty "cucumber.execution.parallel.config.strategy", "fixed"
 //    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "2"
 //    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "2"
-    systemProperty "junit.jupiter.execution.parallel.enabled", "true"
-    systemProperty "junit.jupiter.execution.parallel.mode.default", "concurrent"
+//    systemProperty "junit.jupiter.execution.parallel.enabled", "true"
+//    systemProperty "junit.jupiter.execution.parallel.mode.default", "concurrent"
 }
 
-task cucumberCli() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = [
-                '--plugin',
-                'html:cucumber-report',
-                '--plugin',
-                'json:cucumber.json',
-                '--plugin',
-                'pretty',
-                '--plugin',
-                'html:build/cucumber-report.html',
-                '--plugin',
-                'json:build/cucumber-report.json',
-                '--glue',
-                'org.mifos.integrationtest.cucumber',
-                'src/test/java/resources'
-            ]
-        }
-    }
-}
