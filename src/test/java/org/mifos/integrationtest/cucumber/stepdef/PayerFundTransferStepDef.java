@@ -550,8 +550,12 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         callSavingsActivateEndpoint("activate", client);
         callDepositAccountEndpoint("deposit", amount, client);
         if (client.equals("payer")) {
-            scenarioScopeState.initialBalForPayer = amount;
-            assertThat(scenarioScopeState.initialBalForPayer).isNotNull();
+            if (scenarioScopeState.initialBalForPayerForBatch == null) {
+                scenarioScopeState.initialBalForPayerForBatch = new int[4];
+            }
+            scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
+
         } else if (client.equals("payee")) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null) {
                 scenarioScopeState.initialBalForPayeeForBatch = new int[4];

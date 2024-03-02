@@ -98,7 +98,9 @@ public class ScenarioScopeState {
     protected int initialBalForPayee;
 
     protected String[] payeeIdentifierforBatch;
+    protected String[] payerIdentifierforBatch;
     protected int[] initialBalForPayeeForBatch;
+    protected int[] initialBalForPayerForBatch;
     protected int[] gsmaP2PAmtDebitForBatch;
     protected List<String> registeredBeneficiary = new ArrayList<>();
 

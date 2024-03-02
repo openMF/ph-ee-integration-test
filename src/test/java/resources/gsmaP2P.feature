@@ -92,23 +92,42 @@ Feature: GSMA Outbound Transfer test
 
   @batch-teardown
   Scenario: Bulk Transfer with GSMA
+    #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
-    When I create and setup a "payer" with account balance of 100
+    When I create and setup a "payer" with id "1" and account balance of 100
     Given I have tenant as "payerfsp"
-    Then I call the balance api for payer balance
+    Then I call the balance api for payer "1" balance
+    #payee 1 creation
     When I create and setup a "payee" with id "1" and account balance of 10
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee "1" balance
+
     Then Create a csv file with file name "batchTransactionGsma.csv"
     Then add row to csv with current payer and payee, payment mode as "gsma" and transfer amount 10 and id 0
+
+    #payer 2 creation
+    Given I have Fineract-Platform-TenantId as "payerfsp2"
+    When I create and setup a "payer" with id "2" and account balance of 50
+    Given I have tenant as "payerfsp"
+    Then I call the balance api for payer "2" balance
+    #payee 2 creation
     When I create and setup a "payee" with id "2" and account balance of 20
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee "2" balance
+
     Then add row to csv with current payer and payee, payment mode as "gsma" and transfer amount 5 and id 1
+    #payer 3 creation
+    Given I have Fineract-Platform-TenantId as "payerfsp2"
+    When I create and setup a "payer" with id "3" and account balance of 30
+    Given I have tenant as "payerfsp"
+    Then I call the balance api for payer "3" balance
+    #payee 3 creation
     When I create and setup a "payee" with id "3" and account balance of 30
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee "3" balance
+
     Then add last row to csv with current payer and payee, payment mode as "gsma" and transfer amount 1 and id 2
+    #batch process
     Given I have tenant as "payerfsp"
     And I have the demo csv file "batchTransactionGsma.csv"
     And I generate clientCorrelationId
@@ -122,8 +141,14 @@ Feature: GSMA Outbound Transfer test
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
+    #payer debit check
     Given I have tenant as "payerfsp"
-    Then I call the balance api for payer balance after debit
+    Then I call the balance api for payer with id "1" balance after debit
+    Given I have tenant as "payerfsp"
+    Then I call the balance api for payer with id "2" balance after debit
+    Given I have tenant as "payerfsp"
+    Then I call the balance api for payer with id "3" balance after debit
+    #payee credit check
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee with id "1" balance after credit
     Given I have tenant as "payeefsp3"
