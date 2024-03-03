@@ -200,6 +200,7 @@ jobs:
   test-chart-gov:
     docker:
       - image: cimg/openjdk:17.0.0-node
+    parallelism: 2
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
@@ -237,6 +238,7 @@ jobs:
   test-chart-ams:
     docker:
       - image: cimg/openjdk:17.0.0
+    parallelism: 2
     steps:
       - checkout
       #- run: git clone https://github.com/openmf/ph-ee-integration-test
@@ -327,7 +329,7 @@ workflows:
             - Ngrok
       - test-chart-gov:
           requires:
-            - test-chart-ams
+            - deploying-bpmns
           context:
             - AWS
             - Helm
