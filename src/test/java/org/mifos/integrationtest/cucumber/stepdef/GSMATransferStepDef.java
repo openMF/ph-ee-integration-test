@@ -552,7 +552,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             List<ServeEvent> allServeEvents = getAllServeEvents();
             Boolean isValidated = null;

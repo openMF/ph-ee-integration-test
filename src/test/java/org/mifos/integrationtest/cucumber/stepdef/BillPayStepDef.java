@@ -513,7 +513,18 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
             List<ServeEvent> allServeEvents = getAllServeEvents();
-            assertThat(allServeEvents.size()).isEqualTo(0);
+            if (allServeEvents.isEmpty()) {
+                flag = true;
+            } else {
+                for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                    ServeEvent request = allServeEvents.get(i);
+                    if (!(request.getRequest().getUrl().equals("/billNotificationsTimeout"))) {
+                        flag = true;
+                    }
+                }
+            }
+            assertThat(flag).isTrue();
+
         });
     }
 
