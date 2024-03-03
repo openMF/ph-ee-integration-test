@@ -552,7 +552,7 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     @And("I should be able to verify that the {string} method to {string} endpoint received a request with validation")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay,SECONDS).pollInterval(pollInterval,SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             List<ServeEvent> allServeEvents = getAllServeEvents();
             Boolean isValidated = null;
@@ -707,6 +707,46 @@ public class GSMATransferStepDef extends BaseStepDef {
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]
                 + scenarioScopeState.gsmaP2PAmtDebitForBatch[Integer.parseInt(id)]).isTrue();
+
+    }
+
+    @Then("I call the balance api for payer {string} balance")
+    public void iCallTheBalanceApiForPayerBalance(String id) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        String finalEndpoint = amsBalanceEndpoint;
+        if (scenarioScopeState.payerIdentifierforBatch == null) {
+            scenarioScopeState.payerIdentifierforBatch = new String[4];
+        }
+        scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payerIdentifier;
+        finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
+        finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty.isEmpty() ? scenarioScopeState.payerIdentifier : debitParty);
+        logger.info("Endpoint: " + finalEndpoint);
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
+        assertThat(
+                interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)])
+                .isTrue();
+
+    }
+
+    @Then("I call the balance api for payer with id {string} balance after debit")
+    public void iCallTheBalanceApiForPayerBalanceAfterDebit(String id) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        String finalEndpoint = amsBalanceEndpoint;
+        finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
+        finalEndpoint = finalEndpoint.replace("{IdentifierId}",
+                debitParty.isEmpty() ? scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] : debitParty);
+        logger.info("Endpoint: " + finalEndpoint);
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
+        logger.info("Balance Response: " + scenarioScopeState.response);
+        InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
+        int originBal = scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)];
+        int debitAmt = scenarioScopeState.gsmaP2PAmtDebitForBatch[Integer.parseInt(id)];
+        int avlBal = interopAccountDTO.getAvailableBalance().intValue();
+        assertThat(avlBal == originBal - debitAmt).isTrue();
 
     }
 }
