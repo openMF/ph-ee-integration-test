@@ -200,9 +200,9 @@ test {
     useJUnitPlatform()
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-    systemProperty "cucumber.execution.parallel.enabled", "true"
-    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
-    maxParallelForks = 3
+//    systemProperty "cucumber.execution.parallel.enabled", "true"
+//    systemProperty "cucumber.execution.parallel.config.strategy", "dynamic"
+//    maxParallelForks = 3
 //    systemProperty "cucumber.execution.parallel.config.strategy", "fixed"
 //    systemProperty "cucumber.execution.parallel.config.fixed.parallelism", "2"
 //    systemProperty "cucumber.execution.parallel.config.fixed.max-pool-size", "2"
