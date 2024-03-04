@@ -329,7 +329,7 @@ workflows:
             - Ngrok
       - test-chart-gov:
           requires:
-            - deploying-bpmns
+            - test-chart-ams
           context:
             - AWS
             - Helm
