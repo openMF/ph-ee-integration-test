@@ -172,7 +172,6 @@ dependencies {
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     implementation 'io.github.prashant-ramcharan:courgette-jvm:6.12.0'
-
 }
 
 //tasks.named('test') {
