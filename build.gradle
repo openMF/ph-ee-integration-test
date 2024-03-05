@@ -195,7 +195,7 @@ tasks.withType(Test) {
     systemProperties = System.getProperties()
 }
 
-task regressionSuite(type: Test) {
+task parallelRun(type: Test) {
     include '**/TestRunner.class'
     outputs.upToDateWhen { false }
 }
