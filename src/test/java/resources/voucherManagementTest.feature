@@ -1,7 +1,24 @@
 @gov
 Feature: Voucher Management Api Test
 
-   Scenario: Create Voucher Api Test
+  @createAndActivateVoucher @redeemVoucherSuccess
+  Scenario: Reactivate Voucher Api Test
+    Given I can create an VoucherRequestDTO for voucher suspension
+    And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
+    When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
+    And I can create an VoucherRequestDTO for voucher reactivation
+    And I can register the stub with "/reactivateVoucher" endpoint for "PUT" request with status of 200
+    When I call the activate voucher API with expected status of 202 and stub "/reactivateVoucher"
+#    Then I will sleep for 2000 millisecond
+
+  @createAndActivateVoucher
+  Scenario: Validity Check Voucher Api Test
+    When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
+    And I call the validity check API with expected status of 202 and stub "/validity"
+#    And I will sleep for 3000 millisecond
+    Then I can extract result from validation callback and assert if validation is successful on "/validity"
+
+  Scenario: Create Voucher Api Test
      When I can inject MockServer
      Then I can start mock server
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
@@ -38,22 +55,6 @@ Feature: Voucher Management Api Test
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
 #    Then I will sleep for 2000 millisecond
 
-  @createAndActivateVoucher @redeemVoucherSuccess
-  Scenario: Reactivate Voucher Api Test
-    Given I can create an VoucherRequestDTO for voucher suspension
-    And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
-    When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
-    And I can create an VoucherRequestDTO for voucher reactivation
-    And I can register the stub with "/reactivateVoucher" endpoint for "PUT" request with status of 200
-    When I call the activate voucher API with expected status of 202 and stub "/reactivateVoucher"
-#    Then I will sleep for 2000 millisecond
-
-  @createAndActivateVoucher
-  Scenario: Validity Check Voucher Api Test
-    When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
-    And I call the validity check API with expected status of 202 and stub "/validity"
-#    And I will sleep for 3000 millisecond
-    Then I can extract result from validation callback and assert if validation is successful on "/validity"
 
   @createAndActivateVoucher
   Scenario: Fetch Voucher Api Test
