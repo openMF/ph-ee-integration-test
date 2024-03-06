@@ -231,9 +231,9 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
+          path: build/cucumber-report/cucumber.xml
       - store_artifacts:
-          path: build/test-results
+          path: build/cucumber-report
   test-chart-ams:
     docker:
       - image: cimg/openjdk:17.0.0
@@ -268,9 +268,9 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
+          path: build/cucumber-report/cucumber.xml
       - store_artifacts:
-          path: build/test-results
+          path: build/cucumber-report
 workflows:
   deploy:
     jobs:
