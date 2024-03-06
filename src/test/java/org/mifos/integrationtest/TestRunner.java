@@ -18,6 +18,6 @@ import org.junit.runner.RunWith;
         testOutput = CourgetteTestOutput.CONSOLE,
 
         reportTitle = "Courgette-JVM Example", reportTargetDir = "build", environmentInfo = "browser=chrome; git_branch=master", cucumberOptions = @CucumberOptions(features = "src/test/java/resources", glue = "org.mifos.integrationtest.cucumber", tags = "@gov", publish = true, plugin = {
-                "pretty", "json:build/cucumber-report/cucumber.json", "html:build/cucumber-report/cucumber.html",
-                "junit:build/cucumber-report/cucumber.xml" }))
+                "html:cucumber-report", "json:cucumber.json", "pretty", "html:build/cucumber-report.html",
+                "json:build/cucumber-report.json", "junit:build/cucumber.xml" }))
 public class TestRunner {}
