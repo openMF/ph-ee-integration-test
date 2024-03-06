@@ -231,7 +231,7 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
       - store_artifacts:
           path: build/test-results
   test-chart-ams:
@@ -268,7 +268,7 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
       - store_artifacts:
           path: build/test-results
 workflows:
