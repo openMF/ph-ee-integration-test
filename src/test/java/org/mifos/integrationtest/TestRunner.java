@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 @CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.SCENARIO, rerunFailedScenarios = false,
         testOutput = CourgetteTestOutput.CONSOLE,
 
-        reportTitle = "Courgette-JVM Example", reportTargetDir = "build", cucumberOptions = @CucumberOptions(features = "src/test/java/resources", glue = "org.mifos.integrationtest.cucumber", tags = "@gov", publish = true, plugin = {
+        reportTitle = "Paymenthub Test results", reportTargetDir = "build", cucumberOptions = @CucumberOptions(features = "src/test/java/resources", glue = "org.mifos.integrationtest.cucumber", tags = "@gov", publish = true, plugin = {
                 "html:cucumber-report", "json:cucumber.json", "pretty", "html:build/cucumber-report.html",
                 "json:build/cucumber-report.json", "junit:build/cucumber.xml" }))
 public class TestRunner {}
