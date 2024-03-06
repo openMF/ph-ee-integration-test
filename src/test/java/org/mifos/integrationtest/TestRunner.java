@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 //        "junit:build/cucumber.xml" })
 
 @RunWith(Courgette.class)
-@CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.FEATURE, rerunFailedScenarios = false,
+@CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.SCENARIO, rerunFailedScenarios = false,
         // rerunAttempts = ,
         testOutput = CourgetteTestOutput.CONSOLE,
 

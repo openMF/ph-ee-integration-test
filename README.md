@@ -80,22 +80,22 @@ Where the `glue` property is for defining the package which contains the step de
 @CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.FEATURE, rerunFailedScenarios = false,
         testOutput = CourgetteTestOutput.CONSOLE,
 
-        reportTitle = "Courgette-JVM Example", 
-        reportTargetDir = "build", 
-        environmentInfo = "browser=chrome; git_branch=master", 
-        cucumberOptions = @CucumberOptions(features = "src/test/java/resources", 
-                glue = "org.mifos.integrationtest.cucumber", 
-                tags = "@gov", 
-                publish = true, 
+        reportTitle = "Courgette-JVM Example",
+        reportTargetDir = "build",
+        environmentInfo = "browser=chrome; git_branch=master",
+        cucumberOptions = @CucumberOptions(features = "src/test/java/resources",
+                glue = "org.mifos.integrationtest.cucumber",
+                tags = "@gov",
+                publish = true,
                 plugin = {
-                            "pretty", "json:build/cucumber-report/cucumber.json", 
+                            "pretty", "json:build/cucumber-report/cucumber.json",
                             "html:build/cucumber-report/cucumber.html",
-                            "junit:build/cucumber-report/cucumber.xml" 
+                            "junit:build/cucumber-report/cucumber.xml"
                          }))
 
 ## Adding gradle configuration
 Adding gradle configuration will allow us to run all the cucumber feature file at using a CLI.
-        
+
 tasks.withType(Test) {
     systemProperties = System.getProperties()
 }
