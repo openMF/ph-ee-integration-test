@@ -73,54 +73,42 @@ Now we can run respective feature file directly form the intellij.
 
 ## Adding runner configuration
 Below java class will make sure to run cucumber test using JUnit test command.
-Where the `glue` property is for defining the package which contains the step definitions, `feature` refers to the path where feature file is located and `plugin` is for providing different plugin configuration supported by cucumber.
+Where the `glue` property is for defining the package which contains the step definitions and `plugin` is for providing different plugin configuration supported by cucumber.
 ```java
-@RunWith(Cucumber.class)
-@CucumberOptions(
-        features = {"src/test/java/resources"},
-        glue = {"org.mifos.integrationtest.cucumber"},
-        plugin = {
-            "html:cucumber-report",
-            "json:cucumber.json",
-            "pretty",
-            "html:build/cucumber-report.html",
-            "json:build/cucumber-report.json"
+
+@RunWith(Courgette.class)
+@CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.FEATURE, rerunFailedScenarios = false,
+        testOutput = CourgetteTestOutput.CONSOLE,
+
+        reportTitle = "Courgette-JVM Example", 
+        reportTargetDir = "build", 
+        environmentInfo = "browser=chrome; git_branch=master", 
+        cucumberOptions = @CucumberOptions(features = "src/test/java/resources", 
+                glue = "org.mifos.integrationtest.cucumber", 
+                tags = "@gov", 
+                publish = true, 
+                plugin = {
+                            "pretty", "json:build/cucumber-report/cucumber.json", 
+                            "html:build/cucumber-report/cucumber.html",
+                            "junit:build/cucumber-report/cucumber.xml" 
+                         }))
+
 ## Adding gradle configuration
-Adding gradle configuration will allow us to run all the cucumber feature file at using using a CLI.
-
-```gradle
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
+Adding gradle configuration will allow us to run all the cucumber feature file at using a CLI.
+        
+tasks.withType(Test) {
+    systemProperties = System.getProperties()
 }
 
-task cucumberCli() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = [
-                    '--plugin', 'pretty',
-                    '--plugin', 'html:target/cucumber-report.html',
-                    '--glue', 'org.mifos.connector.slcb.cucumber',
-                    'src/test/java/resources']
-        }
-)
-public class TestRunner {
-}
-```
-Adding below configuration will allow us to wire the CLI arguments be passed in the actual runner configuration while running the cucumber test using JUnit.
-```groovy
-test {
-    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+task parallelRun(type: Test) {
+    include '**/TestRunner.class'
+    outputs.upToDateWhen { false }
 }
 ```
 ## Running an integration test
 Use below command to execute the integration test.
 ```shell
-./gradlew test -Dcucumber.filter.tags="<cucumber tag>"
+./gradlew test -Dcucumber.tags="<cucumber tag>"
 ```
 Where `<cucumber tag>` has to be replaced with valid tag, for example if you are willing to run test cases related to g2p scenario then pass the tag `@gov`. If `-Dcucumber.filter.tags` flag is omitted then all the test cases would be triggered independent of the tag.
 ```shell
