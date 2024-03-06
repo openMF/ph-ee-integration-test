@@ -179,17 +179,6 @@ dependencies {
 //}
 
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-    testlogger {
-        // pick a theme - mocha, standard, plain, mocha-parallel, standard-parallel or plain-parallel
-        theme 'mocha'
-        showSkipped false
-        showStackTraces true
-    }
-}
 
 tasks.withType(Test) {
     systemProperties = System.getProperties()
