@@ -76,3 +76,11 @@ Feature: Voucher Management Api Test
   Scenario: VR-005 Redeem Voucher Api Negative Test when voucher is already redeemed
     Given I can create an RedeemVoucherRequestDTO for voucher redemption
     When I call the redeem voucher API with expected status of 200
+
+  @Ignore
+  Scenario: Create a csv file for voucher number and voucher serial number
+    When I can inject MockServer
+    Then I can start mock server
+    And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
+    And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
+    When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"

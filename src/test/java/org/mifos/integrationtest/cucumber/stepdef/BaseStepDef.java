@@ -60,9 +60,8 @@ public class BaseStepDef {
 
     @Autowired
     FspConfig payeeFspConfig;
-    //
-    // @Autowired
-    // FspConfig payerFspConfig;
+    @Value("${totalvouchers}")
+    public Integer totalVouchers;
 
     @Value("${operations-app.auth.enabled}")
     public Boolean authEnabled;

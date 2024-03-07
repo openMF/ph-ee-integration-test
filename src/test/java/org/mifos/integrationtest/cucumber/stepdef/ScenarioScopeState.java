@@ -104,4 +104,16 @@ public class ScenarioScopeState {
     protected int[] gsmaP2PAmtDebitForBatch;
     protected List<String> registeredBeneficiary = new ArrayList<>();
 
+    protected String requstId;
+    protected String createVoucherBody;
+    protected String activateVoucherBody;
+    protected String redeemVoucherBody;
+    protected String redeemVoucherResponseBody;
+    protected String serialNumber;
+    protected String voucherNumber;
+    protected String cancelVoucherBody;
+    protected String suspendVoucherBody;
+    protected String registeringInstitutionId;
+    protected String agentId;
+    protected String fetchVoucherResponseBody;
 }
