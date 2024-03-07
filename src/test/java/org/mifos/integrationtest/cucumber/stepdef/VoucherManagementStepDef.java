@@ -252,7 +252,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             // Write data
             writer.writeNext(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            // logger.debug(e.getMessage());
         }
     }
 
