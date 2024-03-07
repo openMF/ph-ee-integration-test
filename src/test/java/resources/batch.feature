@@ -44,7 +44,7 @@ Feature: Batch Details API test
   Scenario: BD-004 Batch Details API Test
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
-    And I have the demo csv file "ph-ee-bulk-demo-6.csv"
+    And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
