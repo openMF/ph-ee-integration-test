@@ -126,8 +126,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
                 .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
-                .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.activateVoucherBody)
-                .expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                .body(scenarioScopeState.activateVoucherBody).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         logger.info("Activate Voucher Response: {}", scenarioScopeState.response);
@@ -156,7 +157,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in cancel voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInCancelVoucherCallbackBody(String arg0,
             String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
+        verify(putRequestedFor(urlEqualTo(endpoint))
+                .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
 
     }
 
@@ -165,8 +167,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "").queryParam("command", "cancel")
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.cancelVoucherBody).expect()
+                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
+                .queryParam("command", "cancel").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                .body(scenarioScopeState.cancelVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
@@ -176,7 +179,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in redeem voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInRedeemVoucherCallbackBody(String arg0,
             String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
+        verify(putRequestedFor(urlEqualTo(endpoint))
+                .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in suspend voucher callback body")
@@ -275,7 +279,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.requestId = generateUniqueNumber(12);
         scenarioScopeState.agentId = generateUniqueNumber(10);
 
-        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId, scenarioScopeState.serialNumber, scenarioScopeState.voucherNumber);
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId,
+                scenarioScopeState.serialNumber, scenarioScopeState.voucherNumber);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -289,7 +294,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iCallTheRedeemVoucherAPIWithExpectedStatusOf(int responseCode) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .queryParam("command", "redeem").header("X-Registering-Institution-ID",scenarioScopeState.registeringInstitutionId)
+                .queryParam("command", "redeem").header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
                 .header("X-CallbackURL", "").header("X-Program-ID", "").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.redeemVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build())
                 .when().put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
