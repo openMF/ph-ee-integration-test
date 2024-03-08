@@ -196,7 +196,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
