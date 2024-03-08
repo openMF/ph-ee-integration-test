@@ -244,7 +244,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
         requestId = generateUniqueNumber(12);
         agentId = generateUniqueNumber(10);
 
-        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, scenarioScopeState.serialNumber, voucherNumber);
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, scenarioScopeState.serialNumber,
+                voucherNumber);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
