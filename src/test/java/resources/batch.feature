@@ -138,6 +138,8 @@ Feature: Batch Details API test
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
     When I call the batch details API with expected status of 200 with total 10 txns
