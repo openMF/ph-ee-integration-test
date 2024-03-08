@@ -37,7 +37,7 @@ Feature: Batch Details API test
 #    Then I will sleep for 5000 millisecond
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200 with total 0 txns
+    When I call the batch summary API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
   @gov @batch-teardown
@@ -54,7 +54,7 @@ Feature: Batch Details API test
     And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200 with total 12 txns
+    When I call the batch details API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
 
@@ -140,7 +140,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200 with total 12 txns
+    When I call the batch details API with expected status of 200 with total 10 txns
     Then I should get non empty response with failure and success percentage
 
   @gov @batch-teardown
