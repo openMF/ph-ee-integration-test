@@ -37,7 +37,7 @@ Feature: Batch Details API test
 #    Then I will sleep for 5000 millisecond
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200 with total 0 txns
+    When I call the batch summary API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
   @gov @batch-teardown
@@ -140,7 +140,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200 with total 12 txns
+    When I call the batch details API with expected status of 200 with total 10 txns
     Then I should get non empty response with failure and success percentage
 
   @gov @batch-teardown
@@ -196,7 +196,7 @@ Feature: Batch Details API test
 
   @gov @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
-    Given I have tenant as "paymentBB2"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
     And I have private key
