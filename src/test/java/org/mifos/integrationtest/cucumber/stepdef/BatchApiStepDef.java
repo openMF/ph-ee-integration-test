@@ -597,9 +597,6 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("I should assert total txn count and successful txn count in response")
     public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInResponse() {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
-            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal()).isNotNull();
-            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getSuccessful()).isNotNull();
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal()).isGreaterThan(0);
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getSuccessful()).isGreaterThan(0);
             assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal())
