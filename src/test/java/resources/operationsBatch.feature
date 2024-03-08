@@ -1,7 +1,7 @@
-@gov
+
 Feature: Operations APP related feature
 
-  @ops-batch-setup @ops-batch-teardown
+  @gov @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API no filter test
     Given I have tenant as "paymentBB2"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
@@ -10,7 +10,7 @@ Feature: Operations APP related feature
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
 
-  @ext @ops-batch-setup @ops-batch-teardown
+  @ext @gov @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API batchId filter test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
@@ -36,7 +36,7 @@ Feature: Operations APP related feature
   # set offset to 0 and limit to 1
   # assert single batch is returned
   # set offset to 1 and limit to 1
-  @ops-batch-setup @ops-batch-teardown
+  @gov @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API pagination test
     # Batch 1 call
     Given I have tenant as "paymentBB2"
@@ -75,7 +75,7 @@ Feature: Operations APP related feature
   # sleep for some secs
   # calculate endTime
   # query using startTime and endTime ->> then I should get 5 txn
-  @ext @ops-batch-setup @ops-batch-teardown
+  @ext  @gov @ops-batch-setup @ops-batch-teardown
   Scenario: Batches API date filter test
 #    Given I will sleep for 5000 millisecond
     And I have tenant as "paymentBB2"
