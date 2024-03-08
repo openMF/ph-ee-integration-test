@@ -45,7 +45,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
     private static String redeemVoucherBody;
     private static String redeemVoucherResponseBody;
     private static String callbackBody;
-    private static String serialNumber;
     private static String voucherNumber;
     private static String cancelVoucherBody;
     private static String suspendVoucherBody;
@@ -115,7 +114,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.batchId = generateUniqueNumber(10);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
-        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("02");
 
         ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
@@ -148,7 +147,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         requestId = generateUniqueNumber(12);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
-        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("03");
 
         ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
@@ -229,14 +228,14 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 JsonNode voucherInstructionsNode = rootNode.get("voucherInstructions");
                 if (voucherInstructionsNode.isArray()) {
                     for (JsonNode voucherNode : voucherInstructionsNode) {
-                        serialNumber = voucherNode.get("serialNumber").asText();
+                        scenarioScopeState.serialNumber = voucherNode.get("serialNumber").asText();
                         voucherNumber = voucherNode.get("voucherNumber").asText();
                     }
                 }
             } catch (Exception e) {
                 logger.debug(e.getMessage());
             }
-            assertThat(serialNumber).isNotEmpty();
+            assertThat(scenarioScopeState.serialNumber).isNotEmpty();
         });
     }
 
@@ -245,7 +244,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
         requestId = generateUniqueNumber(12);
         agentId = generateUniqueNumber(10);
 
-        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, serialNumber, voucherNumber);
+        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(requestId, agentId, scenarioScopeState.serialNumber,
+                voucherNumber);
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -341,7 +341,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.batchId = generateUniqueNumber(10);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
-        voucherInstruction.setSerialNumber(serialNumber);
+        voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("06");
 
         ArrayList<VoucherInstruction> voucherInstructions = new ArrayList<>();
@@ -382,7 +382,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
-        sb.append("            \"serialNumber\": \"").append(serialNumber).append("\",\n");
+        sb.append("            \"serialNumber\": \"").append(scenarioScopeState.serialNumber).append("\",\n");
         sb.append("            \"status\": \"02\"\n");
         sb.append("        }\n");
         sb.append("    ]\n");
@@ -395,7 +395,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iCallTheValidityCheckAPIWithExpectedStatusOfAndStub(int responseCode, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .queryParam("serialNumber", serialNumber).queryParam("isValid", "true")
+                .queryParam("serialNumber", scenarioScopeState.serialNumber).queryParam("isValid", "true")
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
                 .header("X-Registering-Institution-ID", registeringInstitutionId)
                 .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
@@ -468,7 +468,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                     .header("X-Registering-Institution-ID", registeringInstitutionId)
                     .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
-                    .get(voucherManagementConfig.fetchVoucherEndpoint + "/" + serialNumber).andReturn().asString();
+                    .get(voucherManagementConfig.fetchVoucherEndpoint + "/" + scenarioScopeState.serialNumber).andReturn().asString();
 
             fetchVoucherResponseBody = scenarioScopeState.response;
             logger.info("Voucher Response: {}", scenarioScopeState.response);
@@ -482,7 +482,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
             String serialNumberResponse = rootNode.get("serialNumber").asText();
             String registeringInstitutionIdResponse = rootNode.get("registeringInstitutionId").asText();
-            assertThat(serialNumberResponse).isEqualTo(serialNumber);
+            assertThat(serialNumberResponse).isEqualTo(scenarioScopeState.serialNumber);
             assertThat(registeringInstitutionIdResponse).isEqualTo(registeringInstitutionId);
         } catch (Exception e) {
             logger.debug(e.getMessage());
