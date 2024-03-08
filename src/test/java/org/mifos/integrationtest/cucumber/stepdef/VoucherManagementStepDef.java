@@ -39,6 +39,8 @@ import org.mifos.connector.common.vouchers.dto.RequestDTO;
 import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.ErrorDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VoucherManagementStepDef extends BaseStepDef {
@@ -48,6 +50,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Autowired
     ScenarioScopeState scenarioScopeState;
+
+    Logger logger = LoggerFactory.getLogger(VoucherManagementStepDef.class);
 
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
@@ -240,7 +244,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 new String[] { scenarioScopeState.voucherNumber, scenarioScopeState.serialNumber });
     }
 
-    public static void createOrAppendCSVFile(String filePath, String[] header, String[] data) {
+    public void createOrAppendCSVFile(String filePath, String[] header, String[] data) {
         File file = new File(filePath);
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
@@ -252,7 +256,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             // Write data
             writer.writeNext(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.debug("Error: {}", e.getMessage());
         }
     }
 
