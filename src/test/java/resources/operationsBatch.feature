@@ -76,7 +76,6 @@ Feature: Operations APP related feature
   # calculate endTime
   # query using startTime and endTime ->> then I should get 5 txn
   @gov @ext @ops-batch-setup @ops-batch-teardown
-    :qq
   Scenario: Batches API date filter test
 #    Given I will sleep for 5000 millisecond
     And I have tenant as "paymentBB2"
