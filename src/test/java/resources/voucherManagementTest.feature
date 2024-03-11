@@ -10,7 +10,7 @@ Feature: Voucher Management Api Test
     When I call the activate voucher API with expected status of 202 and stub "/reactivateVoucher"
 #    Then I will sleep for 2000 millisecond
 
-  @gov @createAndActivateVoucher
+  @gov @ext @createAndActivateVoucher
   Scenario: Validity Check Voucher Api Test
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
     And I call the validity check API with expected status of 202 and stub "/validity"
