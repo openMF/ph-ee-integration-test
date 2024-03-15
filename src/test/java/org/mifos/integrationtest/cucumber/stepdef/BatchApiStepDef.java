@@ -184,8 +184,10 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("Status of transaction is {string}")
     public void checkIfCreatedAtIsNotNull(String status) {
-        assertThat(scenarioScopeState.batchDTO).isNotNull();
-        assertThat(scenarioScopeState.batchDTO.getStatus()).isEqualTo(status);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            assertThat(scenarioScopeState.batchDTO).isNotNull();
+            assertThat(scenarioScopeState.batchDTO.getStatus()).isEqualTo(status);
+        });
     }
 
     @When("I call the batch details API with expected status of {int} with total {int} txns")
@@ -196,6 +198,7 @@ public class BatchApiStepDef extends BaseStepDef {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
             }
             requestSpec.queryParam("batchId", scenarioScopeState.batchId);
+            requestSpec.queryParam("pageSize", "20");
             logger.info("Calling with batch id : {}", scenarioScopeState.batchId);
 
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
