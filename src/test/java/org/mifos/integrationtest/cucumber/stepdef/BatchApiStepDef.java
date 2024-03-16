@@ -423,7 +423,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchRequestDTO).isNotNull();
         assertThat(batchRequestDTO.getCurrency()).isNotEmpty();
         assertThat(batchRequestDTO.getAmount()).isNotEmpty();
-        assertThat(batchRequestDTO.getSubType()).isNotEmpty();
+        assertThat(batchRequestDTO.getPaymentMode()).isNotEmpty();
         assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
         scenarioScopeState.batchRequestDTO = batchRequestDTO;
 
@@ -510,8 +510,9 @@ public class BatchApiStepDef extends BaseStepDef {
         BatchRequestDTO batchRequestDTO = new BatchRequestDTO();
         batchRequestDTO.setAmount("100");
         batchRequestDTO.setCurrency("USD");
-        batchRequestDTO.setSubType(paymentMode);
+        batchRequestDTO.setPaymentMode(paymentMode);
         batchRequestDTO.setDescriptionText("Integration test");
+        batchRequestDTO.setRequestId(UUID.randomUUID().toString());
         return batchRequestDTO;
     }
 
@@ -765,7 +766,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(batchRequestDTO).isNotNull();
         assertThat(batchRequestDTO.getCurrency()).isNotEmpty();
         assertThat(batchRequestDTO.getAmount()).isNotEmpty();
-        assertThat(batchRequestDTO.getSubType()).isNotEmpty();
+        assertThat(batchRequestDTO.getPaymentMode()).isNotEmpty();
         assertThat(batchRequestDTO.getCreditParty()).isNotEmpty();
         BaseStepDef.batchRequestDTO = batchRequestDTO;
 
