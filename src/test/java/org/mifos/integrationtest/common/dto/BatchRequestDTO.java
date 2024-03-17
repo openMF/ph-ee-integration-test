@@ -12,10 +12,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BatchRequestDTO {
 
+    String requestId;
+
     List<Party> creditParty;
     List<Party> debitParty;
 
-    String subType;
+    String paymentMode;
     String amount;
     String currency;
     String descriptionText;
