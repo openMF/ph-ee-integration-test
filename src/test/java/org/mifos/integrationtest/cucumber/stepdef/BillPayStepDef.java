@@ -132,6 +132,18 @@ public class BillPayStepDef extends BaseStepDef {
 
     }
 
+    @And("I can mock payment notification request with missing bill id")
+    public void iCanMockPaymentNotificationRequestwithMissingBillId() throws JsonProcessingException {
+        BillPaymentsReqDTO billPaymentsReqDTO = new BillPaymentsReqDTO();
+        billPaymentsReqDTO.setPaymentReferenceID(UUID.randomUUID().toString());
+        billPaymentsReqDTO.setClientCorrelationId(scenarioScopeState.clientCorrelationId);
+        billPaymentsReqDTO.setBillInquiryRequestId(scenarioScopeState.clientCorrelationId);
+        scenarioScopeState.inboundTransferReqP2G = billPaymentsReqDTO;
+        logger.info("inboundTransferReqP2G: {}", scenarioScopeState.inboundTransferReqP2G);
+        assertThat(scenarioScopeState.inboundTransferReqP2G).isNotNull();
+
+    }
+
     @When("I call the payment notification api expected status of {int} and callbackurl as {string}")
     public void iCallThePaymentNotificationApiExpectedStatusOf(int expectedStatus, String callbackurl) throws JSONException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
@@ -458,6 +470,17 @@ public class BillPayStepDef extends BaseStepDef {
             scenarioScopeState.transactionId = jsonObject.getString("error");
             assertThat(scenarioScopeState.transactionId
                     .equals("Invalid Request: Mandatory Fields Missing, Missing field is billInquiryRequestId")).isTrue();
+        });
+    }
+
+    @Then("I should be able to extract response body from callback for bill notification with missing bill id")
+    public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotificationWithMissingBillId() throws JSONException {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            assertThat(scenarioScopeState.transactionId
+                    .equals("Invalid Request: Mandatory Fields Missing, Missing field is billId")).isTrue();
         });
     }
 
