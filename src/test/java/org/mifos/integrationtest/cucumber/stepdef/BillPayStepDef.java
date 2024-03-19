@@ -637,4 +637,14 @@ public class BillPayStepDef extends BaseStepDef {
             }
         });
     }
+    @Then("I should be able to extract response body from callback for bill notification with empty bill id")
+    public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotificationWithEmptyBillId() throws JSONException {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            assertThat(scenarioScopeState.transactionId
+                    .equals("Invalid Request: Bill Id Empty")).isTrue();
+        });
+    }
 }
