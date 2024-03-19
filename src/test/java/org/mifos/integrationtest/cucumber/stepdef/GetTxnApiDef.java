@@ -51,7 +51,7 @@ public class GetTxnApiDef extends BaseStepDef {
     public void callTxnReqApiwithParams(int daydiff, String endDate, int expectedStatus) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         if("current date".equals(endDate)){
-            endDate = formatter.format(LocalDateTime.now());
+            endDate = formatter.format(LocalDateTime.now().plusDays(1));
         }
         String startDate = formatter.format(LocalDateTime.now().minusDays(daydiff));
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
