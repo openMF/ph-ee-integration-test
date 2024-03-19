@@ -455,7 +455,7 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            scenarioScopeState.transactionId = jsonObject.getString("error");
             assertThat(scenarioScopeState.transactionId
                     .equals("Invalid Request: Mandatory Fields Missing, Missing field is billInquiryRequestId")).isTrue();
         });
@@ -654,7 +654,7 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            scenarioScopeState.transactionId = jsonObject.getString("error");
             assertThat(scenarioScopeState.transactionId.equals("Invalid Request: Bill Id Empty")).isTrue();
         });
     }
