@@ -16,6 +16,9 @@ import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class GetTxnApiDef extends BaseStepDef {
 
     @Autowired
@@ -44,8 +47,13 @@ public class GetTxnApiDef extends BaseStepDef {
         assertThat(scenarioScopeState.response).containsMatch("clientCorrelationId");
     }
 
-    @When("I call the get txn API with date {string} and {string} expected status of {int}")
-    public void callTxnReqApiwithParams(String startDate, String endDate, int expectedStatus) {
+    @When("I call the get txn API with date today minus {int} day and {string} with expected status of {int}")
+    public void callTxnReqApiwithParams(int daydiff, String endDate, int expectedStatus) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        if("current date".equals(endDate)){
+            endDate = formatter.format(LocalDateTime.now());
+        }
+        String startDate = formatter.format(LocalDateTime.now().minusDays(daydiff));
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
