@@ -8,6 +8,8 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.CollectionHelper;
@@ -15,9 +17,6 @@ import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.CollectionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class GetTxnApiDef extends BaseStepDef {
 
@@ -50,8 +49,8 @@ public class GetTxnApiDef extends BaseStepDef {
     @When("I call the get txn API with date today minus {int} day and {string} with expected status of {int}")
     public void callTxnReqApiwithParams(int daydiff, String endDate, int expectedStatus) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-        if("current date".equals(endDate)){
-            endDate = formatter.format(LocalDateTime.now());
+        if ("current date".equals(endDate)) {
+            endDate = formatter.format(LocalDateTime.now().plusDays(1));
         }
         String startDate = formatter.format(LocalDateTime.now().minusDays(daydiff));
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
