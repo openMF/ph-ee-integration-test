@@ -155,11 +155,25 @@ Feature: Bill Payment P2G Test
     And I have bill id as "001"
     And I generate clientCorrelationId
     And I can mock payment notification request with missing values
-    When I call the payment notification api expected status of 404 and callbackurl as "/billNotificationMissing"
+    When I call the payment notification api expected status of 400 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
     And I should get transactionId in response
 #    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill notification with missing values
+
+
+  Scenario: BP-003A Bill Payments API fails due to empty bill id (PFI to PBB)
+    Given I can inject MockServer
+    And I can start mock server
+    And I can register the stub with "/billNotificationIdMissing" endpoint for "POST" request with status of 200
+    Given I have tenant as "paymentBB2"
+    And I generate clientCorrelationId
+    And I can mock payment notification request
+    When I call the payment notification api expected status of 404 and callbackurl as "/billNotificationIdMissing"
+    Then I should get non empty response
+    And I should get transactionId in response
+#    And I will sleep for 5000 millisecond
+    Then I should be able to extract response body from callback for bill notification with empty bill id
 
   @gov
   Scenario: BP-004A Bill Payments API fails due to bill already marked paid (PFI to PBB)
