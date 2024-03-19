@@ -479,8 +479,8 @@ public class BillPayStepDef extends BaseStepDef {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             scenarioScopeState.transactionId = jsonObject.getString("transactionId");
-            assertThat(scenarioScopeState.transactionId
-                    .equals("Invalid Request: Mandatory Fields Missing, Missing field is billId")).isTrue();
+            assertThat(scenarioScopeState.transactionId.equals("Invalid Request: Mandatory Fields Missing, Missing field is billId"))
+                    .isTrue();
         });
     }
 
