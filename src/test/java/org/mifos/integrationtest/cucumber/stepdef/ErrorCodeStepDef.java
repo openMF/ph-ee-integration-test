@@ -358,29 +358,24 @@ public class ErrorCodeStepDef extends BaseStepDef {
 
     @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String endPoint = operationsAppConfig.transfersEndpoint;
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
         requestSpec.queryParam("transactionId", transactionId);
-        logger.info("Transfer query Response: {}", endPoint);
+        logger.info("Endpoint: {}", endPoint);
         logger.info("TxnId : {}", transactionId);
-        int retryCount = 0;
-        String status = null;
-        while (status == null && retryCount < maxRetryCount) {
-            try {
-                iWillSleepForSecs(retryInterval);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
 
-            logger.info("Transfer query Response: {}", scenarioScopeState.response);
-            status = checkForStatus();
-            retryCount++;
-        }
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
+        logger.info("Transfer query Response: {}", scenarioScopeState.response);
+        assertThat(scenarioScopeState.response).isNotNull();
+        String status = checkForStatus();
+        logger.info("Status: {}",status);
+        assertThat(status).isNotNull();
+        });
     }
 
     @When("I can create GSMATransferDTO with different payer and payee")
