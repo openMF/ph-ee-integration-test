@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
@@ -29,16 +31,18 @@ public class GetTxnApiDef extends BaseStepDef {
 
     @When("I call the get txn API with expected status of {int}")
     public void callTxnReqApi(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
-
-        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
+            assertThat(scenarioScopeState.response).isNotNull();
+            logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+        });
     }
 
     @And("I should have clientCorrelationId in response")
