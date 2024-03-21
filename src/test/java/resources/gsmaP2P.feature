@@ -1,7 +1,7 @@
 @amsIntegration @govtodo
 Feature: GSMA Outbound Transfer test
 
-  Scenario: GSMA Withdrawal Transfer testx (Payer Debit only)
+  Scenario: GOT-001 GSMA Withdrawal Transfer testx (Payer Debit only)
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
@@ -31,7 +31,7 @@ Feature: GSMA Outbound Transfer test
     Given I have tenant as "payerfsp"
     Then I call the balance api for payer balance after debit
 
-  Scenario: GSMA Deposit Transfer test
+  Scenario: GOT-002 GSMA Deposit Transfer test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
@@ -57,7 +57,7 @@ Feature: GSMA Outbound Transfer test
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee balance after credit
 
-  Scenario: GSMA Deposit-Withdrawal Transfer test
+  Scenario: GOT-003 GSMA Deposit-Withdrawal Transfer test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
     When I call the create payer client endpoint
@@ -91,7 +91,7 @@ Feature: GSMA Outbound Transfer test
     Then I call the balance api for payee balance after credit
 
   @batch-teardown
-  Scenario: Bulk Transfer with GSMA
+  Scenario: GOV-004 Bulk Transfer with GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "1" and account balance of 100

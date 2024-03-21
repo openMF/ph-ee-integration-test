@@ -1,12 +1,12 @@
 @amsIntegration
 Feature: GSMA Transfer API Test for Account Identifier Worker
 
-  Background: I will start mock server and register stub
+  Background: GAC-001 I will start mock server and register stub
     Given I will start the mock server
     And I can register the stub with "/depositCallback" endpoint for "POST" request with status of 200
     And I can register the stub with "/loanCallback" endpoint for "POST" request with status of 200
 
-  Scenario: Savings account Creation Test
+  Scenario: GAC-002 Savings account Creation Test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
@@ -22,7 +22,7 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     Then I should be able to verify that the "POST" method to "/depositCallback" endpoint received 1 request
 
 
-  Scenario: Loan account Creation Test
+  Scenario: GAC-003 Loan account Creation Test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     And I call the create loan product endpoint
     When I call the create loan account
@@ -36,8 +36,8 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     Then I should be able to verify that the "POST" method to "/loanCallback" endpoint received 1 request
 
 # AMS Mock API call integration test
-  Scenario: AMS Mifos Deposit Mock API Call Test
+  Scenario: AM-001 AMS Mifos Deposit Mock API Call Test
     When I call the AMS Mifos Deposit Mock API with expected status of 200
 
-  Scenario: AMS Mifos Loan Repayment Mock API Call Test
+  Scenario: AM-002 AMS Mifos Loan Repayment Mock API Call Test
     When I call the AMS Mifos Loan Repayment Mock API with expected status of 200

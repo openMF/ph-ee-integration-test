@@ -231,14 +231,14 @@ Feature: Identity Account Mapper Api Test
     And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with validation
 
 
-  Scenario: Fetch Beneficiaries API Test
+  Scenario: FB-001 Fetch Beneficiaries API Test
     Given I create an IdentityMapperDTO for Register Beneficiary
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
 #    And I will sleep for 3000 millisecond
     Then I will call the fetch beneficiary API with expected status of 200
     And I will assert the fields from fetch beneficiary response
 
-  Scenario: Batch Account Lookup Integration Test
+  Scenario: BAL-001 Batch Account Lookup Integration Test
     Given I create an IdentityMapperDTO for Register Beneficiary from csv file
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
 #    And I will sleep for 3000 millisecond

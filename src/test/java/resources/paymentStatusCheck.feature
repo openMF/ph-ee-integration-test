@@ -1,7 +1,7 @@
 @govToDo
 Feature: Payment Status Check API
 
-  Scenario: Component Test for Payment Status Check API
+  Scenario: PS-001 Component Test for Payment Status Check API
     Given I have tenant as "rhino"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO
@@ -21,7 +21,7 @@ Feature: Payment Status Check API
     And I should have startedAt and completedAt in response
     And I should have PayerFspId as not null
 
-  Scenario: Integration Test for Payment Status Check API with batch transactions
+  Scenario: PS-002 Integration Test for Payment Status Check API with batch transactions
     Given I have tenant as "rhino"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId

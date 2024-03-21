@@ -1,7 +1,7 @@
 @gov
 Feature: Voucher Management Api Test
 
-   Scenario: Create Voucher Api Test
+   Scenario: VC-001 Create Voucher Api Test
      When I can inject MockServer
      Then I can start mock server
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
@@ -11,7 +11,7 @@ Feature: Voucher Management Api Test
      Then I should be able to extract response body from callback
 
   @createVoucher
-  Scenario: Activate Voucher Api Test
+  Scenario: VA-001 Activate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher activation
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
@@ -19,7 +19,7 @@ Feature: Voucher Management Api Test
     Then I should be able to assert response body from callback on "/activateVoucher"
 
   @createAndActivateVoucher
-  Scenario: Redeem Voucher Api Test
+  Scenario: VR-001 Redeem Voucher Api Test
     Given I can create an RedeemVoucherRequestDTO for voucher redemption
     When I call the redeem voucher API with expected status of 200
     Then I can assert that redemption was successful by asserting the status in response
@@ -39,7 +39,7 @@ Feature: Voucher Management Api Test
 #    Then I will sleep for 2000 millisecond
 
   @createAndActivateVoucher @redeemVoucherSuccess
-  Scenario: Reactivate Voucher Api Test
+  Scenario: VRA-001 Reactivate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
@@ -49,20 +49,20 @@ Feature: Voucher Management Api Test
 #    Then I will sleep for 2000 millisecond
 
   @createAndActivateVoucher
-  Scenario: Validity Check Voucher Api Test
+  Scenario: VVC-001 Validity Check Voucher Api Test
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
     And I call the validity check API with expected status of 202 and stub "/validity"
 #    And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
 
   @createAndActivateVoucher
-  Scenario: Fetch Voucher Api Test
+  Scenario: VF-001 Fetch Voucher Api Test
 #    When I will sleep for 3000 millisecond
     Then I will call the fetch voucher API with expected status of 200
     And I will assert the fields from fetch voucher response
     And I can stop mock server
 
-  Scenario: VC-001,002,003,004,005 Error Validity check for Create Voucher API for negative request body
+  Scenario: VC-002,003,004,005 Error Validity check for Create Voucher API for negative request body
     Given I can create an negative VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response

@@ -2,7 +2,7 @@
 Feature: Operations APP related feature
 
   @ops-batch-setup @ops-batch-teardown
-  Scenario: Batches API no filter test
+  Scenario: OB-001 Batches API no filter test
     Given I have tenant as "paymentBB2"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
@@ -11,7 +11,7 @@ Feature: Operations APP related feature
     And I am able to parse batch paginated response into DTO
 
   @ops-batch-setup @ops-batch-teardown
-  Scenario: Batches API batchId filter test
+  Scenario: OB-002 Batches API batchId filter test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
     And I have the registeringInstituteId "123"
@@ -37,7 +37,7 @@ Feature: Operations APP related feature
   # assert single batch is returned
   # set offset to 1 and limit to 1
   @ops-batch-setup @ops-batch-teardown
-  Scenario: Batches API pagination test
+  Scenario: OB-003 Batches API pagination test
     # Batch 1 call
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
@@ -76,7 +76,7 @@ Feature: Operations APP related feature
   # calculate endTime
   # query using startTime and endTime ->> then I should get 5 txn
   @ops-batch-setup @ops-batch-teardown
-  Scenario: Batches API date filter test
+  Scenario: OB-004 Batches API date filter test
 #    Given I will sleep for 5000 millisecond
     And I have tenant as "paymentBB2"
     And I store this time as start time

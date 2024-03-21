@@ -2,7 +2,7 @@
 Feature: Authentication test for services routed through kong & keycloak
 
   @keycloak-user-setup @keycloak-user-teardown @kong-teardown
-  Scenario: Unauthorized channel-connector test
+  Scenario: UAC-001 Unauthorized channel-connector test
     Given I have tenant as "paymentBB2"
     And I can mock TransactionChannelRequestDTO
     And I register channel service using config
@@ -12,7 +12,7 @@ Feature: Authentication test for services routed through kong & keycloak
     Then I should get non empty response
 
   @keycloak-user-setup @keycloak-user-teardown @kong-teardown
-  Scenario: Authorized channel-connector test
+  Scenario: AC-001 Authorized channel-connector test
     Given I have tenant as "paymentBB2"
     And I can mock TransactionChannelRequestDTO
     And I register channel service using config
