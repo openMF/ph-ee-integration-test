@@ -5,7 +5,7 @@ Feature: DPGA API test
     When I make a call to nc server health API with expected status 200
     Then I get the value of Healthy as true in response
 
-  Scenario: dpga transfer api test with ams withdrawal verification
+  Scenario: DT-001 dpga transfer api test with ams withdrawal verification
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint

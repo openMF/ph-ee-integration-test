@@ -1,6 +1,6 @@
 Feature: Inbound transaction test
 
-  Scenario: Payer inbound transfer request
+  Scenario: IBT-001 Payer inbound transfer request
     Given I can mock TransactionChannelRequestDTO
     And I have tenant as "gorilla"
     When I call the inbound transfer endpoint with expected status of 200

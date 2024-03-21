@@ -1,7 +1,7 @@
 @gov
 Feature: Test ability to make payment to individual with bank account
 
-  Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
+  Scenario: PBS-001 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
