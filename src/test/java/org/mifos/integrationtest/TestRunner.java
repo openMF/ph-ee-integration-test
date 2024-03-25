@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 //        "junit:build/cucumber.xml" })
 
 @RunWith(Courgette.class)
-@CourgetteOptions(threads = 4, runLevel = CourgetteRunLevel.FEATURE, rerunFailedScenarios = false,
+@CourgetteOptions(threads = 3, runLevel = CourgetteRunLevel.FEATURE, rerunFailedScenarios = false,
         testOutput = CourgetteTestOutput.CONSOLE,
 
         reportTitle = "Paymenthub Test results", reportTargetDir = "build", cucumberOptions = @CucumberOptions(features = "src/test/java/resources", glue = "org.mifos.integrationtest.cucumber", tags = "@gov", publish = true, plugin = {
