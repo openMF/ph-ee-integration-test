@@ -156,7 +156,7 @@ jobs:
       NAMESPACE: paymenthub
     steps:
       - setup_remote_docker:
-          version: 20.10.14
+          version: 20.10.24
       - kubernetes/install-kubectl
       - run: git clone https://github.com/openmf/ph-ee-env-labs
       - aws-eks/update-kubeconfig-with-authenticator:
@@ -231,9 +231,9 @@ jobs:
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
       - store_artifacts:
-          path: build/test-results
+          path: build/courgette-report
   test-chart-ams:
     docker:
       - image: cimg/openjdk:17.0.0
@@ -264,13 +264,13 @@ jobs:
             export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
             echo -n "Public url ."
             echo $CALLBACK_URL
-            ./gradlew test -Dcucumber.filter.tags="@amsIntegration"
+            ./gradlew test -Dcucumber.tags="@amsIntegration"
             echo -n "Test execution is completed, kill ngrok"
             pkill ngrok
       - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+          path: build/test-results/test/TEST-courgette.api.junit.Courgette.xml
       - store_artifacts:
-          path: build/test-results
+          path: build/courgette-report
 workflows:
   deploy:
     jobs:
