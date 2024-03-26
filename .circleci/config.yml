@@ -298,7 +298,9 @@ workflows:
             - build_and_push_latest_image
       - create-secret-paymenthub-namespace:
           requires:
-            - docker-image-availability-check-and-upgrade
+            - build
+            - build_and_push_tag_image
+            - build_and_push_latest_image
           context:
             - AWS
             - Helm
