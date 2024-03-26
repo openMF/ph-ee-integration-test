@@ -18,7 +18,7 @@ public class ValidateTxnDef extends BaseStepDef {
         }
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{").append("\"payer\": {").append("\"partyIdInfo\": {").append("\"partyIdType\": \"MSISDN\",")
-                .append("\"partyIdentifier\": \"277101019bbv\"").append("}},").append("\"payee\": {").append("\"partyIdInfo\": {")
+                .append("\"partyIdentifier\": \"2771bbv\"").append("}},").append("\"payee\": {").append("\"partyIdInfo\": {")
                 .append("\"partyIdType\": \"MSISDN\",").append("\"partyIdentifier\": \"27710102999\"").append("}},").append("\"amount\": {")
                 .append("\"amount\": 230,").append("\"currency\": \"TZS\"").append("}}");
         String json = jsonBuilder.toString();
