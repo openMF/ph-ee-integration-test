@@ -1,4 +1,4 @@
-@gov
+@voucher
 Feature: Voucher Management Api Test
 
    Scenario: Create Voucher Api Test
@@ -27,7 +27,7 @@ Feature: Voucher Management Api Test
   @createAndActivateVoucher @redeemVoucherFailure
   Scenario: VR-006 Cancel Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher cancellation
-    And I can register the stub with "/cancelVoucher" endpoint for "PUT" request with status of 200
+    And I can register the stub with "/cancelVoucher" endpoint for "POST" request with status of 200
     When I call the cancel voucher API with expected status of 202 and stub "/cancelVoucher"
 #    Then I will sleep for 3000 millisecond
 

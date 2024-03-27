@@ -301,7 +301,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .queryParam("command", "redeem").header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
                 .header("X-CallbackURL", "").header("X-Program-ID", "").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.redeemVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build())
-                .when().put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+                .when().post(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         scenarioScopeState.redeemVoucherResponseBody = scenarioScopeState.response;
         logger.info("Redeem Voucher Response: {}", scenarioScopeState.response);
