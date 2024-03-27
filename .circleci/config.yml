@@ -296,29 +296,29 @@ workflows:
             - build
             - build_and_push_tag_image
             - build_and_push_latest_image
-      - create-secret-paymenthub-namespace:
-          requires:
-            - build
-            - build_and_push_tag_image
-            - build_and_push_latest_image
-          context:
-            - AWS
-            - Helm
-            - slack
-            - Secrets
+#      - create-secret-paymenthub-namespace:
+#          requires:
+#            - build
+#            - build_and_push_tag_image
+#            - build_and_push_latest_image
+#          context:
+#            - AWS
+#            - Helm
+#            - slack
+#            - Secrets
       # - install-helm-chart:
       #     cluster-name: sit
       # - delete-helm-release:
       #     cluster-name: sit
       #     requires:
       #       - install-helm-chart
-      - deploying-bpmns:
-          requires:
-            - create-secret-paymenthub-namespace
-          context:
-            - AWS
-            - Helm
-            - slack
+#      - deploying-bpmns:
+#          requires:
+#            - create-secret-paymenthub-namespace
+#          context:
+#            - AWS
+#            - Helm
+#            - slack
 #      - test-chart-ams:
 #          requires:
 #            - deploying-bpmns
@@ -329,7 +329,9 @@ workflows:
 #            - Ngrok
       - test-chart-gov:
           requires:
-            - deploying-bpmns
+            - build
+            - build_and_push_tag_image
+            - build_and_push_latest_image
           context:
             - AWS
             - Helm
