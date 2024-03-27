@@ -410,10 +410,10 @@ public class ErrorCodeStepDef extends BaseStepDef {
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             JSONArray content = jsonObject.getJSONArray("content");
             if (content.getJSONObject(0).has("errorInformation")) {
-                throw new RuntimeException(content.toString());
-//                JSONObject errorInformation = new JSONObject(content.getJSONObject(0).getString("errorInformation"));
-//
-//                status = errorInformation.getString("errorDescription");
+//                throw new RuntimeException(content.toString());
+                JSONObject errorInformation = new JSONObject(String.valueOf(content.getJSONObject(0).getJSONObject("errorInformation")));
+                logger.info("errorInformation: {}",errorInformation);
+                status = errorInformation.getString("errorDescription");
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
