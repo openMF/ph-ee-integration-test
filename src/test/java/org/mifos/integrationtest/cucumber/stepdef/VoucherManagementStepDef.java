@@ -175,7 +175,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .queryParam("command", "cancel").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.cancelVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+                .post(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
