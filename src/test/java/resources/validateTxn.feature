@@ -1,4 +1,4 @@
-@gov
+@govtest
  Feature: Validate Txn Data
 
  Scenario: VT-001 GSMA Transfer Api Payer Invalid Test
