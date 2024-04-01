@@ -491,7 +491,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
                 verify(putRequestedFor(urlEqualTo(endpoint))
-                        .withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(scenarioScopeState.requestId))));
+                        .withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(scenarioScopeState.requestId))));
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);// success
             } catch (VerificationException e) {
