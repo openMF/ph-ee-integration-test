@@ -173,8 +173,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);
             } catch (VerificationException e) {
                 assertTrue(false);// failure
@@ -186,7 +186,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
                 assertTrue(true);
             } catch (VerificationException e) {
                 assertTrue(false);
@@ -356,7 +356,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             throws JsonProcessingException {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);
@@ -530,7 +530,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSuccessfullRegistration(String httpMethod, String stub) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);

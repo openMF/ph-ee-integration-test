@@ -2,6 +2,7 @@
 Feature: Identity Account Mapper Api Test
 
   Background: I will start mock server and register stub
+    Given I will assign a port to mock server
     Given I will start the mock server
     And I can register the stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
     And I can register the stub with "/addPaymentModalityApiTest" endpoint for "PUT" request with status of 200

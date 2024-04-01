@@ -2,6 +2,7 @@
 Feature: Voucher Management Api Test
 
    Scenario: Create Voucher Api Test
+     Given I will assign a port to mock server
      When I can inject MockServer
      Then I can start mock server
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
@@ -60,7 +61,7 @@ Feature: Voucher Management Api Test
 #    When I will sleep for 3000 millisecond
     Then I will call the fetch voucher API with expected status of 200
     And I will assert the fields from fetch voucher response
-    And I can stop mock server
+
 
   Scenario: VC-001,002,003,004,005 Error Validity check for Create Voucher API for negative request body
     Given I can create an negative VoucherRequestDTO for voucher creation
@@ -79,8 +80,8 @@ Feature: Voucher Management Api Test
 
   @Ignore
   Scenario: Create a csv file for voucher number and voucher serial number
-    When I can inject MockServer
-    Then I can start mock server
+
     And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
+    And I can stop mock server

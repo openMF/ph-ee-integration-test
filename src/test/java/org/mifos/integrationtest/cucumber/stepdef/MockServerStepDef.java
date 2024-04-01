@@ -14,11 +14,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -30,12 +33,13 @@ import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class MockServerStepDef extends BaseStepDef {
 
     private static Boolean wiremockStarted = false;
+    private static final AtomicInteger portCounter = new AtomicInteger(53013);
 
-    @Value("${mock-server.port}")
-    private int mockServerPortFromConfig;
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
@@ -45,7 +49,7 @@ public class MockServerStepDef extends BaseStepDef {
     @Then("I should be able to get instance of mock server")
     public void getInstanceOfMockServer() throws InterruptedException {
         assertThat(mockServer.getMockServer()).isNotNull();
-        assertThat(mockServer.getMockServer().port()).isEqualTo(mockServerPortFromConfig);
+        assertThat(mockServer.getMockServer().port()).isEqualTo(scenarioScopeState.mockServerPort);
     }
 
     @ParameterType(name = "httpMethod", value = ".*")
@@ -59,16 +63,17 @@ public class MockServerStepDef extends BaseStepDef {
     public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
-                stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+                mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case POST -> {
-                stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                //configureFor("localhost",4040);
             }
             case PUT -> {
-                stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
@@ -99,16 +104,16 @@ public class MockServerStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
-                    verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+                    mockServer.getMockServer().verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
                 }
                 case POST -> {
-                    verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+                    mockServer.getMockServer().verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
                 }
                 case PUT -> {
-                    verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+                    mockServer.getMockServer().verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
                 }
                 case DELETE -> {
-                    verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+                    mockServer.getMockServer().verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
         });
@@ -117,7 +122,7 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can start mock server")
     public void startMockServer() {
         mockServer.getMockServer().start();
-        configureFor("localhost", mockServer.getMockServer().port());
+        configureFor( scenarioScopeState.mockServerPort);
     }
 
     @And("I can stop mock server")
@@ -145,4 +150,11 @@ public class MockServerStepDef extends BaseStepDef {
     public void iWillUpdateTheMockServerAndRegisterStubAsDone() {
         wiremockStarted = true;
     }
+
+    @Given("I will assign a port to mock server")
+    public void iWillAssignAPortToMockServer() {
+        int port = portCounter.getAndIncrement();
+        scenarioScopeState.mockServerPort = port;
+    }
+
 }

@@ -189,7 +189,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPay() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -229,7 +229,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillNotification() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -291,7 +291,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -336,7 +336,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillerUnidentified() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -372,7 +372,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillInvalid() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -415,7 +415,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForEmptyBillId() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -465,7 +465,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillAlreadyPaid() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -512,7 +512,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldNotBeAbleToExtractResponseBodyFromCallbackForBill() {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             if (allServeEvents.isEmpty()) {
                 flag = true;
             } else {
@@ -532,7 +532,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBillPaidAfterTimeout() {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -623,7 +623,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {

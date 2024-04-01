@@ -44,6 +44,7 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the deposit with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
+    Given I will assign a port to mock server
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of quotation

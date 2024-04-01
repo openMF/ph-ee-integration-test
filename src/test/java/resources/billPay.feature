@@ -4,6 +4,7 @@ Feature: Bill Payment P2G Test
   @gov
    #this is an integration for bill inquiry stage w/o rtp, includes bill inquiry api only from PFI to PBB to Bill Agg and back
   Scenario: BI-001 Bill Inquiry API for orchestration (PFI to PBB)
+    Given I will assign a port to mock server
     Given I can inject MockServer
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
@@ -19,8 +20,6 @@ Feature: Bill Payment P2G Test
   @gov
         #this is an integration for payment notification, includes api calls from PFI to PBB to Bill Agg and back (tests full flow)
   Scenario: BP-001 Bill Payments API for orchestration (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billNotification" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have bill id as "001"
@@ -35,8 +34,7 @@ Feature: Bill Payment P2G Test
 
     #this is an integration for bill inquiry stage w/o rtp, includes bill inquiry api and payment notification from PFI to PBB to Bill Agg and back
   Scenario: Bill Inquiry API for orchestration (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
+
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     And I can register the stub with "/billNotification" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
@@ -80,8 +78,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-001 RTP Integration test
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/test" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
@@ -94,8 +90,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BI-002 Bill Inquiry API for orchestration fails due to invalid prefix (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -108,8 +102,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BI-003A: Bill Inquiry API for orchestration fails due to invalid bill (PBB TO BA)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -122,8 +114,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BI-003B: Bill Inquiry API for orchestration fails due to payer fsp not onboarded (PFI TO PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billInquiryInvalid" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -134,8 +124,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BI-004: Bill Inquiry API for orchestration fails due to empty bill (PBB TO BA)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billInquiryEmpty" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -148,8 +136,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BP-003 Bill Payments API fails due to mandatory fields missing (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billNotificationMissing" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have bill id as "001"
@@ -163,8 +149,6 @@ Feature: Bill Payment P2G Test
 
 
   Scenario: BP-003A Bill Payments API fails due to empty bill id (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billNotificationIdMissing" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I generate clientCorrelationId
@@ -177,8 +161,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BP-004A Bill Payments API fails due to bill already marked paid (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billNotificationPaid" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have bill id as "003"
@@ -193,8 +175,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: BP-004B Bill Payments API fails due to bill marked as paid after a timeout (PFI to PBB)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/billNotificationsTimeout" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have bill id as "005"
@@ -262,9 +242,6 @@ Feature: Bill Payment P2G Test
 
   @gov
   Scenario: RTP-008 Request to Pay is unsuccessful because the specified account of the Payer FI was unreachable - did not respond (Txn timed out)
-
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/payerUnreachable" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
@@ -278,8 +255,6 @@ Feature: Bill Payment P2G Test
   @gov
   Scenario: RTP-009 Request to Pay is unsuccessful because the Payer FSP is unable to debit amount (insufficient amount/ blocked account/ account hold etc)
   (Payer FSP declines)
-    Given I can inject MockServer
-    And I can start mock server
     And I can register the stub with "/debitFailed" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
