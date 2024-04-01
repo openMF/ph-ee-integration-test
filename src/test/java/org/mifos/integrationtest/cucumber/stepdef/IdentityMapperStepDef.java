@@ -1,7 +1,6 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -173,8 +172,10 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+                mockServer.getMockServer().verify(
+                        putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                mockServer.getMockServer().verify(
+                        putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);
             } catch (VerificationException e) {
                 assertTrue(false);// failure
@@ -186,7 +187,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
+                mockServer.getMockServer().verify(
+                        putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
                 assertTrue(true);
             } catch (VerificationException e) {
                 assertTrue(false);
