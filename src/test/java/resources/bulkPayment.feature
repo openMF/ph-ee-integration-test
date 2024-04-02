@@ -123,7 +123,7 @@ Feature: Test ability to make payment to individual with bank account
 
     Then add last row to csv with current payer and payee, payment mode as "closedloop" and transfer amount 1 and id 5
     #batch process
-    Given I have tenant as "payerfsp"
+    Given I have tenant as "paymentbb1"
     And I have the demo csv file "batchTransactionGsmaClosedLoop.csv"
     And I generate clientCorrelationId
     And I have private key
