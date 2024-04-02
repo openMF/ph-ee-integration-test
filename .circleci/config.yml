@@ -319,7 +319,7 @@ workflows:
             - slack
       - test-chart-ams:
           requires:
-            - deploying-bpmns
+            - test-chart-gov
           context:
             - AWS
             - Helm
@@ -327,7 +327,7 @@ workflows:
             - Ngrok
       - test-chart-gov:
           requires:
-            - test-chart-ams
+            - deploying-bpmns
           context:
             - AWS
             - Helm
