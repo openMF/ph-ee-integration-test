@@ -527,6 +527,20 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
+    @Then("add row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int} for combine test cases")
+    public void addRowToCsvFileForCombinedTestCases(String paymentMode, int transferAmount, int id) throws IOException {
+
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addRow(filePath, row);
+        scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
+        if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null) {
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[7];
+        }
+        scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
+    }
+
     @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
@@ -559,6 +573,32 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         } else if (client.equals("payee")) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null) {
                 scenarioScopeState.initialBalForPayeeForBatch = new int[4];
+            }
+            scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
+        }
+    }
+
+    @When("I create and setup a {string} with id {string} and account balance of {int} for combine test cases")
+    public void consolidatedPayeeCreationStepsForCombinedTestsCases(String client, String id, int amount) throws JsonProcessingException {
+        setTenantForPayer(client);
+        callCreateClientEndpoint(client);
+        callCreateSavingsProductEndpoint(client);
+        callCreateSavingsAccountEndpoint(client);
+        callCreateInteropIdentifierEndpoint(client);
+        callApproveSavingsEndpoint("approve", client);
+        callSavingsActivateEndpoint("activate", client);
+        callDepositAccountEndpoint("deposit", amount, client);
+        if (client.equals("payer")) {
+            if (scenarioScopeState.initialBalForPayerForBatch == null) {
+                scenarioScopeState.initialBalForPayerForBatch = new int[7];
+            }
+            scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
+
+        } else if (client.equals("payee")) {
+            if (scenarioScopeState.initialBalForPayeeForBatch == null) {
+                scenarioScopeState.initialBalForPayeeForBatch = new int[7];
             }
             scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
