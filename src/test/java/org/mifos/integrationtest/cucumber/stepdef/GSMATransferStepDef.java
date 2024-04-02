@@ -698,7 +698,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         if (scenarioScopeState.payeeIdentifierforBatch == null) {
-            scenarioScopeState.payeeIdentifierforBatch = new String[7];
+            scenarioScopeState.payeeIdentifierforBatch = new String[9];
         }
         scenarioScopeState.payeeIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payeeIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
@@ -758,7 +758,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
         if (scenarioScopeState.payerIdentifierforBatch == null) {
-            scenarioScopeState.payerIdentifierforBatch = new String[7];
+            scenarioScopeState.payerIdentifierforBatch = new String[9];
         }
         scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payerIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");

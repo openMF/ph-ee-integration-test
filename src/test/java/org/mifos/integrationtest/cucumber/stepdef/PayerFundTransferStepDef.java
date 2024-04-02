@@ -536,7 +536,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         csvHelper.addRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
         if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null) {
-            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[7];
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[9];
         }
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
@@ -591,14 +591,14 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         callDepositAccountEndpoint("deposit", amount, client);
         if (client.equals("payer")) {
             if (scenarioScopeState.initialBalForPayerForBatch == null) {
-                scenarioScopeState.initialBalForPayerForBatch = new int[7];
+                scenarioScopeState.initialBalForPayerForBatch = new int[9];
             }
             scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
 
         } else if (client.equals("payee")) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null) {
-                scenarioScopeState.initialBalForPayeeForBatch = new int[7];
+                scenarioScopeState.initialBalForPayeeForBatch = new int[9];
             }
             scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
