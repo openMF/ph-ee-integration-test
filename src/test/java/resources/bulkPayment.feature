@@ -88,7 +88,7 @@ Feature: Test ability to make payment to individual with bank account
 
     Then add row to csv with current payer and payee, payment mode as "gsma" and transfer amount 5 and id 2 for combine test cases
 
-        #payer 2 creation
+        #payer 4 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "4" and account balance of 50 for combine test cases
     Given I have tenant as "payerfsp"
@@ -100,7 +100,7 @@ Feature: Test ability to make payment to individual with bank account
 
     Then add row to csv with current payer and payee, payment mode as "closedloop" and transfer amount 5 and id 3 for combine test cases
 
-        #payer 2 creation
+        #payer 5 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "5" and account balance of 50 for combine test cases
     Given I have tenant as "payerfsp"
@@ -111,7 +111,7 @@ Feature: Test ability to make payment to individual with bank account
     Then I call the balance api for payee "5" balance for combine test cases
 
     Then add row to csv with current payer and payee, payment mode as "closedloop" and transfer amount 5 and id 4 for combine test cases
-    #payer 3 creation
+    #payer 6 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "6" and account balance of 30 for combine test cases
     Given I have tenant as "payerfsp"
@@ -121,7 +121,7 @@ Feature: Test ability to make payment to individual with bank account
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee "6" balance for combine test cases
 
-    Then add last row to csv with current payer and payee, payment mode as "gsma" and transfer amount 1 and id 5
+    Then add last row to csv with current payer and payee, payment mode as "closedloop" and transfer amount 1 and id 5
     #batch process
     Given I have tenant as "payerfsp"
     And I have the demo csv file "batchTransactionGsmaClosedLoop.csv"
