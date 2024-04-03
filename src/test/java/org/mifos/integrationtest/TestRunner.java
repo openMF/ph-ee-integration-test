@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
                 "html:cucumber-report", "json:cucumber.json", "pretty", "html:build/cucumber-report.html",
                 "json:build/cucumber-report.json", "junit:build/cucumber.xml" }))
 public class TestRunner {
+
     private static WireMockServer wireMockServer;
 
     @BeforeClass

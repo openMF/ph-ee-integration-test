@@ -1,17 +1,12 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -58,30 +53,22 @@ public class MockServerStepDef extends BaseStepDef {
     public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
-                wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo(endpoint))
-                        .willReturn(WireMock.aResponse()
-                                .withStatus(200)));
-                //mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
+                // mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
 
             }
             case POST -> {
-                wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(endpoint))
-                        .willReturn(WireMock.aResponse()
-                                        .withStatus(200)));
-                //mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
+                // mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
                 // configureFor("localhost",4040);
             }
             case PUT -> {
-                wireMockServer.stubFor(WireMock.put(WireMock.urlEqualTo(endpoint))
-                        .willReturn(WireMock.aResponse()
-                                .withStatus(200)));
-                //mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.put(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
+                // mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint))
-                        .willReturn(WireMock.aResponse()
-                                .withStatus(200)));
-                //mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
+                // mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
