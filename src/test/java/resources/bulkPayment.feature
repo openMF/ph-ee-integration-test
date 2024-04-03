@@ -25,7 +25,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
+  Scenario: Bulk Transfer with ClosedLoop and Mojaloop
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment_closedl_mock_mojaloop.csv"
     And I create a list of payee identifiers from csv file
