@@ -2,8 +2,8 @@
 Feature: Identity Account Mapper Api Test
 
   Background: I will start mock server and register stub
-    //Given I will assign a port to mock server
-   // Given I will start the mock server
+    #Given I will assign a port to mock server
+   # Given I will start the mock server
     And I can register the stub with "/registerBeneficiaryApiTest" endpoint for "PUT" request with status of 200
     And I can register the stub with "/addPaymentModalityApiTest" endpoint for "PUT" request with status of 200
     And I can register the stub with "/updatePaymentModalityApiTest" endpoint for "PUT" request with status of 200
@@ -298,7 +298,7 @@ Feature: Identity Account Mapper Api Test
     When I call the update beneficiary API with expected status of 202 and stub "/updateBeneficiaryApiTest"
 #    Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/updateBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
-    //And I can stop mock server
+    #And I can stop mock server
 
 
 

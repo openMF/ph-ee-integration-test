@@ -2,8 +2,8 @@
 Feature: GSMA Transfer API Test for Account Identifier Worker
 
   Background: I will start mock server and register stub
-    //Given I will assign a port to mock server
-    //Given I will start the mock server
+    #Given I will assign a port to mock server
+    #Given I will start the mock server
     And I can register the stub with "/depositCallback" endpoint for "POST" request with status of 200
     And I can register the stub with "/loanCallback" endpoint for "POST" request with status of 200
 

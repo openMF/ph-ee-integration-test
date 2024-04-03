@@ -5,9 +5,9 @@ Feature: Test ability to make payment to individual with bank account
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
-    //Given I will assign a port to mock server
-    //When I can inject MockServer
-    //Then I can start mock server
+    #Given I will assign a port to mock server
+    #When I can inject MockServer
+    #Then I can start mock server
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering beneficiary
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"

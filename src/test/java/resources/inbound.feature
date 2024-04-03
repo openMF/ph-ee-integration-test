@@ -9,9 +9,9 @@ Feature: Inbound transaction test
 
   Scenario: IAM-005 Bulk Processor Inbound Integration Test
     When I create an IdentityMapperDTO for registering beneficiary with "gorilla" as DFSPID
-   // Given I will assign a port to mock server
-    //Then I can inject MockServer
-   // And I can start mock server
+   # Given I will assign a port to mock server
+    #Then I can inject MockServer
+   # And I can start mock server
     When I call the register beneficiary API with expected status of 202
     Given I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I have tenant as "rhino"

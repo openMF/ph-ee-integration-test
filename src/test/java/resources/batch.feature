@@ -274,9 +274,9 @@ Feature: Batch Details API test
 
   @gov
   Scenario: BD-018 Batch with callback
-    //Given I will assign a port to mock server
-    //Given I can inject MockServer
-    //And I can start mock server
+    #Given I will assign a port to mock server
+    #Given I can inject MockServer
+    #And I can start mock server
     And I can register the stub with "/callback" endpoint for "POST" request with status of 200
     Then I will update the  mock server and register stub as done
     Given I have tenant as "paymentBB1"
