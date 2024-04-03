@@ -2,9 +2,9 @@
 Feature: Voucher Management Api Test
 
    Scenario: Create Voucher Api Test
-     Given I will assign a port to mock server
-     When I can inject MockServer
-     Then I can start mock server
+     //Given I will assign a port to mock server
+    // When I can inject MockServer
+    // Then I can start mock server
      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
      Given I can create an VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 202 and stub "/createVoucher"
@@ -84,4 +84,4 @@ Feature: Voucher Management Api Test
     And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
-    And I can stop mock server
+    //And I can stop mock server

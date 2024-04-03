@@ -17,6 +17,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -32,6 +34,7 @@ public class MockServerStepDef extends BaseStepDef {
 
     private static Boolean wiremockStarted = false;
     private static final AtomicInteger portCounter = new AtomicInteger(53013);
+    private static WireMockServer wireMockServer;
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
@@ -55,17 +58,30 @@ public class MockServerStepDef extends BaseStepDef {
     public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
-                mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo(endpoint))
+                        .willReturn(WireMock.aResponse()
+                                .withStatus(200)));
+                //mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+
             }
             case POST -> {
-                mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(endpoint))
+                        .willReturn(WireMock.aResponse()
+                                        .withStatus(200)));
+                //mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
                 // configureFor("localhost",4040);
             }
             case PUT -> {
-                mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.put(WireMock.urlEqualTo(endpoint))
+                        .willReturn(WireMock.aResponse()
+                                .withStatus(200)));
+                //mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint))
+                        .willReturn(WireMock.aResponse()
+                                .withStatus(200)));
+                //mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
@@ -96,16 +112,16 @@ public class MockServerStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
-                    mockServer.getMockServer().verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+                    wireMockServer.verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
                 }
                 case POST -> {
-                    mockServer.getMockServer().verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+                    wireMockServer.verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
                 }
                 case PUT -> {
-                    mockServer.getMockServer().verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+                    wireMockServer.verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
                 }
                 case DELETE -> {
-                    mockServer.getMockServer().verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+                    wireMockServer.verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
         });

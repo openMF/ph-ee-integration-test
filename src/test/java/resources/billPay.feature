@@ -4,9 +4,9 @@ Feature: Bill Payment P2G Test
   @gov
    #this is an integration for bill inquiry stage w/o rtp, includes bill inquiry api only from PFI to PBB to Bill Agg and back
   Scenario: BI-001 Bill Inquiry API for orchestration (PFI to PBB)
-    Given I will assign a port to mock server
-    Given I can inject MockServer
-    And I can start mock server
+   // Given I will assign a port to mock server
+   // Given I can inject MockServer
+    //And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
