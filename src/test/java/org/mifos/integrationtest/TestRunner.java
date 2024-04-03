@@ -6,8 +6,6 @@ import courgette.api.CourgetteRunLevel;
 import courgette.api.CourgetteTestOutput;
 import courgette.api.CucumberOptions;
 import courgette.api.junit.Courgette;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -23,7 +21,7 @@ import org.junit.runner.RunWith;
         reportTitle = "Paymenthub Test results", reportTargetDir = "build", cucumberOptions = @CucumberOptions(features = "src/test/java/resources", glue = "org.mifos.integrationtest.cucumber", tags = "@gov", publish = true, plugin = {
                 "html:cucumber-report", "json:cucumber.json", "pretty", "html:build/cucumber-report.html",
                 "json:build/cucumber-report.json", "junit:build/cucumber.xml" }))
-@SuppressWarnings({ "FinalClass","HideUtilityClassConstructor" })
+@SuppressWarnings({ "FinalClass", "HideUtilityClassConstructor" })
 public class TestRunner {
 
     private static WireMockServer wireMockServer;
