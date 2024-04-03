@@ -161,7 +161,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
             logger.info("Batch Summary Response: " + scenarioScopeState.response);
             BatchDTO res = objectMapper.readValue(scenarioScopeState.response, BatchDTO.class);
-            assertThat(res.getSuccessful()).isEqualTo(totalTxns);
+            assertThat(res.getTotal()).isEqualTo(totalTxns);
         });
     }
 
