@@ -44,11 +44,10 @@ Feature: Test ability to make payment to individual with bank account
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 10000 millisecond
     Given I have tenant as "paymentbb1"
-    When I call the batch summary API with expected status of 200 with total 8 txns
+    When I call the batch summary API with expected status of 200 with total successfull 8 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
-    And I should have matching total txn count and successful txn count in response
-
+    And My total txns 8 and successful txn count in response should Match
 
   Scenario: Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
@@ -154,9 +153,9 @@ Feature: Test ability to make payment to individual with bank account
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-    When I call the batch summary API for gsma with expected status of 200 with total 8 txns
+    When I call the batch summary API with expected status of 200 with total successfull 8 txns
     Then I should get non empty response
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
-    And I should have matching total txn count and successful txn count in response
+    And My total txns 8 and successful txn count in response should Match
 
