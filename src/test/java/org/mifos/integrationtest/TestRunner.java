@@ -26,14 +26,14 @@ public class TestRunner {
     private static WireMockServer wireMockServer;
 
     @BeforeClass
-    private static void setup() {
+    public static void setup() {
         // Start WireMock server
         wireMockServer = new WireMockServer(53013);
         wireMockServer.start();
     }
 
     @AfterClass
-    private static void teardown() {
+    public static void teardown() {
         // Stop WireMock server
         wireMockServer.stop();
     }
