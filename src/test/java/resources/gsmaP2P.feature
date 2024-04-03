@@ -1,4 +1,4 @@
-@amsIntegration @govtodo @gov1
+@amsIntegration @govtodo
 
 Feature: GSMA Outbound Transfer test
 
