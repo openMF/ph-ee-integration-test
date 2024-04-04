@@ -1,6 +1,7 @@
 package org.mifos.integrationtest;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+
 import courgette.api.CourgetteOptions;
 import courgette.api.CourgetteRunLevel;
 import courgette.api.CourgetteTestOutput;
@@ -9,6 +10,8 @@ import courgette.api.junit.Courgette;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.mifos.integrationtest.config.MockServer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 //@RunWith(Cucumber.class)
 //@CucumberOptions(features = { "src/test/java/resources" }, glue = { "org.mifos.integrationtest.cucumber" }, plugin = {
@@ -24,18 +27,24 @@ import org.junit.runner.RunWith;
 @SuppressWarnings({ "FinalClass", "HideUtilityClassConstructor" })
 public class TestRunner {
 
-    private static WireMockServer wireMockServer;
+    @Autowired
+    public static MockServer mockServer;
+
+    // private static WireMockServer wireMockServer;
 
     @BeforeClass
     public static void setup() {
         // Start WireMock server
-        wireMockServer = new WireMockServer(53013);
-        wireMockServer.start();
+        // wireMockServer = new WireMockServer(53013);
+        // wireMockServer.start();
+        mockServer.getMockServer().start();
+        configureFor(53013);
     }
 
     @AfterClass
     public static void teardown() {
         // Stop WireMock server
-        wireMockServer.stop();
+        // wireMockServer.stop();
+        mockServer.getMockServer().stop();
     }
 }
