@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
@@ -17,7 +18,6 @@ import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.getDefaultSpec;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -26,13 +26,11 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.mifos.integrationtest.common.HttpMethod;
 
 public class MockServerStepDef extends BaseStepDef {
 
     private static Boolean wiremockStarted = false;
-    private static final AtomicInteger portCounter = new AtomicInteger(53013);
     private static WireMockServer wireMockServer;
 
     @Given("I can inject MockServer")
@@ -71,8 +69,8 @@ public class MockServerStepDef extends BaseStepDef {
                 mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
-                // mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                // wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
+                mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
@@ -121,8 +119,7 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can start mock server")
     public void startMockServer() {
         mockServer.getMockServer().start();
-        logger.info("PORT {}", scenarioScopeState.mockServerPort);
-        configureFor(scenarioScopeState.mockServerPort);
+        configureFor("localhost", mockServer.getMockServer().port());
     }
 
     @And("I can stop mock server")
@@ -149,12 +146,6 @@ public class MockServerStepDef extends BaseStepDef {
     @Then("I will update the  mock server and register stub as done")
     public void iWillUpdateTheMockServerAndRegisterStubAsDone() {
         wiremockStarted = true;
-    }
-
-    @Given("I will assign a port to mock server")
-    public void iWillAssignAPortToMockServer() {
-        int port = portCounter.getAndIncrement();
-        scenarioScopeState.mockServerPort = port;
     }
 
 }

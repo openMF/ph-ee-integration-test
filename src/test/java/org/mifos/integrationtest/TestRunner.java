@@ -30,21 +30,14 @@ public class TestRunner {
     @Autowired
     public static MockServer mockServer;
 
-    // private static WireMockServer wireMockServer;
-
     @BeforeClass
     public static void setup() {
-        // Start WireMock server
-        // wireMockServer = new WireMockServer(53013);
-        // wireMockServer.start();
         mockServer.getMockServer().start();
         configureFor(53013);
     }
 
     @AfterClass
     public static void teardown() {
-        // Stop WireMock server
-        // wireMockServer.stop();
         mockServer.getMockServer().stop();
     }
 }
