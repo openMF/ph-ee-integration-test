@@ -1,11 +1,9 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -161,7 +159,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in cancel voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInCancelVoucherCallbackBody(String arg0,
             String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint))
+        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
 
     }
@@ -183,21 +181,21 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in redeem voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInRedeemVoucherCallbackBody(String arg0,
             String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint))
+        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
     }
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in suspend voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInSuspendVoucherCallbackBody(String arg0,
             String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint))
+        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
     }
 
     @Then("I should be able to extract response body from callback")
     public void iShouldBeAbleToExtractResponseBodyFromCallback() {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);
@@ -450,7 +448,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
             String serialNo = null;
             String isValid = null;
             for (int i = 0; i < allServeEvents.size(); i++) {
@@ -490,9 +488,10 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iShouldBeAbleToAssertResponseBodyFromCallback(String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                verify(putRequestedFor(urlEqualTo(endpoint))
+                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
                         .withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(scenarioScopeState.requestId))));
-                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+                mockServer.getMockServer().verify(
+                        putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);// success
             } catch (VerificationException e) {
                 assertTrue(false);// failure

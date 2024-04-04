@@ -116,4 +116,5 @@ public class ScenarioScopeState {
     protected String registeringInstitutionId;
     protected String agentId;
     protected String fetchVoucherResponseBody;
+    public int mockServerPort;
 }

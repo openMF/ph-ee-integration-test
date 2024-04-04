@@ -171,50 +171,20 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.5.2'
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    implementation 'io.github.prashant-ramcharan:courgette-jvm:6.12.0'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}
 
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-    testlogger {
-        // pick a theme - mocha, standard, plain, mocha-parallel, standard-parallel or plain-parallel
-        theme 'mocha'
-        showSkipped false
-        showStackTraces true
-    }
+
+tasks.withType(Test) {
+    systemProperties = System.getProperties()
 }
 
-test {
-    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
-    systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-}
-task cucumberCli() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = [
-                '--plugin',
-                'html:cucumber-report',
-                '--plugin',
-                'json:cucumber.json',
-                '--plugin',
-                'pretty',
-                '--plugin',
-                'html:build/cucumber-report.html',
-                '--plugin',
-                'json:build/cucumber-report.json',
-                '--glue',
-                'org.mifos.integrationtest.cucumber',
-                'src/test/java/resources'
-            ]
-        }
-    }
+task parallelRun(type: Test) {
+    include '**/TestRunner.class'
+    outputs.upToDateWhen { false }
 }
