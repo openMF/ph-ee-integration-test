@@ -43,7 +43,7 @@ Feature: Test ability to make payment to individual with bank account
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 10000 millisecond
-    Given I have tenant as "payerfsp"
+    Given I have tenant as "paymentbb1"
     When I call the batch summary API with expected status of 200 with total successfull 8 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
