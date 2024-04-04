@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.common.dto;
+package org.mifos.integrationtest.common.dto.voucher;
 
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateVoucherRequestDTO {
+public class RequestDTO {
 
     public String requestID;
     public String batchID;

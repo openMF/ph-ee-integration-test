@@ -34,11 +34,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.mifos.connector.common.vouchers.dto.RedeemVoucherRequestDTO;
-import org.mifos.connector.common.vouchers.dto.RequestDTO;
-import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.ErrorDetails;
+import org.mifos.integrationtest.common.dto.voucher.RedeemVoucherRequestDTO;
+import org.mifos.integrationtest.common.dto.voucher.RequestDTO;
+import org.mifos.integrationtest.common.dto.voucher.VoucherInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,7 +175,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .queryParam("command", "cancel").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.cancelVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+                .post(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         logger.info("Voucher Response: {}", scenarioScopeState.response);
     }
@@ -301,7 +301,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 .queryParam("command", "redeem").header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
                 .header("X-CallbackURL", "").header("X-Program-ID", "").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.redeemVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build())
-                .when().put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+                .when().post(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
         scenarioScopeState.redeemVoucherResponseBody = scenarioScopeState.response;
         logger.info("Redeem Voucher Response: {}", scenarioScopeState.response);
@@ -491,7 +491,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
                 verify(putRequestedFor(urlEqualTo(endpoint))
-                        .withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(scenarioScopeState.requestId))));
+                        .withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(scenarioScopeState.requestId))));
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);// success
             } catch (VerificationException e) {

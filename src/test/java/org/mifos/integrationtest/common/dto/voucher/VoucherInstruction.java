@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.common.dto;
+package org.mifos.integrationtest.common.dto.voucher;
 
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
