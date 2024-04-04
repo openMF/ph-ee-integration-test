@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 import com.google.gson.Gson;
 import io.cucumber.java.en.And;
@@ -8,6 +10,8 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.integrationtest.common.CollectionHelper;
@@ -27,16 +31,18 @@ public class GetTxnApiDef extends BaseStepDef {
 
     @When("I call the get txn API with expected status of {int}")
     public void callTxnReqApi(int expectedStatus) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
-
-        logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
+            assertThat(scenarioScopeState.response).isNotNull();
+            logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+        });
     }
 
     @And("I should have clientCorrelationId in response")
@@ -44,8 +50,13 @@ public class GetTxnApiDef extends BaseStepDef {
         assertThat(scenarioScopeState.response).containsMatch("clientCorrelationId");
     }
 
-    @When("I call the get txn API with date {string} and {string} expected status of {int}")
-    public void callTxnReqApiwithParams(String startDate, String endDate, int expectedStatus) {
+    @When("I call the get txn API with date today minus {int} day and {string} with expected status of {int}")
+    public void callTxnReqApiwithParams(int daydiff, String endDate, int expectedStatus) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        if ("current date".equals(endDate)) {
+            endDate = formatter.format(LocalDateTime.now().plusDays(1));
+        }
+        String startDate = formatter.format(LocalDateTime.now().minusDays(daydiff));
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);

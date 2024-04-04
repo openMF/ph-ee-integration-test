@@ -37,7 +37,7 @@ Feature: Batch Details API test
 #    Then I will sleep for 5000 millisecond
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch summary API with expected status of 200 with total 0 txns
+    When I call the batch summary API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
   @gov @batch-teardown
@@ -54,7 +54,7 @@ Feature: Batch Details API test
     And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200 with total 12 txns
+    When I call the batch details API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
 
@@ -138,9 +138,11 @@ Feature: Batch Details API test
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batch details API with expected status of 200 with total 12 txns
+    When I call the batch details API with expected status of 200 with total 10 txns
     Then I should get non empty response with failure and success percentage
 
   @gov @batch-teardown
@@ -194,7 +196,7 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  @gov @batch-teardown
+  @gov @ext @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
@@ -231,7 +233,7 @@ Feature: Batch Details API test
     And I should assert total txn count and successful txn count in response
     And Total transaction in batch should add up to total transaction in each sub batch
 
-  @gov
+  @gov @ext
   Scenario: BD-016 Payment Batch Detail API Test
     Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
@@ -272,7 +274,7 @@ Feature: Batch Details API test
 #    And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
 
-  @gov
+  @gov @ext
   Scenario: BD-018 Batch with callback
     Given I can inject MockServer
     And I can start mock server

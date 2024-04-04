@@ -524,6 +524,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             String registeringInstitutionIdResponse = rootNode.get("registeringInstitutionId").asText();
             assertThat(serialNumberResponse).isEqualTo(scenarioScopeState.serialNumber);
             assertThat(registeringInstitutionIdResponse).isEqualTo(scenarioScopeState.registeringInstitutionId);
+
         } catch (Exception e) {
             logger.debug(e.getMessage());
         }
