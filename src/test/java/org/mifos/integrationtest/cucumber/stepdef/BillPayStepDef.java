@@ -1,10 +1,8 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -182,7 +180,7 @@ public class BillPayStepDef extends BaseStepDef {
 
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with code in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
-        verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.code")));
+        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.code")));
     }
 
     @Then("I should be able to extract response body from callback for bill pay")
@@ -504,7 +502,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iShouldNotBeAbleToRemoveAllServerEvents() {
         boolean flag = false;
         WireMock.resetAllRequests();
-        List<ServeEvent> allServeEvents = getAllServeEvents();
+        List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
         assertThat(allServeEvents.size()).isEqualTo(0);
     }
 
