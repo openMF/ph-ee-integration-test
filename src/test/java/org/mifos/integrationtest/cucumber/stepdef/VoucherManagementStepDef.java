@@ -18,6 +18,7 @@ import com.opencsv.CSVWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.node.ObjectNode;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -602,6 +603,34 @@ public class VoucherManagementStepDef extends BaseStepDef {
         } catch (Exception e) {
             logger.info("An error occurred : {}", e);
         }
+    }
+
+    @Given("I can create an VoucherRequestDTO for voucher creation with unsupported parameter parameter")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithUnsupportedParameter() {
+        iCreateAnIdentityMapperDTOForRegisterBeneficiary();
+        scenarioScopeState.createVoucherBody = addUnsupportedParamsInRequestBody(scenarioScopeState.createVoucherBody);
+    }
+
+    @And("I add unsupported parameter in my request body {string}")
+    public String addUnsupportedParamsInRequestBody(String requestBody) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // Convert JSON string to JsonNode
+            JsonNode jsonNode = objectMapper.readTree(requestBody);
+
+            // Add new key-value pair
+            ((ObjectNode) jsonNode).put("abcd", "12345");
+            ((ObjectNode) jsonNode).put("efgh", "6789");
+
+            // Convert JsonNode back to JSON string
+            requestBody = objectMapper.writeValueAsString(jsonNode);
+
+        } catch (Exception e) {
+            logger.info("An error occurred : {}", e);
+        }
+
+        return requestBody;
     }
 
 }

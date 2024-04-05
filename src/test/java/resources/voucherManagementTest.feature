@@ -77,6 +77,17 @@ Feature: Voucher Management Api Test
     Given I can create an RedeemVoucherRequestDTO for voucher redemption
     When I call the redeem voucher API with expected status of 200
 
+ @gov
+  Scenario: Unsupported Parameter Validation for Create Voucher API test
+    Given I can create an VoucherRequestDTO for voucher creation with unsupported parameter parameter
+    When I call the create voucher API with expected status of 400 and stub "/createVoucher"
+    Then I should be able to assert the create voucher validation for negative response
+
+  @gov @createAndActivateVoucher
+   Scenario: Conflicting/unique data validations check for Create Voucher API
+    Then I will call the fetch voucher API with expected status of 200
+    When I call the create voucher API with expected status of 409 and stub "/createVoucher"
+
   @Ignore
   Scenario: Create a csv file for voucher number and voucher serial number
     When I can inject MockServer
