@@ -171,7 +171,7 @@ Feature: Bill Payment P2G Test
     And I should get transactionId in response
 #    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill already paid
-    Then I can stop mock server
+    #Then I can stop mock server
 
   @gov
   Scenario: BP-004B Bill Payments API fails due to bill marked as paid after a timeout (PFI to PBB)
