@@ -1,4 +1,5 @@
 @amsIntegration @govtodo
+
 Feature: GSMA Outbound Transfer test
 
   Scenario: GSMA Withdrawal Transfer testx (Payer Debit only)

@@ -145,6 +145,26 @@ public class BatchApiStepDef extends BaseStepDef {
         });
     }
 
+    @When("I call the batch summary API with expected status of {int} with total successfull {int} txns")
+    public void callBatchSummaryAPIBulk(int expectedStatus, int totalTxns) {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+            logger.info("Calling with batch id: {}", scenarioScopeState.batchId);
+
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.batchSummaryEndpoint + "/" + scenarioScopeState.batchId).andReturn().asString();
+
+            logger.info("Batch Summary Response: " + scenarioScopeState.response);
+            BatchDTO res = objectMapper.readValue(scenarioScopeState.response, BatchDTO.class);
+            assertThat(res.getTotal()).isEqualTo(totalTxns);
+        });
+    }
+
     @When("I call the batch summary API for gsma with expected status of {int} with total {int} txns")
     public void callBatchSummaryAPIGSMA(int expectedStatus, int totalTxns) {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
@@ -372,6 +392,19 @@ public class BatchApiStepDef extends BaseStepDef {
             assertThat(scenarioScopeState.batchDTO.getTotal()).isGreaterThan(0);
             assertThat(scenarioScopeState.batchDTO.getSuccessful()).isGreaterThan(0);
             assertThat(scenarioScopeState.batchDTO.getTotal()).isEqualTo(scenarioScopeState.batchDTO.getSuccessful());
+
+        });
+    }
+
+    @And("My total txns {} and successful txn count in response should Match")
+    public void iShouldHaveMatchingTotalTxnCountAndSuccessfulTxnCount(int totalTxnsCount) {
+        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+            assertThat(scenarioScopeState.batchDTO).isNotNull();
+            assertThat(scenarioScopeState.batchDTO.getTotal()).isNotNull();
+            assertThat(scenarioScopeState.batchDTO.getSuccessful()).isNotNull();
+            assertThat(scenarioScopeState.batchDTO.getTotal()).isGreaterThan(0);
+            assertThat(scenarioScopeState.batchDTO.getSuccessful()).isGreaterThan(0);
+            assertThat(totalTxnsCount).isEqualTo(scenarioScopeState.batchDTO.getSuccessful());
 
         });
     }
