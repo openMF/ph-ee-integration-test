@@ -110,7 +110,6 @@ public class ScenarioScopeState {
     protected String activateVoucherBody;
     protected String redeemVoucherBody;
     protected String redeemVoucherResponseBody;
-    protected String serialNumber;
     protected String voucherNumber;
     protected String cancelVoucherBody;
     protected String suspendVoucherBody;
