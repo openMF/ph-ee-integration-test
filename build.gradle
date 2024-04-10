@@ -171,6 +171,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.5.2'
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    implementation 'commons-validator:commons-validator:1.7'
 }
 
 tasks.named('test') {
