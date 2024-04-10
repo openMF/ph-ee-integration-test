@@ -53,6 +53,7 @@ public class ScenarioScopeState {
     protected TransactionChannelRequestDTO inboundTransferMockReq;
     protected String paymentStatusCheckReqDto;
     protected BillPaymentsReqDTO inboundTransferReqP2G;
+    protected String errorCategory;
 
     protected String billId;
     protected String callbackUrl;

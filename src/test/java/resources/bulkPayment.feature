@@ -160,3 +160,14 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And My total txns 8 and successful txn count in response should Match
 
+
+  Scenario: BT-003 Batch transaction invalid amount API Test
+    Given I have tenant as "paymentBB2"
+    And I have the demo csv file "ph-ee-bulk-demo-negative-amount.csv"
+    And I create a new clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 400
+    Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I should have "errorCategory" and "Validation" in response
