@@ -857,11 +857,4 @@ public class BatchApiStepDef extends BaseStepDef {
         }
     }
 
-    @And("I fetch error category from batch transaction API's response")
-    public void iFetchErrorCategoryFromBatchTransactionAPISResponse() {
-        assertThat(scenarioScopeState.batchTransactionResponse).isNotNull();
-        scenarioScopeState.errorCategory = fetchBatchId(scenarioScopeState.batchTransactionResponse);
-        logger.info("batchId: {}", scenarioScopeState.batchId);
-        assertThat(scenarioScopeState.batchId).isNotEmpty();
-    }
 }
