@@ -714,7 +714,6 @@ public class GSMATransferStepDef extends BaseStepDef {
 
     }
 
-
     @Then("I call the balance api for payee with id {string} balance after credit")
     public void iCallTheBalanceApiForPayeeBalanceAfterCredit(String id) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);

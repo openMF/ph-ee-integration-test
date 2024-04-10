@@ -30,7 +30,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -361,10 +360,12 @@ public class BatchApiStepDef extends BaseStepDef {
         logger.info("batchId: {}", scenarioScopeState.batchId);
         assertThat(scenarioScopeState.batchId).isNotEmpty();
     }
+
     @Then("I check for result file URL validity")
     public void iCheckForResultFileURLValidity() {
         assertThat(isValidURL(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile())).isTrue();
     }
+
     boolean isValidURL(String url) {
         UrlValidator validator = new UrlValidator();
         return validator.isValid(url);
@@ -637,6 +638,7 @@ public class BatchApiStepDef extends BaseStepDef {
             assertThat(res.getTotal()).isEqualTo(res.getSuccessful());
         });
     }
+
     @And("I call the sub batch summary API for result file url with expected status of {int}")
     public void iCallTheSubBatchSummaryAPIForResutlFileURLWithExpectedStatusOf(int expectedStatus) {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
