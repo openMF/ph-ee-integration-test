@@ -179,7 +179,7 @@ Feature: Batch Details API test
     And I should have matching total txn count and successful txn count in response
 
   @gov @batch-teardown
-  Scenario: BD-013 Batch aggregate API Test
+  Scenario: BD-013,BT-001 Batch aggregate API Test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
