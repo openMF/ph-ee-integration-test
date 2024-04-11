@@ -295,6 +295,22 @@ Feature: Batch Details API test
     When I make the "POST" request to "/callback" endpoint with expected status of 200
     Then I should be able to extract response body from callback for batch
     And I can stop mock server
+  @gov @batch-teardown
+  Scenario: BD-019 Batch summary response result file URL Test
+    Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
+    And I have tenant as "paymentBB2"
+    And I generate clientCorrelationId
+    And I have private key
+    And I generate signature
+    When I call the batch transactions endpoint with expected status of 202
+    Then I should get non empty response
+    And I am able to parse batch transactions response
+    And I fetch batch ID from batch transaction API's response
+    When I call the operations-app auth endpoint with username: "mifos" and password: "password"
+    Then I should get a valid token
+    And I call the sub batch summary API for result file url with expected status of 200
+    Then I am able to parse sub batch summary response
+    Then I check for result file URL validity
 
   @gov
   Scenario: APT-001 actuator API test

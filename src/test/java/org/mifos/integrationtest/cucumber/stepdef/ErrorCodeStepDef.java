@@ -359,22 +359,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
-        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
-        String endPoint = operationsAppConfig.transfersEndpoint;
-        if (authEnabled) {
-            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
-        }
-        requestSpec.queryParam("transactionId", transactionId);
-        logger.info("Endpoint: {}", endPoint);
-        logger.info("TxnId : {}", transactionId);
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            String endPoint = operationsAppConfig.transfersEndpoint;
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            requestSpec.queryParam("transactionId", transactionId);
+            logger.info("Endpoint: {}", endPoint);
+            logger.info("TxnId : {}", transactionId);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
-        logger.info("Transfer query Response: {}", scenarioScopeState.response);
-        assertThat(scenarioScopeState.response).isNotNull();
-        String status = checkForStatus();
-        logger.info("Status: {}",status);
-        assertThat(status).isNotNull();
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
+            logger.info("Transfer query Response: {}", scenarioScopeState.response);
+            assertThat(scenarioScopeState.response).isNotNull();
+            String status = checkForStatus();
+            logger.info("Status: {}", status);
+            assertThat(status).isNotNull();
         });
     }
 

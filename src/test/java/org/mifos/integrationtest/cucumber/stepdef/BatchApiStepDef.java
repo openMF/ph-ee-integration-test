@@ -43,6 +43,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mifos.connector.common.operations.dto.Transfer;
@@ -360,6 +361,16 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(scenarioScopeState.batchId).isNotEmpty();
     }
 
+    @Then("I check for result file URL validity")
+    public void iCheckForResultFileURLValidity() {
+        assertThat(isValidURL(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile())).isTrue();
+    }
+
+    boolean isValidURL(String url) {
+        UrlValidator validator = new UrlValidator();
+        return validator.isValid(url);
+    }
+
     @And("I am able to parse batch transactions response")
     public void parseBatchTransactionsResponseStep() {
         parseBatchTransactionsResponse();
@@ -625,6 +636,31 @@ public class BatchApiStepDef extends BaseStepDef {
             BatchAndSubBatchSummaryResponse res = objectMapper.readValue(scenarioScopeState.response,
                     BatchAndSubBatchSummaryResponse.class);
             assertThat(res.getTotal()).isEqualTo(res.getSuccessful());
+        });
+    }
+
+    @And("I call the sub batch summary API for result file url with expected status of {int}")
+    public void iCallTheSubBatchSummaryAPIForResutlFileURLWithExpectedStatusOf(int expectedStatus) {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+            // requestSpec.queryParam("batchId", scenarioScopeDef.batchId);
+            logger.info("Calling with batch id: {}", scenarioScopeState.clientCorrelationId);
+            logger.info("Calling with batch id: {}",
+                    operationsAppConfig.operationAppContactPoint + operationsAppConfig.batchesEndpoint + "/" + scenarioScopeState.batchId);
+
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.batchesEndpoint + "/" + scenarioScopeState.batchId).andReturn().asString();
+
+            logger.info("Sub batch Summary Response: " + scenarioScopeState.response);
+
+            BatchAndSubBatchSummaryResponse res = objectMapper.readValue(scenarioScopeState.response,
+                    BatchAndSubBatchSummaryResponse.class);
+            assertThat(res.getFile()).isNotNull();
         });
     }
 
