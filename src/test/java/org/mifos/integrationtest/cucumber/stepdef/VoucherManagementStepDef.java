@@ -106,8 +106,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher activation")
     public void iCanCreateAnVoucherRequestDTOForVoucherActivation() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
@@ -214,6 +212,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
                     if (rootNode.has("requestID")) {
                         requestID = rootNode.get("requestID").asText();
                     }
+                    if (rootNode.has("batchID")) {
+                        scenarioScopeState.batchId = rootNode.get("batchID").asText();
+                    }
                     if (scenarioScopeState.requestId.equals(requestID)) {
                         scenarioScopeState.callbackBody = request.getRequest().getBodyAsString();
                     }
@@ -281,7 +282,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an RedeemVoucherRequestDTO for voucher redemption")
     public void iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
         scenarioScopeState.agentId = generateUniqueNumber(10);
 
         RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId,
