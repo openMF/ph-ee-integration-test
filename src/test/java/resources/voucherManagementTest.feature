@@ -69,6 +69,7 @@ Feature: Voucher Management Api Test
   @gov
   Scenario: VR-003 Error Validity check for Redeem Voucher API for negative request body
     Given I can create an negative RedeemVoucherRequestDTO to redeem a voucher
+    Then I will add the required headers
     When I call the redeem voucher API with expected status of 400
     And I should be able to assert the redeem voucher validation for negative response
 

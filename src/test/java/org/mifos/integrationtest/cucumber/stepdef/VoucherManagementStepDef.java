@@ -59,7 +59,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.requestId = generateUniqueNumber(12);
         RequestDTO voucherDTO = new RequestDTO();
         voucherDTO.setRequestID(scenarioScopeState.requestId);
-        voucherDTO.setBatchID(generateUniqueNumber(10));
+        scenarioScopeState.batchId = generateUniqueNumber(10);
+        voucherDTO.setBatchID(scenarioScopeState.batchId);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setInstructionID(generateUniqueNumber(16));
@@ -139,8 +140,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
     public void iCanCreateAnVoucherRequestDTOForVoucherCancellation() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("03");
@@ -377,9 +376,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an VoucherRequestDTO for voucher suspension")
     public void iCanCreateAnVoucherRequestDTOForVoucherSuspension() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
-
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("06");
@@ -412,8 +408,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can create an VoucherRequestDTO for voucher reactivation")
     public void iCanCreateAnVoucherRequestDTOForVoucherReactivation() {
-        scenarioScopeState.requestId = generateUniqueNumber(16);
-        scenarioScopeState.batchId = generateUniqueNumber(14);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(scenarioScopeState.requestId).append("\",\n");
@@ -588,6 +582,11 @@ public class VoucherManagementStepDef extends BaseStepDef {
         } catch (JsonProcessingException e) {
             logger.error("Unable to convert the DTO : {}", e);
         }
+    }
+
+    @Then("I will add the required headers")
+    public void makeNecessaryHeadersNonNull() {
+        scenarioScopeState.registeringInstitutionId = generateUniqueNumber(3);
     }
 
     @And("I should be able to assert the redeem voucher validation for negative response")
