@@ -1,5 +1,6 @@
-
+@voucher
 Feature: Voucher Management Api Test
+
   @gov @ext @createAndActivateVoucher @redeemVoucherSuccess
   Scenario: Reactivate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
@@ -16,6 +17,7 @@ Feature: Voucher Management Api Test
     And I call the validity check API with expected status of 202 and stub "/validity"
 #    And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
+
   @gov
    Scenario: Create Voucher Api Test
      When I can inject MockServer
@@ -34,7 +36,7 @@ Feature: Voucher Management Api Test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to assert response body from callback on "/activateVoucher"
 
-  @voucher @gov @createAndActivateVoucher
+  @gov @createAndActivateVoucher
   Scenario: Redeem Voucher Api Test
     Given I can create an RedeemVoucherRequestDTO for voucher redemption
     When I call the redeem voucher API with expected status of 200
@@ -61,11 +63,13 @@ Feature: Voucher Management Api Test
     Then I will call the fetch voucher API with expected status of 200
     And I will assert the fields from fetch voucher response
     And I can stop mock server
+
   @gov
   Scenario: VC-001,002,003,004,005 Error Validity check for Create Voucher API for negative request body
     Given I can create an negative VoucherRequestDTO for voucher creation
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
+
   @gov
   Scenario: VR-003 Error Validity check for Redeem Voucher API for negative request body
     Given I can create an negative RedeemVoucherRequestDTO to redeem a voucher
