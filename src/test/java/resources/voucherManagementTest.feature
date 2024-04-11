@@ -1,4 +1,4 @@
-@voucher
+
 Feature: Voucher Management Api Test
   @gov @ext @createAndActivateVoucher @redeemVoucherSuccess
   Scenario: Reactivate Voucher Api Test
@@ -34,7 +34,7 @@ Feature: Voucher Management Api Test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to assert response body from callback on "/activateVoucher"
 
-  @gov @createAndActivateVoucher
+  @voucher @gov @createAndActivateVoucher
   Scenario: Redeem Voucher Api Test
     Given I can create an RedeemVoucherRequestDTO for voucher redemption
     When I call the redeem voucher API with expected status of 200
