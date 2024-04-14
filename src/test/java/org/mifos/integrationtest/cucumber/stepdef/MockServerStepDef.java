@@ -37,16 +37,16 @@ public class MockServerStepDef extends BaseStepDef {
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
         assertThat(mockServer).isNotNull();
-        //logger.info("{}", mockServer.getMockServer().baseUrl());
+        // logger.info("{}", mockServer.getMockServer().baseUrl());
     }
 
     @Then("I should be able to get instance of mock server")
     public void getInstanceOfMockServer() throws InterruptedException {
-        //assertThat(mockServer.getMockServer()).isNotNull();
-        //assertThat(mockServer.getMockServer().port()).isEqualTo(53013);
-        //WireMockServerSingleton.getInstance
+        // assertThat(mockServer.getMockServer()).isNotNull();
+        // assertThat(mockServer.getMockServer().port()).isEqualTo(53013);
+        // WireMockServerSingleton.getInstance
         assertThat(WireMockServerSingleton.getInstance()).isNotNull();
-        //assertThat(WireMockServerSingleton.getInstance().port()).isEqualTo(53013);
+        // assertThat(WireMockServerSingleton.getInstance().port()).isEqualTo(53013);
     }
 
     @ParameterType(name = "httpMethod", value = ".*")
@@ -73,7 +73,7 @@ public class MockServerStepDef extends BaseStepDef {
                 // wireMockServer.stubFor(WireMock.put(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
                 WireMockServerSingleton.getInstance().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
 
-                //mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                // mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
                 // wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
@@ -126,7 +126,7 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can start mock server")
     public void startMockServer() {
         WireMockServerSingleton.getInstance();
-        //mockServer.getMockServer().start();
+        // mockServer.getMockServer().start();
         configureFor("localhost", mockServer.getMockServer().port());
     }
 

@@ -4,7 +4,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -159,10 +158,10 @@ public class IdentityMapperStepDef extends BaseStepDef {
         for (int i = 1; i < count; i++) {
 
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                    .header("X-Registering-Institution-ID", sourceBBID).header("X-CallbackURL", identityMapperConfig.callbackURL+ port + endpoint)
-                    .queryParam("payeeIdentity", payeeIdentity).queryParam("paymentModality", "00")
-                    .queryParam("requestId", generateUniqueNumber(10)).queryParam("sourceBBID", sourceBBID)
-                    .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
+                    .header("X-Registering-Institution-ID", sourceBBID)
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + port + endpoint).queryParam("payeeIdentity", payeeIdentity)
+                    .queryParam("paymentModality", "00").queryParam("requestId", generateUniqueNumber(10))
+                    .queryParam("sourceBBID", sourceBBID).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();
 
@@ -605,7 +604,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
             int noOfFailedCases) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                WireMockServerSingleton.getInstance().verify(
+                        putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
                 WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                         .withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo(String.valueOf(noOfFailedCases)))));
                 assertTrue(true);

@@ -6,10 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
 @Component
 public class WireMockServerSingleton {
+
     static Logger logger = LoggerFactory.getLogger(WireMockServerSingleton.class);
     private static final ThreadLocal<WireMockServer> threadLocalInstance = new ThreadLocal<>();
 
@@ -17,9 +16,9 @@ public class WireMockServerSingleton {
         WireMockServer instance = threadLocalInstance.get();
         if (instance == null || !instance.isRunning()) {
             synchronized (WireMockServerSingleton.class) {
-                instance = threadLocalInstance.get();  // Double-check idiom
+                instance = threadLocalInstance.get(); // Double-check idiom
                 if (instance == null || !instance.isRunning()) {
-                    instance = startWireMockServerWithRetry(3);  // Retry 3 times
+                    instance = startWireMockServerWithRetry(3); // Retry 3 times
                     threadLocalInstance.set(instance);
                 }
             }
@@ -46,7 +45,7 @@ public class WireMockServerSingleton {
 
     private static int getRandomPort() {
         // This returns a port number in the range 1024-65535
-        return 1024 + (int)(Math.random() * ((65535 - 1024) + 1));
+        return 1024 + (int) (Math.random() * ((65535 - 1024) + 1));
     }
 
     public static int getPort() {

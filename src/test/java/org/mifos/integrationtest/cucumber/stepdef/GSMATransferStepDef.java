@@ -1,6 +1,5 @@
 package org.mifos.integrationtest.cucumber.stepdef;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;

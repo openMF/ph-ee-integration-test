@@ -351,7 +351,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Before("@createVoucher")
     public void createVoucher() {
         iCreateAnIdentityMapperDTOForRegisterBeneficiary();
-        //mockServerStepDef.checkIfMockServerIsInjected();
+        // mockServerStepDef.checkIfMockServerIsInjected();
         mockServerStepDef.startMockServer();
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);
