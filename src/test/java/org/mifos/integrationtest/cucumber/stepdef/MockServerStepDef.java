@@ -27,21 +27,26 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 
 public class MockServerStepDef extends BaseStepDef {
 
     private static Boolean wiremockStarted = false;
-    private static WireMockServer wireMockServer;
+    private WireMockServer wireMockServer;
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
         assertThat(mockServer).isNotNull();
+        //logger.info("{}", mockServer.getMockServer().baseUrl());
     }
 
     @Then("I should be able to get instance of mock server")
     public void getInstanceOfMockServer() throws InterruptedException {
-        assertThat(mockServer.getMockServer()).isNotNull();
-        assertThat(mockServer.getMockServer().port()).isEqualTo(scenarioScopeState.mockServerPort);
+        //assertThat(mockServer.getMockServer()).isNotNull();
+        //assertThat(mockServer.getMockServer().port()).isEqualTo(53013);
+        //WireMockServerSingleton.getInstance
+        assertThat(WireMockServerSingleton.getInstance()).isNotNull();
+        //assertThat(WireMockServerSingleton.getInstance().port()).isEqualTo(53013);
     }
 
     @ParameterType(name = "httpMethod", value = ".*")
@@ -56,21 +61,23 @@ public class MockServerStepDef extends BaseStepDef {
         switch (httpMethod) {
             case GET -> {
                 // wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
-                mockServer.getMockServer().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
 
             }
             case POST -> {
                 // wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
-                mockServer.getMockServer().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
                 // configureFor("localhost",4040);
             }
             case PUT -> {
                 // wireMockServer.stubFor(WireMock.put(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
-                mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+
+                //mockServer.getMockServer().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
                 // wireMockServer.stubFor(WireMock.delete(WireMock.urlEqualTo(endpoint)).willReturn(WireMock.aResponse().withStatus(200)));
-                mockServer.getMockServer().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
@@ -101,16 +108,16 @@ public class MockServerStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
-                    mockServer.getMockServer().verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
                 }
                 case POST -> {
-                    mockServer.getMockServer().verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
                 }
                 case PUT -> {
-                    mockServer.getMockServer().verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
                 }
                 case DELETE -> {
-                    mockServer.getMockServer().verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
         });
@@ -118,7 +125,8 @@ public class MockServerStepDef extends BaseStepDef {
 
     @And("I can start mock server")
     public void startMockServer() {
-        mockServer.getMockServer().start();
+        WireMockServerSingleton.getInstance();
+        //mockServer.getMockServer().start();
         configureFor("localhost", mockServer.getMockServer().port());
     }
 

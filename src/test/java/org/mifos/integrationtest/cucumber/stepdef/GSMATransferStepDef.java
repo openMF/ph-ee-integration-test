@@ -35,6 +35,7 @@ import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequest
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.GsmaConfig;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -554,7 +555,7 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithValidation(String arg0, String endpoint) {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
-            List<ServeEvent> allServeEvents = getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
             Boolean isValidated = null;
 
             for (int i = 0; i < allServeEvents.size(); i++) {

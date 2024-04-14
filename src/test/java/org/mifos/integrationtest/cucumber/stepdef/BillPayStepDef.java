@@ -32,6 +32,7 @@ import org.mifos.integrationtest.common.dto.BillRTPReqDTO;
 import org.mifos.integrationtest.common.dto.PayerFSPDetail;
 import org.mifos.integrationtest.common.dto.billpayp2g.BillPaymentsReqDTO;
 import org.mifos.integrationtest.config.BillPayConnectorConfig;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BillPayStepDef extends BaseStepDef {
@@ -289,7 +290,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iCanExtractTheCallbackBodyAndAssertTheRtpStatus() {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {
@@ -621,7 +622,7 @@ public class BillPayStepDef extends BaseStepDef {
     public void iCanExtractTheErrorFromCallbackBodyAndAssertErrorMessageAs(String errorMessage) {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             boolean flag = false;
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
             for (int i = allServeEvents.size() - 1; i >= 0; i--) {
                 ServeEvent request = allServeEvents.get(i);
                 if (!(request.getRequest().getBodyAsString()).isEmpty()) {

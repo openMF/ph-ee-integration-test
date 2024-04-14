@@ -34,6 +34,7 @@ import org.mifos.connector.common.channel.dto.TransactionChannelRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.AccountMapperRequestDTO;
 import org.mifos.connector.common.identityaccountmapper.dto.BeneficiaryDTO;
 import org.mifos.integrationtest.common.Utils;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class IdentityMapperStepDef extends BaseStepDef {
@@ -158,7 +159,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
         for (int i = 1; i < count; i++) {
 
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                    .header("X-Registering-Institution-ID", sourceBBID).header("X-CallbackURL", identityMapperConfig.callbackURL + endpoint)
+                    .header("X-Registering-Institution-ID", sourceBBID).header("X-CallbackURL", identityMapperConfig.callbackURL+ port + endpoint)
                     .queryParam("payeeIdentity", payeeIdentity).queryParam("paymentModality", "00")
                     .queryParam("requestId", generateUniqueNumber(10)).queryParam("sourceBBID", sourceBBID)
                     .baseUri(identityMapperConfig.identityMapperContactPoint).expect()
@@ -172,9 +173,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                mockServer.getMockServer().verify(
+                WireMockServerSingleton.getInstance().verify(
                         putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-                mockServer.getMockServer().verify(
+                WireMockServerSingleton.getInstance().verify(
                         putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);
             } catch (VerificationException e) {
@@ -187,7 +188,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSamePayeeIdentity(String httpmethod, String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                mockServer.getMockServer().verify(
+                WireMockServerSingleton.getInstance().verify(
                         putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.payeeIdentity", equalTo(payeeIdentity))));
                 assertTrue(true);
             } catch (VerificationException e) {
@@ -358,7 +359,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             throws JsonProcessingException {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);
@@ -604,8 +605,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
             int noOfFailedCases) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
-                verify(putRequestedFor(urlEqualTo(endpoint))
+                WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+                WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                         .withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo(String.valueOf(noOfFailedCases)))));
                 assertTrue(true);
             } catch (VerificationException e) {

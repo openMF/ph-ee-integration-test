@@ -37,6 +37,7 @@ import org.mifos.connector.common.vouchers.dto.RequestDTO;
 import org.mifos.connector.common.vouchers.dto.VoucherInstruction;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.ErrorDetails;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +160,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in cancel voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInCancelVoucherCallbackBody(String arg0,
             String endpoint) {
-        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
+        WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
 
     }
@@ -188,14 +189,14 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in suspend voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInSuspendVoucherCallbackBody(String arg0,
             String endpoint) {
-        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
+        WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
     }
 
     @Then("I should be able to extract response body from callback")
     public void iShouldBeAbleToExtractResponseBodyFromCallback() {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);
@@ -350,7 +351,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Before("@createVoucher")
     public void createVoucher() {
         iCreateAnIdentityMapperDTOForRegisterBeneficiary();
-        mockServerStepDef.checkIfMockServerIsInjected();
+        //mockServerStepDef.checkIfMockServerIsInjected();
         mockServerStepDef.startMockServer();
         mockServerStepDef.startStub("/createVoucher", PUT, 200);
         mockServerStepDef.startStub("/activateVoucher", PUT, 200);

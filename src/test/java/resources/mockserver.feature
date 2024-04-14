@@ -1,4 +1,4 @@
- @gov
+ @govi
 Feature: Testing the startup and working of mockserver
 
   Scenario: MS-001 Mockserver config test

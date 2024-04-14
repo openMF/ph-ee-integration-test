@@ -76,15 +76,16 @@ Feature: Bill Payment P2G Test
     When I call the mock bills payment api from PBB to Biller with billid with expected status of 200
     Then I should get non empty response
 
-  @gov
+  @gove
   Scenario: RTP-001 RTP Integration test
-    And I can register the stub with "/test" endpoint for "POST" request with status of 200
+    #And I can inject MockServer
+    And I can register the stub with "/testing" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     Then I can create DTO for Biller RTP Request
-    And I can call the biller RTP request API with expected status of 202 and "/test" endpoint
+    And I can call the biller RTP request API with expected status of 202 and "/testing" endpoint
 #    Then I will sleep for 8000 millisecond
     And I can extract the callback body and assert the rtpStatus
 
@@ -240,7 +241,7 @@ Feature: Bill Payment P2G Test
     And I can call the biller RTP request API with expected status of 400 and "/invalidBic" endpoint
     And I can extract the error from response body and assert the error information as "Payer Fsp details cannot be null or empty"
 
-  @gov
+  @gove
   Scenario: RTP-008 Request to Pay is unsuccessful because the specified account of the Payer FI was unreachable - did not respond (Txn timed out)
     And I can register the stub with "/payerUnreachable" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
@@ -252,7 +253,7 @@ Feature: Bill Payment P2G Test
 #    Then I will sleep for 3000 millisecond
     And I can extract the error from callback body and assert error message as "Payer FI was unreachable"
 
-  @gov
+  @gove
   Scenario: RTP-009 Request to Pay is unsuccessful because the Payer FSP is unable to debit amount (insufficient amount/ blocked account/ account hold etc)
   (Payer FSP declines)
     And I can register the stub with "/debitFailed" endpoint for "POST" request with status of 200

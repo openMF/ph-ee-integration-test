@@ -60,6 +60,7 @@ import org.mifos.integrationtest.common.dto.operationsapp.SubBatchSummary;
 import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.MockPaymentSchemaConfig;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -667,7 +668,7 @@ public class BatchApiStepDef extends BaseStepDef {
     @Then("I should be able to extract response body from callback for batch")
     public void iShouldBeAbleToExtractResponseBodyFromCallbackForBatch() {
         boolean flag = false;
-        List<ServeEvent> allServeEvents = getAllServeEvents();
+        List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
         for (int i = allServeEvents.size() - 1; i >= 0; i--) {
             ServeEvent request = allServeEvents.get(i);
             if (!(request.getRequest().getBodyAsString()).isEmpty()) {

@@ -26,6 +26,7 @@ import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.mifos.integrationtest.config.TenantConfig;
 import org.mifos.integrationtest.config.VoucherManagementConfig;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class BaseStepDef {
 
     @Autowired
     ScenarioScopeState scenarioScopeState;
+    int port = WireMockServerSingleton.getPort();
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
     protected static BatchRequestDTO batchRequestDTO;
