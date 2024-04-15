@@ -22,7 +22,6 @@ import org.mifos.integrationtest.config.BulkProcessorConfig;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.mifos.integrationtest.config.FspConfig;
 import org.mifos.integrationtest.config.IdentityMapperConfig;
-import org.mifos.integrationtest.config.MockServer;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.mifos.integrationtest.config.TenantConfig;
 import org.mifos.integrationtest.config.VoucherManagementConfig;
@@ -46,9 +45,6 @@ public class BaseStepDef {
 
     @Autowired
     ChannelConnectorConfig channelConnectorConfig;
-
-    @Autowired
-    MockServer mockServer;
 
     @Autowired
     IdentityMapperConfig identityMapperConfig;

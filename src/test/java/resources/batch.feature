@@ -278,7 +278,7 @@ Feature: Batch Details API test
     #Given I can inject MockServer
     #And I can start mock server
     And I can register the stub with "/callback" endpoint for "POST" request with status of 200
-    Then I will update the  mock server and register stub as done
+    #Then I will update the  mock server and register stub as done
     Given I have tenant as "paymentBB1"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
     And I create a new clientCorrelationId
