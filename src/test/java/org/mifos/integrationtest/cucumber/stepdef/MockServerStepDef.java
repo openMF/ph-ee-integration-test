@@ -84,7 +84,7 @@ public class MockServerStepDef extends BaseStepDef {
 
     @When("I make the {httpMethod} request to {string} endpoint with expected status of {int}")
     public void hitStubEndpoint(HttpMethod httpMethod, String endpoint, int expectedStatus) {
-        RequestSender requestSender = RestAssured.given(getDefaultSpec()).baseUri(mockServer.getBaseUri()).expect()
+        RequestSender requestSender = RestAssured.given(getDefaultSpec()).baseUri("http://localhost").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when();
 
         switch (httpMethod) {
