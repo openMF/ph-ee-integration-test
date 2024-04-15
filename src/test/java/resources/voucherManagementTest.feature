@@ -36,6 +36,9 @@ Feature: Voucher Management Api Test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to assert response body from callback on "/activateVoucher"
 
+  @gov @createAndActivateVoucher @redeemVoucherSuccess
+  Scenario: Redeem Voucher API Test using annotations
+
   @gov @createAndActivateVoucher @redeemVoucherFailure
   Scenario: VR-006 Cancel Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher cancellation
