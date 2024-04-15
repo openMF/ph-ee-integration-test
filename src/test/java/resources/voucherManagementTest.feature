@@ -28,19 +28,13 @@ Feature: Voucher Management Api Test
 #     Then I will sleep for 10000 millisecond
      Then I should be able to extract response body from callback
 
-  @gov @createVoucher @voucher-teardown
+  @gov @createVoucher
   Scenario: Activate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher activation
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
 #    Then I will sleep for 5000 millisecond
     Then I should be able to assert response body from callback on "/activateVoucher"
-
-  @gov @createAndActivateVoucher
-  Scenario: Redeem Voucher Api Test
-    Given I can create an RedeemVoucherRequestDTO for voucher redemption
-    When I call the redeem voucher API with expected status of 200
-    Then I can assert that redemption was successful by asserting the status in response
 
   @gov @createAndActivateVoucher @redeemVoucherFailure
   Scenario: VR-006 Cancel Voucher Api Test
@@ -87,6 +81,12 @@ Feature: Voucher Management Api Test
     Given I can create an VoucherRequestDTO for voucher creation with unsupported parameter parameter
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
+
+  @gov @createAndActivateVoucher
+  Scenario: Redeem Voucher Api Test
+    Given I can create an RedeemVoucherRequestDTO for voucher redemption
+    When I call the redeem voucher API with expected status of 200
+    Then I can assert that redemption was successful by asserting the status in response
 
   @gov @createAndActivateVoucher
    Scenario: Conflicting/unique data validations check for Create Voucher API

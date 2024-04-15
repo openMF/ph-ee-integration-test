@@ -635,7 +635,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @After("@voucher-teardown")
     public void voucherTestTearDown() {
         logger.info("Running @voucher-teardown");
-        voucherTestTearDown();
+        voucherTearDown();
     }
 
     public void voucherTearDown() {
