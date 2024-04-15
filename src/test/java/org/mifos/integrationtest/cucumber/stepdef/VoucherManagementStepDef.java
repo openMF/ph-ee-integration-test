@@ -632,4 +632,17 @@ public class VoucherManagementStepDef extends BaseStepDef {
         return requestBody;
     }
 
+    @After("@voucher-teardown")
+    public void voucherTestTearDown() {
+        logger.info("Running @voucher-teardown");
+        voucherTestTearDown();
+    }
+
+    public void voucherTearDown() {
+        scenarioScopeState.requestId = null;
+        scenarioScopeState.batchId = null;
+        scenarioScopeState.serialNumber = null;
+        scenarioScopeState.voucherNumber = null;
+    }
+
 }

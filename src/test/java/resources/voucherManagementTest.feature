@@ -1,4 +1,4 @@
-
+@voucher
 Feature: Voucher Management Api Test
 
   @gov @ext @createAndActivateVoucher @redeemVoucherSuccess
@@ -28,7 +28,7 @@ Feature: Voucher Management Api Test
 #     Then I will sleep for 10000 millisecond
      Then I should be able to extract response body from callback
 
-  @gov @createVoucher
+  @gov @createVoucher @voucher-teardown
   Scenario: Activate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher activation
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
