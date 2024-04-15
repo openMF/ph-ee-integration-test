@@ -182,7 +182,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in redeem voucher callback body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithRequiredParameterInRedeemVoucherCallbackBody(String arg0,
             String endpoint) {
-        mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
+        WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                 .withRequestBody(matchingJsonPath("$.requestID", equalTo(scenarioScopeState.requstId))));
     }
 
@@ -449,7 +449,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             // (putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.isValid", equalTo("true"))));
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
             String serialNo = null;
             String isValid = null;
             for (int i = 0; i < allServeEvents.size(); i++) {
@@ -489,9 +489,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void iShouldBeAbleToAssertResponseBodyFromCallback(String endpoint) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
-                mockServer.getMockServer().verify(putRequestedFor(urlEqualTo(endpoint))
+                WireMockServerSingleton.getInstance().verify(putRequestedFor(urlEqualTo(endpoint))
                         .withRequestBody(matchingJsonPath("$.registerRequestId", equalTo(scenarioScopeState.requestId))));
-                mockServer.getMockServer().verify(
+                WireMockServerSingleton.getInstance().verify(
                         putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
                 assertTrue(true);// success
             } catch (VerificationException e) {

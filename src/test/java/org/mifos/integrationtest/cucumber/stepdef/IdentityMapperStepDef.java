@@ -532,7 +532,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedARequestWithSuccessfullRegistration(String httpMethod, String stub) {
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
 
-            List<ServeEvent> allServeEvents = mockServer.getMockServer().getAllServeEvents();
+            List<ServeEvent> allServeEvents = WireMockServerSingleton.getInstance().getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
                 ServeEvent request = allServeEvents.get(i);

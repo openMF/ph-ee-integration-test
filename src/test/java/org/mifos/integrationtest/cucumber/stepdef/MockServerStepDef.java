@@ -36,7 +36,7 @@ public class MockServerStepDef extends BaseStepDef {
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
-        assertThat(mockServer).isNotNull();
+        assertThat(WireMockServerSingleton.getInstance()).isNotNull();
         // logger.info("{}", mockServer.getMockServer().baseUrl());
     }
 
@@ -127,12 +127,12 @@ public class MockServerStepDef extends BaseStepDef {
     public void startMockServer() {
         WireMockServerSingleton.getInstance();
         // mockServer.getMockServer().start();
-        configureFor("localhost", mockServer.getMockServer().port());
+        configureFor("localhost", WireMockServerSingleton.getInstance().port());
     }
 
     @And("I can stop mock server")
     public void stopMockServer() {
-        mockServer.getMockServer().stop();
+        WireMockServerSingleton.getInstance().stop();
     }
 
     @Given("I will start the mock server")
