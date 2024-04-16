@@ -18,6 +18,7 @@ import com.opencsv.CSVWriter;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.core.internal.com.fasterxml.jackson.databind.node.ObjectNode;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -58,7 +59,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.requestId = generateUniqueNumber(12);
         RequestDTO voucherDTO = new RequestDTO();
         voucherDTO.setRequestID(scenarioScopeState.requestId);
-        voucherDTO.setBatchID(generateUniqueNumber(10));
+        scenarioScopeState.batchId = generateUniqueNumber(10);
+        voucherDTO.setBatchID(scenarioScopeState.batchId);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setInstructionID(generateUniqueNumber(16));
@@ -105,8 +107,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher activation")
     public void iCanCreateAnVoucherRequestDTOForVoucherActivation() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
@@ -140,8 +140,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
     public void iCanCreateAnVoucherRequestDTOForVoucherCancellation() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("03");
@@ -213,6 +211,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
                     if (rootNode.has("requestID")) {
                         requestID = rootNode.get("requestID").asText();
                     }
+                    if (rootNode.has("batchID")) {
+                        scenarioScopeState.batchId = rootNode.get("batchID").asText();
+                    }
                     if (scenarioScopeState.requestId.equals(requestID)) {
                         scenarioScopeState.callbackBody = request.getRequest().getBodyAsString();
                     }
@@ -280,7 +281,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an RedeemVoucherRequestDTO for voucher redemption")
     public void iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
         scenarioScopeState.agentId = generateUniqueNumber(10);
 
         RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId,
@@ -376,9 +376,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an VoucherRequestDTO for voucher suspension")
     public void iCanCreateAnVoucherRequestDTOForVoucherSuspension() {
-        scenarioScopeState.requestId = generateUniqueNumber(12);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
-
         VoucherInstruction voucherInstruction = new VoucherInstruction();
         voucherInstruction.setSerialNumber(scenarioScopeState.serialNumber);
         voucherInstruction.setStatus("06");
@@ -411,8 +408,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @And("I can create an VoucherRequestDTO for voucher reactivation")
     public void iCanCreateAnVoucherRequestDTOForVoucherReactivation() {
-        scenarioScopeState.requestId = generateUniqueNumber(16);
-        scenarioScopeState.batchId = generateUniqueNumber(14);
         StringBuilder sb = new StringBuilder();
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(scenarioScopeState.requestId).append("\",\n");
@@ -589,6 +584,11 @@ public class VoucherManagementStepDef extends BaseStepDef {
         }
     }
 
+    @Then("I will add the required headers")
+    public void makeNecessaryHeadersNonNull() {
+        scenarioScopeState.registeringInstitutionId = generateUniqueNumber(3);
+    }
+
     @And("I should be able to assert the redeem voucher validation for negative response")
     public void iWillAssertTheFieldsFromRedeemVoucherValidationResponse() {
         try {
@@ -602,6 +602,47 @@ public class VoucherManagementStepDef extends BaseStepDef {
         } catch (Exception e) {
             logger.info("An error occurred : {}", e);
         }
+    }
+
+    @Given("I can create an VoucherRequestDTO for voucher creation with unsupported parameter parameter")
+    public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithUnsupportedParameter() {
+        iCreateAnIdentityMapperDTOForRegisterBeneficiary();
+        scenarioScopeState.createVoucherBody = addUnsupportedParamsInRequestBody(scenarioScopeState.createVoucherBody);
+    }
+
+    @And("I add unsupported parameter in my request body {string}")
+    public String addUnsupportedParamsInRequestBody(String requestBody) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            // Convert JSON string to JsonNode
+            JsonNode jsonNode = objectMapper.readTree(requestBody);
+
+            // Add new key-value pair
+            ((ObjectNode) jsonNode).put("abcd", "12345");
+            ((ObjectNode) jsonNode).put("efgh", "6789");
+
+            // Convert JsonNode back to JSON string
+            requestBody = objectMapper.writeValueAsString(jsonNode);
+
+        } catch (Exception e) {
+            logger.info("An error occurred : {}", e);
+        }
+
+        return requestBody;
+    }
+
+    @After("@voucher-teardown")
+    public void voucherTestTearDown() {
+        logger.info("Running @voucher-teardown");
+        voucherTearDown();
+    }
+
+    public void voucherTearDown() {
+        scenarioScopeState.requestId = null;
+        scenarioScopeState.batchId = null;
+        scenarioScopeState.serialNumber = null;
+        scenarioScopeState.voucherNumber = null;
     }
 
 }
