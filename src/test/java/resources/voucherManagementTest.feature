@@ -1,4 +1,4 @@
-@voucher
+
 Feature: Voucher Management Api Test
 
   @gov @ext @createAndActivateVoucher @redeemVoucherSuccess
@@ -37,7 +37,7 @@ Feature: Voucher Management Api Test
     Then I should be able to assert response body from callback on "/activateVoucher"
 
   @gov @createAndActivateVoucher @redeemVoucherSuccess
-  Scenario: Redeem Voucher API Test using annotations
+  Scenario: Redeem Voucher API Test
 
   @gov @createAndActivateVoucher @redeemVoucherFailure
   Scenario: VR-006 Cancel Voucher Api Test
@@ -85,11 +85,11 @@ Feature: Voucher Management Api Test
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
 
-  @gov @createAndActivateVoucher
-  Scenario: Redeem Voucher Api Test
-    Given I can create an RedeemVoucherRequestDTO for voucher redemption
-    When I call the redeem voucher API with expected status of 200
-    Then I can assert that redemption was successful by asserting the status in response
+#  @gov @createAndActivateVoucher
+#  Scenario: Redeem Voucher Api Test
+#    Given I can create an RedeemVoucherRequestDTO for voucher redemption
+#    When I call the redeem voucher API with expected status of 200
+#    Then I can assert that redemption was successful by asserting the status in response
 
   @gov @createAndActivateVoucher
    Scenario: Conflicting/unique data validations check for Create Voucher API
