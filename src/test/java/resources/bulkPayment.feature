@@ -1,7 +1,7 @@
 @gov @ext
 Feature: Test ability to make payment to individual with bank account
 
-  Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
+  Scenario:BB-FSP 001 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
@@ -25,7 +25,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  Scenario: Bulk Transfer with ClosedLoop and Mojaloop
+  Scenario:BB-FSP 002 Bulk Transfer with ClosedLoop and Mojaloop
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment_closedl_mock_mojaloop.csv"
     And I create a list of payee identifiers from csv file
@@ -49,7 +49,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And My total txns 8 and successful txn count in response should Match
 
-  Scenario: Bulk Transfer with ClosedLoop and GSMA
+  Scenario:BB-FSP 003 Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "1" and account balance of 100 for combine test cases
@@ -161,7 +161,7 @@ Feature: Test ability to make payment to individual with bank account
     And My total txns 8 and successful txn count in response should Match
 
 
-  Scenario: Bulk Transfer with Closedloop and Real Mojaloop
+  Scenario:BB-FSP 004 Bulk Transfer with Closedloop and Real Mojaloop
       #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "1" and account balance of 100 for combine test cases
@@ -257,7 +257,7 @@ Feature: Test ability to make payment to individual with bank account
     And My total txns 8 and successful txn count in response should Match
 
 
-  Scenario: Bulk Transfer with ClosedLoop, Real mojaloop and Real GSMA
+  Scenario:BB-FSP 005 Bulk Transfer with ClosedLoop, Real mojaloop and Real GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     When I create and setup a "payer" with id "1" and account balance of 100 for all combine test cases
