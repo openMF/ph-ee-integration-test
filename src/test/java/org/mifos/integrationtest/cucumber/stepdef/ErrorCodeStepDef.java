@@ -40,7 +40,6 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Value("${retry-interval}")
     private int retryInterval;
     public static TransactionChannelRequestDTO mockTransactionChannelRequestDTO = null;
-    public String transactionId;
     public static String randomTransactionId;
     public static GSMATransaction gsmaTransaction = null;
     public static PhErrorDTO errorInformation = null;
@@ -79,9 +78,9 @@ public class ErrorCodeStepDef extends BaseStepDef {
         if (authEnabled) {
             requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
         }
-        requestSpec.queryParam("transactionId", transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
         logger.info("Transfer query Response: {}", endPoint);
-        logger.info("TxnId : {}", transactionId);
+        logger.info("TxnId : {}", scenarioScopeState.transactionId);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endPoint).andReturn().asString();
 
@@ -95,9 +94,9 @@ public class ErrorCodeStepDef extends BaseStepDef {
         // requestSpec.header("Authorization", "Bearer " + BaseStepDef.accessToken);
         requestSpec.queryParam("size", 10);
         requestSpec.queryParam("page", 0);
-        requestSpec.queryParam("transactionId", transactionId);
+        requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
         logger.info("Transfer query Response: {}", endPoint);
-        logger.info("TxnId : {}", transactionId);
+        logger.info("TxnId : {}", scenarioScopeState.transactionId);
         int retryCount = 0;
         errorInformation = null;
         while (errorInformation == null && retryCount < maxRetryCount) {
@@ -123,15 +122,15 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void parseTransactionId() {
         try {
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            transactionId = jsonObject.getString("transactionId");
-            logger.info("Inbound transfer Id: {}", transactionId);
+            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
+            logger.info("Inbound transfer Id: {}", scenarioScopeState.transactionId);
         } catch (JSONException e) {
             logger.error("Error parsing the transaction id from response", e);
             assertThat(false).isTrue();
             return;
         }
-        assertThat(transactionId).isNotNull();
-        assertThat(transactionId).isNotEmpty();
+        assertThat(scenarioScopeState.transactionId).isNotNull();
+        assertThat(scenarioScopeState.transactionId).isNotEmpty();
     }
 
     public void checkForCallback() {
@@ -359,14 +358,15 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Then("I should poll the transfer query endpoint with transactionId until status is populated for the transactionId")
     public void iShouldPollTheTransferQueryEndpointWithTransactionIdUntilStatusIsPopulatedForTheTransactionId() {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             String endPoint = operationsAppConfig.transfersEndpoint;
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
             }
-            requestSpec.queryParam("transactionId", transactionId);
+            requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
             logger.info("Endpoint: {}", endPoint);
-            logger.info("TxnId : {}", transactionId);
+            logger.info("TxnId : {}", scenarioScopeState.transactionId);
 
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endPoint).andReturn().asString();
@@ -410,8 +410,11 @@ public class ErrorCodeStepDef extends BaseStepDef {
         try {
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             JSONArray content = jsonObject.getJSONArray("content");
-            if (content.getJSONObject(0).has("status")) {
-                status = content.getJSONObject(0).getString("errorInformation");
+            if (content.getJSONObject(0).has("errorInformation")) {
+//                throw new RuntimeException(content.toString());
+                JSONObject errorInformation = content.getJSONObject(0).getJSONObject("errorInformation");
+                //logger.info("errorInformation: {}",errorInformation);
+                status = errorInformation.getString("errorDescription");
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);

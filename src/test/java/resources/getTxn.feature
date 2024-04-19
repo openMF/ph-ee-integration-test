@@ -1,4 +1,3 @@
-
 @gov
 Feature: Get Txn Req API test
 
@@ -10,7 +9,6 @@ Feature: Get Txn Req API test
     When I call the get txn API with expected status of 200
     Then I should get non empty response
     And I should have clientCorrelationId in response
-
 
   Scenario: GTX-002 Get Txn Req API with Params
     Given I have tenant as "paymentbb2"

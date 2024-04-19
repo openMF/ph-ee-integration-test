@@ -36,7 +36,7 @@ public class GetTxnApiDef extends BaseStepDef {
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
             }
-
+            requestSpec.queryParam("transactionId", scenarioScopeState.response);
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(operationsAppConfig.transactionRequestsEndpoint).andReturn().asString();
@@ -87,6 +87,7 @@ public class GetTxnApiDef extends BaseStepDef {
                 .body(collectionRequestBody.toString()).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
                 .when().post("/channel/collection").andReturn().asString();
         CollectionResponse response = (new Gson()).fromJson(json, CollectionResponse.class);
+        scenarioScopeState.response = response.getTransactionId();
         assertThat(response.getTransactionId()).isNotEmpty();
     }
 }
