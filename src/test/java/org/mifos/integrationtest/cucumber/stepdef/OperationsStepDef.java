@@ -4,6 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
+import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -52,13 +53,16 @@ public class OperationsStepDef extends BaseStepDef {
         batchDbTearDown();
     }
 
-    @When("I call the batches endpoint with expected status of {int}")
-    public void simpleBatchesApiCallWithNoHeader(int expectedStatus) {
+    @When("I call the batches endpoint with expected status of {int} with total batches {int}")
+    public void simpleBatchesApiCallWithNoHeader(int expectedStatus, int totalBatches) {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            String date = BaseStepDef.getCurrentDateInFormat();
+            updateQueryParam(scenarioScopeState.batchesEndpointQueryParam, "dateTo", date);
             log.info("Query params: {}", scenarioScopeState.batchesEndpointQueryParam);
-            callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam);
+            callBatchesEndpoint(expectedStatus, scenarioScopeState.batchesEndpointQueryParam, totalBatches);
         });
     }
+
 
     @And("The count of batches should be {int}")
     public void assertCountOfBatches(int expectedCount) {
@@ -129,7 +133,7 @@ public class OperationsStepDef extends BaseStepDef {
         queryParam.put(key, object);
     }
 
-    private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams) {
+    private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams, int totalBatches) throws JsonProcessingException {
         log.info("Tenant I am passing is: {}", scenarioScopeState.tenant);
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
@@ -144,6 +148,11 @@ public class OperationsStepDef extends BaseStepDef {
                 .get(operationsAppConfig.batchesEndpoint).andReturn().asString();
 
         logger.info("Batches api Response: " + scenarioScopeState.response);
+        assertThat(scenarioScopeState.response).isNotEmpty();
+        BatchPaginatedResponse batchResponse = objectMapper.readValue(scenarioScopeState.response, BatchPaginatedResponse.class);
+        if(totalBatches != -1) {
+            assertThat(batchResponse.getData().size()).isEqualTo(totalBatches);
+        }
     }
 
     private void parseBatchesResponse(String response) {

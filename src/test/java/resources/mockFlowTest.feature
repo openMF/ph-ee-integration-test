@@ -20,7 +20,7 @@ Feature: Mock Flow Test
     Then I should get non empty response
     Given I can mock TransactionChannelRequestDTO
     And I have tenant as "paymentbb1"
-    When I call the get txn API with expected status of 200 and txnId
+    When I call the get txn API with expected status of 200 and txnId with PayeeDFSPId check
     Then I should get non empty response
     And I should have startedAt and completedAt in response
     And I should have PayeeFspId as "pluto"

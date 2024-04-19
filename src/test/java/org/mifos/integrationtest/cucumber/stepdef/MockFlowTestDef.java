@@ -72,6 +72,28 @@ public class MockFlowTestDef extends BaseStepDef {
             logger.info("GetTxn Request Response: " + scenarioScopeState.response);
             assertThat(scenarioScopeState.response).containsMatch("startedAt");
             assertThat(scenarioScopeState.response).containsMatch("completedAt");
+        });
+    }
+
+
+    @When("I call the get txn API with expected status of {int} and txnId with PayeeDFSPId check")
+    public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnIdWithPayeeDFSPIdCheck(int expectedStatus) {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+            requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
+            requestSpec.queryParam("size", "1");
+            requestSpec.header("page", "0");
+            if (authEnabled) {
+                requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+            }
+
+            scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .get(operationsAppConfig.transfersEndpoint).andReturn().asString();
+
+            logger.info("GetTxn Request Response: " + scenarioScopeState.response);
+            assertThat(scenarioScopeState.response).containsMatch("startedAt");
+            assertThat(scenarioScopeState.response).containsMatch("completedAt");
             assert scenarioScopeState.response.contains("payeeDfspId");
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
             JSONArray jsonArray = (JSONArray) jsonObject.get("content");
