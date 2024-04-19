@@ -337,6 +337,11 @@ public class VoucherManagementStepDef extends BaseStepDef {
     }
 
     @Before("@createAndActivateVoucher")
+    public void createAndActivateVoucherUsingAnnotation() {
+        createAndActivateVoucher();
+    }
+
+    @Given("I can create and activate a voucher")
     public void createAndActivateVoucher() {
         iCreateAnIdentityMapperDTOForRegisterBeneficiary();
         mockServerStepDef.checkIfMockServerIsInjected();
@@ -350,6 +355,11 @@ public class VoucherManagementStepDef extends BaseStepDef {
     }
 
     @Before("@createVoucher")
+    public void createVoucherUsingAnnotation() {
+        createVoucher();
+    }
+
+    @Given("I can create a voucher")
     public void createVoucher() {
         iCreateAnIdentityMapperDTOForRegisterBeneficiary();
         mockServerStepDef.checkIfMockServerIsInjected();
@@ -361,6 +371,10 @@ public class VoucherManagementStepDef extends BaseStepDef {
     }
 
     @After("@redeemVoucherFailure")
+    public void redeemVoucherFailureUsingAnnotation() {
+        redeemVoucherFailure();
+    }
+    @Then("I check for redeem voucher failure")
     public void redeemVoucherFailure() {
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
         iCallTheRedeemVoucherAPIWithExpectedStatusOf(200);
@@ -368,6 +382,10 @@ public class VoucherManagementStepDef extends BaseStepDef {
     }
 
     @After("@redeemVoucherSuccess")
+    public void redeemVoucherSuccessUsingAnnotation() {
+        redeemVoucherSuccess();
+    }
+    @Then("I check for redeem voucher success")
     public void redeemVoucherSuccess() {
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
         iCallTheRedeemVoucherAPIWithExpectedStatusOf(200);
