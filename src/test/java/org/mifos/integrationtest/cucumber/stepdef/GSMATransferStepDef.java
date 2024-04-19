@@ -718,7 +718,7 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void iCallTheBalanceApiForPayeeBalanceForAllCombinedTestsCases(String id) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
-        if (scenarioScopeState.payeeIdentifierforBatch == null) {
+        if (scenarioScopeState.payeeIdentifierforBatch == null || id.equals("1")) {
             scenarioScopeState.payeeIdentifierforBatch = new String[15];
         }
         scenarioScopeState.payeeIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payeeIdentifier;
@@ -799,7 +799,7 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void iCallTheBalanceApiForAllPayerBalanceForCombinedTestCases(String id) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         String finalEndpoint = amsBalanceEndpoint;
-        if (scenarioScopeState.payerIdentifierforBatch == null) {
+        if (scenarioScopeState.payerIdentifierforBatch == null || id.equals("1")) {
             scenarioScopeState.payerIdentifierforBatch = new String[15];
         }
         scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payerIdentifier;

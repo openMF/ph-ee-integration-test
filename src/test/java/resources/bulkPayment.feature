@@ -297,7 +297,7 @@ Feature: Test ability to make payment to individual with bank account
 
         #payer 4 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
-    When I create and setup a "payer" with id "4" and account balance of 50 for all combine test cases
+    When I create and setup a "payer" with id "4" and account balance of 50
     Given I have tenant as "payerfsp"
     Then I call the balance api for payer "4" balance for all combine test cases
     #payee 4 creation
