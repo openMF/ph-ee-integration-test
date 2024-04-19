@@ -1,4 +1,4 @@
-@gov @ext
+@gov1 @ext
 Feature: Mojaloop test
 
   Scenario: ML connector partial payee party lookup test
@@ -125,7 +125,7 @@ Feature: Mojaloop test
     When I call the batch transactions endpoint with expected status of 202
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-#    Then I will sleep for 10000 millisecond
+    Then I will sleep for 10000 millisecond
     When I call the batch aggregate API with expected status of 200 with total 3 txns
     Then I should get non empty response
     Then I am able to parse batch summary response
