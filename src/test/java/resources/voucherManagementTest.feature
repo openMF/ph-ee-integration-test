@@ -13,7 +13,7 @@ Feature: Voucher Management Api Test
     Then I check for redeem voucher success
 #    Then I will sleep for 2000 millisecond
 
-  @gov @ext @createAndActivateVoucher
+  @gov
   Scenario: Validity Check Voucher Api Test
     Given I can create and activate a voucher
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
