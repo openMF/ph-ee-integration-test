@@ -576,7 +576,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     "ABCDEF");
             beneficiaryDTOList.add(beneficiaryDTO);
         }
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(12), "11", "12345678", "ABCDEF");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(22), "11", "12345678", "ABCDEF");
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
@@ -591,7 +591,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
                     "ABCDEF");
             beneficiaryDTOList.add(beneficiaryDTO);
         }
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(16), "11", "12345678", "ABCDEF");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(generateUniqueNumber(26), "11", "12345678", "ABCDEF");
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(10);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
