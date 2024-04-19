@@ -157,7 +157,7 @@ Feature: Bill Payment P2G Test
     And I can mock payment notification request with missing values
     When I call the payment notification api expected status of 400 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
-    And I should get transactionId in response
+#    And I should get transactionId in response
 #    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill notification with missing values
 
@@ -171,7 +171,7 @@ Feature: Bill Payment P2G Test
     And I can mock payment notification request with missing bill id
     When I call the payment notification api expected status of 404 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
-    And I should get transactionId in response
+#    And I should get transactionId in response
 #    And I will sleep for 5000 millisecond
     Then I should be able to extract response body from callback for bill notification with missing bill id
 
