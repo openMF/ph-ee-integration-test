@@ -511,6 +511,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         beneficiaryDTOList.add(beneficiaryDTO);
         scenarioScopeState.requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(scenarioScopeState.requestId, "", beneficiaryDTOList);
+        scenarioScopeState.beneficiaryPayeeIdentity = scenarioScopeState.payeeIdentity;
     }
 
     public static String generateUniqueNumber(int length) {
