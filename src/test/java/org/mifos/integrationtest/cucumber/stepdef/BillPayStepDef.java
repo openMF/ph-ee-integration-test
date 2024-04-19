@@ -46,6 +46,7 @@ public class BillPayStepDef extends BaseStepDef {
     private static String billerId;
     private static BillRTPReqDTO billRTPReqDTO;
     private static String billId = "12345";
+    private static String rtpId = "123456";
     private static String rtpResponse;
 
     @Then("I can create DTO for Biller RTP Request")
@@ -315,7 +316,7 @@ public class BillPayStepDef extends BaseStepDef {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    if (rootNode != null && rootNode.has("billId") && rootNode.get("billId").asText().equals(billId)) {
+                    if (rootNode != null && rootNode.has("rtpId") && rootNode.get("rtpId").asText().equals(rtpId)) {
                         String requestId = null;
                         if (rootNode.has("requestId")) {
                             requestId = rootNode.get("requestId").asText();
@@ -467,8 +468,7 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            scenarioScopeState.transactionId = jsonObject.getString("error");
-            assertThat(scenarioScopeState.transactionId
+            assertThat(jsonObject.getString("error")
                     .equals("Invalid Request: Mandatory Fields Missing, Missing field is billInquiryRequestId")).isTrue();
         });
     }
@@ -478,8 +478,7 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
-            assertThat(scenarioScopeState.transactionId.equals("Invalid Request: Mandatory Fields Missing, Missing field is billId"))
+            assertThat(jsonObject.getString("error").equals("Invalid Request: Bill Id Empty"))
                     .isTrue();
         });
     }

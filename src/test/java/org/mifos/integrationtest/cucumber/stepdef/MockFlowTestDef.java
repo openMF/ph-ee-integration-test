@@ -72,6 +72,15 @@ public class MockFlowTestDef extends BaseStepDef {
             logger.info("GetTxn Request Response: " + scenarioScopeState.response);
             assertThat(scenarioScopeState.response).containsMatch("startedAt");
             assertThat(scenarioScopeState.response).containsMatch("completedAt");
+            assert scenarioScopeState.response.contains("payeeDfspId");
+            JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+            JSONArray jsonArray = (JSONArray) jsonObject.get("content");
+            JSONObject content = (JSONObject) jsonArray.get(0);
+            String payeeDfspId = content.get("payeeDfspId").toString();
+            assertThat(payeeDfspId).isNotEmpty();
+            assertThat(payeeDfspId).isNotEqualTo("null");
+            String payeeIdentifier = content.get("payeePartyId").toString();
+            assertThat(payeeIdentifier).isEqualTo(scenarioScopeState.payerIdentifier);
         });
     }
 
