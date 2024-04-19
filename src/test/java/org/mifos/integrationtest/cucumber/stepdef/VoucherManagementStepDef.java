@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import org.mifos.integrationtest.common.UniqueNumberGenerator;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.ErrorDetails;
 import org.mifos.integrationtest.common.dto.voucher.RedeemVoucherRequestDTO;
@@ -57,9 +57,9 @@ public class VoucherManagementStepDef extends BaseStepDef {
     @Given("I can create an VoucherRequestDTO for voucher creation")
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiary() {
         scenarioScopeState.requestId = generateUniqueNumber(12);
+        scenarioScopeState.batchId = generateUniqueNumber(10);
         RequestDTO voucherDTO = new RequestDTO();
         voucherDTO.setRequestID(scenarioScopeState.requestId);
-        scenarioScopeState.batchId = generateUniqueNumber(10);
         voucherDTO.setBatchID(scenarioScopeState.batchId);
 
         VoucherInstruction voucherInstruction = new VoucherInstruction();
@@ -98,11 +98,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     }
 
     public static String generateUniqueNumber(int length) {
-        Random rand = new Random();
-        long timestamp = System.currentTimeMillis();
-        long randomLong = rand.nextLong(100000000);
-        String uniqueNumber = timestamp + "" + randomLong;
-        return uniqueNumber.substring(0, length);
+        return UniqueNumberGenerator.generateUniqueNumber(length);
     }
 
     @When("I can create an VoucherRequestDTO for voucher activation")
@@ -374,6 +370,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void redeemVoucherFailureUsingAnnotation() {
         redeemVoucherFailure();
     }
+
     @Then("I check for redeem voucher failure")
     public void redeemVoucherFailure() {
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
@@ -385,6 +382,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
     public void redeemVoucherSuccessUsingAnnotation() {
         redeemVoucherSuccess();
     }
+
     @Then("I check for redeem voucher success")
     public void redeemVoucherSuccess() {
         iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
@@ -430,7 +428,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         sb.append("{\n");
         sb.append("    \"requestID\": \"").append(scenarioScopeState.requestId).append("\",\n");
         sb.append("    \"batchID\": \"").append(scenarioScopeState.batchId).append("\",\n"); // Replaced "045155518258"
-                                                                                             // with batchId
+        // with batchId
         // variable
         sb.append("    \"voucherInstructions\": [\n");
         sb.append("        {\n");
@@ -661,6 +659,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         scenarioScopeState.batchId = null;
         scenarioScopeState.serialNumber = null;
         scenarioScopeState.voucherNumber = null;
+        scenarioScopeState.callbackBody = null;
     }
 
 }

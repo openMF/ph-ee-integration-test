@@ -1,7 +1,26 @@
-@voucher
+
 Feature: Voucher Management Api Test
 
   @gov
+  Scenario: Create Voucher Api Test
+    When I can inject MockServer
+    Then I can start mock server
+    And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
+    Given I can create an VoucherRequestDTO for voucher creation
+    When I call the create voucher API with expected status of 202 and stub "/createVoucher"
+#     Then I will sleep for 10000 millisecond
+    Then I should be able to extract response body from callback
+
+  @gov @voucher-teardown
+  Scenario: Activate Voucher Api Test
+    Given I can create a voucher
+    Given I can create an VoucherRequestDTO for voucher activation
+    And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
+    When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
+#    Then I will sleep for 5000 millisecond
+    Then I should be able to assert response body from callback on "/activateVoucher"
+
+  @gov @voucher-teardown
   Scenario: Reactivate Voucher Api Test
     Given I can create and activate a voucher
     Given I can create an VoucherRequestDTO for voucher suspension
@@ -21,26 +40,7 @@ Feature: Voucher Management Api Test
 #    And I will sleep for 3000 millisecond
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
 
-  @gov
-   Scenario: Create Voucher Api Test
-     When I can inject MockServer
-     Then I can start mock server
-     And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
-     Given I can create an VoucherRequestDTO for voucher creation
-    When I call the create voucher API with expected status of 202 and stub "/createVoucher"
-#     Then I will sleep for 10000 millisecond
-     Then I should be able to extract response body from callback
-
-  @gov
-  Scenario: Activate Voucher Api Test
-    Given I can create a voucher
-    Given I can create an VoucherRequestDTO for voucher activation
-    And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
-    When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
-#    Then I will sleep for 5000 millisecond
-    Then I should be able to assert response body from callback on "/activateVoucher"
-
-  @gov
+  @gov @voucher-teardown
   Scenario: Redeem Voucher API Test
     Given I can create and activate a voucher
     Then I check for redeem voucher success
@@ -53,6 +53,7 @@ Feature: Voucher Management Api Test
     When I call the cancel voucher API with expected status of 202 and stub "/cancelVoucher"
     Then I check for redeem voucher failure
 #    Then I will sleep for 3000 millisecond
+#    Then I will sleep for 10000 millisecond
 
   @gov
   Scenario: VR-002 Suspend Voucher Api Test
@@ -97,22 +98,16 @@ Feature: Voucher Management Api Test
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
 
-#  @gov @createAndActivateVoucher
-#  Scenario: Redeem Voucher Api Test
-#    Given I can create an RedeemVoucherRequestDTO for voucher redemption
-#    When I call the redeem voucher API with expected status of 200
-#    Then I can assert that redemption was successful by asserting the status in response
-
   @gov
    Scenario: Conflicting/unique data validations check for Create Voucher API
     Given I can create and activate a voucher
     Then I will call the fetch voucher API with expected status of 200
     When I call the create voucher API with expected status of 409 and stub "/createVoucher"
 
-  @Ignore
-  Scenario: Create a csv file for voucher number and voucher serial number
-    When I can inject MockServer
-    Then I can start mock server
-    And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
-    And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
-    When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
+#  @Ignore
+#  Scenario: Create a csv file for voucher number and voucher serial number
+#    When I can inject MockServer
+#    Then I can start mock server
+#    And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
+#    And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
+#    When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
