@@ -63,7 +63,6 @@ public class OperationsStepDef extends BaseStepDef {
         });
     }
 
-
     @And("The count of batches should be {int}")
     public void assertCountOfBatches(int expectedCount) {
         assertThat(scenarioScopeState.batchesResponse).isNotNull();
@@ -133,7 +132,8 @@ public class OperationsStepDef extends BaseStepDef {
         queryParam.put(key, object);
     }
 
-    private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams, int totalBatches) throws JsonProcessingException {
+    private void callBatchesEndpoint(int expectedStatusCode, Map<String, Object> queryParams, int totalBatches)
+            throws JsonProcessingException {
         log.info("Tenant I am passing is: {}", scenarioScopeState.tenant);
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         if (authEnabled) {
@@ -150,7 +150,7 @@ public class OperationsStepDef extends BaseStepDef {
         logger.info("Batches api Response: " + scenarioScopeState.response);
         assertThat(scenarioScopeState.response).isNotEmpty();
         BatchPaginatedResponse batchResponse = objectMapper.readValue(scenarioScopeState.response, BatchPaginatedResponse.class);
-        if(totalBatches != -1) {
+        if (totalBatches != -1) {
             assertThat(batchResponse.getData().size()).isEqualTo(totalBatches);
         }
     }

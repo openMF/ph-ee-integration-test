@@ -75,7 +75,6 @@ public class MockFlowTestDef extends BaseStepDef {
         });
     }
 
-
     @When("I call the get txn API with expected status of {int} and txnId with PayeeDFSPId check")
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnIdWithPayeeDFSPIdCheck(int expectedStatus) {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
