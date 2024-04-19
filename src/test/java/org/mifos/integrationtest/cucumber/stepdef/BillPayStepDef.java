@@ -478,8 +478,7 @@ public class BillPayStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
 
             JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-            assertThat(jsonObject.getString("error").equals("Invalid Request: Bill Id Empty"))
-                    .isTrue();
+            assertThat(jsonObject.getString("error").equals("Invalid Request: Bill Id Empty")).isTrue();
         });
     }
 

@@ -6,7 +6,7 @@ Feature: Operations APP related feature
     Given I have tenant as "paymentBB2"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
     Then I should get a valid token
-    When I call the batches endpoint with expected status of 200
+    When I call the batches endpoint with expected status of 200 with total batches -1
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
 
@@ -27,7 +27,7 @@ Feature: Operations APP related feature
     Then I am able to parse batch summary response
     And I should get non empty response
     Then I add batchId query param
-    When I call the batches endpoint with expected status of 200
+    When I call the batches endpoint with expected status of 200 with total batches 1
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
     And I am able to assert 1 totalBatches
@@ -59,13 +59,13 @@ Feature: Operations APP related feature
     When I call the batch transactions endpoint with expected status of 202
     And I add limit filter 1
     And I add offset filter 0
-    When I call the batches endpoint with expected status of 200
+    When I call the batches endpoint with expected status of 200 with total batches 1
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
     And The count of batches should be 1
     When I add limit filter 1
     And I add offset filter 1
-	And I call the batches endpoint with expected status of 200
+	And I call the batches endpoint with expected status of 200 with total batches 1
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
     And The count of batches should be 1
@@ -129,10 +129,10 @@ Feature: Operations APP related feature
     And I generate signature
     When I call the batch transactions endpoint with expected status of 202
     # sleep for 5 sec
-#    Then I will sleep for 20000 millisecond
+   # Then I will sleep for 10000 millisecond
   	And I add date from filter
     And I add date to filter
-    When I call the batches endpoint with expected status of 200
+    When I call the batches endpoint with expected status of 200 with total batches 5
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
     And I am able to assert 5 totalBatches
