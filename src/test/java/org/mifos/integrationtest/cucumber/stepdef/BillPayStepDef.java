@@ -86,6 +86,7 @@ public class BillPayStepDef extends BaseStepDef {
     @And("I should get transactionId in response")
     public void iShouldGetBatchIdInResponse() throws JSONException {
         JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+        assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
         scenarioScopeState.transactionId = jsonObject.getString("transactionId");
 
     }
