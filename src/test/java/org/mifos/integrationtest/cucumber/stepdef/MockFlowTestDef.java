@@ -77,7 +77,7 @@ public class MockFlowTestDef extends BaseStepDef {
 
     @When("I call the get txn API with expected status of {int} and txnId with PayeeDFSPId check")
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnIdWithPayeeDFSPIdCheck(int expectedStatus) {
-        await().atMost(awaitMost + 20, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
             requestSpec.queryParam("size", "1");
