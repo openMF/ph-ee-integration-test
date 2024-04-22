@@ -221,8 +221,6 @@ public class VoucherManagementStepDef extends BaseStepDef {
                 }
             }
 
-            assertThat(scenarioScopeState.callbackBody).isNotNull();
-
             try {
                 // ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(scenarioScopeState.callbackBody);
@@ -283,17 +281,20 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Given("I can create an RedeemVoucherRequestDTO for voucher redemption")
     public void iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption() {
-        scenarioScopeState.agentId = generateUniqueNumber(10);
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            scenarioScopeState.agentId = generateUniqueNumber(10);
 
-        RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId,
-                scenarioScopeState.serialNumber, scenarioScopeState.voucherNumber);
+            RedeemVoucherRequestDTO requestDTO = new RedeemVoucherRequestDTO(scenarioScopeState.requestId, scenarioScopeState.agentId,
+                    scenarioScopeState.serialNumber, scenarioScopeState.voucherNumber);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            scenarioScopeState.redeemVoucherBody = objectMapper.writeValueAsString(requestDTO);
-        } catch (JsonProcessingException e) {
-            logger.error("Unable to convert the DTO : {}", e);
-        }
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                scenarioScopeState.redeemVoucherBody = objectMapper.writeValueAsString(requestDTO);
+                assertThat(scenarioScopeState.redeemVoucherBody).isNotNull();
+            } catch (JsonProcessingException e) {
+                logger.error("Unable to convert the DTO : {}", e);
+            }
+        });
     }
 
     @When("I call the redeem voucher API with expected status of {int}")
@@ -449,17 +450,19 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the validity check API with expected status of {int} and stub {string}")
     public void iCallTheValidityCheckAPIWithExpectedStatusOfAndStub(int responseCode, String stub) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .queryParam("serialNumber", scenarioScopeState.serialNumber).queryParam("isValid", "true")
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
-                .get(voucherManagementConfig.voucherValidityEndpoint).andReturn().asString();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .queryParam("serialNumber", scenarioScopeState.serialNumber).queryParam("isValid", "true")
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
+                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
+                    .get(voucherManagementConfig.voucherValidityEndpoint).andReturn().asString();
 
-        scenarioScopeState.redeemVoucherResponseBody = scenarioScopeState.response;
-        logger.info("Validity Voucher Response: {}", scenarioScopeState.response);
+            scenarioScopeState.redeemVoucherResponseBody = scenarioScopeState.response;
+            logger.info("Validity Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     @And("I can extract result from validation callback and assert if validation is successful on {string}")

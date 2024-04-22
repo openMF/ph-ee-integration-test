@@ -19,6 +19,10 @@ Feature: Voucher Management Api Test
     Then I should be able to assert response body from callback on "/activateVoucher"
 
   @gov @createAndActivateVoucher
+  Scenario: Redeem Voucher API Test
+    Then I check for redeem voucher success
+
+  @gov @createAndActivateVoucher
   Scenario: Reactivate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
@@ -33,10 +37,6 @@ Feature: Voucher Management Api Test
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
     And I call the validity check API with expected status of 202 and stub "/validity"
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
-
-  @gov @createAndActivateVoucher
-  Scenario: Redeem Voucher API Test
-    Then I check for redeem voucher success
 
   @gov @createAndActivateVoucher
   Scenario: VR-006 Cancel Voucher Api Test
