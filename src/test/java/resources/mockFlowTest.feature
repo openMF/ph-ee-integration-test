@@ -1,7 +1,7 @@
 @gov
 Feature: Mock Flow Test
 
-  @test
+  @ext
   Scenario: Test for minimal mock fund transfer account lookup flow
     Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I call the create payer client endpoint
