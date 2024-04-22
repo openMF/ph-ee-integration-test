@@ -85,16 +85,18 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the create voucher API with expected status of {int} and stub {string}")
     public void iCallTheVoucherCreateAPIWithExpectedStatusOf(int expectedStatus, String stub) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.registeringInstitutionId = "SocialWelfare";
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
-                .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.createVoucherBody).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.registeringInstitutionId = "SocialWelfare";
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
+                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.createVoucherBody).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();
 
-        logger.info("Create Voucher Response: {}", scenarioScopeState.response);
+            logger.info("Create Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     public static String generateUniqueNumber(int length) {
@@ -122,16 +124,18 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @When("I call the activate voucher API with expected status of {int} and stub {string}")
     public void iCallTheActivateVoucherAPIWithExpectedStatusOfAndStub(int expectedStatus, String stub) {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
-                .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint)
-                .body(scenarioScopeState.activateVoucherBody).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
+                    .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                    .body(scenarioScopeState.activateVoucherBody).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                    .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
-        logger.info("Activate Voucher Response: {}", scenarioScopeState.response);
+            logger.info("Activate Voucher Response: {}", scenarioScopeState.response);
+        });
     }
 
     @When("I can create an VoucherRequestDTO for voucher cancellation")
@@ -190,7 +194,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I should be able to extract response body from callback")
     public void iShouldBeAbleToExtractResponseBodyFromCallback() {
-        await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             List<ServeEvent> allServeEvents = getAllServeEvents();
 
             for (int i = 0; i < allServeEvents.size(); i++) {
@@ -216,6 +220,8 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
                 }
             }
+
+            assertThat(scenarioScopeState.callbackBody).isNotNull();
 
             try {
                 // ObjectMapper objectMapper = new ObjectMapper();
@@ -647,19 +653,4 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
         return requestBody;
     }
-
-    @After("@voucher-teardown")
-    public void voucherTestTearDown() {
-        logger.info("Running @voucher-teardown");
-        voucherTearDown();
-    }
-
-    public void voucherTearDown() {
-        scenarioScopeState.requestId = null;
-        scenarioScopeState.batchId = null;
-        scenarioScopeState.serialNumber = null;
-        scenarioScopeState.voucherNumber = null;
-        scenarioScopeState.callbackBody = null;
-    }
-
 }
