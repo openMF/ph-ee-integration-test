@@ -86,6 +86,7 @@ public class BillPayStepDef extends BaseStepDef {
     @And("I should get transactionId in response")
     public void iShouldGetBatchIdInResponse() throws JSONException {
         JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
+        assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
         scenarioScopeState.transactionId = jsonObject.getString("transactionId");
 
     }
@@ -160,8 +161,6 @@ public class BillPayStepDef extends BaseStepDef {
 
         logger.info("Payment notiifcation response: {}", scenarioScopeState.response);
         JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-        scenarioScopeState.transactionId = jsonObject.getString("transactionId");
-        assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
     }
 
     @When("I call the mock get bills api from PBB to Biller with billid with expected status of {int}")
