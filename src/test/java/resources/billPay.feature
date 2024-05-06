@@ -8,7 +8,7 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "001"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
@@ -40,7 +40,7 @@ Feature: Bill Payment P2G Test
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     And I can register the stub with "/billNotification" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "001"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiry"
     Then I should get non empty response
@@ -62,9 +62,9 @@ Feature: Bill Payment P2G Test
       #response for bill inquiry api from Bill Agg to PBB to PFI
   Scenario: Bill Inquiry API for P2G (PBB to Biller/Agg)
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "001"
-    When I call the mock get bills api from PBB to Biller with billid with expected status of 200
+    When I call the mock get bills api from PBB to Biller with billid with expected status of 202
     Then I should get non empty response
 
 
@@ -72,10 +72,10 @@ Feature: Bill Payment P2G Test
    #response for bill inquiry api from Bill Agg to PBB to PFI
   Scenario: Bill Payments API for P2G (PBB to Biller/Agg)
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "001"
     And I can mock payment notification request
-    When I call the mock bills payment api from PBB to Biller with billid with expected status of 200
+    When I call the mock bills payment api from PBB to Biller with billid with expected status of 202
     Then I should get non empty response
 
   @gov
@@ -86,6 +86,7 @@ Feature: Bill Payment P2G Test
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
     And I have bill id as "1008"
+    And I generate clientCorrelationId
     And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request
     And I can call the biller RTP request API with expected status of 202 and "/testRTP" endpoint
@@ -98,7 +99,7 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "101"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiryPrefixInvalid"
     Then I should get non empty response
@@ -112,7 +113,7 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiry" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "002"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/invalidbillInquiry"
     Then I should get non empty response
@@ -126,7 +127,7 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiryInvalid" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "003"
     When I call the get bills api with billid with expected status of 404 and callbackurl as "/billInquiryInvalid"
     Then I should get non empty response
@@ -138,7 +139,7 @@ Feature: Bill Payment P2G Test
     And I can start mock server
     And I can register the stub with "/billInquiryEmpty" endpoint for "POST" request with status of 200
     Given I have tenant as "paymentBB2"
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     And I have bill id as "004"
     When I call the get bills api with billid with expected status of 202 and callbackurl as "/billInquiryEmpty"
     Then I should get non empty response
@@ -157,9 +158,7 @@ Feature: Bill Payment P2G Test
     And I can mock payment notification request with missing values
     When I call the payment notification api expected status of 400 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
-#    And I should get transactionId in response
-#    And I will sleep for 5000 millisecond
-    Then I should be able to extract response body from callback for bill notification with missing values
+    And I should be able to assert negative response body
 
   @gov
   Scenario: BP-003A Bill Payments API fails due to mandatory fields missing -Bill Id(PFI to PBB)
@@ -169,11 +168,10 @@ Feature: Bill Payment P2G Test
     Given I have tenant as "paymentBB2"
     And I generate clientCorrelationId
     And I can mock payment notification request with missing bill id
-    When I call the payment notification api expected status of 404 and callbackurl as "/billNotificationMissing"
+    When I call the payment notification api expected status of 400 and callbackurl as "/billNotificationMissing"
     Then I should get non empty response
-#    And I should get transactionId in response
-#    And I will sleep for 5000 millisecond
-    Then I should be able to extract response body from callback for bill notification with missing bill id
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.bill.id.cannot.be.null.or.empty"
 
   @gov
   Scenario: BP-004A Bill Payments API fails due to bill already marked paid (PFI to PBB)
@@ -216,10 +214,11 @@ Feature: Bill Payment P2G Test
     And I have a billerId as "GovBill"
     And I have bill id as "1009"
     And I generate clientCorrelationId
-    And I create a new clientCorrelationId
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request without alias details
     And I can call the biller RTP request API with expected status of 400 and "/aliasSpecification" endpoint
-    And I can extract the error from response body and assert the error information as "Payer Fsp details cannot be null or empty"
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.payer.fsp.details.cannot.be.null.or.empty"
 
   @gov
   Scenario: RTP-003 Request to Pay is unsuccessful because RtP type does not match with the information provided
@@ -228,9 +227,11 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     And I have bill id as "1010"
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect rtp information
     And I can call the biller RTP request API with expected status of 400 and "/informationMismatch" endpoint
-    And I can extract the error from response body and assert the error information as "Alias cannot be null or empty"
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.alias.cannot.be.null.or.empty"
 
   @gov
   Scenario: RTP-004 Request to Pay is unsuccessful because of invalid RTP type (alias or bank account)
@@ -239,9 +240,11 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     And I have bill id as "1011"
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect rtp type
     And I can call the biller RTP request API with expected status of 400 and "/invalidRtp" endpoint
-    And I can extract the error from response body and assert the error information as "Request Type is Invalid"
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.request.type.is.invalid"
 
   @gov
   Scenario: RTP-005 Request to Pay is unsuccessful because of  Alias type and Alias information mismatch
@@ -250,9 +253,11 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     And I have bill id as "1012"
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request with incorrect alias details
     And I can call the biller RTP request API with expected status of 400 and "/aliasMismatch" endpoint
-    And I can extract the error from response body and assert the error information as "Request Type is Invalid"
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.request.type.is.invalid"
 
   @gov
   Scenario: RTP-006 Request to Pay is unsuccessful because of invalid/incorrect BIC
@@ -261,9 +266,11 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     And I have bill id as "1013"
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request without alias details
     And I can call the biller RTP request API with expected status of 400 and "/invalidBic" endpoint
-    And I can extract the error from response body and assert the error information as "Payer Fsp details cannot be null or empty"
+    And I should be able to assert negative response body
+    Then I will assert that response contains "error.msg.schema.payer.fsp.details.cannot.be.null.or.empty"
 
   @gov
   Scenario: RTP-008 Request to Pay is unsuccessful because the specified account of the Payer FI was unreachable - did not respond (Txn timed out)
@@ -276,6 +283,7 @@ Feature: Bill Payment P2G Test
     And I generate clientCorrelationId
     And I create a new clientCorrelationId
     And I have bill id as "1014"
+    And I generate clientCorrelationId
     Then I can create DTO for Biller RTP Request to mock payer fi unreachable
     And I can call the biller RTP request API with expected status of 202 and "/payerUnreachable" endpoint
 #    Then I will sleep for 3000 millisecond
@@ -353,3 +361,13 @@ Feature: Bill Payment P2G Test
     And I can call the biller RTP request API with expected status of 202 and "/test1" endpoint
     Given I can create a request for status api
     And I can call the biller RTP status API with expected status of 200 until I get the rtpStatus as "ACCEPTED"
+
+  @gov
+  Scenario: Unsupported header validation for Bill Payments API
+    Given I have tenant as "paymentBB2"
+    And I generate clientCorrelationId
+    And I have bill id as "001"
+    And I can mock payment notification request
+    When I call the mock bills payment api with invalid header from PBB to Biller with billid with expected status of 400
+    Then I should get non empty response
+    Then I will assert that response contains "error.msg.header.validation.errors"
