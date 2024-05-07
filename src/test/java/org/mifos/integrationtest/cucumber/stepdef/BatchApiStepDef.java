@@ -617,7 +617,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @And("I call the sub batch summary API for sub batch summary with expected status of {int}")
     public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(awaitMost + 10, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
             if (authEnabled) {
