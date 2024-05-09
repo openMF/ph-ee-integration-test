@@ -294,7 +294,6 @@ workflows:
             - AWS
             - Helm
             - slack
-          requires:
       - create-secret-paymenthub-namespace:
           requires:
             - docker-image-availability-check-and-upgrade
