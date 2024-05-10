@@ -173,7 +173,7 @@ keycloak:
       password: "admin"
     client:
       id: "kong-oidc"
-      secret: "toCozdqKQut8dpVi7WiXXGVeEqKrrTjp"
+      secret: "QAnfEBawUTHOVCDGtf88tn23buodUHUC"
     grant_type: "password"
 
 config:
