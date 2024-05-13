@@ -1,4 +1,4 @@
-@billPay
+
 Feature: Bill Payment P2G Test
 
   @gov
