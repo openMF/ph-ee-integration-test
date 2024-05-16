@@ -169,7 +169,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
+                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "123")
                 .queryParam("command", "cancel").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.cancelVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()

@@ -1,4 +1,4 @@
-@voucher
+
 Feature: Voucher Management Api Test
 
   @gov
