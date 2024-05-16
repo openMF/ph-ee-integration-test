@@ -128,7 +128,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "")
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("X-Program-ID", "123")
                     .queryParam("command", "activate").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                     .body(scenarioScopeState.activateVoucherBody).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -302,7 +302,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .queryParam("command", "redeem").header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
-                .header("X-CallbackURL", "").header("X-Program-ID", "").baseUri(voucherManagementConfig.voucherManagementContactPoint)
+                .header("X-CallbackURL", "").header("X-Program-ID", "123").baseUri(voucherManagementConfig.voucherManagementContactPoint)
                 .body(scenarioScopeState.redeemVoucherBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build())
                 .when().post(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
 
@@ -420,7 +420,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .queryParam("command", "suspend").header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
-                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Program-ID", "")
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).header("X-Program-ID", "123")
                 .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.suspendVoucherBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(responseCode).build()).when()
                 .put(voucherManagementConfig.voucherLifecycleEndpoint).andReturn().asString();
