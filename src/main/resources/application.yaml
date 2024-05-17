@@ -242,6 +242,7 @@ billPay:
     inquiry: /bills/{billId}
     payments: /paymentNotifications
     billerRtpRequest: /billTransferRequests
+    billStatus: /transferRequests/{{correlationId}}
 
 awaitly:
   maxWaitTime: 25

@@ -21,6 +21,9 @@ public class BillPayConnectorConfig {
     @Value("${billPay.endpoints.billerRtpRequest}")
     public String billerRtpEndpoint;
 
+    @Value("${billPay.endpoints.billStatus}")
+    public String statusEndpoint;
+
     @PostConstruct
     private void setup() {
         inquiryEndpoint = billPayContactPoint + inquiryEndpoint;
