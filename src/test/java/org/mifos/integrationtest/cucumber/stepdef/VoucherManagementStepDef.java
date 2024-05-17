@@ -656,4 +656,22 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
         return requestBody;
     }
+
+    @And("I can call the voucher status API with expected status of {int} until I get the status as {string}")
+    public void iCanCallTheVoucherStatusAPIWithExpectedStatusOfUntilIGetTheStatusAs(int expectedStatus, String status) {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            String endpoint = voucherManagementConfig.voucherStatus;
+            RequestSpecification requestSpec = Utils.getDefaultSpec();
+            // requestSpec.queryParam("fields", "status");
+            endpoint = String.format(endpoint.replace("{{serialNumber}}", "%s"), scenarioScopeState.serialNumber);
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
+                    .baseUri(voucherManagementConfig.voucherManagementContactPoint).expect()
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endpoint).andReturn().asString();
+
+            logger.info("Status Response: {}", scenarioScopeState.response);
+            assertThat(scenarioScopeState.response.contains(status)).isTrue();
+        });
+    }
 }

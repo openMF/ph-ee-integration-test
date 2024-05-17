@@ -141,6 +141,7 @@ voucher-management:
     voucher-validity: /voucher/validity
     fetch: /vouchers
     actuator: "/actuator/health"
+    voucher-status: "/voucher/{{serialNumber}}?fields=status"
 
 
 mock-payment-schema:
