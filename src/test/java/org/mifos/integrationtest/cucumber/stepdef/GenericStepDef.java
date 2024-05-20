@@ -53,4 +53,9 @@ public class GenericStepDef extends BaseStepDef {
         assertThat(data).isNotNull();
     }
 
+    @Then("I will assert that response body contains {string}")
+    public void verifyTheResponseContains(String message) {
+        assertThat(scenarioScopeState.response.contains(message));
+    }
+
 }

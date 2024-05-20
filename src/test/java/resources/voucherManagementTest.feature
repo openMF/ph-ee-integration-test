@@ -88,6 +88,13 @@ Feature: Voucher Management Api Test
     Then I will call the fetch voucher API with expected status of 200
     When I call the create voucher API with expected status of 409 and stub "/createVoucher"
 
+  @gov
+  Scenario: Unsupported header validation for Create Voucher Api Test
+    Given I can create an VoucherRequestDTO for voucher creation
+    When I call the create voucher API having invalid header with expected status of 400 and stub "/createVoucher"
+    Then I should get non empty response
+    Then I will assert that response body contains "error.msg.header.validation.errors"
+
   @Ignore
   Scenario: Create a csv file for voucher number and voucher serial number
     When I can inject MockServer
