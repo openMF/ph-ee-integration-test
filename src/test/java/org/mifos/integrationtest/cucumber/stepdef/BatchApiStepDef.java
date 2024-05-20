@@ -786,10 +786,12 @@ public class BatchApiStepDef extends BaseStepDef {
         logger.info("Batch Transactions Response: " + scenarioScopeState.response);
     }
 
-    @And("I should assert total txn count and successful txn count in payment batch detail response for batch account lookup")
-    public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup() {
-        assertThat(scenarioScopeState.paymentBatchDetail).isNotNull();
-        assertThat(scenarioScopeState.paymentBatchDetail.getInstructionList().size()).isEqualTo(3);
+    @And("I should assert total txn count and successful txn count with {int} txns in payment batch detail response for batch account lookup")
+    public void iShouldAssertTotalTxnCountAndSuccessfulTxnCountInPaymentBatchDetailResponseForBatchAccountLookup(int expectedCount) {
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            assertThat(scenarioScopeState.paymentBatchDetail).isNotNull();
+            assertThat(scenarioScopeState.paymentBatchDetail.getInstructionList().size()).isEqualTo(expectedCount);
+        });
     }
 
     @And("I am able to parse actuator response")

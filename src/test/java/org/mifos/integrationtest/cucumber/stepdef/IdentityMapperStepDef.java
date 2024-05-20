@@ -498,11 +498,11 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryFromCsvFile() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         payeeIdentity = generateUniqueNumber(16);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("3001003873110196", "00", null, "gorilla");
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO("1038731101961", "00", null, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
-        beneficiaryDTO = new BeneficiaryDTO("3001003874120160", "00", null, "gorilla");
+        beneficiaryDTO = new BeneficiaryDTO("1038741201602", "00", null, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
-        beneficiaryDTO = new BeneficiaryDTO("3001003873110195", "00", null, "rhino");
+        beneficiaryDTO = new BeneficiaryDTO("1038731101953", "00", null, "gorilla");
         beneficiaryDTOList.add(beneficiaryDTO);
         requestId = generateUniqueNumber(12);
         registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
