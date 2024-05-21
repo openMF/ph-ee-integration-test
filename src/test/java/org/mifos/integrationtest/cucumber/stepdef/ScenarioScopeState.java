@@ -116,4 +116,6 @@ public class ScenarioScopeState {
     protected String registeringInstitutionId;
     protected String agentId;
     protected String fetchVoucherResponseBody;
+
+    protected String rtpId;
 }
