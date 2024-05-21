@@ -102,3 +102,42 @@ Feature: Voucher Management Api Test
     And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
     When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
+
+    @gov
+    Scenario: Voucher Status Check for inactive voucher, active voucher and redeemed voucher
+      When I can inject MockServer
+      Then I can start mock server
+      And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
+      Given I can create an VoucherRequestDTO for voucher creation
+      When I call the create voucher API with expected status of 202 and stub "/createVoucher"
+#     Then I will sleep for 10000 millisecond
+      Then I should be able to extract response body from callback
+      And I can call the voucher status API with expected status of 200 until I get the status as "01"
+      Given I can create an VoucherRequestDTO for voucher activation
+      And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
+      When I call the activate voucher API with expected status of 202 and stub "/activateVoucher"
+#    Then I will sleep for 5000 millisecond
+      Then I should be able to assert response body from callback on "/activateVoucher"
+      And I can call the voucher status API with expected status of 200 until I get the status as "02"
+      Given I can create an RedeemVoucherRequestDTO for voucher redemption
+      When I call the redeem voucher API with expected status of 200
+      Then I can assert that redemption was successful by asserting the status in response
+      And I can call the voucher status API with expected status of 200 until I get the status as "05"
+
+
+
+  @createAndActivateVoucher @gov
+  Scenario: Voucher Status Check for inactive voucher, active voucher, suspended and cancelled voucher
+    Given I can create an VoucherRequestDTO for voucher suspension
+    And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
+    When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
+    And I can call the voucher status API with expected status of 200 until I get the status as "06"
+    And I can create an VoucherRequestDTO for voucher reactivation
+    And I can register the stub with "/reactivateVoucher" endpoint for "PUT" request with status of 200
+    When I call the activate voucher API with expected status of 202 and stub "/reactivateVoucher"
+    And I can call the voucher status API with expected status of 200 until I get the status as "02"
+    Given I can create an VoucherRequestDTO for voucher cancellation
+    And I can register the stub with "/cancelVoucher" endpoint for "PUT" request with status of 200
+    When I call the cancel voucher API with expected status of 202 and stub "/cancelVoucher"
+    And I can call the voucher status API with expected status of 200 until I get the status as "03"
+
