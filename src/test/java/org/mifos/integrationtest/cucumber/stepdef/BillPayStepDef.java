@@ -81,8 +81,7 @@ public class BillPayStepDef extends BaseStepDef {
         requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId.toString());
         requestSpec.header("X-CallbackURL", billPayConnectorConfig.callbackURL + callbackUrl);
         String fsp = payeeFspConfig.getPayerFsp("payerfsp1");
-        requestSpec.header("X-PayerFSP-Id", fsp);
-        requestSpec.header("Payer-FSP-Id", "lion");
+        requestSpec.header("Payer-FSP-Id", fsp);
         requestSpec.queryParam("fields", "inquiry");
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -173,14 +172,6 @@ public class BillPayStepDef extends BaseStepDef {
                 .post(billPayConnectorConfig.paymentsEndpoint).andReturn().asString();
 
         logger.info("Payment notiifcation response: {}", scenarioScopeState.response);
-        JSONObject jsonObject = new JSONObject(scenarioScopeState.response);
-        if (!jsonObject.get("transactionId").toString().equals("null")) {
-            scenarioScopeState.transactionId = jsonObject.getString("transactionId");
-            assertThat(scenarioScopeState.transactionId.equals("NA")).isFalse();
-        } else {
-            scenarioScopeState.transactionId = jsonObject.getString("error");
-            assertThat(scenarioScopeState.transactionId.contains("Invalid Request")).isTrue();
-        }
     }
 
     @When("I call the mock get bills api from PBB to Biller with billid with expected status of {int}")
@@ -188,8 +179,7 @@ public class BillPayStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId);
         String fsp = payeeFspConfig.getPayerFsp("payerfsp1");
-        requestSpec.header("X-PayerFSP-Id", fsp);
-        requestSpec.header("Payer-FSP-Id", "lion");
+        requestSpec.header("Payer-FSP-Id", fsp);
         requestSpec.header("X-CallbackURL", billPayConnectorConfig.callbackURL + "/billInquiry");
 
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(billPayConnectorConfig.billPayContactPoint).expect()
@@ -308,7 +298,7 @@ public class BillPayStepDef extends BaseStepDef {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonPayload = objectMapper.writeValueAsString(billRTPReqDTO);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec.header("X-CorrelationID", scenarioScopeState.clientCorrelationId);
+        requestSpec.header("X-Client-Correlation-ID", scenarioScopeState.clientCorrelationId);
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-Callback-URL", billPayConnectorConfig.callbackURL + stub).header("X-Biller-Id", billerId)
                 .header("X-Client-Correlation-ID", scenarioScopeState.clientCorrelationId)

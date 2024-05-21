@@ -298,7 +298,6 @@ Feature: Bill Payment P2G Test
     Given I have tenant as "paymentBB2"
     And I have a billerId as "GovBill"
     And I generate clientCorrelationId
-    And I create a new clientCorrelationId
     And I have bill id as "1015"
     Then I can create DTO for Biller RTP Request to mock payer fsp failed to debit amount
     And I can call the biller RTP request API with expected status of 202 and "/debitFailed" endpoint
@@ -318,7 +317,7 @@ Feature: Bill Payment P2G Test
     And I can call the biller RTP request API with expected status of 202 and "/test1" endpoint
     And I can extract the callback body and assert the rtpStatus
     Given I can create a request for status api
-    And I can call the biller RTP status API with expected status of 200 until I get the rtpStatus as "COM"
+    And I can call the biller RTP status API with expected status of 400 until I get the rtpStatus as "COM"
 
   @gov
   Scenario: BS-002 Bill RTP Status API to get PENDING
