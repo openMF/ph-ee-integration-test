@@ -317,7 +317,7 @@ Feature: Bill Payment P2G Test
     And I can call the biller RTP request API with expected status of 202 and "/test1" endpoint
     And I can extract the callback body and assert the rtpStatus
     Given I can create a request for status api
-    And I can call the biller RTP status API with expected status of 400 until I get the rtpStatus as "COM"
+    And I can call the biller RTP status API with expected status of 200 until I get the rtpStatus as "COM"
 
   @gov
   Scenario: BS-002 Bill RTP Status API to get PENDING
