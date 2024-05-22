@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PayerFSPDetail {
 
-    private String payerFspId;
+    private String payerFSPID;
     private String financialAddress;
 }

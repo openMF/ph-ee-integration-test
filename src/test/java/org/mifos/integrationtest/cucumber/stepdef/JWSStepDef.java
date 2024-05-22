@@ -8,13 +8,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.UUID;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import org.mifos.connector.common.util.CertificateUtil;
 import org.mifos.connector.common.util.Constant;
 import org.mifos.connector.common.util.SecurityUtil;
+import org.mifos.integrationtest.common.UniqueNumberGenerator;
 import org.mifos.integrationtest.config.JWSKeyConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +25,7 @@ public class JWSStepDef extends BaseStepDef {
 
     @And("I generate clientCorrelationId")
     public void setClientCorrelationId() {
-        scenarioScopeState.clientCorrelationId = UUID.randomUUID().toString();
+        scenarioScopeState.clientCorrelationId = UniqueNumberGenerator.generateUniqueNumber(12);
         assertThat(scenarioScopeState.clientCorrelationId).isNotEmpty();
     }
 

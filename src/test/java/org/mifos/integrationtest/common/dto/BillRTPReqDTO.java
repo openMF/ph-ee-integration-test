@@ -12,24 +12,24 @@ import lombok.Setter;
 public class BillRTPReqDTO {
 
     private String clientCorrelationId;
-    private String billId;
+    private String billID;
     private String requestType;
-    private PayerFSPDetail payerFspDetail;
+    private PayerFSPDetail payerFspDetails;
     private Alias alias;
-    private Bill bill;
+    private Bill billDetails;
 
     public BillRTPReqDTO(String clientCorrelationId, String billId, String requestType, PayerFSPDetail payerFSPDetail, Bill bill) {
         this.clientCorrelationId = clientCorrelationId;
-        this.bill = bill;
-        this.billId = billId;
+        this.billDetails = bill;
+        this.billID = billId;
         this.requestType = requestType;
-        this.payerFspDetail = payerFSPDetail;
+        this.payerFspDetails = payerFSPDetail;
     }
 
     public BillRTPReqDTO(String clientCorrelationId, String billId, String requestType, Alias alias, Bill bill) {
         this.clientCorrelationId = clientCorrelationId;
-        this.bill = bill;
-        this.billId = billId;
+        this.billDetails = bill;
+        this.billID = billId;
         this.requestType = requestType;
         this.alias = alias;
     }
