@@ -298,7 +298,6 @@ public class BillPayStepDef extends BaseStepDef {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonPayload = objectMapper.writeValueAsString(billRTPReqDTO);
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec.header("X-Client-Correlation-ID", scenarioScopeState.clientCorrelationId);
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                 .header("X-Callback-URL", billPayConnectorConfig.callbackURL + stub).header("X-Biller-Id", billerId)
                 .header("X-Client-Correlation-ID", scenarioScopeState.clientCorrelationId)
