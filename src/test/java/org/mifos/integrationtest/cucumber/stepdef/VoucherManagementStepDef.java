@@ -106,8 +106,7 @@ public class VoucherManagementStepDef extends BaseStepDef {
             scenarioScopeState.registeringInstitutionId = "SocialWelfare";
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId)
-                    .header("invalid-header", "test")
+                    .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstitutionId).header("invalid-header", "test")
                     .baseUri(voucherManagementConfig.voucherManagementContactPoint).body(scenarioScopeState.createVoucherBody).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .post(voucherManagementConfig.createVoucherEndpoint).andReturn().asString();

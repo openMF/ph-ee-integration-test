@@ -35,10 +35,7 @@ Feature: Identity Account Mapper Api Test
     When I call the account lookup API with expected status of 202 and stub "/accountLookupTest"
 #    Then I will sleep for 3000 millisecond
     And I should be able to verify that the "PUT" method to "/accountLookupTest" endpoint received a request with same payeeIdentity
-  @gov
-  Scenario: IAM-005 Account Lookup Api Consistency Test
-    When I call the account lookup API 10 times with expected status of 202 and stub "/accountLookup"
-#    Then I will sleep for 3000 millisecond
+
   @gov
   Scenario: UB-003 Update a single beneficiary with Payment Modality - Mobile Money
     When I create an IdentityMapperDTO for 1 Register Beneficiary with payment modality as "ACCOUNT_ID"
@@ -297,6 +294,11 @@ Feature: Identity Account Mapper Api Test
     When I call the update beneficiary API with expected status of 202 and stub "/updateBeneficiaryApiTest"
 #    Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "PUT" method to "/updateBeneficiaryApiTest" endpoint received a request with no of failed cases as 2
+
+  @gov
+  Scenario: IAM-005 Account Lookup Api Consistency Test
+    When I call the account lookup API 10 times with expected status of 202 and stub "/accountLookup"
+#    Then I will sleep for 3000 millisecond
     And I can stop mock server
 
 
