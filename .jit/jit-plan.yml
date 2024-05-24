@@ -6,6 +6,9 @@ items:
   - name: Generate a Software Bill of Materials (SBOM)
     uses: >-
       jitsecurity-controls/jit-plans/items/code/item-software-bill-of-materials.yml@latest
+  - name: Scan your code for vulnerabilities (SAST)
+    uses: >-
+      jitsecurity-controls/jit-plans/items/code/item-code-vulnerability.yml@latest
 level: beginner
 version: 0.1
 references:
