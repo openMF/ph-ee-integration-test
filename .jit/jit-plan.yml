@@ -9,6 +9,9 @@ items:
   - name: Scan your code for vulnerabilities (SAST)
     uses: >-
       jitsecurity-controls/jit-plans/items/code/item-code-vulnerability.yml@latest
+  - name: Scan Kubernetes configuration files
+    uses: >-
+      jitsecurity-controls/jit-plans/items/infrastructure/item-iac-kubernetes.yml@latest
 level: beginner
 version: 0.1
 references:
