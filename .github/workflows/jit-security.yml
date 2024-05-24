@@ -22,6 +22,17 @@ jobs:
       with:
         security_control: registry.jit.io/control-enrichment-slim:latest
         
+  iac-misconfig-detection-kubernetes:
+    if: fromJSON(github.event.inputs.client_payload).payload.workflow_job_name == 'iac-misconfig-detection-kubernetes' && fromJSON(github.event.inputs.client_payload).payload.workflow_slug == 'workflow-kubernetes-iac-misconfiguration-detection'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+    - name: kubescape
+      uses: jitsecurity-controls/jit-github-action@v4.2.2
+      with:
+        security_control: registry.jit.io/control-kubescape-slim:latest
+        security_control_output_file: /code/results.json
+        
   remediation-pr:
     if: fromJSON(github.event.inputs.client_payload).payload.workflow_job_name == 'remediation-pr' && fromJSON(github.event.inputs.client_payload).payload.workflow_slug == 'workflow-remediation-pr'
     runs-on: ubuntu-22.04
