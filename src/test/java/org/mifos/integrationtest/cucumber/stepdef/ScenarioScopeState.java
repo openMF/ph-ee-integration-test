@@ -96,7 +96,8 @@ public class ScenarioScopeState {
 
     protected int initialBalForPayer;
     protected int initialBalForPayee;
-
+    protected String debitParty;
+    protected String creditParty;
     protected String[] payeeIdentifierforBatch;
     protected String[] payerIdentifierforBatch;
     protected int[] initialBalForPayeeForBatch;

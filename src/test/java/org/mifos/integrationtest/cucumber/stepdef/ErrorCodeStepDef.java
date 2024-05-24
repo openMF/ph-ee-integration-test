@@ -382,8 +382,8 @@ public class ErrorCodeStepDef extends BaseStepDef {
     public void iCanCreateGSMATransactionDTOWithDifferentPayerAndPayee() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
         Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
-        GsmaParty debit = gsmaTransferHelper.gsmaPartyHelper("msisdn", gsmaTransferStepDef.debitParty);
-        GsmaParty credit = gsmaTransferHelper.gsmaPartyHelper("msisdn", gsmaTransferStepDef.creditParty);
+        GsmaParty debit = gsmaTransferHelper.gsmaPartyHelper("msisdn", scenarioScopeState.debitParty);
+        GsmaParty credit = gsmaTransferHelper.gsmaPartyHelper("msisdn", scenarioScopeState.creditParty);
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
                 .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
         IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
