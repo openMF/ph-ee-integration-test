@@ -368,7 +368,7 @@ public class BatchApiStepDef extends BaseStepDef {
     }
 
     boolean isValidURL(String url) {
-        UrlValidator validator = new UrlValidator();
+        UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
         return validator.isValid(url);
     }
 
