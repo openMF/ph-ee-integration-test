@@ -364,7 +364,6 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I check for result file URL validity")
     public void iCheckForResultFileURLValidity() {
-        logger.info("<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>> {}",scenarioScopeState.batchAndSubBatchSummaryResponse.getFile());
         assertThat(isValidURL(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile())).isTrue();
     }
 
