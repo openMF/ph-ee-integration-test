@@ -1,0 +1,621 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "https://identity-mapper.sandbox.fynarfin.io",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/paymentModality": {
+      "put": {
+        "tags": [
+          "GOV"
+        ],
+        "summary": "Updating payment modality",
+        "operationId": "updatePaymentModality",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GOV"
+        ],
+        "summary": "Adding new payment modality",
+        "operationId": "addPaymentModality",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beneficiary": {
+      "get": {
+        "tags": [
+          "GOV"
+        ],
+        "summary": "Account Lookup API",
+        "operationId": "accountLookup",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "payeeIdentity",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "paymentModality",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "requestId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "update-beneficiary-api-controller"
+        ],
+        "operationId": "registerBeneficiary",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GOV"
+        ],
+        "summary": "Registering new beneficiary",
+        "operationId": "registerBeneficiary_1",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/batchAccountLookupCallback": {
+      "put": {
+        "tags": [
+          "account-lookup-callback-controller"
+        ],
+        "operationId": "batchAccountLookupCallback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accountLookupCallback": {
+      "put": {
+        "tags": [
+          "account-lookup-callback-controller"
+        ],
+        "operationId": "accountLookupCallback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accountLookup": {
+      "post": {
+        "tags": [
+          "batch-account-lookup-api-controller"
+        ],
+        "operationId": "batchAccountLookup",
+        "parameters": [
+          {
+            "name": "X-CallbackURL",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beneficiaries": {
+      "get": {
+        "tags": [
+          "fetch-beneficiaries-api-controller"
+        ],
+        "operationId": "fetchAllBeneficiary",
+        "parameters": [
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageFetchBeneficiariesResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beneficiaries/{payeeIdentity}": {
+      "get": {
+        "tags": [
+          "fetch-beneficiaries-api-controller"
+        ],
+        "operationId": "fetchBeneficiary",
+        "parameters": [
+          {
+            "name": "payeeIdentity",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Registering-Institution-ID",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchBeneficiariesResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BeneficiaryDTO": {
+        "type": "object",
+        "properties": {
+          "payeeIdentity": {
+            "type": "string"
+          },
+          "paymentModality": {
+            "type": "string"
+          },
+          "financialAddress": {
+            "type": "string"
+          },
+          "bankingInstitutionCode": {
+            "type": "string"
+          }
+        }
+      },
+      "RequestDTO": {
+        "type": "object",
+        "properties": {
+          "requestID": {
+            "type": "string"
+          },
+          "sourceBBID": {
+            "type": "string"
+          },
+          "beneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BeneficiaryDTO"
+            }
+          }
+        }
+      },
+      "ResponseDTO": {
+        "type": "object",
+        "properties": {
+          "responseCode": {
+            "type": "string"
+          },
+          "responseDescription": {
+            "type": "string"
+          },
+          "requestID": {
+            "type": "string"
+          }
+        }
+      },
+      "FetchBeneficiariesResponseDTO": {
+        "type": "object",
+        "properties": {
+          "registeringInstitutionId": {
+            "type": "string"
+          },
+          "payeeIdentity": {
+            "type": "string"
+          },
+          "paymentModality": {
+            "type": "string"
+          },
+          "financialAddress": {
+            "type": "string"
+          },
+          "bankingInstitutionCode": {
+            "type": "string"
+          }
+        }
+      },
+      "PageFetchBeneficiariesResponseDTO": {
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FetchBeneficiariesResponseDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
