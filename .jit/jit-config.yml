@@ -1,7 +1,7 @@
 applications:
-- api_domain: bulk-connector.sandbox.fynarfin.io
-  application_name: Bulk processor
+- api_domain: identity-mapper.sandbox.fynarfin.io
+  application_name: IDAM
   authentication_mode: non-authenticated
   exclude_paths: []
-  target_url: .jit/BulkSwaggerNew.yaml
+  target_url: .jit/IDAM-swagger.yaml
   type: api
