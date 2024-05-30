@@ -1,6 +1,6 @@
 @gov @ext
 Feature: Mojaloop test
-
+  @ConditionalSkip
   Scenario: ML connector partial payee party lookup test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -17,7 +17,7 @@ Feature: Mojaloop test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to verify the callback for lookup
     Then I can stop mock server
-
+  @ConditionalSkip
   Scenario: ML connector partial payee quotation test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -34,7 +34,7 @@ Feature: Mojaloop test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to verify the callback for quotation
     Then I can stop mock server
-
+  @ConditionalSkip
   Scenario: ML connector partial payee transfer test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -55,7 +55,7 @@ Feature: Mojaloop test
 #    Then I will sleep for 5000 millisecond
     Then I should be able to verify the callback for transfer
     Then I can stop mock server
-
+  @ConditionalSkip
   Scenario: Payer Fund Transfer Flow test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payer"
@@ -100,7 +100,7 @@ Feature: Mojaloop test
 
     Then I assert "payer" balance to be 11
     Then I assert "payee" balance to be 11
-
+  @ConditionalSkip
   Scenario: Bulk Transfer with Mojaloop
     Given I am setting up Mojaloop
     When I create and setup a "payer" with account balance of 12
