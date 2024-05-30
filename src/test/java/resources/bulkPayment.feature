@@ -52,6 +52,7 @@ Feature: Test ability to make payment to individual with bank account
   Scenario: Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
+    And I initialize the payee list
     When I create and setup a "payer" with id "1" and account balance of 100 for combine test cases
     Given I have tenant as "payerfsp"
     Then I call the balance api for payer "1" balance for combine test cases
@@ -144,8 +145,15 @@ Feature: Test ability to make payment to individual with bank account
     Then I call the balance api for payee "8" balance for combine test cases
 
     Then add last row to csv with current payer and payee, payment mode as "gsma" and transfer amount 8 and id 7
+
+    When I can inject MockServer
+    Then I can start mock server
+    And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
+    And I create a IdentityMapperDTO for registering beneficiary
+    Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
+    And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
     #batch process
-    Given I have tenant as "payerfsp"
+    Given I have tenant as "paymentBB1"
     And I have the demo csv file "batchTransactionGsmaClosedLoop.csv"
     And I generate clientCorrelationId
     And I have private key
