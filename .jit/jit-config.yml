@@ -1,0 +1,7 @@
+applications:
+- api_domain: bulk-connector.sandbox.fynarfin.io
+  application_name: Bulk processor
+  authentication_mode: non-authenticated
+  exclude_paths: []
+  target_url: .jit/BulkSwaggerNew.yaml
+  type: api
