@@ -236,11 +236,13 @@ Feature: Identity Account Mapper Api Test
     And I will assert the fields from fetch beneficiary response
   @gov @ext
   Scenario: Batch Account Lookup Integration Test
-    Given I create an IdentityMapperDTO for Register Beneficiary from csv file
-    When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
-#    And I will sleep for 3000 millisecond
-    Given I have tenant as "paymentBB1"
-    And I have the demo csv file "ph-ee-bulk-demo-7.csv"
+    Given I have tenant as "paymentbb1"
+    And I have the demo csv file "bulk_payment.csv"
+    And I create a list of payee identifiers from csv file
+    And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
+    And I create a IdentityMapperDTO for registering beneficiary
+    Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
+    And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
@@ -248,9 +250,9 @@ Feature: Identity Account Mapper Api Test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 10000 millisecond
-    And I call the payment batch detail API with expected status of 200 with total 3 txns
+    And I call the payment batch detail API with expected status of 200 with total 6 txns
     Then I am able to parse payment batch detail response
-    And I should assert total txn count and successful txn count in payment batch detail response for batch account lookup
+    And I should assert total txn count and successful txn count with 6 txns in payment batch detail response for batch account lookup
 
   @gov
   Scenario: RB-011 Attempt to Register a 5 Beneficiary - 4 with a valid RegistrationInstitution and 1 with a invalid RegistrationInstitution not available in PayBB
