@@ -562,7 +562,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
             } catch (Exception e) {
                 logger.debug(e.getMessage());
             }
-            //assertThat(count).isEqualTo(0);
+            // assertThat(count).isEqualTo(0);
             beneficiaryList = new ArrayList<>();
         });
     }

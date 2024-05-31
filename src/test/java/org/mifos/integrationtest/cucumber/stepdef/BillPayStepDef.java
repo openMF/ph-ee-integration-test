@@ -729,7 +729,7 @@ public class BillPayStepDef extends BaseStepDef {
         });
     }
 
-        @When("I call the mock bills payment api with invalid header from PBB to Biller with billid with expected status of {int}")
+    @When("I call the mock bills payment api with invalid header from PBB to Biller with billid with expected status of {int}")
     public void iCallTheMockBillsPaymentApiWithInvalidFromPBBToBillerWithBillidWithExpectedStatusOf(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header(CONTENT_TYPE, "application/json");

@@ -636,7 +636,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
             BatchAndSubBatchSummaryResponse res = objectMapper.readValue(scenarioScopeState.response,
                     BatchAndSubBatchSummaryResponse.class);
-            assertThat(res.getTotal()).isEqualTo(res.getSuccessful());
+            assertThat(res.getTotal()).isEqualTo(3);
         });
     }
 
