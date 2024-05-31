@@ -1,0 +1,9 @@
+id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
+0,4676a8cd-a9bd-4ff8-8f7f-343e15e6b06b,closedloop,msisdn,1661,msisdn,1589,10,USD,Test Payee Payment
+1,c6543675-e573-4575-85fb-6e25f44a643b,closedloop,msisdn,1662,msisdn,1590,5,USD,Test Payee Payment
+2,14a359d4-d37f-4eda-a5e7-c7002ae699e0,closedloop,msisdn,1663,msisdn,1591,5,USD,Test Payee Payment
+3,36472026-28d2-4203-8f0f-8489ea04ae36,closedloop,msisdn,1664,msisdn,1592,5,USD,Test Payee Payment
+4,ef8c31b3-43d8-4318-b2fd-d9cbb2391aa6,closedloop,msisdn,1665,msisdn,1593,5,USD,Test Payee Payment
+5,7d8f65a5-f19e-4e23-93aa-c01100771f09,mojaloop,msisdn,1666,msisdn,1594,3,USD,Test Payee Payment
+6,801fe779-5950-41dd-8dd7-11b0e3171674,mojaloop,msisdn,1667,msisdn,1594,2,USD,Test Payee Payment
+7,a6c35b7c-432c-4cc0-8df4-0d53be2316c6,mojaloop,msisdn,1668,msisdn,1595,1,USD,Test Payee Payment
