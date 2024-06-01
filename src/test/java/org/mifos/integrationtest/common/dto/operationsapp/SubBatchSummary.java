@@ -1,6 +1,7 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
@@ -13,6 +14,12 @@ public class SubBatchSummary {
     private String subBatchId;
 
     private String batchId;
+
+    private Date startedAt;
+
+    private Date completedAt;
+
+    private String registeringInstitutionId;
 
     private String requestId;
 

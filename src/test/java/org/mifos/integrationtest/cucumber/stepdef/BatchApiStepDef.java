@@ -729,6 +729,7 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(scenarioScopeState.paymentBatchDetail).isNotNull();
         assertThat(scenarioScopeState.paymentBatchDetail.getSubBatchList().size()).isEqualTo(3);
         assertThat(scenarioScopeState.paymentBatchDetail.getInstructionList().size()).isEqualTo(12);
+        assertThat(scenarioScopeState.paymentBatchDetail.getTotal()).isEqualTo(scenarioScopeState.paymentBatchDetail.getSuccessful());
     }
 
     @Then("I should be able to extract response body from callback for batch")
