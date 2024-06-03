@@ -102,6 +102,7 @@ public class MojaloopStepDef extends BaseStepDef {
             mojaloopDef.oracleOnboard();
         }
     }
+
     @Before("@ConditionalSkip")
     public void beforeScenario(Scenario scenario) {
         boolean shouldSkip = checkCondition();
@@ -109,6 +110,7 @@ public class MojaloopStepDef extends BaseStepDef {
             Assume.assumeTrue("Skipping scenario: " + scenario.getName(), false);
         }
     }
+
     private boolean checkCondition() {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         String endpoint = mojaloopConfig.mojaloopHubAccount;
@@ -116,18 +118,12 @@ public class MojaloopStepDef extends BaseStepDef {
         String mojaloopBaseUrl = mojaloopConfig.mojaloopBaseurl;
 
         try {
-            int statusCode = RestAssured.given(requestSpec)
-                    .baseUri(mojaloopBaseUrl)
-                    .when()
-                    .get("/actuator")
-                    .then()
-                    .extract()
-                    .statusCode();
+            int statusCode = RestAssured.given(requestSpec).baseUri(mojaloopBaseUrl).when().get("/actuator").then().extract().statusCode();
 
             return statusCode == 200;
         } catch (Exception e) {
 
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return false;
         }
 
