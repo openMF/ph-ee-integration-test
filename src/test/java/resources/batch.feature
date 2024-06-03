@@ -208,7 +208,7 @@ Feature: Batch Details API test
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
 #    Then I will sleep for 10000 millisecond
-    And I call the sub batch summary API for sub batch summary with expected status of 200
+    And I call the sub batch summary API for sub batch summary with expected status of 200 and total count 3
     Then I am able to parse sub batch summary response
     And I should assert total txn count and successful txn count in response
 
@@ -228,7 +228,7 @@ Feature: Batch Details API test
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
-    And I call the sub batch summary API for sub batch summary with expected status of 200
+    And I call the sub batch summary API for sub batch summary with expected status of 200 and total count 12
     Then I am able to parse sub batch summary response
     And I should assert total txn count and successful txn count in response
     And Total transaction in batch should add up to total transaction in each sub batch

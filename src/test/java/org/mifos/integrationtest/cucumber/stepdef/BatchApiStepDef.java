@@ -615,8 +615,8 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
     }
 
-    @And("I call the sub batch summary API for sub batch summary with expected status of {int}")
-    public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus) {
+    @And("I call the sub batch summary API for sub batch summary with expected status of {int} and total count {int}")
+    public void iCallTheSubBatchSummaryAPIForSubBatchSummaryWithExpectedStatusOf(int expectedStatus, int totalCount) {
         await().atMost(awaitMost + 15, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.header("X-Correlation-ID", scenarioScopeState.clientCorrelationId);
@@ -636,7 +636,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
             BatchAndSubBatchSummaryResponse res = objectMapper.readValue(scenarioScopeState.response,
                     BatchAndSubBatchSummaryResponse.class);
-            assertThat(res.getTotal()).isEqualTo(res.getSuccessful());
+            assertThat(totalCount).isEqualTo(res.getSuccessful());
         });
     }
 
