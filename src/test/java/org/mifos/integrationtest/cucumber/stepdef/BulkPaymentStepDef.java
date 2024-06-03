@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -141,5 +142,10 @@ public class BulkPaymentStepDef extends BaseStepDef {
     private String fetchBatchId(String response) {
         String[] split = response.split(",");
         return split[0].substring(31);
+    }
+
+    @And("I initialize the payee list")
+    public void iInitializeThePayeeList() {
+        scenarioScopeState.payeeIdentifiers = new ArrayList<>();
     }
 }

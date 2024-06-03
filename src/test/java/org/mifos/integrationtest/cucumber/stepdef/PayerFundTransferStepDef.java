@@ -529,6 +529,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("add row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int} for combine test cases")
     public void addRowToCsvFileForCombinedTestCases(String paymentMode, int transferAmount, int id) throws IOException {
+        if (paymentMode.equals("closedloop")) {
+            scenarioScopeState.payeeIdentifiers.add(scenarioScopeState.payeeIdentifier);
+        }
 
         String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
                 "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
