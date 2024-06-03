@@ -153,7 +153,7 @@ Feature: Test ability to make payment to individual with bank account
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
     #batch process
-    Given I have tenant as "paymentBB1"
+    Given I have tenant as "payerfsp"
     And I have the demo csv file "batchTransactionGsmaClosedLoop.csv"
     And I generate clientCorrelationId
     And I have private key
