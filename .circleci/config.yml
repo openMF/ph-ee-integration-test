@@ -115,6 +115,7 @@ jobs:
     docker:
       - image: 'cimg/python:3.10'
     steps:
+      - add_ssh_keys
       - mifos-orb/docker-image-availability-check-and-upgrade:
           namespace: paymenthub
           chart-base-url: https://fynarfin.io/images
@@ -187,6 +188,7 @@ jobs:
     docker:
       - image: 'cimg/base:2022.06'
     steps:
+      - add_ssh_keys
       - run: git clone https://github.com/openmf/ph-ee-env-labs
       - run: echo $AWS_PROFILE
       - run: echo $AWS_DEFAULT_PROFILE
@@ -292,10 +294,6 @@ workflows:
             - AWS
             - Helm
             - slack
-          requires:
-            - build
-            - build_and_push_tag_image
-            - build_and_push_latest_image
       - create-secret-paymenthub-namespace:
           requires:
             - docker-image-availability-check-and-upgrade
