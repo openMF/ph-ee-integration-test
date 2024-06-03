@@ -4,11 +4,14 @@ import static com.google.common.truth.Truth.assertThat;
 import static io.restassured.config.EncoderConfig.encoderConfig;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.junit.Assume;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +101,32 @@ public class MojaloopStepDef extends BaseStepDef {
         if (!mojaloopDef.oracleExists()) {
             mojaloopDef.oracleOnboard();
         }
+    }
+
+    @Before("@ConditionalSkip")
+    public void beforeScenario(Scenario scenario) {
+        boolean shouldSkip = checkCondition();
+        if (!shouldSkip) {
+            Assume.assumeTrue("Skipping scenario: " + scenario.getName(), false);
+        }
+    }
+
+    private boolean checkCondition() {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        String endpoint = mojaloopConfig.mojaloopHubAccount;
+
+        String mojaloopBaseUrl = mojaloopConfig.mojaloopBaseurl;
+
+        try {
+            int statusCode = RestAssured.given(requestSpec).baseUri(mojaloopBaseUrl).when().get("/actuator").then().extract().statusCode();
+
+            return statusCode == 200;
+        } catch (Exception e) {
+
+            logger.error(e.getMessage());
+            return false;
+        }
+
     }
 
 }
