@@ -234,7 +234,7 @@ Feature: Identity Account Mapper Api Test
 #    And I will sleep for 3000 millisecond
     Then I will call the fetch beneficiary API with expected status of 200
     And I will assert the fields from fetch beneficiary response
-  @gov @ext
+  @gov
   Scenario: Batch Account Lookup Integration Test
     Given I create an IdentityMapperDTO for Register Beneficiary from csv file
     When I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiaryApiTest"
