@@ -2,6 +2,7 @@ package org.mifos.integrationtest.common.dto.operationsapp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
@@ -14,6 +15,12 @@ public class BatchAndSubBatchSummaryResponse {
     private String batchId;
 
     private String requestId;
+
+    private Date startedAt;
+
+    private Date completedAt;
+
+    private String registeringInstitutionId;
 
     private Long total;
 
@@ -54,7 +61,7 @@ public class BatchAndSubBatchSummaryResponse {
 
     private String generatedAt;
 
-    private String totalSubBatches;
+    private Long totalSubBatches;
 
     private Long approvedTransactionCount;
 

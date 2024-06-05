@@ -678,7 +678,8 @@ public class BatchApiStepDef extends BaseStepDef {
     @And("Total transaction in batch should add up to total transaction in each sub batch")
     public void matchTotalSubBatchTxnAndBatchTxnCount() {
         assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
-        assertThat(Integer.parseInt(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotalSubBatches())).isGreaterThan(1);
+        assertThat(Integer.parseInt(String.valueOf(scenarioScopeState.batchAndSubBatchSummaryResponse.getTotalSubBatches())))
+                .isGreaterThan(1);
         long batchTotal = scenarioScopeState.batchAndSubBatchSummaryResponse.getTotal();
         long subBatchTotal = 0L;
         for (SubBatchSummary subBatchSummary : scenarioScopeState.batchAndSubBatchSummaryResponse.getSubBatchSummaryList()) {
@@ -708,6 +709,7 @@ public class BatchApiStepDef extends BaseStepDef {
             logger.info("Batch Payment Detail Response: " + scenarioScopeState.response);
             PaymentBatchDetail res = objectMapper.readValue(scenarioScopeState.response, PaymentBatchDetail.class);
             assertThat(res.getInstructionList().size()).isEqualTo(totaltxns);
+            assertThat(res.getSuccessful()).isEqualTo(totaltxns);
         });
     }
 
@@ -729,6 +731,9 @@ public class BatchApiStepDef extends BaseStepDef {
         assertThat(scenarioScopeState.paymentBatchDetail).isNotNull();
         assertThat(scenarioScopeState.paymentBatchDetail.getSubBatchList().size()).isEqualTo(3);
         assertThat(scenarioScopeState.paymentBatchDetail.getInstructionList().size()).isEqualTo(12);
+        assertThat(scenarioScopeState.paymentBatchDetail.getTotal()).isEqualTo(scenarioScopeState.paymentBatchDetail.getSuccessful());
+        assertThat(scenarioScopeState.paymentBatchDetail.getStatus().equals("COMPLETED"));
+        assertThat(scenarioScopeState.paymentBatchDetail.getCompletedAt()).isNotNull();
     }
 
     @Then("I should be able to extract response body from callback for batch")
