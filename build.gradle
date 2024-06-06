@@ -200,6 +200,7 @@ configurations {
         showStackTraces true
     }
 }
+
 task cucumberCli() {
     dependsOn assemble, testClasses
     doLast {
