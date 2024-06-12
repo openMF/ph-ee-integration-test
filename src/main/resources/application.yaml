@@ -271,3 +271,22 @@ fspconfig:
     payerfsp2: "gorilla"
 
 totalvouchers: 30
+
+
+messageGateway:
+  contactpoint: "https://messagegateway.sandbox.fynarfin.io"
+  endpoint:
+    email: "/emails"
+
+spring:
+  mail:
+    host: ${MY_POD_IP:localhost}
+    port: 3025
+    username: greenmail
+    password: greenmail
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
