@@ -172,6 +172,7 @@ dependencies {
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     implementation 'commons-validator:commons-validator:1.7'
+    testImplementation 'com.icegreen:greenmail-junit5:1.6.1'
 }
 
 tasks.named('test') {
