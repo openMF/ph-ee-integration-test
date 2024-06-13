@@ -606,16 +606,19 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse sub batch summary response")
     public void iAmAbleToParseSubBatchSummaryResponse() {
-        scenarioScopeState.batchAndSubBatchSummaryResponse = null;
-        assertThat(scenarioScopeState.response).isNotNull();
-        assertThat(scenarioScopeState.response).isNotEmpty();
-        try {
-            scenarioScopeState.batchAndSubBatchSummaryResponse = objectMapper.readValue(scenarioScopeState.response,
-                    BatchAndSubBatchSummaryResponse.class);
-        } catch (Exception e) {
-            logger.error("Error parsing the batch summary response", e);
-        }
-        assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            scenarioScopeState.batchAndSubBatchSummaryResponse = null;
+            assertThat(scenarioScopeState.response).isNotNull();
+            assertThat(scenarioScopeState.response).isNotEmpty();
+            try {
+                scenarioScopeState.batchAndSubBatchSummaryResponse = objectMapper.readValue(scenarioScopeState.response,
+                        BatchAndSubBatchSummaryResponse.class);
+            } catch (Exception e) {
+                logger.error("Error parsing the batch summary response", e);
+            }
+            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
+            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile()).isNotNull();
+        });
     }
 
     @And("I call the sub batch summary API for sub batch summary with expected status of {int} and total count {int}")
