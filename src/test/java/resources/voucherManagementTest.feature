@@ -2,7 +2,7 @@
 Feature: Voucher Management Api Test
 
   @gov
-  Scenario: Create Voucher Api Test
+  Scenario: VCR-001 Create Voucher Api Test
     When I can inject MockServer
     Then I can start mock server
     And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
@@ -11,7 +11,7 @@ Feature: Voucher Management Api Test
     Then I should be able to extract response body from callback
 
   @gov @createVoucher
-  Scenario: Activate Voucher Api Test
+  Scenario: VA-001 Activate Voucher Api Test
     Given I can create a voucher
     Given I can create an VoucherRequestDTO for voucher activation
     And I can register the stub with "/activateVoucher" endpoint for "PUT" request with status of 200
@@ -19,11 +19,11 @@ Feature: Voucher Management Api Test
     Then I should be able to assert response body from callback on "/activateVoucher"
 
   @gov @createAndActivateVoucher
-  Scenario: Redeem Voucher API Test
+  Scenario: VR-001 Redeem Voucher API Test
     Then I check for redeem voucher success
 
   @gov @createAndActivateVoucher
-  Scenario: Reactivate Voucher Api Test
+  Scenario: VRE-001 Reactivate Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"
@@ -33,7 +33,7 @@ Feature: Voucher Management Api Test
     Then I check for redeem voucher success
 
   @gov @createAndActivateVoucher
-  Scenario: Validity Check Voucher Api Test
+  Scenario: VVA-001 Validity Check Voucher Api Test
     When I can register the stub with "/validity" endpoint for "PUT" request with status of 200
     And I call the validity check API with expected status of 202 and stub "/validity"
     Then I can extract result from validation callback and assert if validation is successful on "/validity"
@@ -53,7 +53,7 @@ Feature: Voucher Management Api Test
     Then I check for redeem voucher failure
 
   @gov @createAndActivateVoucher
-  Scenario: Fetch Voucher Api Test
+  Scenario: VF-001 Fetch Voucher Api Test
     Then I will call the fetch voucher API with expected status of 200
     And I will assert the fields from fetch voucher response
     And I can stop mock server
@@ -78,18 +78,18 @@ Feature: Voucher Management Api Test
     Then I check for redeem voucher failure
 
  @gov
-  Scenario: Unsupported Parameter Validation for Create Voucher API test
+  Scenario: VCR-002 Unsupported Parameter Validation for Create Voucher API test
     Given I can create an VoucherRequestDTO for voucher creation with unsupported parameter parameter
     When I call the create voucher API with expected status of 400 and stub "/createVoucher"
     Then I should be able to assert the create voucher validation for negative response
 
   @gov @createAndActivateVoucher
-   Scenario: Conflicting/unique data validations check for Create Voucher API
+   Scenario: VCR-003 Conflicting/unique data validations check for Create Voucher API
     Then I will call the fetch voucher API with expected status of 200
     When I call the create voucher API with expected status of 409 and stub "/createVoucher"
 
   @gov
-  Scenario: Unsupported header validation for Create Voucher Api Test
+  Scenario: VCR-004 Unsupported header validation for Create Voucher Api Test
     Given I can create an VoucherRequestDTO for voucher creation
     When I call the create voucher API having invalid header with expected status of 400 and stub "/createVoucher"
     Then I should get non empty response
@@ -104,7 +104,7 @@ Feature: Voucher Management Api Test
     When I call the create, Activate voucher API and store it in "vouchertest/loadTest_demo.csv"
 
     @gov
-    Scenario: Voucher Status Check for inactive voucher, active voucher and redeemed voucher
+    Scenario: VS-001 Voucher Status Check for inactive voucher, active voucher and redeemed voucher
       When I can inject MockServer
       Then I can start mock server
       And I can register the stub with "/createVoucher" endpoint for "PUT" request with status of 200
@@ -127,7 +127,7 @@ Feature: Voucher Management Api Test
 
 
   @createAndActivateVoucher @gov
-  Scenario: Voucher Status Check for inactive voucher, active voucher, suspended and cancelled voucher
+  Scenario: VS-002 Voucher Status Check for inactive voucher, active voucher, suspended and cancelled voucher
     Given I can create an VoucherRequestDTO for voucher suspension
     And I can register the stub with "/suspendVoucher" endpoint for "PUT" request with status of 200
     When I call the suspend voucher API with expected status of 202 and stub "/suspendVoucher"

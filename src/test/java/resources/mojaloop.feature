@@ -1,7 +1,7 @@
 @gov @ext
 Feature: Mojaloop test
 
-  Scenario: ML connector partial payee party lookup test
+  Scenario: MLT-001 ML connector partial payee party lookup test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
@@ -18,7 +18,7 @@ Feature: Mojaloop test
     Then I should be able to verify the callback for lookup
     Then I can stop mock server
 
-  Scenario: ML connector partial payee quotation test
+  Scenario: MLT-002 ML connector partial payee quotation test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
@@ -35,7 +35,7 @@ Feature: Mojaloop test
     Then I should be able to verify the callback for quotation
     Then I can stop mock server
 
-  Scenario: ML connector partial payee transfer test
+  Scenario: MLT-003 ML connector partial payee transfer test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
@@ -56,7 +56,7 @@ Feature: Mojaloop test
     Then I should be able to verify the callback for transfer
     Then I can stop mock server
 
-  Scenario: Payer Fund Transfer Flow test
+  Scenario: PFT-001 Payer Fund Transfer Flow test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payer"
     When I call the create client endpoint for "payer"
@@ -101,7 +101,7 @@ Feature: Mojaloop test
     Then I assert "payer" balance to be 11
     Then I assert "payee" balance to be 11
 
-  Scenario: Bulk Transfer with Mojaloop
+  Scenario: BTM-001 Bulk Transfer with Mojaloop
     Given I am setting up Mojaloop
     When I create and setup a "payer" with account balance of 12
     When I create and setup a "payee" with account balance of 10

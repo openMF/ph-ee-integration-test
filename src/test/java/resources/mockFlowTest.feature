@@ -2,7 +2,7 @@
 Feature: Mock Flow Test
 
   @ext
-  Scenario: Test for minimal mock fund transfer account lookup flow
+  Scenario: MFT-003 Test for minimal mock fund transfer account lookup flow
     Given I have Fineract-Platform-TenantId as "payeefsp1"
     When I call the create payer client endpoint
     Then I call the create savings product endpoint
