@@ -11,7 +11,6 @@ import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import io.cucumber.core.internal.com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -21,8 +20,6 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import org.mifos.integrationtest.common.Utils;
@@ -92,43 +89,60 @@ public class EmailStepDef extends BaseStepDef {
     @Then("the email should be sent to all recipients with subject {string} and body {string}")
     public void theEmailShouldBeSentToWithSubjectAndBody(String subject, String body) throws Exception {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
-        logger.info(String.valueOf(greenMail.getReceivedMessages().length));
-        assertThat(greenMail.getReceivedMessages().length == 1).isTrue();
+            logger.info(String.valueOf(greenMail.getReceivedMessages().length));
+            assertThat(greenMail.getReceivedMessages().length == 1).isTrue();
 
-        String receivedTo = GreenMailUtil.getAddressList(greenMail.getReceivedMessages()[0].getAllRecipients());
-        String receivedSubject = greenMail.getReceivedMessages()[0].getSubject();
-        String receivedBody = GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]);
+            String receivedTo = GreenMailUtil.getAddressList(greenMail.getReceivedMessages()[0].getAllRecipients());
+            String receivedSubject = greenMail.getReceivedMessages()[0].getSubject();
+            String receivedBody = GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]);
 
-        assertThat(receivedTo).isNotNull();
-        assertThat(subject.equals(receivedSubject)).isTrue();
-        assertThat(body.equals(receivedBody)).isTrue();
+            assertThat(receivedTo).isNotNull();
+            assertThat(subject.equals(receivedSubject)).isTrue();
+            assertThat(body.equals(receivedBody)).isTrue();
         });
     }
+
     @Then("I should be able to extract error from response")
     public void iShouldBeAbleToExtractErrorFromResponse() {
         assertThat(scenarioScopeState.response).isNotNull();
         assertThat(scenarioScopeState.response).containsMatch("Bad Request");
     }
 
-    @And("I can verify callback recieved with value")
-    public void iCanVerifyCallbackRecievedWithValue() {
-            await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
-                boolean flag = false;
-                List<ServeEvent> allServeEvents = getAllServeEvents();
-                for (int i = allServeEvents.size() - 1; i >= 0; i--) {
-                    ServeEvent request = allServeEvents.get(i);
-                    if (!(request.getRequest().getBodyAsString()).isEmpty() && request.getRequest().getUrl().equals("/sendMail")) {
-                        JsonNode rootNode = null;
-                        try {
-                            rootNode = objectMapper.readTree(request.getRequest().getBody());
-                            logger.info("Rootnode value:" + rootNode);
-                            assertThat(rootNode.toString().contains("Email sent successfully"));
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+    @And("I can verify callback received with success")
+    public void iCanVerifyCallbackReceivedWithSuccess() {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty() && request.getRequest().getUrl().equals("/sendMail")) {
+                    String rootNode = null;
+                    rootNode = request.getRequest().getBodyAsString();
+                    logger.info("Rootnode value:" + rootNode);
+                    assertThat(rootNode.contains("Email sent successfully")).isTrue();
                 }
+            }
 
-            });
-        }
+        });
+    }
+
+    @And("I can verify callback received with failure")
+    public void iCanVerifyCallbackReceivedWithFailure() {
+        await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            boolean flag = false;
+            List<ServeEvent> allServeEvents = getAllServeEvents();
+            for (int i = allServeEvents.size() - 1; i >= 0; i--) {
+                ServeEvent request = allServeEvents.get(i);
+                if (!(request.getRequest().getBodyAsString()).isEmpty() && request.getRequest().getUrl().equals("/sendMail")) {
+                    String rootNode = null;
+                    rootNode = request.getRequest().getBodyAsString();
+                    logger.info("Rootnode value:" + rootNode);
+                    assertThat(rootNode
+                            .contains("Email could not be sent to [recipient1@example.com] because of Mail server connection failed"))
+                            .isTrue();
+                }
+            }
+
+        });
+    }
 }
