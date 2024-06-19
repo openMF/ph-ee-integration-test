@@ -74,8 +74,6 @@ public class OperationsAppConfig {
     @Value("${operations-app.endpoints.reportSingleReport}")
     public String reportSingleReport;
 
-
-
     @PostConstruct
     private void setup() {
         batchTransactionUrl = operationAppContactPoint + batchTransactionEndpoint;

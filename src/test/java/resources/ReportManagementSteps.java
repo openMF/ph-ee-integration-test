@@ -1,5 +1,10 @@
 package resources;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +15,11 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.hc.core5.http.HttpStatus;
 import org.hamcrest.Matchers;
-import org.junit.Assert; // Example static import
+import org.junit.Assert;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.ReportParameter;
 import org.mifos.integrationtest.common.dto.operationsapp.ReportRequestDTO;
@@ -23,14 +30,6 @@ import org.mifos.integrationtest.cucumber.stepdef.ScenarioScopeState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 public class ReportManagementSteps extends BaseStepDef {
 
@@ -99,14 +98,10 @@ public class ReportManagementSteps extends BaseStepDef {
 
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
-            scenarioScopeState.response = RestAssured.given(requestSpec)
-                    .header("Content-Type", "application/json")
-                    .header("Platform-TenantId", scenarioScopeState.tenant)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .body(scenarioScopeState.createReportBody)
-                    .expect().statusCode(expectedStatus)
-                    .when().post(operationsAppConfig.reportCreate)
-                    .andReturn().asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("Platform-TenantId", scenarioScopeState.tenant).baseUri(operationsAppConfig.operationAppContactPoint)
+                    .body(scenarioScopeState.createReportBody).expect().statusCode(expectedStatus).when()
+                    .post(operationsAppConfig.reportCreate).andReturn().asString();
 
             logger.info("Create Report Response: {}", scenarioScopeState.response);
 
@@ -131,7 +126,8 @@ public class ReportManagementSteps extends BaseStepDef {
             assertThat(jsonResponse.get("reportType").asText(), Matchers.equalTo("Financial"));
             assertThat(jsonResponse.get("reportSubType").asText(), Matchers.equalTo("Monthly"));
             assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Financial summary for the month of June"));
-            assertThat(jsonResponse.get("reportSql").asText(), Matchers.equalTo("SELECT * FROM transactions WHERE date >= '2024-06-01' AND date <= '2024-06-30'"));
+            assertThat(jsonResponse.get("reportSql").asText(),
+                    Matchers.equalTo("SELECT * FROM transactions WHERE date >= '2024-06-01' AND date <= '2024-06-30'"));
 
             if (jsonResponse.has("reportParameters")) {
                 JsonNode reportParameters = jsonResponse.get("reportParameters");
@@ -143,7 +139,6 @@ public class ReportManagementSteps extends BaseStepDef {
                 assertThat(reportParameters.get(1).get("parameterValue").asText(), Matchers.equalTo("Value2"));
             }
         } catch (Exception e) {
-            // Handle any JSON parsing exceptions
             logger.error("Error parsing JSON response: {}", e.getMessage());
             fail("Error parsing JSON response");
         }
@@ -156,7 +151,7 @@ public class ReportManagementSteps extends BaseStepDef {
 
     @Given("I have a report ID")
     public void iHaveAReportID() {
-        // Implementation if needed
+
     }
 
     @When("I call the update report API with valid data with expected status of {int}")
@@ -199,14 +194,10 @@ public class ReportManagementSteps extends BaseStepDef {
 
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
-            scenarioScopeState.response = RestAssured.given(requestSpec)
-                    .header("Content-Type", "application/json")
-                    .header("Platform-TenantId", scenarioScopeState.tenant)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .body(scenarioScopeState.updateReportBody)
-                    .expect().statusCode(expectedStatus)
-                    .when().put(updateUrl)
-                    .andReturn().asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                    .header("Platform-TenantId", scenarioScopeState.tenant).baseUri(operationsAppConfig.operationAppContactPoint)
+                    .body(scenarioScopeState.updateReportBody).expect().statusCode(expectedStatus).when().put(updateUrl).andReturn()
+                    .asString();
 
             logger.info("Update Report Response: {}", scenarioScopeState.response);
         });
@@ -218,7 +209,9 @@ public class ReportManagementSteps extends BaseStepDef {
         try {
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-            assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId)); // Verify the same report ID
+            assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId)); // Verify the
+                                                                                                        // same report
+                                                                                                        // ID
             assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
             assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
 
@@ -237,13 +230,14 @@ public class ReportManagementSteps extends BaseStepDef {
             String reportId = scenarioScopeState.reportId;
             String getSingleReportEndpoint = "/reports/{reportId}";
 
-            scenarioScopeState.response = RestAssured.given(requestSpec)
-                    .header("Platform-TenantId", scenarioScopeState.tenant)
-                    .baseUri(operationsAppConfig.operationAppContactPoint)
-                    .pathParam("reportId", reportId) // Replace with actual path param if required
-                    .expect().statusCode(expectedStatus)
-                    .when().get(getSingleReportEndpoint)
-                    .andReturn().asString();
+            scenarioScopeState.response = RestAssured.given(requestSpec).header("Platform-TenantId", scenarioScopeState.tenant)
+                    .baseUri(operationsAppConfig.operationAppContactPoint).pathParam("reportId", reportId) // Replace
+                                                                                                           // with
+                                                                                                           // actual
+                                                                                                           // path param
+                                                                                                           // if
+                                                                                                           // required
+                    .expect().statusCode(expectedStatus).when().get(getSingleReportEndpoint).andReturn().asString();
 
             logger.info("Get Single Report Response: {}", scenarioScopeState.response);
         } catch (Exception e) {
@@ -258,11 +252,9 @@ public class ReportManagementSteps extends BaseStepDef {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-
             assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId));
             assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
             assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
-
 
         } catch (Exception e) {
             logger.error("Error parsing JSON response: {}", e.getMessage());
@@ -305,31 +297,23 @@ public class ReportManagementSteps extends BaseStepDef {
 
     @Then("I should receive a response with status {int}")
     public void iShouldReceiveResponseWithStatus(int expectedStatus) {
-        await().atMost(awaitMost, SECONDS)
-                .pollDelay(pollDelay, SECONDS)
-                .pollInterval(pollInterval, SECONDS)
-                .untilAsserted(() -> {
-                    try {
-                        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            try {
+                RequestSpecification requestSpec = Utils.getDefaultSpec();
 
-                        if (scenarioScopeState.tenant != null) {
-                            requestSpec.header("Platform-TenantId", scenarioScopeState.tenant);
-                        }
+                if (scenarioScopeState.tenant != null) {
+                    requestSpec.header("Platform-TenantId", scenarioScopeState.tenant);
+                }
 
-                        scenarioScopeState.response = RestAssured.given(requestSpec)
-                                .header("Content-Type", "application/json")
-                                .baseUri(operationsAppConfig.operationAppContactPoint)
-                                .body(scenarioScopeState.createReportBody)
-                                .expect().statusCode(HttpStatus.SC_BAD_REQUEST) // Expecting 400 for invalid data
-                                .when().post(operationsAppConfig.reportCreate)
-                                .andReturn().asString();
+                scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
+                        .baseUri(operationsAppConfig.operationAppContactPoint).body(scenarioScopeState.createReportBody).expect()
+                        .statusCode(HttpStatus.SC_BAD_REQUEST).when().post(operationsAppConfig.reportCreate).andReturn().asString();
 
-                        logger.info("Create Report Response: {}", scenarioScopeState.response);
-                    } catch (Exception e) {
-                        logger.error("Error calling create report API: {}", e.getMessage());
-                        fail("Error calling create report API");
-                    }
-                });
+                logger.info("Create Report Response: {}", scenarioScopeState.response);
+            } catch (Exception e) {
+                logger.error("Error calling create report API: {}", e.getMessage());
+                fail("Error calling create report API");
+            }
+        });
     }
-
 }
