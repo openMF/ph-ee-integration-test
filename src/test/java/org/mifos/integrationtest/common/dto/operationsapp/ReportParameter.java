@@ -1,6 +1,8 @@
 package org.mifos.integrationtest.common.dto.operationsapp;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
