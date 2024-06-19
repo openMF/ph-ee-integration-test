@@ -1,4 +1,4 @@
-package resources;
+package org.mifos.integrationtest.common.dto;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -18,6 +18,8 @@ import io.restassured.specification.RequestSpecification;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.hc.core5.http.HttpStatus;
+import org.awaitility.Awaitility;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.mifos.integrationtest.common.Utils;
@@ -96,7 +98,7 @@ public class ReportManagementSteps extends BaseStepDef {
             logger.error("Unable to convert the DTO : {}", e);
         }
 
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        Awaitility.await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("Platform-TenantId", scenarioScopeState.tenant).baseUri(operationsAppConfig.operationAppContactPoint)
@@ -122,21 +124,21 @@ public class ReportManagementSteps extends BaseStepDef {
         try {
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-            assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Sample Report"));
-            assertThat(jsonResponse.get("reportType").asText(), Matchers.equalTo("Financial"));
-            assertThat(jsonResponse.get("reportSubType").asText(), Matchers.equalTo("Monthly"));
-            assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Financial summary for the month of June"));
-            assertThat(jsonResponse.get("reportSql").asText(),
+            MatcherAssert.assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Sample Report"));
+            MatcherAssert.assertThat(jsonResponse.get("reportType").asText(), Matchers.equalTo("Financial"));
+            MatcherAssert.assertThat(jsonResponse.get("reportSubType").asText(), Matchers.equalTo("Monthly"));
+            MatcherAssert.assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Financial summary for the month of June"));
+            MatcherAssert.assertThat(jsonResponse.get("reportSql").asText(),
                     Matchers.equalTo("SELECT * FROM transactions WHERE date >= '2024-06-01' AND date <= '2024-06-30'"));
 
             if (jsonResponse.has("reportParameters")) {
                 JsonNode reportParameters = jsonResponse.get("reportParameters");
-                assertThat(reportParameters.size(), Matchers.equalTo(2)); // Assuming two parameters were added
+                MatcherAssert.assertThat(reportParameters.size(), Matchers.equalTo(2)); // Assuming two parameters were added
 
-                assertThat(reportParameters.get(0).get("parameterKey").asText(), Matchers.equalTo("Param1"));
-                assertThat(reportParameters.get(0).get("parameterValue").asText(), Matchers.equalTo("Value1"));
-                assertThat(reportParameters.get(1).get("parameterKey").asText(), Matchers.equalTo("Param2"));
-                assertThat(reportParameters.get(1).get("parameterValue").asText(), Matchers.equalTo("Value2"));
+                MatcherAssert.assertThat(reportParameters.get(0).get("parameterKey").asText(), Matchers.equalTo("Param1"));
+                MatcherAssert.assertThat(reportParameters.get(0).get("parameterValue").asText(), Matchers.equalTo("Value1"));
+                MatcherAssert.assertThat(reportParameters.get(1).get("parameterKey").asText(), Matchers.equalTo("Param2"));
+                MatcherAssert.assertThat(reportParameters.get(1).get("parameterValue").asText(), Matchers.equalTo("Value2"));
             }
         } catch (Exception e) {
             logger.error("Error parsing JSON response: {}", e.getMessage());
@@ -146,7 +148,7 @@ public class ReportManagementSteps extends BaseStepDef {
 
     @And("the response should contain a unique report ID")
     public void theResponseShouldContainUniqueReportID() {
-        assertThat(scenarioScopeState.response, Matchers.containsString("id"));
+        MatcherAssert.assertThat(scenarioScopeState.response, Matchers.containsString("id"));
     }
 
     @Given("I have a report ID")
@@ -192,7 +194,7 @@ public class ReportManagementSteps extends BaseStepDef {
 
         logger.info("Update URL: {}", updateUrl);
 
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        Awaitility.await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("Platform-TenantId", scenarioScopeState.tenant).baseUri(operationsAppConfig.operationAppContactPoint)
@@ -209,11 +211,11 @@ public class ReportManagementSteps extends BaseStepDef {
         try {
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-            assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId)); // Verify the
+            MatcherAssert.assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId)); // Verify the
                                                                                                         // same report
                                                                                                         // ID
-            assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
-            assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
+            MatcherAssert.assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
+            MatcherAssert.assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
 
         } catch (Exception e) {
             // Handle any JSON parsing exceptions
@@ -252,9 +254,9 @@ public class ReportManagementSteps extends BaseStepDef {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-            assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId));
-            assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
-            assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
+            MatcherAssert.assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId));
+            MatcherAssert.assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
+            MatcherAssert.assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
 
         } catch (Exception e) {
             logger.error("Error parsing JSON response: {}", e.getMessage());
@@ -297,7 +299,7 @@ public class ReportManagementSteps extends BaseStepDef {
 
     @Then("I should receive a response with status {int}")
     public void iShouldReceiveResponseWithStatus(int expectedStatus) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        Awaitility.await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             try {
                 RequestSpecification requestSpec = Utils.getDefaultSpec();
 
