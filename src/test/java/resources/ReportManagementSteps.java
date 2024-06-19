@@ -12,6 +12,7 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.apache.hc.core5.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.junit.Assert; // Example static import
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.common.dto.operationsapp.ReportParameter;
 import org.mifos.integrationtest.common.dto.operationsapp.ReportRequestDTO;
@@ -30,7 +31,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-
 
 public class ReportManagementSteps extends BaseStepDef {
 
@@ -61,7 +61,7 @@ public class ReportManagementSteps extends BaseStepDef {
 
     @Then("the response should contain a list of reports")
     public void theResponseShouldContainListOfReports() {
-        assertNotNull( scenarioScopeState.response);
+        Assert.assertNotNull(scenarioScopeState.response);
     }
 
     @When("I call the create report API with valid data with expected status of {int}")
@@ -69,7 +69,6 @@ public class ReportManagementSteps extends BaseStepDef {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ReportRequestDTO reportDTO = new ReportRequestDTO();
-
 
         reportDTO.setReportName("Sample Report");
         reportDTO.setReportType("Financial");
@@ -147,32 +146,26 @@ public class ReportManagementSteps extends BaseStepDef {
             // Handle any JSON parsing exceptions
             logger.error("Error parsing JSON response: {}", e.getMessage());
             fail("Error parsing JSON response");
-
-
         }
     }
 
     @And("the response should contain a unique report ID")
-    public void theResponseShouldContainUniqueReportID () {
-
+    public void theResponseShouldContainUniqueReportID() {
         assertThat(scenarioScopeState.response, Matchers.containsString("id"));
     }
 
     @Given("I have a report ID")
     public void iHaveAReportID() {
-
+        // Implementation if needed
     }
 
     @When("I call the update report API with valid data with expected status of {int}")
     public void iCallUpdateReportAPIWithValidData(int expectedStatus) {
-
-        assertNotNull( scenarioScopeState.reportId);
+        Assert.assertNotNull(scenarioScopeState.reportId);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ReportRequestDTO reportDTO = new ReportRequestDTO();
 
-
-        //reportDTO.setId(Long.valueOf(scenarioScopeState.reportId));
         reportDTO.setReportName("Updated Report Name");
         reportDTO.setReportType("Financial");
         reportDTO.setReportSubType("Monthly");
@@ -194,8 +187,6 @@ public class ReportManagementSteps extends BaseStepDef {
 
         reportDTO.setReportParameters(reportParameters);
 
-
-
         try {
             String updateReportBody = objectMapper.writeValueAsString(reportDTO);
             scenarioScopeState.updateReportBody = updateReportBody;
@@ -205,7 +196,6 @@ public class ReportManagementSteps extends BaseStepDef {
         String updateUrl = "/reports/" + scenarioScopeState.reportId;
 
         logger.info("Update URL: {}", updateUrl);
-
 
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
@@ -222,7 +212,6 @@ public class ReportManagementSteps extends BaseStepDef {
         });
     }
 
-
     @Then("the response should contain the updated report details")
     public void theResponseShouldContainUpdatedReportDetails() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -234,6 +223,7 @@ public class ReportManagementSteps extends BaseStepDef {
             assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
 
         } catch (Exception e) {
+            // Handle any JSON parsing exceptions
             logger.error("Error parsing JSON response: {}", e.getMessage());
             fail("Error parsing JSON response");
         }
@@ -243,7 +233,6 @@ public class ReportManagementSteps extends BaseStepDef {
     public void iCallGetSingleReportAPI(int expectedStatus) {
         try {
             RequestSpecification requestSpec = Utils.getDefaultSpec();
-
 
             String reportId = scenarioScopeState.reportId;
             String getSingleReportEndpoint = "/reports/{reportId}";
@@ -262,6 +251,7 @@ public class ReportManagementSteps extends BaseStepDef {
             fail("Error calling get single report API");
         }
     }
+
     @Then("the response should contain the details of the requested report")
     public void theResponseShouldContainRequestedReportDetails() {
         try {
@@ -279,7 +269,6 @@ public class ReportManagementSteps extends BaseStepDef {
             fail("Error parsing JSON response");
         }
     }
-
 
     @When("I call the create report API with invalid data")
     public void iCallCreateReportAPIWithInvalidData() {
@@ -313,7 +302,6 @@ public class ReportManagementSteps extends BaseStepDef {
             logger.error("Unable to convert the DTO : {}", e);
         }
     }
-
 
     @Then("I should receive a response with status {int}")
     public void iShouldReceiveResponseWithStatus(int expectedStatus) {
