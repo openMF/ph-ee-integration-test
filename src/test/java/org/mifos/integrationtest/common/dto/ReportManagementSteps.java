@@ -1,10 +1,5 @@
 package org.mifos.integrationtest.common.dto;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,8 +10,6 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.hc.core5.http.HttpStatus;
 import org.awaitility.Awaitility;
 import org.hamcrest.MatcherAssert;
@@ -32,6 +25,12 @@ import org.mifos.integrationtest.cucumber.stepdef.ScenarioScopeState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.fail;
 
 public class ReportManagementSteps extends BaseStepDef {
 
