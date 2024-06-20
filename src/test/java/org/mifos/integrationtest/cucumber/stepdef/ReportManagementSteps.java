@@ -208,9 +208,8 @@ public class ReportManagementSteps extends BaseStepDef {
         try {
             JsonNode jsonResponse = objectMapper.readTree(scenarioScopeState.response);
 
-            MatcherAssert.assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId)); // Verify the
-                                                                                                        // same report
-                                                                                                        // ID
+            MatcherAssert.assertThat(jsonResponse.get("id").asText(), Matchers.equalTo(scenarioScopeState.reportId));
+
             MatcherAssert.assertThat(jsonResponse.get("reportName").asText(), Matchers.equalTo("Updated Report Name"));
             MatcherAssert.assertThat(jsonResponse.get("description").asText(), Matchers.equalTo("Updated description"));
 
@@ -230,12 +229,7 @@ public class ReportManagementSteps extends BaseStepDef {
             String getSingleReportEndpoint = "/reports/{reportId}";
 
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Platform-TenantId", scenarioScopeState.tenant)
-                    .baseUri(operationsAppConfig.operationAppContactPoint).pathParam("reportId", reportId) // Replace
-                                                                                                           // with
-                                                                                                           // actual
-                                                                                                           // path param
-                                                                                                           // if
-                                                                                                           // required
+                    .baseUri(operationsAppConfig.operationAppContactPoint).pathParam("reportId", reportId) 
                     .expect().statusCode(expectedStatus).when().get(getSingleReportEndpoint).andReturn().asString();
 
             logger.info("Get Single Report Response: {}", scenarioScopeState.response);
