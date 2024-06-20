@@ -61,4 +61,26 @@ public class ChannelClientIdDef extends BaseStepDef {
 
         logger.info("Txn Req response: {}", scenarioScopeState.response);
     }
+
+    @When("I call the transfer API with size {int} and page {int} expecting expected status of {int}")
+    public void iCallTheTransferAPIWithSizeAndPageExpectingExpectedStatusOf(int size, int page, int expectedStatus) {
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
+        if (authEnabled) {
+            requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
+        }
+
+        String endpoint = String.format("%s?size=%d&page=%d", operationsAppConfig.transfersEndpoint, size, page);
+        logger.info("Calling endpoint: {}", endpoint);
+
+        scenarioScopeState.response = RestAssured.given(requestSpec)
+                .baseUri(operationsAppConfig.operationAppContactPoint)
+                .expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
+                .when()
+                .get(endpoint)
+                .andReturn()
+                .asString();
+
+        logger.info("Inbound transfer with size and page Response: {}", scenarioScopeState.response);
+    }
 }
