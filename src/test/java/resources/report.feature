@@ -20,7 +20,7 @@ Feature: Report Management API Integration Test
     Given I have a report ID
     When I call the get single report API with expected status of 200
     Then the response should contain the details of the requested report
-
+  @amsIntegration
   Scenario: Manage Reports Workflow With Invalid Data
     Given Have tenant as "paymentbb2"
     When I call the create report API with invalid data
