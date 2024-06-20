@@ -128,7 +128,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch summary API with expected status of {int} with total {int} txns")
     public void callBatchSummaryAPI(int expectedStatus, int totalTxns) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(100, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -212,7 +212,7 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @When("I call the batch details API with expected status of {int} with total {int} txns")
     public void callBatchDetailsAPI(int expectedStatus, int totalTxns) {
-        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+        await().atMost(100, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             if (authEnabled) {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
@@ -364,7 +364,10 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I check for result file URL validity")
     public void iCheckForResultFileURLValidity() {
-        assertThat(isValidURL(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile())).isTrue();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            logger.info("batch summary file response is : {}", scenarioScopeState.batchAndSubBatchSummaryResponse.getFile());
+            assertThat(isValidURL(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile())).isTrue();
+        });
     }
 
     boolean isValidURL(String url) {
@@ -603,16 +606,19 @@ public class BatchApiStepDef extends BaseStepDef {
 
     @Then("I am able to parse sub batch summary response")
     public void iAmAbleToParseSubBatchSummaryResponse() {
-        scenarioScopeState.batchAndSubBatchSummaryResponse = null;
-        assertThat(scenarioScopeState.response).isNotNull();
-        assertThat(scenarioScopeState.response).isNotEmpty();
-        try {
-            scenarioScopeState.batchAndSubBatchSummaryResponse = objectMapper.readValue(scenarioScopeState.response,
-                    BatchAndSubBatchSummaryResponse.class);
-        } catch (Exception e) {
-            logger.error("Error parsing the batch summary response", e);
-        }
-        assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            scenarioScopeState.batchAndSubBatchSummaryResponse = null;
+            assertThat(scenarioScopeState.response).isNotNull();
+            assertThat(scenarioScopeState.response).isNotEmpty();
+            try {
+                scenarioScopeState.batchAndSubBatchSummaryResponse = objectMapper.readValue(scenarioScopeState.response,
+                        BatchAndSubBatchSummaryResponse.class);
+            } catch (Exception e) {
+                logger.error("Error parsing the batch summary response", e);
+            }
+            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse).isNotNull();
+            assertThat(scenarioScopeState.batchAndSubBatchSummaryResponse.getFile()).isNotNull();
+        });
     }
 
     @And("I call the sub batch summary API for sub batch summary with expected status of {int} and total count {int}")

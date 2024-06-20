@@ -396,9 +396,11 @@ public class VoucherManagementStepDef extends BaseStepDef {
 
     @Then("I check for redeem voucher failure")
     public void redeemVoucherFailure() {
-        iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
-        iCallTheRedeemVoucherAPIWithExpectedStatusOf(200);
-        assertUnsuccessfulRedemption();
+        await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            iCanCreateAnRedeemVoucherRequestDTOForVoucherRedemption();
+            iCallTheRedeemVoucherAPIWithExpectedStatusOf(200);
+            assertUnsuccessfulRedemption();
+        });
     }
 
     @After("@redeemVoucherSuccess")

@@ -362,7 +362,7 @@ Feature: Bill Payment P2G Test
     And I can call the biller RTP status API with expected status of 200 until I get the rtpStatus as "ACCEPTED"
 
   @gov
-  Scenario: Unsupported header validation for Bill Payments API
+  Scenario: BP-006 Unsupported header validation for Bill Payments API
     Given I have tenant as "paymentBB2"
     And I generate clientCorrelationId
     And I have bill id as "001"

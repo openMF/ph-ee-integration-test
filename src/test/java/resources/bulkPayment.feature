@@ -1,7 +1,7 @@
 @gov @ext
 Feature: Test ability to make payment to individual with bank account
 
-  Scenario: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
+  Scenario: BT-002 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
@@ -25,7 +25,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  Scenario: Bulk Transfer with ClosedLoop and Mojaloop
+  Scenario: BT-002 Bulk Transfer with ClosedLoop and Mojaloop
     Given I have tenant as "paymentbb2"
     And I have the demo csv file "bulk_payment_closedl_mock_mojaloop.csv"
     And I create a list of payee identifiers from csv file
@@ -49,7 +49,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And My total txns 8 and successful txn count in response should Match
 
-  Scenario: Bulk Transfer with ClosedLoop and GSMA
+  Scenario: BT-001 Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
     And I initialize the payee list
