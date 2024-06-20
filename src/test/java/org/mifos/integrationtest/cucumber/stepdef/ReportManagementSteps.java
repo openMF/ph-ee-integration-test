@@ -1,4 +1,4 @@
-package org.mifos.integrationtest.common.dto;
+package org.mifos.integrationtest.cucumber.stepdef;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.fail;
@@ -25,8 +25,6 @@ import org.mifos.integrationtest.common.dto.operationsapp.ReportParameter;
 import org.mifos.integrationtest.common.dto.operationsapp.ReportRequestDTO;
 import org.mifos.integrationtest.config.OperationsAppConfig;
 import org.mifos.integrationtest.config.TenantConfig;
-import org.mifos.integrationtest.cucumber.stepdef.BaseStepDef;
-import org.mifos.integrationtest.cucumber.stepdef.ScenarioScopeState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
