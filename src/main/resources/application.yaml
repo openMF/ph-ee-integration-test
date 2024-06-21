@@ -280,7 +280,7 @@ messageGateway:
 
 spring:
   mail:
-    host: ${MY_POD_IP:localhost}
+    host: ${EMAIL_URL:localhost}
     port: 3025
     username: greenmail
     password: greenmail
