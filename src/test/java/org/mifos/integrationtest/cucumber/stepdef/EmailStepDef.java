@@ -49,17 +49,13 @@ public class EmailStepDef extends BaseStepDef {
 
     private GreenMail greenMail;
 
-    @Before
-    public void setUp() {
 
+    @Given("the email service is running")
+    public void theEmailServiceIsRunning() {
         int port = Integer.parseInt(Objects.requireNonNull(env.getProperty("spring.mail.port")));
         greenMail = new GreenMail(ServerSetupTest.SMTP);
         greenMail.setUser("greenmail", "greenmail");
         greenMail.start();
-    }
-
-    @Given("the email service is running")
-    public void theEmailServiceIsRunning() {
 
     }
 
