@@ -10,13 +10,12 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.ChannelConnectorConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class ChannelClientIdDef extends BaseStepDef {
 
@@ -78,14 +77,8 @@ public class ChannelClientIdDef extends BaseStepDef {
         String endpoint = String.format("%s?size=%d&page=%d", operationsAppConfig.transfersEndpoint, size, page);
         logger.info("Calling endpoint: {}", endpoint);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(endpoint)
-                .andReturn()
-                .asString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endpoint).andReturn().asString();
 
         logger.info("Inbound transfer with size and page Response: {}", scenarioScopeState.response);
     }
@@ -100,20 +93,13 @@ public class ChannelClientIdDef extends BaseStepDef {
         String startfrom = startDate.format(formatter);
         String startto = endDate.format(formatter);
 
-        String endpoint = String.format("%s?startfrom=%s&startto=%s",
-                operationsAppConfig.transfersEndpoint, startfrom, startto);
+        String endpoint = String.format("%s?startfrom=%s&startto=%s", operationsAppConfig.transfersEndpoint, startfrom, startto);
         String fullUrl = operationsAppConfig.operationAppContactPoint + endpoint;
 
         logger.info("Calling endpoint: {}", fullUrl);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(endpoint)
-                .andReturn()
-                .asString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endpoint).andReturn().asString();
 
         logger.info("Inbound transfer with date range Response: {}", scenarioScopeState.response);
     }
@@ -147,14 +133,8 @@ public class ChannelClientIdDef extends BaseStepDef {
         String endpoint = String.format("%s?currency=%s&amount=%d", operationsAppConfig.transfersEndpoint, currency, amount);
         logger.info("Calling get transfer endpoint: {}", endpoint);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec)
-                .baseUri(operationsAppConfig.operationAppContactPoint)
-                .expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build())
-                .when()
-                .get(endpoint)
-                .andReturn()
-                .asString();
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when().get(endpoint).andReturn().asString();
 
         logger.info("Inbound transfer with currency and amount Response: {}", scenarioScopeState.response);
     }
