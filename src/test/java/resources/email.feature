@@ -1,6 +1,6 @@
 Feature: Send Email
 
-  @govtodo
+  @gov
   Scenario: Sending an email to the recipient with success
     Given I can inject MockServer
     And I can start mock server
