@@ -12,7 +12,6 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -48,7 +47,6 @@ public class EmailStepDef extends BaseStepDef {
     private Environment env;
 
     private GreenMail greenMail;
-
 
     @Given("the email service is running")
     public void theEmailServiceIsRunning() {
