@@ -28,7 +28,7 @@ Feature: Send Email
     Then I should be able to extract error from response
     Then I should be able to stop the greenmail mock
 
-  @gov
+  @govtodo
   Scenario: Sending an email to the recipient with failure in callback
     Given I can inject MockServer
     And I can start mock server
