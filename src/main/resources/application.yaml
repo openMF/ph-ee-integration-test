@@ -13,7 +13,7 @@ operations-app:
     batch-transaction: "/api/v1/batch/transactions"
     batches: "/api/v1/batches"
     batch-aggregate: "/api/v1/batch/"
-    transfers: "/api/v1/transfers?size=1&page=0"
+    transfers: "/api/v1/transfers"
     variables: "/api/v1/variables"
     transactionRequests: "/api/v1/transactionRequests"
     actuator: "/actuator/health"
