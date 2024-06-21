@@ -145,4 +145,11 @@ public class EmailStepDef extends BaseStepDef {
 
         });
     }
+
+    @Then("I should be able to stop the greenmail mock")
+    public void iShouldBeAbleToStopTheGreenmailMock() {
+        if (greenMail != null) {
+            greenMail.stop();
+        }
+    }
 }

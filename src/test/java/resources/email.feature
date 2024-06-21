@@ -12,6 +12,8 @@ Feature: Send Email
       | recipient1@example.com |
     And I can verify callback received with success
     Then the email should be sent to all recipients with subject "Test Email" and body "This is a test email"
+    Then I should be able to stop the greenmail mock
+
 
   @gov
   Scenario: Sending an email to the recipient for validation issues
@@ -24,6 +26,7 @@ Feature: Send Email
     When I send an email to the following recipients with subject "" and body "This is a test email" with callbackurl as "/sendMail" and get 400
       | recipient1@example.com |
     Then I should be able to extract error from response
+    Then I should be able to stop the greenmail mock
 
   @gov
   Scenario: Sending an email to the recipient with failure in callback
@@ -36,3 +39,4 @@ Feature: Send Email
     When I send an email to the following recipients with subject "Test Email" and body "This is a test email" with callbackurl as "/sendMail" and get 202
       | recipient1@example.com |
     And I can verify callback received with failure
+    Then I should be able to stop the greenmail mock
