@@ -26,7 +26,7 @@ paybill:
       settlement: "/confirmation"
 
 bulk-processor:
-  contactpoint: "https://bulk-connector.sandbox.fynarfin.io"
+  contactpoint: "https://localhost:9091"
   endpoints:
     bulk-transactions: "/batchtransactions"
     simulate: "/simulate"

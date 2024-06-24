@@ -729,8 +729,8 @@ public class GSMATransferStepDef extends BaseStepDef {
         }
         scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payerIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
-        finalEndpoint = finalEndpoint.replace("{IdentifierId}", debitParty.isEmpty() ? scenarioScopeState.payerIdentifier : debitParty);
-        logger.info("Endpoint: " + finalEndpoint);
+        finalEndpoint = finalEndpoint.replace("{IdentifierId}",
+                (scenarioScopeState.debitParty == null) ? scenarioScopeState.payerIdentifier : scenarioScopeState.debitParty);        logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
         logger.info("Balance Response: " + scenarioScopeState.response);
@@ -751,8 +751,8 @@ public class GSMATransferStepDef extends BaseStepDef {
         }
         scenarioScopeState.payeeIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payeeIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
-        finalEndpoint = finalEndpoint.replace("{IdentifierId}", creditParty.isEmpty() ? scenarioScopeState.payeeIdentifier : creditParty);
-        logger.info("Endpoint: " + finalEndpoint);
+        finalEndpoint = finalEndpoint.replace("{IdentifierId}",
+                scenarioScopeState.creditParty == null ? scenarioScopeState.payeeIdentifier : scenarioScopeState.creditParty);        logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
         logger.info("Balance Response: " + scenarioScopeState.response);
