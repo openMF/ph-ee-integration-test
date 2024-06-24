@@ -644,6 +644,48 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
+
+    @When("I create and setup a {string} with id {string} and account balance of {int} for all combine test cases")
+    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount) throws JsonProcessingException {
+        setTenantForPayer(client);
+        callCreateClientEndpoint(client);
+        callCreateSavingsProductEndpoint(client);
+        callCreateSavingsAccountEndpoint(client);
+        callCreateInteropIdentifierEndpoint(client);
+        callApproveSavingsEndpoint("approve", client);
+        callSavingsActivateEndpoint("activate", client);
+        callDepositAccountEndpoint("deposit", amount, client);
+        if (client.equals("payer")) {
+            if (scenarioScopeState.initialBalForPayerForBatch == null || id.equals("1")) {
+                scenarioScopeState.initialBalForPayerForBatch = new int[14];
+            }
+            scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
+
+        } else if (client.equals("payee")) {
+            if (scenarioScopeState.initialBalForPayeeForBatch == null || id.equals("1")) {
+                scenarioScopeState.initialBalForPayeeForBatch = new int[14];
+            }
+            scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
+        }
+    }
+
+    @Then("add row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int} for all combine test cases")
+    public void addRowToCsvFileForAllCombinedTestCases(String paymentMode, int transferAmount, int id) throws IOException {
+
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addRow(filePath, row);
+        scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
+        if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null || id == 1) {
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[14];
+        }
+        scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
+    }
+
+
     @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
