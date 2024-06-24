@@ -1,4 +1,4 @@
-@gov
+@e2e
 Feature: Test ability to make payment to individual with bank account
 
   Scenario:BB-FSP 001 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
