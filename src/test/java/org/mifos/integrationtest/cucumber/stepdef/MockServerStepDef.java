@@ -28,6 +28,7 @@ import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSender;
 import org.mifos.integrationtest.common.HttpMethod;
+import org.mifos.integrationtest.config.WireMockServerSingleton;
 import org.springframework.beans.factory.annotation.Value;
 
 public class MockServerStepDef extends BaseStepDef {
@@ -39,13 +40,13 @@ public class MockServerStepDef extends BaseStepDef {
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
-        assertThat(mockServer).isNotNull();
+        assertThat(WireMockServerSingleton.getInstance()).isNotNull();
     }
 
     @Then("I should be able to get instance of mock server")
     public void getInstanceOfMockServer() throws InterruptedException {
-        assertThat(mockServer.getMockServer()).isNotNull();
-        assertThat(mockServer.getMockServer().port()).isEqualTo(mockServerPortFromConfig);
+        assertThat(WireMockServerSingleton.getInstance()).isNotNull();
+        assertThat(WireMockServerSingleton.getPort()).isEqualTo(mockServerPortFromConfig);
     }
 
     @ParameterType(name = "httpMethod", value = ".*")
@@ -59,16 +60,16 @@ public class MockServerStepDef extends BaseStepDef {
     public void startStub(String endpoint, HttpMethod httpMethod, int status) {
         switch (httpMethod) {
             case GET -> {
-                stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(get(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case POST -> {
-                stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(post(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case PUT -> {
-                stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(put(urlPathMatching(endpoint)).willReturn(status(status)));
             }
             case DELETE -> {
-                stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
+                WireMockServerSingleton.getInstance().stubFor(delete(urlPathMatching(endpoint)).willReturn(status(status)));
             }
         }
     }
@@ -99,16 +100,16 @@ public class MockServerStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
-                    verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
                 }
                 case POST -> {
-                    verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
                 }
                 case PUT -> {
-                    verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
                 }
                 case DELETE -> {
-                    verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
+                    WireMockServerSingleton.getInstance().verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
         });
@@ -116,13 +117,13 @@ public class MockServerStepDef extends BaseStepDef {
 
     @And("I can start mock server")
     public void startMockServer() {
-        mockServer.getMockServer().start();
-        configureFor("localhost", mockServer.getMockServer().port());
+        WireMockServerSingleton.getInstance().start();
+        configureFor("localhost", WireMockServerSingleton.getPort());
     }
 
     @And("I can stop mock server")
     public void stopMockServer() {
-        mockServer.getMockServer().stop();
+        WireMockServerSingleton.getInstance().stop();
     }
 
     @Given("I will start the mock server")

@@ -27,7 +27,7 @@ public class MockServerConfig implements MockServer {
 
     @Override
     public String getBaseUri() {
-        return "http://localhost:" + getMockServer().port();
+        return "http://localhost:" + WireMockServerSingleton.getInstance().port();
     }
 
 }
