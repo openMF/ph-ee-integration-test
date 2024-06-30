@@ -1,4 +1,4 @@
-@amsIntegration
+@common @amsIntegration
 Feature: GSMA Transfer API Test for Account Identifier Worker
 
   Background: I will start mock server and register stub
