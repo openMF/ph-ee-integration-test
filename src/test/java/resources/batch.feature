@@ -1,6 +1,6 @@
 Feature: Batch Details API test
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-001 Batch transactions API Test
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "paymentBB2"
@@ -11,7 +11,7 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-002 Batch transactions API Test with polling callback url
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "paymentBB2"
@@ -22,7 +22,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-003 Batch summary API Test
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
@@ -40,7 +40,7 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200 with total 10 txns
     Then I should get non empty response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-004 Batch Details API Test
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
@@ -58,7 +58,7 @@ Feature: Batch Details API test
     Then I should get non empty response
 
 
-  	@gov @batch-teardown
+  	@commonExtended @gov @batch-teardown
     Scenario: BD-005 Batch transaction API Test for Synchronous File Validation with empty file
       Given I have tenant as "paymentBB2"
       And I make sure there is no file
@@ -69,7 +69,7 @@ Feature: Batch Details API test
       Then I should get non empty response
       And I should have "errorInformation" and "File not uploaded" in response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-006 Batch transaction API Test for Synchronous File Validation with invalid file
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demoErrorSync-6.csv"
@@ -80,7 +80,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I should have "Error Information" and "Invalid file structure" in response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-007 Batch transaction API Test for Asynchronous File Validation
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demoErrorAsync-6.csv"
@@ -98,7 +98,7 @@ Feature: Batch Details API test
     When I call the batch summary API with expected status of 200 with total 5 txns
     Then I should get non empty response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-008 Batch Phased Callback API Test Success
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
@@ -128,7 +128,7 @@ Feature: Batch Details API test
     When I should call callbackUrl api
     Then I should get expected status of 503
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-010 Batch summary with failure percent API Test
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
@@ -162,7 +162,7 @@ Feature: Batch Details API test
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-012 Batch Transaction REST Api test
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -178,7 +178,7 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-013,BT-001 Batch aggregate API Test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
@@ -196,7 +196,7 @@ Feature: Batch Details API test
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
-  @gov @ext @batch-teardown
+  @commonExtended @gov @ext @batch-teardown
   Scenario: BD-014 Sub Batch summary API Test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
@@ -212,7 +212,7 @@ Feature: Batch Details API test
     Then I am able to parse sub batch summary response
     And I should assert total txn count and successful txn count in response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-015 Batch splitting test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
@@ -233,7 +233,7 @@ Feature: Batch Details API test
     And I should assert total txn count and successful txn count in response
     And Total transaction in batch should add up to total transaction in each sub batch
 
-  @gov @ext
+  @commonExtended @gov @ext
   Scenario: BD-016 Payment Batch Detail API Test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-splitting.csv"
@@ -249,7 +249,7 @@ Feature: Batch Details API test
     Then I am able to parse payment batch detail response
     And I should assert total txn count and successful txn count in payment batch detail response
 
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-017 Batch test for de-duplicating payments
     Given I have the demo csv file "deduplication-test.csv"
     And I have tenant as "paymentBB2"
@@ -264,7 +264,7 @@ Feature: Batch Details API test
     Then I should get transactions with note set as "Duplicate transaction"
     And All the duplicate transaction should have status as Failed
 
-  @gov
+  @commonExtended @gov
   Scenario: BA-001 Batch Authorization API test
     Given I will start the mock server
     And I can register the stub with "/authorization/callback" endpoint for "POST" request with status of 200
@@ -274,7 +274,7 @@ Feature: Batch Details API test
 #    And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status
 
-  @gov @ext
+  @commonExtended @gov @ext
   Scenario: BD-018 Batch with callback
     Given I can inject MockServer
     And I can start mock server
@@ -295,7 +295,7 @@ Feature: Batch Details API test
     When I make the "POST" request to "/callback" endpoint with expected status of 200
     Then I should be able to extract response body from callback for batch
     And I can stop mock server
-  @gov @batch-teardown
+  @commonExtended @gov @batch-teardown
   Scenario: BD-019 Batch summary response result file URL Test
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "paymentBB2"

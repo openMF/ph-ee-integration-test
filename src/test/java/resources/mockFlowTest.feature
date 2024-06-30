@@ -25,6 +25,7 @@ Feature: Mock Flow Test
     And I should have startedAt and completedAt in response
     And I should have PayeeFspId as "pluto"
 
+  @common
   Scenario: MFT-001 Test for minimal mock fund transfer flow
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -39,6 +40,7 @@ Feature: Mock Flow Test
     And I should have startedAt and completedAt in response
     And I should have PayerFspId as not null
 
+  @common
   Scenario: MFT-002 Test for minimal mock fund transfer flow with batch transactions
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"

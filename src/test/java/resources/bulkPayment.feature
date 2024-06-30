@@ -1,6 +1,6 @@
 @e2e
 Feature: Test ability to make payment to individual with bank account
-
+  @commonExtended
   Scenario: BB-FSP 001 Create Budget Account and Register Payee
     Given I am setting up Mojaloop
     And I have the registeringInstituteId "SocialWelfare"
@@ -211,7 +211,7 @@ Feature: Test ability to make payment to individual with bank account
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And My total txns 8 and successful txn count in response should Match
-
+  @commonExtended
   Scenario:BB-FSP 003 Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
