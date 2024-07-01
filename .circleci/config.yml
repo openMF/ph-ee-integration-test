@@ -271,6 +271,7 @@ jobs:
           path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
       - store_artifacts:
           path: build/test-results
+
 workflows:
   deploy:
     jobs:

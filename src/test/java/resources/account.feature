@@ -1,6 +1,6 @@
 Feature: Account Status and Account Name Check api
 
-  @amsIntegration
+  @common @amsIntegration
   Scenario: Savings account Status Test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
@@ -21,7 +21,7 @@ Feature: Account Status and Account Name Check api
     Then I call the account status api
     And I can assert "active" status in response
 
-  @amsIntegration
+  @common @amsIntegration
   Scenario: Savings account Name Test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
