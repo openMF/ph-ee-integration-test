@@ -36,8 +36,8 @@ public class ScenarioScopeState {
     protected String fspId;
 
     protected String batchId;
-    protected String tenant;
-    protected String response;
+    public String tenant;
+    public String response;
     protected String request;
 
     protected String payeeIdentity;
@@ -45,7 +45,7 @@ public class ScenarioScopeState {
     protected String callbackBody;
 
     protected Integer statusCode;
-    protected String accessToken;
+    public String accessToken;
     protected String filename;
     protected String requestType;
     protected String clientCorrelationId;
@@ -119,4 +119,11 @@ public class ScenarioScopeState {
     protected String fetchVoucherResponseBody;
 
     protected String rtpId;
+
+    public String createReportBody;
+    public String updateReportBody;
+    public String reportId;
+
+    protected String reports;
+
 }
