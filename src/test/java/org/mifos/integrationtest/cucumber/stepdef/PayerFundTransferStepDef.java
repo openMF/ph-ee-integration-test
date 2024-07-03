@@ -42,6 +42,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     private static String payer_identifier;
 
+    private static String savings_account_id;
+
     private static String payee_identifier;
 
     private static String quoteId;
@@ -186,6 +188,42 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
+    @Then("I call the interop identifier endpoint for {string} and accountId {string}")
+    public void callCreateInteropBudgetIdentifierEndpoint(String client, String accountId) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
+        // Setting account ID in path
+
+        String responseSavingsAccount = client.equals("payer") ? fundTransferDef.responseSavingsAccountPayer
+                : fundTransferDef.responseSavingsAccountPayee;
+
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+         savings_account_id = savingsAccountResponse.getSavingsId().toString();
+
+        if (client.equals("payer")) {
+            payer_identifier = accountId;
+            scenarioScopeState.payerIdentifier = accountId;
+        } else {
+            payee_identifier = accountId;
+            scenarioScopeState.payeeIdentifier = accountId;
+        }
+
+        String endpoint = transferConfig.interopIdentifierEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
+
+        // Calling Interop Identifier endpoint
+        fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
+    }
+
     @Then("I approve the deposit with command {string} for {string}")
     public void callApproveSavingsEndpoint(String command, String client) throws JsonProcessingException {
         // Setting headers and body
@@ -210,6 +248,31 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
     }
 
+    @Then("I approve the deposit for Budget Account with command {string} for {string}")
+    public void callApproveBudgetAccountEndpoint(String command, String client) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        requestSpec.queryParam("command", command);
+        fundTransferDef.savingsApproveBody = fundTransferDef.setBodySavingsApprove();
+        String endpoint = transferConfig.savingsApproveEndpoint;
+
+        if (client.equals("payer")) {
+            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+        } else {
+            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+        }
+
+        // Calling create loan account endpoint
+        fundTransferDef.responseSavingsApprove = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Savings Approve Response: " + fundTransferDef.responseSavingsApprove);
+        assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
+    }
+
+
     @When("I activate the account with command {string} for {string}")
     public void callSavingsActivateEndpoint(String command, String client) throws JsonProcessingException {
         // Setting headers and body
@@ -232,6 +295,30 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
         assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
     }
+
+    @When("I activate the budget account with command {string} for {string}")
+    public void callBudgetAccountActivateEndpoint(String command, String client) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        requestSpec.queryParam("command", command);
+        fundTransferDef.savingsActivateBody = fundTransferDef.setBodySavingsActivate();
+
+        String endpoint = transferConfig.savingsActivateEndpoint;
+        if (client.equals("payer")) {
+            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+        } else {
+            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+        }
+        // Calling create loan account endpoint
+        fundTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
+        assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
+    }
+
 
     @Then("I call the deposit account endpoint with command {string} for amount {int} for {string}")
     public void callDepositAccountEndpoint(String command, int amount, String client) throws JsonProcessingException {
@@ -617,6 +704,28 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
         }
+    }
+
+    @Then("I check whether budget account exists with accoundId {string}")
+    public void budgetAccountExistsWithAccoundId(String accountId) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        // Setting account ID in path
+
+        String endpoint = transferConfig.interopIdentifierEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
+            try {
+                // Calling Interop Identifier endpoint
+                fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                        .expect().spec(new ResponseSpecBuilder().build()).when()
+                        .delete(endpoint).andReturn().asString();
+            } catch (Exception e) {
+        logger.error("Error checking account existence: ", e);
+        throw new RuntimeException("Failed to check account existence", e);
+    }
+        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
 }
