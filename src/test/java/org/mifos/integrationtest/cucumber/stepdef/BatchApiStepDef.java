@@ -311,7 +311,6 @@ public class BatchApiStepDef extends BaseStepDef {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
             requestSpec.header(HEADER_PURPOSE, "Integartion test");
             requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
             requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
             requestSpec.header(QUERY_PARAM_TYPE, "CSV");
             if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {

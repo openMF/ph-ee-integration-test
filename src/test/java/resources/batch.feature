@@ -149,8 +149,8 @@ Feature: Batch Details API test
   Scenario: BD-011 Batch test for payerIdentifier resolution using budgetAccount info
     Given I have tenant as "paymentBB2"
 	And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"
-    And I have the registeringInstituteId "123"
-    And I have the programId "SocialWelfare"
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "Education"
     And I generate clientCorrelationId
     And I have private key
     And I generate signature
