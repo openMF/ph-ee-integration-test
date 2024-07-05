@@ -25,6 +25,7 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
+
   Scenario: Bulk Transfer with ClosedLoop and Mojaloop
     Given I have tenant as "paymentbb2"
     And I have the demo csv file "bulk_payment_closedl_mock_mojaloop.csv"
