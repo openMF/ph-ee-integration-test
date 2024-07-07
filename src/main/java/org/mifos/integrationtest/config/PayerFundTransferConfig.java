@@ -12,6 +12,12 @@ public class PayerFundTransferConfig {
     @Value("${payerFundTransfer.tenant.payee}")
     public String payeeTenant;
 
+    @Value("${payerFundTransfer.tenant.payee2}")
+    public String payeeTenant2;
+
+    @Value("${payerFundTransfer.tenant.payee3}")
+    public String payeeTenant3;
+
     @Value("${savings.base-url}")
     public String clientBaseUrl;
     @Value("${savings.endpoints.client-endpoint}")

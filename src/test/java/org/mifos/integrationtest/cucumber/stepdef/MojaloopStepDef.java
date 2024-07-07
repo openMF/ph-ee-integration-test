@@ -29,12 +29,23 @@ public class MojaloopStepDef extends BaseStepDef {
 
         String clientIdentifierId;
         String fspId;
-        if (client.equals("payer")) {
-            clientIdentifierId = scenarioScopeState.payerIdentifier;
-            fspId = mojaloopConfig.payerFspId;
-        } else {
-            clientIdentifierId = scenarioScopeState.payeeIdentifier;
-            fspId = mojaloopConfig.payeeFspId;
+        switch (client) {
+            case "payer" -> {
+                clientIdentifierId = scenarioScopeState.payerIdentifier;
+                fspId = mojaloopConfig.payerFspId;
+            }
+            case "payee2" -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId2;
+            }
+            case "payee3" -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId3;
+            }
+            default -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId;
+            }
         }
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
