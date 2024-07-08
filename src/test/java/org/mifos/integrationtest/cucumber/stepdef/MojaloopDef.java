@@ -195,11 +195,15 @@ public class MojaloopDef {
 
         String payerFsp = mojaloopConfig.payerFspId;
         String payeeFsp = mojaloopConfig.payeeFspId;
+        String payeeFsp2 = mojaloopConfig.payeeFspId2;
+        String payeeFsp3 = mojaloopConfig.payeeFspId3;
         callbackEndpoints.getCallbackEndpoints().forEach(callback -> {
             String value = callback.getValue().replaceAll("\\{\\{CALLBACK_HOST\\}\\}", "http://" + mojaloopConfig.mlConnectorHost);
             try {
                 addCallbackEndpoint(payerFsp, callback.getType(), value);
                 addCallbackEndpoint(payeeFsp, callback.getType(), value);
+                addCallbackEndpoint(payeeFsp2, callback.getType(), value);
+                addCallbackEndpoint(payeeFsp3, callback.getType(), value);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
