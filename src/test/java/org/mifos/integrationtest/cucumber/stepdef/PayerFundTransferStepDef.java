@@ -406,7 +406,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
         requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
-        requestSpec.header("payeeDfspId", fundTransferDef.payeeTenant);
+        requestSpec.header("X-PayeeDFSP-ID", fundTransferDef.payeeTenant);
         // requestSpec.header("Platform-TenantId", transferConfig.payerTenant);
 
         String requestBody = TransferHelper
