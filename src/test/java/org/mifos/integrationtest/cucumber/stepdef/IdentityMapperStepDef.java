@@ -25,6 +25,7 @@ import io.restassured.specification.RequestSpecification;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-Registering-Institution-ID", sourceBBID).header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
+                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstituteId).header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
                 .baseUri(identityMapperConfig.identityMapperContactPoint).body(registerBeneficiaryBody).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();

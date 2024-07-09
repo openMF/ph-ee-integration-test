@@ -243,6 +243,10 @@ public class PayerFundTransferDef {
             return setBodyPayerClient();
         } else if (client.equals("payee")) {
             return setBodyPayeeClient();
+        } else if (client.equals("payee2")) {
+            return setBodyPayeeClient();
+        } else if (client.equals("payee3")) {
+            return setBodyPayeeClient();
         }
         return client;
     }
