@@ -224,6 +224,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
+
+
     @Then("I approve the deposit with command {string} for {string}")
     public void callApproveSavingsEndpoint(String command, String client) throws JsonProcessingException {
         // Setting headers and body

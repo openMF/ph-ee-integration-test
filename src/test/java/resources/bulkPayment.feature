@@ -171,6 +171,8 @@ Feature: Test ability to make payment to individual with bank account
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "Health"
+    And I have the programId "Maternity"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering beneficiary
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
