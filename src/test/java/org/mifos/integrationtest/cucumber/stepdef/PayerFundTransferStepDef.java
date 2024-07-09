@@ -68,15 +68,25 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void setTenantForPayer(String client) {
         String tenant;
         logger.info(client);
-        if (client.equals("payer")) {
-            tenant = transferConfig.payerTenant;
-            fundTransferDef.setPayerTenant(tenant);
-            scenarioScopeState.tenant = tenant;
-        } else {
-            tenant = transferConfig.payeeTenant;
-            fundTransferDef.setPayeeTenant(tenant);
-            scenarioScopeState.tenant = tenant;
+        switch (client) {
+            case "payer" -> {
+                tenant = transferConfig.payerTenant;
+                fundTransferDef.setPayerTenant(tenant);
+            }
+            case "payee2" -> {
+                tenant = transferConfig.payeeTenant2;
+                fundTransferDef.setPayeeTenant(tenant);
+            }
+            case "payee3" -> {
+                tenant = transferConfig.payeeTenant3;
+                fundTransferDef.setPayeeTenant(tenant);
+            }
+            default -> {
+                tenant = transferConfig.payeeTenant;
+                fundTransferDef.setPayeeTenant(tenant);
+            }
         }
+        scenarioScopeState.tenant = tenant;
         assertThat(tenant).isNotEmpty();
         fundTransferDef.setTenant(tenant);
         logger.info(tenant);
@@ -213,6 +223,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
+
+
 
     @Then("I approve the deposit with command {string} for {string}")
     public void callApproveSavingsEndpoint(String command, String client) throws JsonProcessingException {
