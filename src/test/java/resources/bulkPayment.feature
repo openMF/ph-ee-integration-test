@@ -27,7 +27,7 @@ Feature: Test ability to make payment to individual with bank account
     Then I approve the deposit for Budget Account with command "approve" for "payer"
     When I activate the budget account with command "activate" for "payer"
     Then I call the deposit account endpoint with command "deposit" for amount 9000 for "payer"
-    Then I add "payer" with account id "123456789" to als
+    Then I add "payer" with account id "223456789" to als
 
 
     When I call the create client endpoint for "payer"
@@ -38,7 +38,7 @@ Feature: Test ability to make payment to individual with bank account
     Then I approve the deposit for Budget Account with command "approve" for "payer"
     When I activate the budget account with command "activate" for "payer"
     Then I call the deposit account endpoint with command "deposit" for amount 9000 for "payer"
-    Then I add "payer" with account id "123456789" to als
+    Then I add "payer" with account id "323456789" to als
 
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
@@ -49,29 +49,29 @@ Feature: Test ability to make payment to individual with bank account
     Then I approve the deposit for Budget Account with command "approve" for "payee"
     When I activate the budget account with command "activate" for "payee"
     Then I call the deposit account endpoint with command "deposit" for amount 1000 for "payee"
-    Then I add "payee" with account id "400173110196" to als
+    Then I add "payee" with account id "1234" to als
 
-    Given I have Fineract-Platform-TenantId for "payee"
+    Given I have Fineract-Platform-TenantId for "payee2"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
     When I call the create savings account endpoint for "payee"
-    Then I check whether budget account exists with accoundId "1235"
-    Then I call the interop identifier endpoint for "payee" and accountId "1235"
+    Then I check whether budget account exists with accoundId "2235"
+    Then I call the interop identifier endpoint for "payee" and accountId "2235"
     Then I approve the deposit for Budget Account with command "approve" for "payee"
     When I activate the budget account with command "activate" for "payee"
     Then I call the deposit account endpoint with command "deposit" for amount 2000 for "payee"
-    Then I add "payee" with account id "400174120160" to als
+    Then I add "payee2" with account id "2235" to als
 
-    Given I have Fineract-Platform-TenantId for "payee"
+    Given I have Fineract-Platform-TenantId for "payee3"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
     When I call the create savings account endpoint for "payee"
-    Then I check whether budget account exists with accoundId "400173110195"
-    Then I call the interop identifier endpoint for "payee" and accountId "400173110195"
+    Then I check whether budget account exists with accoundId "3235"
+    Then I call the interop identifier endpoint for "payee" and accountId "3235"
     Then I approve the deposit for Budget Account with command "approve" for "payee"
     When I activate the budget account with command "activate" for "payee"
     Then I call the deposit account endpoint with command "deposit" for amount 3000 for "payee"
-    Then I add "payee" with account id "400173110195" to als
+    Then I add "payee3" with account id "3235" to als
 
     And I have the demo csv file "bulk_payment.csv"
     When I can inject MockServer
@@ -82,22 +82,23 @@ Feature: Test ability to make payment to individual with bank account
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
 
+
   Scenario: BB-001 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given I have tenant as "paymentbb1"
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "Education"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering beneficiary
+    And I create a IdentityMapperDTO for registering payee with IAM
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
 
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
-    And I have the registeringInstituteId "SocialWelfare"
-      And I have the programId "Education"
 
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
@@ -117,15 +118,15 @@ Feature: Test ability to make payment to individual with bank account
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "UnconditionalCashTransfer"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering beneficiary
+    And I create a IdentityMapperDTO for registering payee with IAM
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
-    And I have the registeringInstituteId "SocialWelfare"
-    And I have programId "UnconditionalCashTransfer"
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And I am able to parse batch transactions response
@@ -144,15 +145,15 @@ Feature: Test ability to make payment to individual with bank account
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "Health"
+    And I have the programId "Maternity"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering beneficiary
+    And I create a IdentityMapperDTO for registering payee with IAM
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
     And I create a new clientCorrelationId
     And I have private key
     And I generate signature
-    And I have the registeringInstituteId "Health"
-    And I have programId "Maternity"
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
     And I am able to parse batch transactions response
@@ -188,7 +189,6 @@ Feature: Test ability to make payment to individual with bank account
     And Status of transaction is "COMPLETED"
     And My total txns 8 and successful txn count in response should Match
 
-  @commonExtended
   Scenario: Bulk Transfer with ClosedLoop and GSMA
     #payer 1 creation
     Given I have Fineract-Platform-TenantId as "payerfsp2"
