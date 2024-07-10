@@ -29,12 +29,23 @@ public class MojaloopStepDef extends BaseStepDef {
 
         String clientIdentifierId;
         String fspId;
-        if (client.equals("payer")) {
-            clientIdentifierId = scenarioScopeState.payerIdentifier;
-            fspId = mojaloopConfig.payerFspId;
-        } else {
-            clientIdentifierId = scenarioScopeState.payeeIdentifier;
-            fspId = mojaloopConfig.payeeFspId;
+        switch (client) {
+            case "payer" -> {
+                clientIdentifierId = scenarioScopeState.payerIdentifier;
+                fspId = mojaloopConfig.payerFspId;
+            }
+            case "payee2" -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId2;
+            }
+            case "payee3" -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId3;
+            }
+            default -> {
+                clientIdentifierId = scenarioScopeState.payeeIdentifier;
+                fspId = mojaloopConfig.payeeFspId;
+            }
         }
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
@@ -67,6 +78,9 @@ public class MojaloopStepDef extends BaseStepDef {
 
         String payerFsp = mojaloopConfig.payerFspId;
         String payeeFsp = mojaloopConfig.payeeFspId;
+        String payeeFsp2 = mojaloopConfig.payeeFspId2;
+        String payeeFsp3 = mojaloopConfig.payeeFspId3;
+
 
         if (!mojaloopDef.isHubAccountTypesAdded()) {
 
@@ -86,10 +100,15 @@ public class MojaloopStepDef extends BaseStepDef {
 
         mojaloopDef.addFsp(payerFsp);
         mojaloopDef.addFsp(payeeFsp);
+        mojaloopDef.addFsp(payeeFsp2);
+        mojaloopDef.addFsp(payeeFsp3);
         mojaloopDef.addInitialPositionAndLimit(payerFsp);
         mojaloopDef.addInitialPositionAndLimit(payeeFsp);
+        mojaloopDef.addInitialPositionAndLimit(payeeFsp2);
+        mojaloopDef.addInitialPositionAndLimit(payeeFsp3);
 
-        if (!mojaloopDef.getCallbackEndpoints(payerFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp)) {
+        if (!mojaloopDef.getCallbackEndpoints(payerFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp) || !mojaloopDef.getCallbackEndpoints(payeeFsp2)
+         || !mojaloopDef.getCallbackEndpoints(payeeFsp3)) {
             mojaloopDef.setCallbackEndpoints();
         }
 
