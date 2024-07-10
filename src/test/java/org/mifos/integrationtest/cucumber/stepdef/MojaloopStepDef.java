@@ -122,7 +122,6 @@ public class MojaloopStepDef extends BaseStepDef {
         assertThat(response).isNotNull();
     }
 
-
     @Given("I am setting up Mojaloop")
     public void mojaloopSetup() throws JsonProcessingException {
 

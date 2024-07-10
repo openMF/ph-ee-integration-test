@@ -201,7 +201,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
-         savings_account_id = savingsAccountResponse.getSavingsId().toString();
+        savings_account_id = savingsAccountResponse.getSavingsId().toString();
 
         if (client.equals("payer")) {
             payer_identifier = accountId;
@@ -223,8 +223,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
-
-
 
     @Then("I approve the deposit with command {string} for {string}")
     public void callApproveSavingsEndpoint(String command, String client) throws JsonProcessingException {
@@ -274,7 +272,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
     }
 
-
     @When("I activate the account with command {string} for {string}")
     public void callSavingsActivateEndpoint(String command, String client) throws JsonProcessingException {
         // Setting headers and body
@@ -320,7 +317,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
         assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
     }
-
 
     @Then("I call the deposit account endpoint with command {string} for amount {int} for {string}")
     public void callDepositAccountEndpoint(String command, int amount, String client) throws JsonProcessingException {
@@ -644,9 +640,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
-
     @When("I create and setup a {string} with id {string} and account balance of {int} for all combine test cases")
-    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount) throws JsonProcessingException {
+    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount)
+            throws JsonProcessingException {
         setTenantForPayer(client);
         callCreateClientEndpoint(client);
         callCreateSavingsProductEndpoint(client);
@@ -684,7 +680,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         }
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
-
 
     @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
@@ -759,15 +754,14 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String endpoint = transferConfig.interopIdentifierEndpoint;
         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
-            try {
-                // Calling Interop Identifier endpoint
-                fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
-                        .expect().spec(new ResponseSpecBuilder().build()).when()
-                        .delete(endpoint).andReturn().asString();
-            } catch (Exception e) {
-        logger.error("Error checking account existence: ", e);
-        throw new RuntimeException("Failed to check account existence", e);
-    }
+        try {
+            // Calling Interop Identifier endpoint
+            fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
+                    .spec(new ResponseSpecBuilder().build()).when().delete(endpoint).andReturn().asString();
+        } catch (Exception e) {
+            logger.error("Error checking account existence: ", e);
+            throw new RuntimeException("Failed to check account existence", e);
+        }
         logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }

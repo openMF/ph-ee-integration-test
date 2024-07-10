@@ -730,7 +730,8 @@ public class GSMATransferStepDef extends BaseStepDef {
         scenarioScopeState.payerIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payerIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}",
-                (scenarioScopeState.debitParty == null) ? scenarioScopeState.payerIdentifier : scenarioScopeState.debitParty);        logger.info("Endpoint: " + finalEndpoint);
+                (scenarioScopeState.debitParty == null) ? scenarioScopeState.payerIdentifier : scenarioScopeState.debitParty);
+        logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
         logger.info("Balance Response: " + scenarioScopeState.response);
@@ -740,7 +741,6 @@ public class GSMATransferStepDef extends BaseStepDef {
                 .isTrue();
 
     }
-
 
     @Then("I call the balance api for payee {string} balance for all combine test cases")
     public void iCallTheBalanceApiForPayeeBalanceForAllCombinedTestsCases(String id) throws JsonProcessingException {
@@ -752,7 +752,8 @@ public class GSMATransferStepDef extends BaseStepDef {
         scenarioScopeState.payeeIdentifierforBatch[Integer.parseInt(id)] = scenarioScopeState.payeeIdentifier;
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}",
-                scenarioScopeState.creditParty == null ? scenarioScopeState.payeeIdentifier : scenarioScopeState.creditParty);        logger.info("Endpoint: " + finalEndpoint);
+                scenarioScopeState.creditParty == null ? scenarioScopeState.payeeIdentifier : scenarioScopeState.creditParty);
+        logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
         logger.info("Balance Response: " + scenarioScopeState.response);

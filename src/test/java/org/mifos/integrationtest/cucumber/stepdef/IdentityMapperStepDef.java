@@ -76,9 +76,9 @@ public class IdentityMapperStepDef extends BaseStepDef {
     public void iCallTheRegisterBeneficiaryAPIWithExpectedStatusOf(int expectedStatus, String stub) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
-                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstituteId).header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                .baseUri(identityMapperConfig.identityMapperContactPoint).body(registerBeneficiaryBody).expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+                .header("X-Registering-Institution-ID", scenarioScopeState.registeringInstituteId)
+                .header("X-CallbackURL", identityMapperConfig.callbackURL + stub).baseUri(identityMapperConfig.identityMapperContactPoint)
+                .body(registerBeneficiaryBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                 .post(identityMapperConfig.registerBeneficiaryEndpoint).andReturn().asString();
 
         logger.info("Identity Mapper Response: {}", scenarioScopeState.response);
@@ -536,7 +536,8 @@ public class IdentityMapperStepDef extends BaseStepDef {
         int fspIndex = 0;
         Set<String> payeeIdentifiers = new HashSet<>(scenarioScopeState.payeeIdentifiers);
         for (String payeeIdentifier : payeeIdentifiers) {
-            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", financialAddressArray[fspIndex], payeeFspConfig.getPayeeFsp(payeeFsp));
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", financialAddressArray[fspIndex],
+                    payeeFspConfig.getPayeeFsp(payeeFsp));
             beneficiaryDTOList.add(beneficiaryDTO);
             fspIndex++;
         }
