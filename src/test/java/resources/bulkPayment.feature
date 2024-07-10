@@ -171,8 +171,8 @@ Feature: Test ability to make payment to individual with bank account
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
-    And I have the registeringInstituteId "Health"
-    And I have the programId "Maternity"
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "Education"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering beneficiary
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
@@ -192,11 +192,13 @@ Feature: Test ability to make payment to individual with bank account
     And I should have matching total txn count and successful txn count in response
 
   Scenario:BB-FSP 006 Bulk Transfer with ClosedLoop and Mojaloop
-    Given I have tenant as "paymentBB2"
+    Given I have tenant as "payerfsp"
     And I have the demo csv file "bulk_payment_closedl_mock_mojaloop.csv"
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "Education"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering beneficiary
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
@@ -209,7 +211,7 @@ Feature: Test ability to make payment to individual with bank account
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
     Then I will sleep for 10000 millisecond
-    Given I have tenant as "paymentBB2"
+    Given I have tenant as "payerfsp"
     When I call the batch summary API with expected status of 200 with total successfull 8 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
@@ -314,6 +316,8 @@ Feature: Test ability to make payment to individual with bank account
 
     When I can inject MockServer
     Then I can start mock server
+    And I have the registeringInstituteId "SocialWelfare"
+    And I have the programId "Education"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering beneficiary
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
