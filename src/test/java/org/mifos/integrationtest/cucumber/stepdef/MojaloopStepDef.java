@@ -11,6 +11,7 @@ import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
+import org.mifos.integrationtest.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MojaloopStepDef extends BaseStepDef {
@@ -23,6 +24,8 @@ public class MojaloopStepDef extends BaseStepDef {
 
     @Autowired
     ScenarioScopeState scenarioScopeState;
+
+    private static final String CONTENT_TYPE = "application/vnd.interoperability.participants+json;version=1.0";
 
     @Then("I add {string} to als")
     public void addUsersToALS(String client) throws JsonProcessingException {
@@ -51,7 +54,7 @@ public class MojaloopStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("FSPIOP-Source", fspId);
         requestSpec.header("Date", getCurrentDateInFormat());
-        requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1");
+        requestSpec.header("Accept", CONTENT_TYPE);
         // requestSpec.header("Content-Type", "application/vnd.interoperability.participants+json;version=1.0");
 
         String endpoint = mojaloopConfig.addUserToAlsEndpoint;
@@ -66,8 +69,8 @@ public class MojaloopStepDef extends BaseStepDef {
 
         String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopBaseurl)
                 .config(RestAssured.config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-                .body(requestBody).contentType("application/vnd.interoperability.participants+json;version=1.0").expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn().asString();
+                .body(requestBody).contentType(CONTENT_TYPE).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
+                .post(endpoint).andReturn().asString();
 
         logger.info(response);
         assertThat(response).isNotNull();
@@ -100,13 +103,15 @@ public class MojaloopStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("FSPIOP-Source", fspId);
         requestSpec.header("Date", getCurrentDateInFormat());
-        requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1");
-        // requestSpec.header("Content-Type", "application/vnd.interoperability.participants+json;version=1.0");
+        requestSpec.header("Accept", CONTENT_TYPE);
 
         String endpoint = mojaloopConfig.addUserToAlsEndpoint;
-        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
-
+        String identifierType = "MSISDN";
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifierType}}", identifierType);
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifier}}", accountId);
+        String identifierId = (scenarioScopeState.creditParty == null) ? scenarioScopeState.payeeIdentifier
+                : scenarioScopeState.creditParty;
+        endpoint = String.format(endpoint, identifierType, identifierId);
         String requestBody = mojaloopDef.setBodyAddAlsUser(fspId);
 
         logger.info(mojaloopConfig.mojaloopBaseurl);

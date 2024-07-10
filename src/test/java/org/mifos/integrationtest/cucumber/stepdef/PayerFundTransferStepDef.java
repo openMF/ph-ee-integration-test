@@ -33,6 +33,7 @@ import org.mifos.integrationtest.common.TransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.mifos.integrationtest.config.PayerFundTransferConfig;
+import org.mifos.integrationtest.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PayerFundTransferStepDef extends BaseStepDef {
@@ -105,7 +106,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(transferConfig.clientEndpoint)
                 .andReturn().asString();
 
-        if (client.equals("payer")) {
+        if ("payer".equals(client)) {
             fundTransferDef.responsePayerClient = clientResponse;
             assertThat(fundTransferDef.responsePayerClient).isNotEmpty();
         } else {
@@ -160,7 +161,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
 
-        String responseSavingsAccount = client.equals("payer") ? fundTransferDef.responseSavingsAccountPayer
+        String responseSavingsAccount = ("payer").equals(client) ? fundTransferDef.responseSavingsAccountPayer
                 : fundTransferDef.responseSavingsAccountPayee;
 
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
@@ -196,7 +197,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
 
-        String responseSavingsAccount = client.equals("payer") ? fundTransferDef.responseSavingsAccountPayer
+        String responseSavingsAccount = ("payer").equals(client) ? fundTransferDef.responseSavingsAccountPayer
                 : fundTransferDef.responseSavingsAccountPayee;
 
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
@@ -212,8 +213,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         }
 
         String endpoint = transferConfig.interopIdentifierEndpoint;
-        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
+        String identifierType = "MSISDN";
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifierType}}", identifierType);
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifier}}", accountId);
 
         // Calling Interop Identifier endpoint
         fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
@@ -640,9 +642,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
-
     @When("I create and setup a {string} with id {string} and account balance of {int} for all combine test cases")
-    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount) throws JsonProcessingException {
+    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount)
+            throws JsonProcessingException {
         setTenantForPayer(client);
         callCreateClientEndpoint(client);
         callCreateSavingsProductEndpoint(client);
@@ -658,7 +660,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
 
-        } else if (client.equals("payee")) {
+        } else if (("payee").equals(client)) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null || id.equals("1")) {
                 scenarioScopeState.initialBalForPayeeForBatch = new int[14];
             }
@@ -680,7 +682,6 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         }
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
-
 
     @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
@@ -704,14 +705,14 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
         callDepositAccountEndpoint("deposit", amount, client);
-        if (client.equals("payer")) {
+        if (("payer").equals(client)) {
             if (scenarioScopeState.initialBalForPayerForBatch == null) {
                 scenarioScopeState.initialBalForPayerForBatch = new int[4];
             }
             scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
 
-        } else if (client.equals("payee")) {
+        } else if (("payee").equals(client)) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null) {
                 scenarioScopeState.initialBalForPayeeForBatch = new int[4];
             }

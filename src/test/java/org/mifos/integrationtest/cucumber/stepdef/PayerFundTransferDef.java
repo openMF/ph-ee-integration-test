@@ -155,7 +155,7 @@ public class PayerFundTransferDef {
         // Getting resourceId and clientId
         PostClientsResponse createPayerClientResponse;
 
-        if (client.equals("payer")) {
+        if (("payer").equals(client)) {
             createPayerClientResponse = objectMapper.readValue(responsePayerClient, PostClientsResponse.class);
         } else {
             createPayerClientResponse = objectMapper.readValue(responsePayeeClient, PostClientsResponse.class);
@@ -242,10 +242,6 @@ public class PayerFundTransferDef {
         if (client.equals("payer")) {
             return setBodyPayerClient();
         } else if (client.equals("payee")) {
-            return setBodyPayeeClient();
-        } else if (client.equals("payee2")) {
-            return setBodyPayeeClient();
-        } else if (client.equals("payee3")) {
             return setBodyPayeeClient();
         }
         return client;
