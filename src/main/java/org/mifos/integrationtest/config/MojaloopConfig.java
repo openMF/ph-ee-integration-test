@@ -42,8 +42,14 @@ public class MojaloopConfig {
     @Value("${mojaloop.fspid.payer}")
     public String payerFspId;
 
-    @Value("${mojaloop.fspid.payee}")
+    @Value("${mojaloop.fspid.payee1}")
     public String payeeFspId;
+
+    @Value("${mojaloop.fspid.payee2}")
+    public String payeeFspId2;
+
+    @Value("${mojaloop.fspid.payee3}")
+    public String payeeFspId3;
 
     @Value("${ml-connector.host}")
     public String mlConnectorHost;
