@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -519,6 +520,22 @@ public class IdentityMapperStepDef extends BaseStepDef {
             }
             String payeeFsp = payeeFspArray[fspIndex];
             BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", "1234", payeeFspConfig.getPayeeFsp(payeeFsp));
+            beneficiaryDTOList.add(beneficiaryDTO);
+            fspIndex++;
+        }
+        requestId = generateUniqueNumber(12);
+        registerBeneficiaryBody = new AccountMapperRequestDTO(requestId, sourceBBID, beneficiaryDTOList);
+    }
+
+    @And("I create a IdentityMapperDTO for registering payee with IAM")
+    public void iCreateAIdentityMapperDTOForRegisteringPayee() {
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        String payeeFsp = "payeefsp3";
+        String[] financialAddressArray = { "1234", "1235", "1236" };
+        int fspIndex = 0;
+        Set<String> payeeIdentifiers = new HashSet<>(scenarioScopeState.payeeIdentifiers);
+        for (String payeeIdentifier : payeeIdentifiers) {
+            BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", financialAddressArray[fspIndex], payeeFspConfig.getPayeeFsp(payeeFsp));
             beneficiaryDTOList.add(beneficiaryDTO);
             fspIndex++;
         }

@@ -62,6 +62,45 @@ public class MojaloopStepDef extends BaseStepDef {
         assertThat(response).isNotNull();
     }
 
+    @Then("I add {string} with account id {string} to als")
+    public void addBudgetAccountToALS(String client, String accountId) throws JsonProcessingException {
+
+        String clientIdentifierId;
+        String fspId;
+        if (client.equals("payer")) {
+            clientIdentifierId = scenarioScopeState.payerIdentifier;
+            fspId = mojaloopConfig.payerFspId;
+        } else {
+            clientIdentifierId = scenarioScopeState.payeeIdentifier;
+            fspId = mojaloopConfig.payeeFspId;
+        }
+
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec.header("FSPIOP-Source", fspId);
+        requestSpec.header("Date", getCurrentDateInFormat());
+        requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1");
+        // requestSpec.header("Content-Type", "application/vnd.interoperability.participants+json;version=1.0");
+
+        String endpoint = mojaloopConfig.addUserToAlsEndpoint;
+        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
+
+        String requestBody = mojaloopDef.setBodyAddAlsUser(fspId);
+
+        logger.info(mojaloopConfig.mojaloopBaseurl);
+        logger.info(requestBody);
+        logger.info(endpoint);
+
+        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopBaseurl)
+                .config(RestAssured.config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+                .body(requestBody).contentType("application/vnd.interoperability.participants+json;version=1.0").expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn().asString();
+
+        logger.info(response);
+        assertThat(response).isNotNull();
+    }
+
+
     @Given("I am setting up Mojaloop")
     public void mojaloopSetup() throws JsonProcessingException {
 
