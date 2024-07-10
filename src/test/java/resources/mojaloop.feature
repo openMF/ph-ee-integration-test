@@ -56,7 +56,7 @@ Feature: Mojaloop test
     Then I should be able to verify the callback for transfer
     Then I can stop mock server
 
-  Scenario: Payer Fund Transfer Flow test
+ Scenario Outline: Payer Fund Transfer Flow test
     Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payer"
     When I call the create client endpoint for "payer"
@@ -67,8 +67,8 @@ Feature: Mojaloop test
     When I activate the account with command "activate" for "payer"
     Then I call the deposit account endpoint with command "deposit" for amount 12 for "payer"
 
-#    payee/payee2/payee3
-    Given I have Fineract-Platform-TenantId for "payee3"
+#    payee1/payee2/payee3
+    Given I have Fineract-Platform-TenantId for "<payee>"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"
     When I call the create savings account endpoint for "payee"
@@ -78,8 +78,8 @@ Feature: Mojaloop test
     Then I call the deposit account endpoint with command "deposit" for amount 10 for "payee"
 
     Then I add "payer" to als
-#    payee/payee2/payee3
-    Then I add "payee3" to als
+#    payee1/payee2/payee3
+    Then I add "<payee>" to als
 
     Then I call the payer fund transfer api to transfer amount "1" from payer to payee
     Then I should get transaction id in response
@@ -102,6 +102,11 @@ Feature: Mojaloop test
 
     Then I assert "payer" balance to be 11
     Then I assert "payee" balance to be 11
+   Examples:
+     | payee |
+     | payee1 |
+     | payee2 |
+     | payee3 |
 
   Scenario: Bulk Transfer with Mojaloop
     Given I am setting up Mojaloop

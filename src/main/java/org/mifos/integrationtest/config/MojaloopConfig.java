@@ -42,7 +42,7 @@ public class MojaloopConfig {
     @Value("${mojaloop.fspid.payer}")
     public String payerFspId;
 
-    @Value("${mojaloop.fspid.payee}")
+    @Value("${mojaloop.fspid.payee1}")
     public String payeeFspId;
 
     @Value("${mojaloop.fspid.payee2}")

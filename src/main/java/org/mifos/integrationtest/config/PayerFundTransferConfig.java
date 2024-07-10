@@ -9,7 +9,7 @@ public class PayerFundTransferConfig {
     @Value("${payerFundTransfer.tenant.payer}")
     public String payerTenant;
 
-    @Value("${payerFundTransfer.tenant.payee}")
+    @Value("${payerFundTransfer.tenant.payee1}")
     public String payeeTenant;
 
     @Value("${payerFundTransfer.tenant.payee2}")

@@ -186,14 +186,14 @@ config:
 payerFundTransfer:
   tenant:
     payer: "wakanda"
-    payee: "jupiter"
+    payee1: "jupiter"
     payee2: "pluto"
     payee3: "venus"
 
 mojaloop:
   fspid:
     payer: "payerfsp"
-    payee: "payeefsp"
+    payee1: "payeefsp"
     payee2: "payeefsp2"
     payee3: "payeefsp3"
   contactpoint: http://account-lookup-service.sandbox.fynarfin.io
