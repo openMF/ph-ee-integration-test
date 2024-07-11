@@ -120,7 +120,7 @@ public class MojaloopStepDef extends BaseStepDef {
 
         String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopBaseurl)
                 .config(RestAssured.config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
-                .body(requestBody).contentType("application/vnd.interoperability.participants+json;version=1.0").expect()
+                .body(requestBody).contentType(CONTENT_TYPE).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn().asString();
 
         logger.info(response);

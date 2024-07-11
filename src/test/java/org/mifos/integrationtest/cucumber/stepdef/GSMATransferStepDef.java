@@ -432,10 +432,10 @@ public class GSMATransferStepDef extends BaseStepDef {
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}",
                 scenarioScopeState.debitParty.isEmpty() ? scenarioScopeState.payerIdentifier : scenarioScopeState.debitParty);
-        logger.info("Endpoint: " + finalEndpoint);
+        logger.info("Endpoint: {}", finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() <= scenarioScopeState.initialBalForPayer).isTrue();
         scenarioScopeState.gsmaP2PAmtDebit = 0;
@@ -449,10 +449,10 @@ public class GSMATransferStepDef extends BaseStepDef {
         finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
         finalEndpoint = finalEndpoint.replace("{IdentifierId}",
                 scenarioScopeState.creditParty.isEmpty() ? scenarioScopeState.payeeIdentifier : scenarioScopeState.creditParty);
-        logger.info("Endpoint: " + finalEndpoint);
+        logger.info("Endpoint: {}", finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayee).isTrue();
 
@@ -469,7 +469,7 @@ public class GSMATransferStepDef extends BaseStepDef {
             logger.info("Endpoint: " + finalEndpoint);
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-            logger.info("Balance Response: " + scenarioScopeState.response);
+            logger.info("Balance Response: {}", scenarioScopeState.response);
             InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
             assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayer
                     - scenarioScopeState.gsmaP2PAmtDebit).isTrue();
@@ -485,10 +485,10 @@ public class GSMATransferStepDef extends BaseStepDef {
             finalEndpoint = finalEndpoint.replace("{IdentifierType}", "MSISDN");
             finalEndpoint = finalEndpoint.replace("{IdentifierId}",
                     scenarioScopeState.creditParty.isEmpty() ? scenarioScopeState.payeeIdentifier : scenarioScopeState.creditParty);
-            logger.info("Endpoint: " + finalEndpoint);
+            logger.info("Endpoint: {}", finalEndpoint);
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-            logger.info("Balance Response: " + scenarioScopeState.response);
+            logger.info("Balance Response: {}", scenarioScopeState.response);
             InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
             assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayee
                     + scenarioScopeState.gsmaP2PAmtDebit).isTrue();
@@ -691,7 +691,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)])
@@ -713,7 +713,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)])
@@ -735,7 +735,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: {} ", finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)])
@@ -777,7 +777,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: {}", finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)])
@@ -797,7 +797,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: {}", finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(interopAccountDTO.getAvailableBalance().intValue() == scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]
                 + scenarioScopeState.gsmaP2PAmtDebitForBatch[Integer.parseInt(id)]).isTrue();
@@ -816,7 +816,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)])
@@ -838,7 +838,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         assertThat(
                 interopAccountDTO.getAvailableBalance().intValue() >= scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)])
@@ -855,7 +855,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         logger.info("Endpoint: " + finalEndpoint);
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(amsBaseUrl).body("").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(finalEndpoint).andReturn().asString();
-        logger.info("Balance Response: " + scenarioScopeState.response);
+        logger.info("Balance Response: {}", scenarioScopeState.response);
         InteropAccountDTO interopAccountDTO = objectMapper.readValue(scenarioScopeState.response, InteropAccountDTO.class);
         int originBal = scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)];
         int debitAmt = scenarioScopeState.gsmaP2PAmtDebitForBatch[Integer.parseInt(id)];

@@ -185,7 +185,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
@@ -222,7 +222,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
@@ -246,7 +246,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Approve Response: " + fundTransferDef.responseSavingsApprove);
+        logger.info("Savings Approve Response: {}", fundTransferDef.responseSavingsApprove);
         assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
     }
 
@@ -260,9 +260,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String endpoint = transferConfig.savingsApproveEndpoint;
 
         if (client.equals("payer")) {
-            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
         } else {
-            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
         }
 
         // Calling create loan account endpoint
@@ -270,7 +270,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Approve Response: " + fundTransferDef.responseSavingsApprove);
+        logger.info("Savings Approve Response: {}", fundTransferDef.responseSavingsApprove);
         assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
     }
 
@@ -293,7 +293,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
+        logger.info("Savings Activate Response: {}", fundTransferDef.responseSavingsActivate);
         assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
     }
 
@@ -307,16 +307,16 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         String endpoint = transferConfig.savingsActivateEndpoint;
         if (client.equals("payer")) {
-            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
         } else {
-            endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", savings_account_id);
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
         }
         // Calling create loan account endpoint
         fundTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
                 .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
+        logger.info("Savings Activate Response: {}", fundTransferDef.responseSavingsActivate);
         assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
     }
 
@@ -754,8 +754,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         // Setting account ID in path
 
         String endpoint = transferConfig.interopIdentifierEndpoint;
-        endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
-        endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", accountId);
+        String identifierType = "MSISDN";
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifierType}}", identifierType);
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifier}}", accountId);
         try {
             // Calling Interop Identifier endpoint
             fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
@@ -764,7 +765,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             logger.error("Error checking account existence: ", e);
             throw new RuntimeException("Failed to check account existence", e);
         }
-        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
