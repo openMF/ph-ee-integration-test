@@ -33,6 +33,7 @@ import org.mifos.integrationtest.common.TransferHelper;
 import org.mifos.integrationtest.common.Utils;
 import org.mifos.integrationtest.config.MojaloopConfig;
 import org.mifos.integrationtest.config.PayerFundTransferConfig;
+import org.mifos.integrationtest.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PayerFundTransferStepDef extends BaseStepDef {
@@ -41,6 +42,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     PayerFundTransferDef fundTransferDef;
 
     private static String payer_identifier;
+
+    private static String savings_account_id;
 
     private static String payee_identifier;
 
@@ -103,7 +106,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(transferConfig.clientEndpoint)
                 .andReturn().asString();
 
-        if (client.equals("payer")) {
+        if ("payer".equals(client)) {
             fundTransferDef.responsePayerClient = clientResponse;
             assertThat(fundTransferDef.responsePayerClient).isNotEmpty();
         } else {
@@ -158,7 +161,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
         // Setting account ID in path
 
-        String responseSavingsAccount = client.equals("payer") ? fundTransferDef.responseSavingsAccountPayer
+        String responseSavingsAccount = ("payer").equals(client) ? fundTransferDef.responseSavingsAccountPayer
                 : fundTransferDef.responseSavingsAccountPayee;
 
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
@@ -182,7 +185,44 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
+        assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
+    }
+
+    @Then("I call the interop identifier endpoint for {string} and accountId {string}")
+    public void callCreateInteropBudgetIdentifierEndpoint(String client, String accountId) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        fundTransferDef.interopIdentifierBody = fundTransferDef.setBodyInteropIdentifier();
+        // Setting account ID in path
+
+        String responseSavingsAccount = ("payer").equals(client) ? fundTransferDef.responseSavingsAccountPayer
+                : fundTransferDef.responseSavingsAccountPayee;
+
+        PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(responseSavingsAccount,
+                PostSavingsAccountsResponse.class);
+        savings_account_id = savingsAccountResponse.getSavingsId().toString();
+
+        if (client.equals("payer")) {
+            payer_identifier = accountId;
+            scenarioScopeState.payerIdentifier = accountId;
+        } else {
+            payee_identifier = accountId;
+            scenarioScopeState.payeeIdentifier = accountId;
+        }
+
+        String endpoint = transferConfig.interopIdentifierEndpoint;
+        String identifierType = "MSISDN";
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifierType}}", identifierType);
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifier}}", accountId);
+
+        // Calling Interop Identifier endpoint
+        fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.interopIdentifierBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
@@ -206,7 +246,31 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Approve Response: " + fundTransferDef.responseSavingsApprove);
+        logger.info("Savings Approve Response: {}", fundTransferDef.responseSavingsApprove);
+        assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
+    }
+
+    @Then("I approve the deposit for Budget Account with command {string} for {string}")
+    public void callApproveBudgetAccountEndpoint(String command, String client) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        requestSpec.queryParam("command", command);
+        fundTransferDef.savingsApproveBody = fundTransferDef.setBodySavingsApprove();
+        String endpoint = transferConfig.savingsApproveEndpoint;
+
+        if (client.equals("payer")) {
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
+        } else {
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
+        }
+
+        // Calling create loan account endpoint
+        fundTransferDef.responseSavingsApprove = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.savingsApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Savings Approve Response: {}", fundTransferDef.responseSavingsApprove);
         assertThat(fundTransferDef.responseSavingsApprove).isNotEmpty();
     }
 
@@ -229,7 +293,30 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(endpoint).andReturn().asString();
 
-        logger.info("Savings Activate Response: " + fundTransferDef.responseSavingsActivate);
+        logger.info("Savings Activate Response: {}", fundTransferDef.responseSavingsActivate);
+        assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
+    }
+
+    @When("I activate the budget account with command {string} for {string}")
+    public void callBudgetAccountActivateEndpoint(String command, String client) throws JsonProcessingException {
+        // Setting headers and body
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        requestSpec.queryParam("command", command);
+        fundTransferDef.savingsActivateBody = fundTransferDef.setBodySavingsActivate();
+
+        String endpoint = transferConfig.savingsActivateEndpoint;
+        if (client.equals("payer")) {
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
+        } else {
+            endpoint = Util.getFormattedEndpoint(endpoint, "{{savingsAccId}}", savings_account_id);
+        }
+        // Calling create loan account endpoint
+        fundTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
+                .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(endpoint).andReturn().asString();
+
+        logger.info("Savings Activate Response: {}", fundTransferDef.responseSavingsActivate);
         assertThat(fundTransferDef.responseSavingsActivate).isNotEmpty();
     }
 
@@ -555,6 +642,47 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
     }
 
+    @When("I create and setup a {string} with id {string} and account balance of {int} for all combine test cases")
+    public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount)
+            throws JsonProcessingException {
+        setTenantForPayer(client);
+        callCreateClientEndpoint(client);
+        callCreateSavingsProductEndpoint(client);
+        callCreateSavingsAccountEndpoint(client);
+        callCreateInteropIdentifierEndpoint(client);
+        callApproveSavingsEndpoint("approve", client);
+        callSavingsActivateEndpoint("activate", client);
+        callDepositAccountEndpoint("deposit", amount, client);
+        if (client.equals("payer")) {
+            if (scenarioScopeState.initialBalForPayerForBatch == null || id.equals("1")) {
+                scenarioScopeState.initialBalForPayerForBatch = new int[14];
+            }
+            scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
+
+        } else if (("payee").equals(client)) {
+            if (scenarioScopeState.initialBalForPayeeForBatch == null || id.equals("1")) {
+                scenarioScopeState.initialBalForPayeeForBatch = new int[14];
+            }
+            scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
+            assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
+        }
+    }
+
+    @Then("add row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int} for all combine test cases")
+    public void addRowToCsvFileForAllCombinedTestCases(String paymentMode, int transferAmount, int id) throws IOException {
+
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addRow(filePath, row);
+        scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
+        if (scenarioScopeState.gsmaP2PAmtDebitForBatch == null || id == 1) {
+            scenarioScopeState.gsmaP2PAmtDebitForBatch = new int[14];
+        }
+        scenarioScopeState.gsmaP2PAmtDebitForBatch[id + 1] = transferAmount;
+    }
+
     @Then("add last row to csv with current payer and payee, payment mode as {string} and transfer amount {int} and id {int}")
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
@@ -577,14 +705,14 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
         callDepositAccountEndpoint("deposit", amount, client);
-        if (client.equals("payer")) {
+        if (("payer").equals(client)) {
             if (scenarioScopeState.initialBalForPayerForBatch == null) {
                 scenarioScopeState.initialBalForPayerForBatch = new int[4];
             }
             scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayerForBatch[Integer.parseInt(id)]).isNotNull();
 
-        } else if (client.equals("payee")) {
+        } else if (("payee").equals(client)) {
             if (scenarioScopeState.initialBalForPayeeForBatch == null) {
                 scenarioScopeState.initialBalForPayeeForBatch = new int[4];
             }
@@ -617,6 +745,28 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)] = amount;
             assertThat(scenarioScopeState.initialBalForPayeeForBatch[Integer.parseInt(id)]).isNotNull();
         }
+    }
+
+    @Then("I check whether budget account exists with accoundId {string}")
+    public void budgetAccountExistsWithAccoundId(String accountId) throws JsonProcessingException {
+        RequestSpecification requestSpec = Utils.getDefaultSpec();
+        requestSpec = fundTransferDef.setHeaders(requestSpec);
+        // Setting account ID in path
+
+        String endpoint = transferConfig.interopIdentifierEndpoint;
+        String identifierType = "MSISDN";
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifierType}}", identifierType);
+        endpoint = Util.getFormattedEndpoint(endpoint, "{{identifier}}", accountId);
+        try {
+            // Calling Interop Identifier endpoint
+            fundTransferDef.responseInteropIdentifier = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl).expect()
+                    .spec(new ResponseSpecBuilder().build()).when().delete(endpoint).andReturn().asString();
+        } catch (Exception e) {
+            logger.error("Error checking account existence: ", e);
+            throw new RuntimeException("Failed to check account existence", e);
+        }
+        logger.info("Interop Identifier Response: {}", fundTransferDef.responseInteropIdentifier);
+        assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
 }
