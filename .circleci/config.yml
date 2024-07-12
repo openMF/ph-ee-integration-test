@@ -210,7 +210,7 @@ jobs:
           name: Test execution
           no_output_timeout: 30m
           command: |
-            ngrok config add-authtoken $AUTH_TOKEN
+            ngrok config add-authtoken 2i8JgHJji5KPQvUpByBDrQ6pfRl_Je6B9jDwHDUadvvvZvGe
             echo "web_addr: $LOCAL_PORT" >> /home/circleci/.config/ngrok/ngrok.yml
             ngrok http 53013 > /dev/null &
             echo -n "Extracting ngrok public url ."
