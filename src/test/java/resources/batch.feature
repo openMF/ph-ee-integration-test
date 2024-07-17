@@ -269,7 +269,7 @@ Feature: Batch Details API test
     Given I will start the mock server
     And I can register the stub with "/authorization/callback" endpoint for "POST" request with status of 200
     Then I will update the  mock server and register stub as done
-    When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "USD" and amount as "30"
+    When I create an AuthorizationRequest for Batch Authorization with batch ID as "1234", payerIdentifier as "5678", currency as "TZS" and amount as "30"
     And I call the Authorization API with batchId as "1234" and expected status of 202 and stub "/authorization/callback"
 #    And I will sleep for 5000 millisecond
     Then I should be able to verify that the "POST" method to "/authorization/callback" endpoint received a request with authorization status

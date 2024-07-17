@@ -42,7 +42,7 @@ public class MojaloopDef {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final String CURRENCY = "USD";
+    private static final String CURRENCY = "TZS";
 
     protected String setBodyAddAlsUser(String fspId) throws JsonProcessingException {
         AddUserAlsRequest addUserAlsRequest = new AddUserAlsRequest();
@@ -116,7 +116,7 @@ public class MojaloopDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         String endpoint = mojaloopConfig.settlementModel;
-        SettlementModelRequestBody requestBody = settlementModelRequestBody("DEFERREDNETUSD");
+        SettlementModelRequestBody requestBody = settlementModelRequestBody("DEFERREDNETTZS");
         requestBody.setCurrency(CURRENCY);
 
         Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody).when()
@@ -215,7 +215,7 @@ public class MojaloopDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec.header("Content-Type", "application/json");
         String endpoint = mojaloopConfig.recordFundsEndpoint.replaceAll("\\{\\{fsp\\}\\}", fsp)
-                .replaceAll("\\{\\{payerfspSettlementAccountId\\}\\}", "4");
+                .replaceAll("\\{\\{payerfspSettlementAccountId\\}\\}", "16");
         String requestBody = objectMapper.writeValueAsString(getRecordFundsRequestBody());
 
         Response responseBody = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).body(requestBody)

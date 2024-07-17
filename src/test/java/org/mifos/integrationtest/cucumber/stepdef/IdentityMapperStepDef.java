@@ -531,13 +531,13 @@ public class IdentityMapperStepDef extends BaseStepDef {
     @And("I create a IdentityMapperDTO for registering payee with IAM")
     public void iCreateAIdentityMapperDTOForRegisteringPayee() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
-        String payeeFsp = "payeefsp3";
-        String[] financialAddressArray = { "1234", "1235", "1236" };
+        String[] payeeFsps = { "payeefsp1", "payeefsp2", "payeefsp3" };
+        String[] payeeIdentifiers = { "400173110196", "400174120160", "400173110195" };
+        String[] financialAddressArray = { "1234", "2235", "3235" };
         int fspIndex = 0;
-        Set<String> payeeIdentifiers = new HashSet<>(scenarioScopeState.payeeIdentifiers);
         for (String payeeIdentifier : payeeIdentifiers) {
             BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(payeeIdentifier, "00", financialAddressArray[fspIndex],
-                    payeeFspConfig.getPayeeFsp(payeeFsp));
+                    payeeFspConfig.getPayeeFsp(payeeFsps[fspIndex]));
             beneficiaryDTOList.add(beneficiaryDTO);
             fspIndex++;
         }

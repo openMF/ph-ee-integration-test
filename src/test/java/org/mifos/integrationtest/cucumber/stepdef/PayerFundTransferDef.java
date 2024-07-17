@@ -127,7 +127,7 @@ public class PayerFundTransferDef {
         String shortName = getAlphaNumericString(4);
 
         PostSavingsProductsRequest savingsProductsRequest = new PostSavingsProductsRequest();
-        savingsProductsRequest.setCurrencyCode("USD");
+        savingsProductsRequest.setCurrencyCode("TZS");
         savingsProductsRequest.setDigitsAfterDecimal(2);
         savingsProductsRequest.setInterestCompoundingPeriodType(1);
         savingsProductsRequest.setInterestPostingPeriodType(4);
@@ -151,7 +151,7 @@ public class PayerFundTransferDef {
         return objectMapper.writeValueAsString(savingsApprove);
     }
 
-    protected String setBodySavingsAccount(String client) throws JsonProcessingException {
+    protected String setBodySavingsAccount(String client, String interopId) throws JsonProcessingException {
         // Getting resourceId and clientId
         PostClientsResponse createPayerClientResponse;
 
@@ -165,7 +165,7 @@ public class PayerFundTransferDef {
                 PostSavingsProductsResponse.class);
         String date = getCurrentDate();
         setcurrentDate(date);
-        externalId = UUID.randomUUID().toString();
+        externalId = interopId;
         PostSavingsAccountsRequest savingsAccountsRequest = new PostSavingsAccountsRequest();
         savingsAccountsRequest.setClientId(createPayerClientResponse.getClientId());
         savingsAccountsRequest.setProductId(savingsProductResponse.getResourceId());
@@ -208,13 +208,13 @@ public class PayerFundTransferDef {
         return objectMapper.writeValueAsString(savingsAccountDeposit);
     }
 
-    protected String setBodyPayerClient() throws JsonProcessingException {
+    protected String setBodyPayerClient(String firstName, String lastName) throws JsonProcessingException {
         String date = getCurrentDate();
         PostClientsRequest postClientsRequest = new PostClientsRequest();
         postClientsRequest.setOfficeId(1);
         postClientsRequest.setLegalFormId(1);
-        postClientsRequest.setFirstname("John");
-        postClientsRequest.setLastname("Wick");
+        postClientsRequest.setFirstname(firstName);
+        postClientsRequest.setLastname(lastName);
         postClientsRequest.setActive(true);
         postClientsRequest.setLocale("en");
         postClientsRequest.setDateFormat("dd MMMM yyyy");
@@ -223,13 +223,13 @@ public class PayerFundTransferDef {
         return objectMapper.writeValueAsString(postClientsRequest);
     }
 
-    protected String setBodyPayeeClient() throws JsonProcessingException {
+    protected String setBodyPayeeClient(String firstName, String lastName) throws JsonProcessingException {
         String date = getCurrentDate();
         PostClientsRequest postClientsRequest = new PostClientsRequest();
         postClientsRequest.setOfficeId(1);
         postClientsRequest.setLegalFormId(1);
-        postClientsRequest.setFirstname("John");
-        postClientsRequest.setLastname("Wick");
+        postClientsRequest.setFirstname(firstName);
+        postClientsRequest.setLastname(lastName);
         postClientsRequest.setActive(true);
         postClientsRequest.setLocale("en");
         postClientsRequest.setDateFormat("dd MMMM yyyy");
@@ -238,11 +238,11 @@ public class PayerFundTransferDef {
         return objectMapper.writeValueAsString(postClientsRequest);
     }
 
-    protected String setBodyClient(String client) throws JsonProcessingException {
+    protected String setBodyClient(String client, String firstName, String lastName) throws JsonProcessingException {
         if (client.equals("payer")) {
-            return setBodyPayerClient();
+            return setBodyPayerClient(firstName, lastName);
         } else if (client.equals("payee")) {
-            return setBodyPayeeClient();
+            return setBodyPayeeClient(firstName, lastName);
         }
         return client;
     }
@@ -254,7 +254,7 @@ public class PayerFundTransferDef {
         requestDTO.setPayer(getParty(payerIdentifier, mojaloopConfig.payerFspId));
         requestDTO.setPayee(getParty(payeeIdentifier, mojaloopConfig.payeeFspId));
         requestDTO.setAmountType(AmountType.RECEIVE);
-        requestDTO.setAmount(new MoneyData(amount, "USD"));
+        requestDTO.setAmount(new MoneyData(amount, "TZS"));
         requestDTO.setTransactionId(UUID.randomUUID().toString());
         requestDTO.setQuoteId(quoteId);
         TransactionType transactionType = new TransactionType();
@@ -277,7 +277,7 @@ public class PayerFundTransferDef {
         requestDTO.setTransferId(UUID.randomUUID().toString());
         requestDTO.setPayeeFsp(mojaloopConfig.payerFspId);
         requestDTO.setPayeeFsp(mojaloopConfig.payeeFspId);
-        requestDTO.setAmount(new MoneyData(amount, "USD"));
+        requestDTO.setAmount(new MoneyData(amount, "TZS"));
         requestDTO.setIlpPacket(ilpPacket);
         requestDTO.setCondition(condition);
         return objectMapper.writeValueAsString(requestDTO);

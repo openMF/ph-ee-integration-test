@@ -1,9 +1,9 @@
 id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
-0,dbe1d284-1bea-4f03-bc0f-8faece9f5da2,closedloop,msisdn,2300,msisdn,1759,10,USD,Test Payee Payment
-1,696a9340-adc2-48e3-a1d1-10a239bc412b,closedloop,msisdn,2301,msisdn,1760,5,USD,Test Payee Payment
-2,8e2eaf78-4566-438e-9183-ec02288fd16b,closedloop,msisdn,2302,msisdn,1761,5,USD,Test Payee Payment
-3,b9bc0bc8-cf25-417a-adbc-97345330737a,closedloop,msisdn,2303,msisdn,1762,5,USD,Test Payee Payment
-4,a59acbe1-4ebb-4618-bda3-630f2c306e09,closedloop,msisdn,2304,msisdn,1763,5,USD,Test Payee Payment
-5,d79a4bc6-f9ec-4eba-beb7-96277bd832b3,mojaloop,msisdn,2305,msisdn,1764,3,USD,Test Payee Payment
-6,1f838585-5091-44ef-9432-77d13b9c4583,mojaloop,msisdn,2306,msisdn,1764,2,USD,Test Payee Payment
-7,94fd7bd1-7482-4f4f-bf12-a21ab4b550a8,mojaloop,msisdn,2307,msisdn,1765,1,USD,Test Payee Payment
+0,dbe1d284-1bea-4f03-bc0f-8faece9f5da2,closedloop,msisdn,2300,msisdn,1759,10,TZS,Test Payee Payment
+1,696a9340-adc2-48e3-a1d1-10a239bc412b,closedloop,msisdn,2301,msisdn,1760,5,TZS,Test Payee Payment
+2,8e2eaf78-4566-438e-9183-ec02288fd16b,closedloop,msisdn,2302,msisdn,1761,5,TZS,Test Payee Payment
+3,b9bc0bc8-cf25-417a-adbc-97345330737a,closedloop,msisdn,2303,msisdn,1762,5,TZS,Test Payee Payment
+4,a59acbe1-4ebb-4618-bda3-630f2c306e09,closedloop,msisdn,2304,msisdn,1763,5,TZS,Test Payee Payment
+5,d79a4bc6-f9ec-4eba-beb7-96277bd832b3,mojaloop,msisdn,2305,msisdn,1764,3,TZS,Test Payee Payment
+6,1f838585-5091-44ef-9432-77d13b9c4583,mojaloop,msisdn,2306,msisdn,1764,2,TZS,Test Payee Payment
+7,94fd7bd1-7482-4f4f-bf12-a21ab4b550a8,mojaloop,msisdn,2307,msisdn,1765,1,TZS,Test Payee Payment

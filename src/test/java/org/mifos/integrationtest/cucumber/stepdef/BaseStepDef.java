@@ -4,6 +4,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -103,12 +106,34 @@ public class BaseStepDef {
             throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException,
             InvalidKeySpecException, InvalidKeyException {
 
-        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder().setClientCorrelationId(clientCorrelationId)
-                .setTenantId(tenant).setIsDataAsFile(isDataAFile)
-                .setData(isDataAFile ? Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename) : data).build();
+        String filePathOrData = isDataAFile ? Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename) : data;
+
+        // Debug statements to check the values
+        System.out.println("Client Correlation ID: " + clientCorrelationId);
+        System.out.println("Tenant: " + tenant);
+        System.out.println("Is Data A File: " + isDataAFile);
+        System.out.println("Data or File Path: " + filePathOrData);
+
+        // Read file content if it's a file
+        if (isDataAFile) {
+            String fileContent = new String(Files.readAllBytes(Paths.get(filePathOrData)), StandardCharsets.UTF_8);
+            System.out.println("File Content: " + fileContent);
+        }
+
+        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder()
+                .setClientCorrelationId(clientCorrelationId)
+                .setTenantId(tenant)
+                .setIsDataAsFile(isDataAFile)
+                .setData(filePathOrData)
+                .build();
+
+        // More debug statements
+        System.out.println("Generated JsonWebSignature Object: " + jsonWebSignature);
 
         return jsonWebSignature.getSignature(scenarioScopeState.privateKeyString);
     }
+
+
 
     private <T> void assertNonEmptyArray(List<T> objects) {
         assertNotNull(objects);

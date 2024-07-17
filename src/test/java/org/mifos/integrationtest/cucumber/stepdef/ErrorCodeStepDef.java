@@ -176,19 +176,19 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with missing currency details")
     public void iCanCreateGSMATransactionDTOWithMissingCurrency() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
             gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "", "string", "string",
@@ -202,22 +202,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with same payer and payee")
     public void iCanCreateGSMATransactionDTOWithSamePayerAndPayee() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "TZS", "string", "string",
                     "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
                     senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -228,22 +228,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with Negative Amount")
     public void iCanCreateGSMATransactionDTOWithNegativeAmount() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("-11", debitParty, creditParty, "USD", "string", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("-11", debitParty, creditParty, "TZS", "string", "string",
                     "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
                     senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -255,22 +255,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with invalid amount format")
     public void iCanCreateGSMATransactionDTOWithInvalidAmountFormat() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "+449999112");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("ab", debitParty, creditParty, "USD", "string", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("ab", debitParty, creditParty, "TZS", "string", "string",
                     "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
                     senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -281,22 +281,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with incorrect Payer")
     public void iCanCreateGSMATransferDTOWithIncorrectPayerHelper() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "TZS", "string", "string",
                     "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
                     senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -307,22 +307,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with Payer Insufficient Balance")
     public void iCanCreateGSMATransferDTOWithPayerInsufficientBalance() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("110", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("110", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "398714218");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11000", debitParty, creditParty, "USD", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11000", debitParty, creditParty, "TZS", "string",
                     "string", "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string",
                     receiverKyc, senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -333,22 +333,22 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @Given("I can create GSMATransferDTO with invalid payer information")
     public void iCanCreateGSMATransferDTOWithInvalidData() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debitParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "449999hhhhdsda");
         GsmaParty creditParty = gsmaTransferHelper.gsmaPartyHelper("msisdn", "835322416ffgg");
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         try {
-            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "USD", "string", "string",
+            gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debitParty, creditParty, "TZS", "string", "string",
                     "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string", receiverKyc,
                     senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {
@@ -381,23 +381,23 @@ public class ErrorCodeStepDef extends BaseStepDef {
     @When("I can create GSMATransferDTO with different payer and payee")
     public void iCanCreateGSMATransactionDTOWithDifferentPayerAndPayee() {
         GSMATransferHelper gsmaTransferHelper = new GSMATransferHelper();
-        Fee fee = gsmaTransferHelper.feeHelper("11", "USD", "string");
+        Fee fee = gsmaTransferHelper.feeHelper("11", "TZS", "string");
         GsmaParty debit = gsmaTransferHelper.gsmaPartyHelper("msisdn", scenarioScopeState.debitParty);
         GsmaParty credit = gsmaTransferHelper.gsmaPartyHelper("msisdn", scenarioScopeState.creditParty);
         InternationalTransferInformation internationalTransferInformation = gsmaTransferHelper
-                .internationalTransferInformationHelper("string", "string", "directtoaccount", "USA", "USA", "USA", "USA");
-        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "USA", "2022-09-28T12:51:19.260+00:00",
+                .internationalTransferInformationHelper("string", "string", "directtoaccount", "Tanzania", "Tanzania", "Tanzania", "Tanzania");
+        IdDocument idDocument = gsmaTransferHelper.idDocumentHelper("passport", "string", "Tanzania", "2022-09-28T12:51:19.260+00:00",
                 "2022-09-28T12:51:19.260+00:00", "string", "string");
-        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "USA", "string",
+        PostalAddress postalAddress = gsmaTransferHelper.postalAddressHelper("string", "string", "string", "string", "Tanzania", "string",
                 "string");
         SubjectName subjectName = gsmaTransferHelper.subjectNameHelper("string", "string", "string", "string", "string");
-        Kyc senderKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc senderKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
-        Kyc receiverKyc = gsmaTransferHelper.kycHelper("USA", "2000-11-20", "string", "string", "string", 'm', idDocument, "USA", "string",
+        Kyc receiverKyc = gsmaTransferHelper.kycHelper("Tanzania", "2000-11-20", "string", "string", "string", 'm', idDocument, "Tanzania", "string",
                 postalAddress, subjectName);
         scenarioScopeState.gsmaP2PAmtDebit = 11;
         try {
-            ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "USD", "string",
+            ErrorCodeStepDef.gsmaTransaction = gsmaTransferHelper.gsmaTransactionRequestBodyHelper("11", debit, credit, "TZS", "string",
                     "string", "string", "transfer", "string", fee, "37.423825,-122.082900", internationalTransferInformation, "string",
                     receiverKyc, senderKyc, "string", "2023-01-12T12:51:19.260+00:00");
         } catch (JSONException e) {

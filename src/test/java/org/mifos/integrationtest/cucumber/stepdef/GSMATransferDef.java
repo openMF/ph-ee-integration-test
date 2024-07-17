@@ -113,7 +113,7 @@ public class GSMATransferDef extends GsmaConfig {
         String name = new StringBuilder().append(getAlphaNumericString(4)).append(tenant).toString();
         String shortName = getAlphaNumericString(4);
         PostLoanProductsRequest loanProductsRequest = new PostLoanProductsRequest();
-        loanProductsRequest.setCurrencyCode("USD");
+        loanProductsRequest.setCurrencyCode("TZS");
         loanProductsRequest.setInMultiplesOf(2);
         loanProductsRequest.setDigitsAfterDecimal(2);
         loanProductsRequest.setDaysInYearType(1);
@@ -211,7 +211,7 @@ public class GSMATransferDef extends GsmaConfig {
         String shortName = getAlphaNumericString(4);
 
         PostSavingsProductsRequest savingsProductsRequest = new PostSavingsProductsRequest();
-        savingsProductsRequest.setCurrencyCode("USD");
+        savingsProductsRequest.setCurrencyCode("TZS");
         savingsProductsRequest.setDigitsAfterDecimal(2);
         savingsProductsRequest.setInterestCompoundingPeriodType(1);
         savingsProductsRequest.setInterestPostingPeriodType(4);
@@ -335,7 +335,7 @@ public class GSMATransferDef extends GsmaConfig {
         String dateFormatGiven = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
         String currentDate = new SimpleDateFormat(dateFormatGiven).format(new Date());
 
-        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "USD", "note",
+        GsmaTransfer gsmaTransfer = new GsmaTransfer("RKTQDM7W6S", "inbound", "transfer", Integer.toString(amount), "TZS", "note",
                 currentDate, customData, payer, payee);
         return objectMapper.writeValueAsString(gsmaTransfer);
     }

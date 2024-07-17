@@ -47,7 +47,7 @@ public final class TransferHelper {
 
     private static JSONObject getAmountObject(String amount) throws JSONException {
         JSONObject amountObject = new JSONObject();
-        amountObject.put("currency", "USD");
+        amountObject.put("currency", "TZS");
         amountObject.put("amount", amount);
         return amountObject;
     }

@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 /**
  * { "payer": [ { "key": "MSISDN", "value": "254708374149" }, { "key": "ACCOUNTID", "value": "24450523" } ], "amount": {
- * "amount": "1", "currency": "USD" }, "transactionType": { "scenario": "MPESA", "subScenario": "BUYGOODS", "initiator":
+ * "amount": "1", "currency": "TZS" }, "transactionType": { "scenario": "MPESA", "subScenario": "BUYGOODS", "initiator":
  * "PAYEE", "initiatorType": "BUSINESS" } }
  */
 public final class CollectionHelper {
@@ -60,7 +60,7 @@ public final class CollectionHelper {
 
     private static JSONObject getAmountObject(String amount) throws JSONException {
         JSONObject amountObject = new JSONObject();
-        amountObject.put("currency", "USD");
+        amountObject.put("currency", "TZS");
         amountObject.put("amount", amount);
         return amountObject;
     }

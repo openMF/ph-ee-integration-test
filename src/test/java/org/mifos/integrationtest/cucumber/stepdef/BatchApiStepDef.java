@@ -553,7 +553,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public BatchRequestDTO mockBatchTransactionRequestDTO(String paymentMode) {
         BatchRequestDTO batchRequestDTO = new BatchRequestDTO();
         batchRequestDTO.setAmount("100");
-        batchRequestDTO.setCurrency("USD");
+        batchRequestDTO.setCurrency("TZS");
         batchRequestDTO.setPaymentMode(paymentMode);
         batchRequestDTO.setDescriptionText("Integration test");
         batchRequestDTO.setRequestId(UUID.randomUUID().toString());

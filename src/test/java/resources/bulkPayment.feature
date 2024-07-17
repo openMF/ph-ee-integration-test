@@ -7,9 +7,9 @@ Feature: Test ability to make payment to individual with bank account
     And I have the registeringInstituteId "SocialWelfare"
     And I have the programId "Education"
     Given I have Fineract-Platform-TenantId for "payer"
-    When I call the create client endpoint for "payer"
+    When I call the create client endpoint for "payer" with account holder name as "Ministry of SocialWelfare" "Education"
     Then I call the create savings product endpoint for "payer"
-    When I call the create savings account endpoint for "payer"
+    When I call the create savings account endpoint for "payer" with accountId "123456789"
     Then I check whether budget account exists with accoundId "123456789"
     Then I call the interop identifier endpoint for "payer" and accountId "123456789"
     Then I approve the deposit for Budget Account with command "approve" for "payer"
@@ -19,9 +19,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I add "payer" with account id "123456789" to als
 
 
-    When I call the create client endpoint for "payer"
+    When I call the create client endpoint for "payer" with account holder name as "Ministry of SocialWelfare" "Cash Transfer"
     Then I call the create savings product endpoint for "payer"
-    When I call the create savings account endpoint for "payer"
+    When I call the create savings account endpoint for "payer" with accountId "223456789"
     Then I check whether budget account exists with accoundId "223456789"
     Then I call the interop identifier endpoint for "payer" and accountId "223456789"
     Then I approve the deposit for Budget Account with command "approve" for "payer"
@@ -30,9 +30,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I add "payer" with account id "223456789" to als
 
 
-    When I call the create client endpoint for "payer"
+    When I call the create client endpoint for "payer" with account holder name as "Ministry of Health" "Maternity"
     Then I call the create savings product endpoint for "payer"
-    When I call the create savings account endpoint for "payer"
+    When I call the create savings account endpoint for "payer" with accountId "323456789"
     Then I check whether budget account exists with accoundId "323456789"
     Then I call the interop identifier endpoint for "payer" and accountId "323456789"
     Then I approve the deposit for Budget Account with command "approve" for "payer"
@@ -41,9 +41,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I add "payer" with account id "323456789" to als
 
     Given I have Fineract-Platform-TenantId for "payee1"
-    When I call the create client endpoint for "payee"
+    When I call the create client endpoint for "payee" with account holder name as "Maria" "Borges"
     Then I call the create savings product endpoint for "payee"
-    When I call the create savings account endpoint for "payee"
+    When I call the create savings account endpoint for "payee" with accountId "1234"
     Then I check whether budget account exists with accoundId "1234"
     Then I call the interop identifier endpoint for "payee" and accountId "1234"
     Then I approve the deposit for Budget Account with command "approve" for "payee"
@@ -52,9 +52,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I add "payee1" with account id "1234" to als
 
     Given I have Fineract-Platform-TenantId for "payee2"
-    When I call the create client endpoint for "payee"
+    When I call the create client endpoint for "payee" with account holder name as "Claudia" "Benezeth Lubao"
     Then I call the create savings product endpoint for "payee"
-    When I call the create savings account endpoint for "payee"
+    When I call the create savings account endpoint for "payee" with accountId "2235"
     Then I check whether budget account exists with accoundId "2235"
     Then I call the interop identifier endpoint for "payee" and accountId "2235"
     Then I approve the deposit for Budget Account with command "approve" for "payee"
@@ -63,9 +63,9 @@ Feature: Test ability to make payment to individual with bank account
     Then I add "payee2" with account id "2235" to als
 
     Given I have Fineract-Platform-TenantId for "payee3"
-    When I call the create client endpoint for "payee"
+    When I call the create client endpoint for "payee" with account holder name as "Flaviana" "Matata"
     Then I call the create savings product endpoint for "payee"
-    When I call the create savings account endpoint for "payee"
+    When I call the create savings account endpoint for "payee" with accountId "3235"
     Then I check whether budget account exists with accoundId "3235"
     Then I call the interop identifier endpoint for "payee" and accountId "3235"
     Then I approve the deposit for Budget Account with command "approve" for "payee"
@@ -82,44 +82,21 @@ Feature: Test ability to make payment to individual with bank account
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
     And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
 
-
-  Scenario: BB-FSP 002 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
+  Scenario Outline: Input CSV file using the batch transaction API and poll batch summary API till we get completed status
     Given I have tenant as "paymentbb1"
+    Then Create a csv file with file name "bulk_payment.csv"
+    Then add row to csv with current ministry and payee "400173110196", payment mode as "closedloop" and transfer amount 100 and id 0
+    Then add row to csv with current ministry and payee "400173110196", payment mode as "closedloop" and transfer amount 200 and id 1
+    Then add row to csv with current ministry and payee "400174120160", payment mode as "closedloop" and transfer amount 300 and id 2
+    Then add row to csv with current ministry and payee "400174120160", payment mode as "closedloop" and transfer amount 400 and id 3
+    Then add row to csv with current ministry and payee "400173110195", payment mode as "closedloop" and transfer amount 700 and id 4
+    Then add last row to csv with current ministry and payee "400173110195", payment mode as "closedloop" and transfer amount 800 and id 5
     And I have the demo csv file "bulk_payment.csv"
     And I create a list of payee identifiers from csv file
     When I can inject MockServer
     Then I can start mock server
-    And I have the registeringInstituteId "SocialWelfare"
-    And I have the programId "Education"
-    And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering payee with IAM
-    Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
-    And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
-
-    And I create a new clientCorrelationId
-    And I have private key
-    And I generate signature
-
-    When I call the batch transactions endpoint with expected status of 202
-    Then I should get non empty response
-    And I am able to parse batch transactions response
-    And I fetch batch ID from batch transaction API's response
-#    Then I will sleep for 10000 millisecond
-    Given I have tenant as "paymentbb1"
-    When I call the batch summary API with expected status of 200 with total 6 txns
-    Then I am able to parse batch summary response
-    And Status of transaction is "COMPLETED"
-    And I should have matching total txn count and successful txn count in response
-
-
-  Scenario: BB-FSP 003 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
-    Given I have tenant as "paymentbb1"
-    And I have the demo csv file "bulk_payment.csv"
-    And I create a list of payee identifiers from csv file
-    When I can inject MockServer
-    Then I can start mock server
-    And I have the registeringInstituteId "SocialWelfare"
-    And I have the programId "UnconditionalCashTransfer"
+    And I have the registeringInstituteId "<registeringInstituteId>"
+    And I have the programId "<programId>"
     And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
     And I create a IdentityMapperDTO for registering payee with IAM
     Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
@@ -131,65 +108,19 @@ Feature: Test ability to make payment to individual with bank account
     Then I should get non empty response
     And I am able to parse batch transactions response
     And I fetch batch ID from batch transaction API's response
-#    Then I will sleep for 10000 millisecond
     Given I have tenant as "paymentbb1"
     When I call the batch summary API with expected status of 200 with total 6 txns
     Then I am able to parse batch summary response
     And Status of transaction is "COMPLETED"
     And I should have matching total txn count and successful txn count in response
 
+    Examples:
+      | registeringInstituteId | programId                 |
+      | SocialWelfare          | Education                 |
+      | SocialWelfare          | UnconditionalCashTransfer |
+      | Health                 | Maternity                 |
 
-  Scenario: BB-FSP 004 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
-    Given I have tenant as "paymentbb1"
-    And I have the demo csv file "bulk_payment.csv"
-    And I create a list of payee identifiers from csv file
-    When I can inject MockServer
-    Then I can start mock server
-    And I have the registeringInstituteId "Health"
-    And I have the programId "Maternity"
-    And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering payee with IAM
-    Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
-    And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
-    And I create a new clientCorrelationId
-    And I have private key
-    And I generate signature
-    When I call the batch transactions endpoint with expected status of 202
-    Then I should get non empty response
-    And I am able to parse batch transactions response
-    And I fetch batch ID from batch transaction API's response
-#    Then I will sleep for 10000 millisecond
-    Given I have tenant as "paymentbb1"
-    When I call the batch summary API with expected status of 200 with total 6 txns
-    Then I am able to parse batch summary response
-    And Status of transaction is "COMPLETED"
-    And I should have matching total txn count and successful txn count in response
 
-  Scenario:BB-FSP 005 Input CSV file using the batch transaction API and poll batch summary API till we get completed status
-    Given I have tenant as "paymentbb1"
-    And I have the demo csv file "bulk_payment.csv"
-    And I create a list of payee identifiers from csv file
-    When I can inject MockServer
-    Then I can start mock server
-    And I have the registeringInstituteId "SocialWelfare"
-    And I have the programId "Education"
-    And I can register the stub with "/registerBeneficiary" endpoint for "PUT" request with status of 200
-    And I create a IdentityMapperDTO for registering beneficiary
-    Then I call the register beneficiary API with expected status of 202 and stub "/registerBeneficiary"
-    And I should be able to verify that the "PUT" method to "/registerBeneficiary" endpoint received a request with successfull registration
-    And I create a new clientCorrelationId
-    And I have private key
-    And I generate signature
-    When I call the batch transactions endpoint with expected status of 202
-    Then I should get non empty response
-    And I am able to parse batch transactions response
-    And I fetch batch ID from batch transaction API's response
-#    Then I will sleep for 10000 millisecond
-    Given I have tenant as "paymentbb1"
-    When I call the batch summary API with expected status of 200 with total 6 txns
-    Then I am able to parse batch summary response
-    And Status of transaction is "COMPLETED"
-    And I should have matching total txn count and successful txn count in response
 
   Scenario:BB-FSP 006 Bulk Transfer with ClosedLoop and Mojaloop
     Given I have tenant as "payerfsp"

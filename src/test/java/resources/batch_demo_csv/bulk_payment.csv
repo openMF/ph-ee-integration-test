@@ -1,7 +1,7 @@
 id,request_id,payment_mode,payer_identifier_type,payer_identifier,payee_identifier_type,payee_identifier,amount,currency,note
-0,g1e22fe3-9740-4fba-97b6-78f43bfa7f2f,closedloop,accountNumber,003001003879112168,accountNumber,400173110196,850,USD,Test Payee Payment
-1,72aa3ea4-e6f6-4880-877f-39f6ac4d052e,closedloop,accountNumber,003001003879112168,accountNumber,400174120160,222,USD,Test Payee Payment
-2,f1e22fe3-9740-4fba-97b6-78f43bfa7f0f,closedloop,accountNumber,003001003879112168,accountNumber,400173110195,840,USD,Test Payee Payment
-3,q1e22fe3-9740-4fba-97b6-78f43bfa7f2f,closedloop,accountNumber,003001003879112168,accountNumber,400173110196,750,USD,Test Payee Payment
-4,a2aa3ea4-e6f6-4880-877f-39f6ac4d052e,closedloop,accountNumber,003001003879112168,accountNumber,400174120160,122,USD,Test Payee Payment
-5,z1e22fe3-9740-4fba-97b6-78f43bfa7f0f,closedloop,accountNumber,003001003879112168,accountNumber,400173110195,740,USD,Test Payee Payment
+0,9b7d4130-1fbb-4ac9-819b-44c0224c0784,closedloop,msisdn,N/A,msisdn,400173110196,100,TZS,Test Payee Payment
+1,7348da1e-0576-424f-b41b-9bd01ba26fe7,closedloop,msisdn,N/A,msisdn,400173110196,200,TZS,Test Payee Payment
+2,3d16c00d-8b06-4876-af94-717487eecd88,closedloop,msisdn,N/A,msisdn,400174120160,300,TZS,Test Payee Payment
+3,de45e6f9-6d19-488d-b5aa-e97099ea0a31,closedloop,msisdn,N/A,msisdn,400174120160,400,TZS,Test Payee Payment
+4,7c3f66f2-35c1-41bf-8cc5-5a2807486fc4,closedloop,msisdn,N/A,msisdn,400173110195,700,TZS,Test Payee Payment
+5,1b34dcee-a319-422b-9564-a890fa520fd3,closedloop,msisdn,N/A,msisdn,400173110195,800,TZS,Test Payee Payment

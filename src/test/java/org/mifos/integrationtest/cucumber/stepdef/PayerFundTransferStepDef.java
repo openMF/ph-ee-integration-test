@@ -93,14 +93,17 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         logger.info(tenant);
     }
 
-    @When("I call the create client endpoint for {string}")
-    public void callCreateClientEndpoint(String client) throws JsonProcessingException {
+    @When("I call the create client endpoint for {string} with account holder name as {string} {string}")
+    public void callCreateClientEndpoint(String client, String firstName, String lastName) throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = fundTransferDef.setHeaders(requestSpec);
-
         logger.info(client);
-
-        fundTransferDef.createClientBody = fundTransferDef.setBodyClient(client);
+        if(firstName == null)
+        {
+            firstName = "Claudia";
+            lastName = "Cardinale";
+        }
+        fundTransferDef.createClientBody = fundTransferDef.setBodyClient(client, firstName, lastName);
         // Calling savings product endpoint
         String clientResponse = RestAssured.given(requestSpec).baseUri(transferConfig.clientBaseUrl).body(fundTransferDef.createClientBody)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(transferConfig.clientEndpoint)
@@ -131,12 +134,14 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseSavingsProduct).isNotEmpty();
     }
 
-    @When("I call the create savings account endpoint for {string}")
-    public void callCreateSavingsAccountEndpoint(String client) throws JsonProcessingException {
+    @When("I call the create savings account endpoint for {string} with accountId {string}")
+    public void callCreateSavingsAccountEndpoint(String client, String interopId) throws JsonProcessingException {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = fundTransferDef.setHeaders(requestSpec);
-        fundTransferDef.savingsAccountBody = fundTransferDef.setBodySavingsAccount(client);
+            interopId = UUID.randomUUID().toString();
+
+        fundTransferDef.savingsAccountBody = fundTransferDef.setBodySavingsAccount(client, interopId);
         // Calling savings product endpoint
         String responseSavingsAccount = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
                 .body(fundTransferDef.savingsAccountBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -586,9 +591,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @When("I create and setup a {string} with account balance of {int}")
     public void consolidatedPayerCreationSteps(String client, int amount) throws JsonProcessingException {
         setTenantForPayer(client);
-        callCreateClientEndpoint(client);
+        callCreateClientEndpoint(client, null, null);
         callCreateSavingsProductEndpoint(client);
-        callCreateSavingsAccountEndpoint(client);
+        callCreateSavingsAccountEndpoint(client, null);
         callCreateInteropIdentifierEndpoint(client);
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
@@ -615,7 +620,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void addRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
         String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
-                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
@@ -632,7 +637,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         }
 
         String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
-                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
@@ -646,9 +651,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void consolidatedPayeeCreationStepsForAllCombinedTestsCases(String client, String id, int amount)
             throws JsonProcessingException {
         setTenantForPayer(client);
-        callCreateClientEndpoint(client);
+        callCreateClientEndpoint(client, null, null);
         callCreateSavingsProductEndpoint(client);
-        callCreateSavingsAccountEndpoint(client);
+        callCreateSavingsAccountEndpoint(client, null);
         callCreateInteropIdentifierEndpoint(client);
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
@@ -673,7 +678,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void addRowToCsvFileForAllCombinedTestCases(String paymentMode, int transferAmount, int id) throws IOException {
 
         String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
-                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
@@ -687,7 +692,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void addLastRowToCsvFile(String paymentMode, int transferAmount, int id) throws IOException {
 
         String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", scenarioScopeState.payerIdentifier,
-                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "USD", "Test Payee Payment" };
+                "msisdn", scenarioScopeState.payeeIdentifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addLastRow(filePath, row);
         scenarioScopeState.gsmaP2PAmtDebit = scenarioScopeState.gsmaP2PAmtDebit + transferAmount;
@@ -698,9 +703,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @When("I create and setup a {string} with id {string} and account balance of {int}")
     public void consolidatedPayeeCreationSteps(String client, String id, int amount) throws JsonProcessingException {
         setTenantForPayer(client);
-        callCreateClientEndpoint(client);
+        callCreateClientEndpoint(client, null, null);
         callCreateSavingsProductEndpoint(client);
-        callCreateSavingsAccountEndpoint(client);
+        callCreateSavingsAccountEndpoint(client, null);
         callCreateInteropIdentifierEndpoint(client);
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
@@ -724,9 +729,9 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @When("I create and setup a {string} with id {string} and account balance of {int} for combine test cases")
     public void consolidatedPayeeCreationStepsForCombinedTestsCases(String client, String id, int amount) throws JsonProcessingException {
         setTenantForPayer(client);
-        callCreateClientEndpoint(client);
+        callCreateClientEndpoint(client, null, null);
         callCreateSavingsProductEndpoint(client);
-        callCreateSavingsAccountEndpoint(client);
+        callCreateSavingsAccountEndpoint(client, null);
         callCreateInteropIdentifierEndpoint(client);
         callApproveSavingsEndpoint("approve", client);
         callSavingsActivateEndpoint("activate", client);
@@ -769,4 +774,26 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 
+    @Then("add row to csv with current ministry and payee {string}, payment mode as {string} and transfer amount {int} and id {int}")
+    public void addRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode, int transferAmount, int id) throws IOException {
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A",
+                "msisdn", payee_identifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        scenarioScopeState.batchDebitAmt = scenarioScopeState.batchDebitAmt + transferAmount;
+        if (scenarioScopeState.bulkTransactionList == null) {
+            scenarioScopeState.bulkTransactionList = new int[9];
+        }
+        scenarioScopeState.bulkTransactionList[id + 1] = transferAmount;
+        csvHelper.addRow(filePath, row);
+    }
+
+    @Then("add last row to csv with current ministry and payee {string}, payment mode as {string} and transfer amount {int} and id {int}")
+    public void addLastRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode, int transferAmount, int id) throws IOException {
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A",
+                "msisdn", payee_identifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
+        String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
+        csvHelper.addLastRow(filePath, row);
+        scenarioScopeState.batchDebitAmt = scenarioScopeState.batchDebitAmt + transferAmount;
+        scenarioScopeState.bulkTransactionList[id + 1] = transferAmount;
+    }
 }
