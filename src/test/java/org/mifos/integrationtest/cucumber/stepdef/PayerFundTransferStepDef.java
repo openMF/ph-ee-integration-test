@@ -98,8 +98,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         logger.info(client);
-        if(firstName == null)
-        {
+        if (firstName == null) {
             firstName = "Claudia";
             lastName = "Cardinale";
         }
@@ -139,7 +138,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         // Setting headers and body
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         requestSpec = fundTransferDef.setHeaders(requestSpec);
-            interopId = UUID.randomUUID().toString();
+        interopId = UUID.randomUUID().toString();
 
         fundTransferDef.savingsAccountBody = fundTransferDef.setBodySavingsAccount(client, interopId);
         // Calling savings product endpoint
@@ -775,9 +774,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     }
 
     @Then("add row to csv with current ministry and payee {string}, payment mode as {string} and transfer amount {int} and id {int}")
-    public void addRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode, int transferAmount, int id) throws IOException {
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A",
-                "msisdn", payee_identifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
+    public void addRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode,
+            int transferAmount, int id) throws IOException {
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A", "msisdn", payee_identifier,
+                String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         scenarioScopeState.batchDebitAmt = scenarioScopeState.batchDebitAmt + transferAmount;
         if (scenarioScopeState.bulkTransactionList == null) {
@@ -788,9 +788,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     }
 
     @Then("add last row to csv with current ministry and payee {string}, payment mode as {string} and transfer amount {int} and id {int}")
-    public void addLastRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode, int transferAmount, int id) throws IOException {
-        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A",
-                "msisdn", payee_identifier, String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
+    public void addLastRowToCsvWithCurrentMinistryAndPayeePaymentModeAsAndTransferAmountAndId(String payee_identifier, String paymentMode,
+            int transferAmount, int id) throws IOException {
+        String[] row = { String.valueOf(id), UUID.randomUUID().toString(), paymentMode, "msisdn", "N/A", "msisdn", payee_identifier,
+                String.valueOf(transferAmount), "TZS", "Test Payee Payment" };
         String filePath = Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename);
         csvHelper.addLastRow(filePath, row);
         scenarioScopeState.batchDebitAmt = scenarioScopeState.batchDebitAmt + transferAmount;

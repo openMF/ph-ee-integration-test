@@ -120,20 +120,14 @@ public class BaseStepDef {
             System.out.println("File Content: " + fileContent);
         }
 
-        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder()
-                .setClientCorrelationId(clientCorrelationId)
-                .setTenantId(tenant)
-                .setIsDataAsFile(isDataAFile)
-                .setData(filePathOrData)
-                .build();
+        JsonWebSignature jsonWebSignature = new JsonWebSignature.JsonWebSignatureBuilder().setClientCorrelationId(clientCorrelationId)
+                .setTenantId(tenant).setIsDataAsFile(isDataAFile).setData(filePathOrData).build();
 
         // More debug statements
         System.out.println("Generated JsonWebSignature Object: " + jsonWebSignature);
 
         return jsonWebSignature.getSignature(scenarioScopeState.privateKeyString);
     }
-
-
 
     private <T> void assertNonEmptyArray(List<T> objects) {
         assertNotNull(objects);
