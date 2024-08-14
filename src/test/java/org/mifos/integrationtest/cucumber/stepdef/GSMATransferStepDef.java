@@ -6,6 +6,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE;
 import static org.mifos.integrationtest.common.Utils.CONTENT_TYPE_VALUE;
+import static org.mifos.integrationtest.common.Utils.TENANT_PARAM_NAME;
 import static org.mifos.integrationtest.common.Utils.X_CORRELATIONID;
 import static org.mifos.integrationtest.common.Utils.X_CallbackURL;
 
@@ -132,7 +133,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         PostSavingsAccountsResponse savingsAccountResponse = objectMapper.readValue(gsmaTransferDef.responseSavingsAccount,
                 PostSavingsAccountsResponse.class);
         scenarioScopeState.payerIdentifier = savingsAccountResponse.getSavingsId().toString();
-        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+        gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifierType\\}\\}", "ACCOUNT_ID");
         gsmaConfig.interopIdentifierEndpoint = gsmaConfig.interopIdentifierEndpoint.replaceAll("\\{\\{identifier\\}\\}",
                 scenarioScopeState.payerIdentifier);
         // Calling Interop Identifier endpoint
@@ -337,7 +338,16 @@ public class GSMATransferStepDef extends BaseStepDef {
         assertThat(gsmaTransferDef.amsName).isNotEmpty();
         assertThat(gsmaTransferDef.acccountHoldingInstitutionId).isNotEmpty();
         assertThat(gsmaTransferDef.amount).isNotNull();
+    }
 
+    @When("I have amsName as {string} and acccountHoldingInstitutionId as {string} and tenantId as {string} and amount as {int}")
+    public void setHeadersWithTenant(String amsName, String acccountHoldingInstitutionId, String tenantId, int amount) {
+        gsmaTransferDef.setHeadersMifos(amsName, acccountHoldingInstitutionId, amount);
+        gsmaTransferDef.setTenant(tenantId);
+        assertThat(gsmaTransferDef.amsName).isNotEmpty();
+        assertThat(gsmaTransferDef.acccountHoldingInstitutionId).isNotEmpty();
+        assertThat(gsmaTransferDef.amount).isNotNull();
+        assertThat(gsmaTransferDef.tenant).isNotNull();
     }
 
     @Then("I call the channel connector API for savings account with expected status of {int} and stub {string}")
@@ -347,6 +357,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         requestSpec.header("accountHoldingInstitutionId", gsmaTransferDef.acccountHoldingInstitutionId);
         requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(X_CallbackURL, gsmaConfig.callbackURL + stub);
+        requestSpec.header(TENANT_PARAM_NAME, gsmaTransferDef.tenant);
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("S");
@@ -367,6 +378,7 @@ public class GSMATransferStepDef extends BaseStepDef {
         requestSpec.header(X_CORRELATIONID, "123456789");
         requestSpec.header(CONTENT_TYPE, CONTENT_TYPE_VALUE);
         requestSpec.header(X_CallbackURL, gsmaConfig.callbackURL + stub);
+        requestSpec.header(TENANT_PARAM_NAME, gsmaTransferDef.tenant);
 
         gsmaTransferDef.gsmaTransferBody = gsmaTransferDef.setGsmaTransactionBody("L");
 
