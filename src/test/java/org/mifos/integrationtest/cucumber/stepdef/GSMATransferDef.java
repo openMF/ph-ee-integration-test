@@ -365,12 +365,15 @@ public class GSMATransferDef extends GsmaConfig {
 
     private String getLoanIdFromFineract(String loanId) {
         RequestSpecification requestSpecification = Utils.getDefaultSpec();
+        // this is to change the tenant for checking account in different tenant.
+        setTenant(acccountHoldingInstitutionId);
         requestSpecification = setHeaders(requestSpecification);
         loanGetAccountIdEndpoint = loanGetAccountIdEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanId);
         String response = RestAssured.given(requestSpecification).baseUri(loanBaseUrl).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(loanGetAccountIdEndpoint).andReturn().asString();
         String accountNp = "";
-
+        // this is to change the tenant again for paymenthub operations to make API call.
+        setTenant(tenant);
         try {
             JSONObject jsonResponse = new JSONObject(response);
             accountNp = jsonResponse.getString("accountNo");
