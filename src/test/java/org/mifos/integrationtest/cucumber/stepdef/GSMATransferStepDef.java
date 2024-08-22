@@ -281,11 +281,12 @@ public class GSMATransferStepDef extends BaseStepDef {
         PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(gsmaTransferDef.responseLoanAccount,
                 PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
-        gsmaConfig.loanApproveEndpoint = gsmaConfig.loanApproveEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
+        String loanApprovalEndpoint = gsmaConfig.loanApproveEndpoint;
+        loanApprovalEndpoint = loanApprovalEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
         gsmaTransferDef.responseLoanApprove = RestAssured.given(requestSpec).baseUri(gsmaConfig.loanBaseUrl)
                 .body(gsmaTransferDef.loanApproveBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(gsmaConfig.loanApproveEndpoint).andReturn().asString();
+                .post(loanApprovalEndpoint).andReturn().asString();
 
         logger.info("Loan Approve Response: " + gsmaTransferDef.responseLoanApprove);
         assertThat(gsmaTransferDef.responseLoanApprove).isNotEmpty();
@@ -301,11 +302,12 @@ public class GSMATransferStepDef extends BaseStepDef {
         PostSelfLoansLoanIdResponse loanAccountResponse = objectMapper.readValue(gsmaTransferDef.responseLoanAccount,
                 PostSelfLoansLoanIdResponse.class);
         String loanAccountId = String.valueOf(loanAccountResponse.getLoanId());
-        gsmaConfig.loanDisburseEndpoint = gsmaConfig.loanDisburseEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
+        String loanDisbursementEndpoint = gsmaConfig.loanDisburseEndpoint;
+        loanDisbursementEndpoint = loanDisbursementEndpoint.replaceAll("\\{\\{loanAccId\\}\\}", loanAccountId);
         // Calling create loan account endpoint
         gsmaTransferDef.responseLoanDisburse = RestAssured.given(requestSpec).baseUri(gsmaConfig.loanBaseUrl)
                 .body(gsmaTransferDef.loanDisburseBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
-                .post(gsmaConfig.loanDisburseEndpoint).andReturn().asString();
+                .post(loanDisbursementEndpoint).andReturn().asString();
 
         logger.info("Loan Approve Response: " + gsmaTransferDef.responseLoanDisburse);
         assertThat(gsmaTransferDef.responseLoanDisburse).isNotEmpty();
@@ -523,7 +525,7 @@ public class GSMATransferStepDef extends BaseStepDef {
     public void iCreateAnIdentityMapperDTOForRegisterBeneficiaryWithIdentifierFromPreviousStep() {
         List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
         scenarioScopeState.payeeIdentity = generateUniqueNumber(12);
-        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "01", scenarioScopeState.payerIdentifier,
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO(scenarioScopeState.payeeIdentity, "00", scenarioScopeState.payerIdentifier,
                 scenarioScopeState.fspId);
         beneficiaryDTOList.add(beneficiaryDTO);
         scenarioScopeState.requestId = generateUniqueNumber(12);
@@ -559,7 +561,7 @@ public class GSMATransferStepDef extends BaseStepDef {
             scenarioScopeState.response = RestAssured.given(requestSpec).header("Content-Type", "application/json")
                     .header("X-Registering-Institution-ID", registeringInstitutionId)
                     .header("X-CallbackURL", identityMapperConfig.callbackURL + stub)
-                    .queryParam("payeeIdentity", scenarioScopeState.payeeIdentity).queryParam("paymentModality", "01")
+                    .queryParam("payeeIdentity", scenarioScopeState.payeeIdentity).queryParam("paymentModality", "00")
                     .queryParam("requestId", scenarioScopeState.requestId).baseUri(identityMapperConfig.identityMapperContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
                     .get(identityMapperConfig.accountLookupEndpoint).andReturn().asString();

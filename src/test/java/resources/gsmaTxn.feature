@@ -33,12 +33,13 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     Then I call the deposit account endpoint with command "deposit" for amount 11
 # Savings account deposit using BPMN workflow.
     When I have amsName as "mifos" and acccountHoldingInstitutionId as "wakanda" and tenantId as "gorilla" and amount as 111
-    Then I call the channel connector API for savings account with expected status of 200 and stub "/depositCallback"
+    Then I call the channel connector API for savings account with expected status of 200 and stub "/depositCallbackWithDFSPID"
     Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "POST" method to "/depositCallbackWithDFSPID" endpoint received 1 request
 
   Scenario: Loan account Creation Test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
+    When I call the create payer client endpoint
     And I call the create loan product endpoint
     When I call the create loan account
     Then I approve the loan account with command "approve" for amount 7800
@@ -59,7 +60,7 @@ Feature: GSMA Transfer API Test for Account Identifier Worker
     Then I call the loan repayment endpoint for amount 21
 # Loan account repayment using BPMN workflow.
     When I have amsName as "mifos" and acccountHoldingInstitutionId as "wakanda" and tenantId as "gorilla" and amount as 111
-    Then I call the channel connector API for loan account with expected status of 200 and stub "/loanCallback"
+    Then I call the channel connector API for loan account with expected status of 200 and stub "/loanCallbackWithDFSPID"
     Then I will sleep for 3000 millisecond
     Then I should be able to verify that the "POST" method to "/loanCallbackWithDFSPID" endpoint received 1 request
 
