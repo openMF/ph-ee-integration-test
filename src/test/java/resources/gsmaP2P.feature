@@ -58,6 +58,8 @@ Feature: GSMA Outbound Transfer test
     Given I have tenant as "payeefsp3"
     Then I call the balance api for payee balance after credit
 
+
+
   Scenario: GSMA Deposit-Withdrawal Transfer test
     Given I have Fineract-Platform-TenantId as "payerfsp1"
     When I create a set of debit and credit party
