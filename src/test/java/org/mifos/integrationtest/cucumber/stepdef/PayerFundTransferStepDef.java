@@ -269,6 +269,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void registerStubForPartyLookup() {
         String endpoint = "parties/MSISDN/" + scenarioScopeState.payeeIdentifier;
         System.out.println("DEBUG RegisterStubForPartyLookup" + endpoint );
+        logger.info("DEBUG8: register stub for call back for partylookup: " + endpoint );
         mockServerStepDef.startStub(endpoint, HttpMethod.PUT, 200);
     }
 
@@ -304,14 +305,16 @@ public class PayerFundTransferStepDef extends BaseStepDef {
             identifier = scenarioScopeState.payerIdentifier;
         } else {
             identifier = scenarioScopeState.payeeIdentifier;
+            System.out.println("DEBUG7C: payee identifier  " + identifier) ; 
         }
 
         String endpoint = mojaloopConfig.mlConnectorGetPartyEndpoint;
         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", identifier);
+        //String endpoint = "/_interop/parties/MSISDN/27713803912";
         System.out.println("DEBUG7: endpoint " + endpoint  ) ; 
         requestSpec.log().all(); 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost).expect()
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("http://" + mojaloopConfig.mlConnectorHost).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().get(endpoint).andReturn().asString();
         System.out.println("DEBUG7A: scenarioScopeState.response : " + scenarioScopeState.response );
         assertThat(scenarioScopeState.response).isNotNull();

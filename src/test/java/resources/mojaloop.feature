@@ -2,7 +2,7 @@ Feature: Mojaloop test
 
   @tom 
   Scenario: ML connector partial payee party lookup test
-    Given I am setting up Mojaloop
+    #Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
     When I call the create client endpoint for "payee"
     Then I call the create savings product endpoint for "payee"

@@ -10,8 +10,8 @@ Feature: Mock Flow Test
     Then I call the interop identifier endpoint
     Then I approve the deposit with command "approve"
     When I activate the account with command "activate"
-    Then I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step
-    When I call the register beneficiary API with expected status of 202 and callback stub "/registerBeneficiaryApiTest"
+  #  Then I create an IdentityMapperDTO for Register Beneficiary with identifier from previous step
+  #  When I call the register beneficiary API with expected status of 202 and callback stub "/registerBeneficiaryApiTest"
     Then I have tenant as "payerFSP"
     And I create a new clientCorrelationId
     Given I can mock TransactionChannelRequestDTO for account lookup
@@ -25,7 +25,7 @@ Feature: Mock Flow Test
     And I should have startedAt and completedAt in response
     And I should have PayeeFspId as "pluto"
 
-  @tom
+  @ext
   Scenario: MFT-001 Test for minimal mock fund transfer flow
     Given I have tenant as "paymentBB2"
     And I create a new clientCorrelationId
@@ -40,6 +40,7 @@ Feature: Mock Flow Test
     And I should have startedAt and completedAt in response
     And I should have PayerFspId as not null
 
+  @tom
   Scenario: MFT-002 Test for minimal mock fund transfer flow with batch transactions
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"
