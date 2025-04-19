@@ -10,6 +10,7 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the account with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
+    Then I associate the account to vNext Oracle for "payee" 
     ## TOMD: what is the mockerver doing here should I register call back to ttk instances ? 
     When I can inject MockServer
     Then I can start mock server

@@ -186,6 +186,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 .post(endpoint).andReturn().asString();
 
         logger.info("Interop Identifier Response: " + fundTransferDef.responseInteropIdentifier);
+
         assertThat(fundTransferDef.responseInteropIdentifier).isNotEmpty();
     }
 

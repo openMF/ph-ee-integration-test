@@ -53,6 +53,7 @@ public class MojaloopStepDef extends BaseStepDef {
         logger.info(mojaloopConfig.mojaloopBaseurl);
         logger.info(requestBody);
         logger.info(endpoint);
+        requestSpec.log().all();
 
         String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopBaseurl)
                 .config(RestAssured.config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
@@ -102,5 +103,45 @@ public class MojaloopStepDef extends BaseStepDef {
         //     mojaloopDef.oracleOnboard();
         // }
    }
+
+    @Then("I associate the account to vNext Oracle for {string}")
+    public void associateAccountToOracle(String client) throws JsonProcessingException {
+         String clientIdentifierId;
+         String fspId;
+         if (client.equals("payer")) {
+              clientIdentifierId = scenarioScopeState.payerIdentifier;
+              fspId = mojaloopConfig.payerFspId;
+         } else {
+              clientIdentifierId = scenarioScopeState.payeeIdentifier;
+              fspId = mojaloopConfig.payeeFspId;
+         }
+    
+         RequestSpecification requestSpec = Utils.getDefaultSpec();
+         requestSpec.header("fspiop-source", fspId);
+         requestSpec.header("Date", getCurrentDateInFormat());
+         requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1");
+         // requestSpec.header("Content-Type", "application/vnd.interoperability.participants+json;version=1.0");
+    
+         String endpoint = mojaloopConfig.addUserToAlsEndpoint;
+         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
+         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", clientIdentifierId);
+    
+         String requestBody = mojaloopDef.setBodyAddAlsUser(fspId);
+    
+         logger.info("TOMD8A Setting up user associataion in vNext Oracle");
+         logger.info(requestBody);
+         logger.info(endpoint);
+         requestSpec.log().all();
+         logger.info("TOMD8A END -> Setting up user associataion in vNext Oracle");
+    
+         String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopBaseurl)
+                .config(RestAssured.config().encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false)))
+                .body(requestBody).contentType("application/vnd.interoperability.participants+json;version=1.0").expect()
+                .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn().asString();
+    
+         logger.info("TOMD8B response from associating {}:", clientIdentifierId);
+         assertThat(response).isNotNull();
+    }
+
 
 }

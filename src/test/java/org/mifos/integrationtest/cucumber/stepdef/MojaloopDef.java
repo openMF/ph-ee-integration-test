@@ -254,17 +254,17 @@ public class MojaloopDef {
                 .reason("string").amount(amount).build();
     }
 
-    protected Boolean oracleExists() {
-        RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec.header("Content-Type", "application/json");
-        requestSpec.header("Date", "");
-        String endpoint = mojaloopConfig.oracleEndpoint;
-        Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).when().expect()
-                .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint);
-        int count = JsonParser.parseString(response.getBody().asString()).getAsJsonArray().size();
-        logger.info(String.valueOf(count));
-        return count >= 1;
-    }
+    // protected Boolean oracleExists() {
+    //     RequestSpecification requestSpec = Utils.getDefaultSpec();
+    //     requestSpec.header("Content-Type", "application/json");
+    //     requestSpec.header("Date", "");
+    //     String endpoint = mojaloopConfig.oracleEndpoint;
+    //     Response response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopAccountLookupAdminBaseurl).when().expect()
+    //             .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint);
+    //     int count = JsonParser.parseString(response.getBody().asString()).getAsJsonArray().size();
+    //     logger.info(String.valueOf(count));
+    //     return count >= 1;
+    // }
 
     protected void oracleOnboard() throws JsonProcessingException {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
