@@ -8,6 +8,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +33,17 @@ public class MockFlowTestDef extends BaseStepDef {
     public void iCallTheOutboundTransferEndpointWithExpectedStatus(int expectedStatus) {
         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
         logger.info("X-CorrelationId: {}", scenarioScopeState.clientCorrelationId);
+        logger.info("TOMD: URL {}", channelConnectorConfig.channelConnectorContactPoint);
+        logger.info("TOMD1: channelConnectorConfig:transferEndpoint {}", channelConnectorConfig.transferEndpoint);
         requestSpec.header(Utils.X_CORRELATIONID, scenarioScopeState.clientCorrelationId);
         requestSpec.header("X-Registering-Institution-ID", "SocialWelfare");
+        // Cast to access headers
+        FilterableRequestSpecification filterableSpec = (FilterableRequestSpecification) requestSpec;
+
+        logger.info("---- Request Headers ----");
+        filterableSpec.getHeaders().asList().forEach(header ->
+            logger.info("TOMD3 Headers {}: {}", header.getName(), header.getValue())
+        );
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(scenarioScopeState.inboundTransferMockReq).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
@@ -57,6 +67,7 @@ public class MockFlowTestDef extends BaseStepDef {
     @When("I call the get txn API with expected status of {int} and txnId")
     public void iCallTheGetTxnAPIWithExpectedStatusOfAndTxnId(int expectedStatus) {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            logger.info("TOMD Tenant : {}", scenarioScopeState.tenant);
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant);
             requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
             requestSpec.queryParam("size", "1");

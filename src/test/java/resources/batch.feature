@@ -12,7 +12,7 @@ Feature: Batch Details API test
     When I call the batch transactions endpoint with expected status of 202
     Then I should get non empty response
 
-  @gov @batch-teardown
+  @gov @batch-teardown 
   Scenario: BD-002 Batch transactions API Test with polling callback url
     Given I have the demo csv file "ph-ee-bulk-demo-6.csv"
     And I have tenant as "paymentBB2"
@@ -23,7 +23,7 @@ Feature: Batch Details API test
     Then I should get non empty response
     And I should have "PollingPath" and "SuggestedCallbackSeconds" in response
 
-  @gov @batch-teardown
+  @gov @batch-teardown 
   Scenario: BD-003 Batch summary API Test
     Given I have a batch id from previous scenario
     And I have tenant as "paymentBB2"
@@ -59,7 +59,7 @@ Feature: Batch Details API test
     Then I should get non empty response
 
 
-  	@gov @batch-teardown
+  	@gov @batch-teardown 
     Scenario: BD-005 Batch transaction API Test for Synchronous File Validation with empty file
       Given I have tenant as "paymentBB2"
       And I make sure there is no file

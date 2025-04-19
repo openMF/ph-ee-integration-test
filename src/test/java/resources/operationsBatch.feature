@@ -1,7 +1,7 @@
-@ext
+@ext 
 Feature: Operations APP related feature
 
-  @gov @ops-batch-setup @ops-batch-teardown
+  @gov @ops-batch-setup @ops-batch-teardown 
   Scenario: Batches API no filter test
     Given I have tenant as "paymentBB2"
     When I call the operations-app auth endpoint with username: "mifos" and password: "password"
@@ -10,7 +10,7 @@ Feature: Operations APP related feature
     Then I should get non empty response
     And I am able to parse batch paginated response into DTO
 
-  @gov @ext @ops-batch-setup @ops-batch-teardown
+  @gov @ext @ops-batch-setup @ops-batch-teardown 
   Scenario: Batches API batchId filter test
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "payerIdentifier-resolution-using-budgetAccount.csv"

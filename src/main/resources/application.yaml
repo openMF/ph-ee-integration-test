@@ -182,21 +182,21 @@ config:
 
 payerFundTransfer:
   tenant:
-    payer: "bluebank"
-    payee: "greenbank"
+    payer: "greenbank"
+    payee: "bluebank"
 
 mojaloop:
   fspid:
-    payer: "bluebank"
-    payee: "greenbank"
-  contactpoint: http://fred2.mifos.gazelle.test/_interop
+    payer: "greenbank"
+    payee: "bluebank"
+  contactpoint: http://vnextadmin.mifos.gazelle.test/_interop
   central-ledger-contactpoint: http://fspiop_fred2.mifos.gazelle.test
-  account-lookup-admin-contactpoint: http://fred1.mifos.gazelle.test/_interop
+  account-lookup-admin-contactpoint: http://vnextadmin.mifos.gazelle.test/_interop
   endpoint:
     als: /participants/{{identifierType}}/{{identifier}}
     #hub-account: /participants/Hub/accounts
-    hub-account: /MSISDN/27713803912
-    bluebank-account: /parties/MSISDN/27713803912 
+    hub-account: /MSISDN/fred
+    bluebank-account: /parties/MSISDN/27713803066
     settlement-model: /settlementModels
     participant: /participants
     position-and-limits: /participants/{{fsp}}/initialPositionAndLimits
@@ -204,12 +204,14 @@ mojaloop:
     record-fund: /participants/{{fsp}}/accounts/{{payerfspSettlementAccountId}}
     oracle: /oracles
   callback-endpoints:
-    - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT"
-      value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}"
-    - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR"
-      value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+    # - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT"
+    #   value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}"
+    # - type: "FSPIOP_CALLBACK_URL_PARTICIPANT_PUT_ERROR"
+      # value: "{{CALLBACK_HOST}}/{{fsp}}/participants/{{partyIdType}}/{{partyIdentifier}}/error"
+    # - type: "FSPIOP_CALLBACK_URL_PARTIES_GET"
+    #   value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}"
     - type: "FSPIOP_CALLBACK_URL_PARTIES_GET"
-      value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}"
+      value: "http://bluebank-backend:4040/{{partyIdType}}/{{partyIdentifier}}"
     - type: "FSPIOP_CALLBACK_URL_PARTIES_PUT"
       value: "{{CALLBACK_HOST}}/switch/parties/{{partyIdType}}/{{partyIdentifier}}"
     - type: "FSPIOP_CALLBACK_URL_PARTIES_PUT_ERROR"
@@ -254,21 +256,21 @@ awaitly:
 tenantconfig:
   tenants:
     paymentbb1: "greenbank"
-    paymentbb2: "bluebank"
-    payerfsp: "wakanda"
-    payeefsp1: "greenbank"
+    paymentbb2: "greenbank"
+    payerfsp: "greenbank"
+    payeefsp1: "bluebank"
     payeefsp2: "bluebank"
-    payeefsp3: "jupiter"
+    #payeefsp3: "jupiter"
 
 fspconfig:
   payeefsp:
-    payeefsp1: "greenbank"
+    payeefsp1: "bluebank"
     payeefsp2: "bluebank"
-    payeefsp3: "jupiter"
+    payeefsp3: "bluebank"
   payerfsp:
     payerfsp1: "greenbank"
-    payerfsp2: "bluebank"
+    payerfsp2: "greenbank"
 
 logging:
   level:
-    org.mifos.integrationtest: DEBUG
+    org.mifos.integrationtest: INFO

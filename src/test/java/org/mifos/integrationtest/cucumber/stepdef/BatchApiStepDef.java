@@ -330,7 +330,7 @@ public class BatchApiStepDef extends BaseStepDef {
     public void callBatchTransactionsEndpoint(int expectedStatus) {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
-            requestSpec.header(HEADER_PURPOSE, "Integartion test");
+            requestSpec.header(HEADER_PURPOSE, "Integration test");
             requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
             requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
             requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
@@ -344,8 +344,9 @@ public class BatchApiStepDef extends BaseStepDef {
             }
 
             // Print request headers and query parameters
-            System.out.println("Request Details:");
-            requestSpec.log().all();
+            logger.info("Request Details: : %s", requestSpec.log().all() );
+            // System.out.println("Request Details:");
+            // requestSpec.log().all();
 
 
             File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));

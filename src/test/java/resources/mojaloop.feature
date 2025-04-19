@@ -1,6 +1,6 @@
 Feature: Mojaloop test
 
-  @tom 
+  @tom
   Scenario: ML connector partial payee party lookup test
     #Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -10,6 +10,7 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the account with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
+    ## TOMD: what is the mockerver doing here should I register call back to ttk instances ? 
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of party lookup

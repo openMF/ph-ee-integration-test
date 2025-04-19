@@ -26,6 +26,7 @@ public class GenericStepDef extends BaseStepDef {
     @And("I have tenant as {string}")
     public void payeefsp3tenantAnd(String tenant) {
         scenarioScopeState.tenant = tenantConfig.getTenant(tenant.toLowerCase());
+        logger.info("TOMDB Tenant is set to {}", scenarioScopeState.tenant);
     }
 
     @Then("I should get non empty response")

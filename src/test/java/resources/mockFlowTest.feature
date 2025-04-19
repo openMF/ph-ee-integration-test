@@ -1,4 +1,4 @@
-@gov
+@fred
 Feature: Mock Flow Test
 
   @ext
@@ -40,7 +40,7 @@ Feature: Mock Flow Test
     And I should have startedAt and completedAt in response
     And I should have PayerFspId as not null
 
-  @tom
+  @fred 
   Scenario: MFT-002 Test for minimal mock fund transfer flow with batch transactions
     Given I have tenant as "paymentBB2"
     And I have the demo csv file "ph-ee-bulk-demo-7.csv"

@@ -95,7 +95,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String clientResponse = RestAssured.given(requestSpec).baseUri(transferConfig.clientBaseUrl).body(fundTransferDef.createClientBody)
                 .expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().post(transferConfig.clientEndpoint)
                 .andReturn().asString();
-        System.out.println("DEBUG-CLIENT-RESPONSE clientResponse: " + clientResponse);
+        System.out.println("TOMD-DEBUG-CLIENT-RESPONSE clientResponse: " + clientResponse);
         if (client.equals("payer")) {
             fundTransferDef.responsePayerClient = clientResponse;
             assertThat(fundTransferDef.responsePayerClient).isNotEmpty();
@@ -269,7 +269,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     public void registerStubForPartyLookup() {
         String endpoint = "parties/MSISDN/" + scenarioScopeState.payeeIdentifier;
         System.out.println("DEBUG RegisterStubForPartyLookup" + endpoint );
-        logger.info("DEBUG8: register stub for call back for partylookup: " + endpoint );
+        logger.info("DEBUG8: register stub for call back for partylookup: {} ", endpoint );
         mockServerStepDef.startStub(endpoint, HttpMethod.PUT, 200);
     }
 
@@ -285,6 +285,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         quoteId = UUID.randomUUID().toString();
         String endpoint = "transfers/\\{id\\}";
         mockServerStepDef.startStub(endpoint, HttpMethod.PUT, 200);
+        logger.info("TOMD8: register stub for call back for transfer: {} ", endpoint );
     }
 
     @Then("I call the get parties api in ml connector for {string}")
@@ -299,13 +300,17 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         requestSpec.header("partyIdType", "MSISDN");
         requestSpec.header("Traceparent", UUID.randomUUID());
         requestSpec.header("X-Lookup-Callback-Url", transferConfig.callbackURL);
+        
+        logger.info("TOMD7D: request for call get parties api for client {} ", client );
+        requestSpec.log().all(); 
+        logger.info("TOMD7D-end: request for call get parties api for client {} ", client );
 
         String identifier;
         if (client.equals("payer")) {
             identifier = scenarioScopeState.payerIdentifier;
         } else {
             identifier = scenarioScopeState.payeeIdentifier;
-            System.out.println("DEBUG7C: payee identifier  " + identifier) ; 
+            logger.info("DEBUG7C: payee identifier  {} " , identifier) ; 
         }
 
         String endpoint = mojaloopConfig.mlConnectorGetPartyEndpoint;
