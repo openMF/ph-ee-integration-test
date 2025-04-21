@@ -9,14 +9,17 @@ public class MojaloopConfig {
     @Value("${mojaloop.contactpoint}")
     public String mojaloopBaseurl;
 
-    @Value("${mojaloop.endpoint.bluebank-account}")
-    public String bluebankAccount;
+    @Value("${mojaloop.endpoint.payee-account}")
+    public String payeeAccount;
 
     @Value("${mojaloop.central-ledger-contactpoint}")
     public String mojaloopCentralLedgerBaseurl;
 
     @Value("${mojaloop.account-lookup-admin-contactpoint}")
     public String mojaloopAccountLookupAdminBaseurl;
+
+    @Value("${mojaloop.participant-lookup}")
+    public String mojaloopParticipantLookupBaseurl;
 
     @Value("${mojaloop.endpoint.als}")
     public String addUserToAlsEndpoint;

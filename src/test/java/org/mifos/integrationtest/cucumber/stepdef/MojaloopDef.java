@@ -52,29 +52,23 @@ public class MojaloopDef {
         return objectMapper.writeValueAsString(addUserAlsRequest);
     }
 
-    protected Boolean isBlueBankLoaded() {
-
+    protected Boolean isTenantLoaded(String tenant) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         RestAssured.config = RestAssured.config()
             .encoderConfig(encoderConfig().appendDefaultContentCharsetToContentTypeIfUndefined(false));
         requestSpec.header(Utils.HEADER_DATE,Utils.getCurrentUTCFormat("UTC"));
-        //requestSpec.header(Utils.HEADER_DATE,"2024-11-06T11:33:03.338Z");
-        requestSpec.header("accept", "application/vnd.interoperability.parties+json;version=1.0");
-        requestSpec.header(Utils.CONTENT_TYPE, "application/vnd.interoperability.parties+json;version=1.0");
-        requestSpec.header("fspiop-source","bluebank");
+        requestSpec.header("accept", "application/vnd.interoperability.participants+json;version=1.1");
+        requestSpec.header(Utils.CONTENT_TYPE, "application/vnd.interoperability.participants+json;version=1.1");
+        requestSpec.header("fspiop-source", tenant);
         requestSpec.header("fspiop-http-method","GET");
 
-        String endpoint = mojaloopConfig.bluebankAccount;
-        System.out.println("TOMD endpoint :" + mojaloopConfig.bluebankAccount);
+        String endpoint = mojaloopConfig.payeeAccount;
+        System.out.println("TOMD endpoint :" + mojaloopConfig.payeeAccount);
         System.out.println("TOMD Request Headers:");
         requestSpec.log().all();
 
-        // String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when().expect()
-        //         .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
-        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when().expect()
+        String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopParticipantLookupBaseurl ).when().expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().get(endpoint).andReturn().asString();
-                //System.out.printf("%s : %s ", mojaloopConfig.mojaloopCentralLedgerBaseurl, endpoint);
-        //int count = JsonParser.parseString(response).getAsJsonArray().size();
         System.out.println("Response Body: " + response);
         logger.info("should return null in body ");
         return response == null;
@@ -84,7 +78,6 @@ public class MojaloopDef {
 
         RequestSpecification requestSpec = Utils.getDefaultSpec();
         String endpoint = mojaloopConfig.mojaloopHubAccount;
-        System.out.printf("FRED2 %s : %s ", mojaloopConfig.mojaloopCentralLedgerBaseurl, endpoint);
         String response = RestAssured.given(requestSpec).baseUri(mojaloopConfig.mojaloopCentralLedgerBaseurl).when().expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(endpoint).andReturn().asString();
         System.out.printf("%s : %s ", mojaloopConfig.mojaloopCentralLedgerBaseurl, endpoint);

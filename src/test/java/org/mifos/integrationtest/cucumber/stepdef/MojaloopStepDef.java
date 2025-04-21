@@ -64,15 +64,13 @@ public class MojaloopStepDef extends BaseStepDef {
         assertThat(response).isNotNull();
     }
 
-    @Given("I am setting up Mojaloop")
-    public void mojaloopSetup() throws JsonProcessingException {
-
-        String payerFsp = mojaloopConfig.payerFspId;
-        System.out.printf("FRED payerFspId : %s", mojaloopConfig.payerFspId);
-        logger.info("payerFspId : %s", mojaloopConfig.payerFspId);
+    @Given("I have vNext switch running and configured")
+    public void vNextConfigured() throws JsonProcessingException {
+        //Note that looking up 
         String payeeFsp = mojaloopConfig.payeeFspId;
+        String payerFsp = mojaloopConfig.payerFspId;
 
-        if (!mojaloopDef.isBlueBankLoaded()) {
+        if (!mojaloopDef.isTenantLoaded(payeeFsp)) {
             System.out.println("FRED isbluebankLoaded ");
             logger.info("verify bluebank is loaded ");
 

@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
+import com.github.tomakehurst.wiremock.http.ResponseDefinition;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -268,10 +269,10 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     @Then("I can register the stub for callback endpoint of party lookup")
     public void registerStubForPartyLookup() {
-        String endpoint = "parties/MSISDN/" + scenarioScopeState.payeeIdentifier;
+        String endpoint = "/parties/MSISDN/" + scenarioScopeState.payeeIdentifier;
         System.out.println("DEBUG RegisterStubForPartyLookup" + endpoint );
         logger.info("DEBUG8: register stub for call back for partylookup: {} ", endpoint );
-        mockServerStepDef.startStub(endpoint, HttpMethod.PUT, 200);
+        mockServerStepDef.startStub(endpoint, HttpMethod.GET, 200);
     }
 
     @Then("I can register the stub for callback endpoint of quotation")
@@ -292,18 +293,22 @@ public class PayerFundTransferStepDef extends BaseStepDef {
     @Then("I call the get parties api in ml connector for {string}")
     public void callGetPartiesApi(String client) {
         RequestSpecification requestSpec = Utils.getDefaultSpec();
-        requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1.0");
-        requestSpec.header("Content-Type", "application/vnd.interoperability.parties+json;version=1.0");
-        requestSpec.header("Date", new Date());
+        // These are currently ignored by the Mojaloop Connector 
+        // requestSpec.header("Accept", "application/vnd.interoperability.parties+json;version=1.1");
+        // requestSpec.header("Content-Type", "application/vnd.interoperability.parties+json;version=1.1");
+        // requestSpec.header("Date", new Date());
         requestSpec.header("Fspiop-Destination", mojaloopConfig.payeeFspId);
-        requestSpec.header("Fspiop-Source", mojaloopConfig.payerFspId);
+        requestSpec.header("Fspiop-Source", mojaloopConfig.payeeFspId);
         requestSpec.header("partyId", scenarioScopeState.payeeIdentifier);
         requestSpec.header("partyIdType", "MSISDN");
         requestSpec.header("Traceparent", UUID.randomUUID());
-        requestSpec.header("X-Lookup-Callback-Url", transferConfig.callbackURL);
+        // X-Lookup-Callback-Url is used by Mojaloop Connector to set the vNext Host/URI for account lookup 
+        // leave it null and connector will use the default alsHost from properties
+        // requestSpec.header("X-Lookup-Callback-Url", "http://vnextadmin.mifos.gazelle.test/_interop");
+        
         
         logger.info("TOMD7D: request for call get parties api for client {} ", client );
-        requestSpec.log().all(); 
+        logger.info("TOMD7-MID {}", requestSpec.log().all() ) ; 
         logger.info("TOMD7D-end: request for call get parties api for client {} ", client );
 
         String identifier;
@@ -318,11 +323,11 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         endpoint = endpoint.replaceAll("\\{\\{identifierType\\}\\}", "MSISDN");
         endpoint = endpoint.replaceAll("\\{\\{identifier\\}\\}", identifier);
         //String endpoint = "/_interop/parties/MSISDN/27713803912";
-        System.out.println("DEBUG7: endpoint " + endpoint  ) ; 
-        requestSpec.log().all(); 
+        System.out.println("TOMD9-START endpoint " + endpoint  ) ; 
+        logger.info("TOMD9-MID {}", requestSpec.log().all() ) ; 
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("http://" + mojaloopConfig.mlConnectorHost).expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().get(endpoint).andReturn().asString();
-        System.out.println("DEBUG7A: scenarioScopeState.response : " + scenarioScopeState.response );
+        System.out.println("TOMD9-END: scenarioScopeState.response : " + scenarioScopeState.response );
         assertThat(scenarioScopeState.response).isNotNull();
     }
 
@@ -364,17 +369,44 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
     }
 
-    @Then("I should be able to verify the callback for lookup")
+    @Then("I should be able to DEBUG callback")
     public void verifyGetPartyCallback() {
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+            logger.info("TOMD: verifyGetPartyCallback");
+    
             List<ServeEvent> serveEvents = getAllServeEvents();
+            System.out.println("TOMDAWAIT1: serveEvents contents  " + serveEvents.toString());
             logger.info(String.valueOf(serveEvents.size()));
             assertThat(serveEvents.size()).isGreaterThan(0);
+    
             serveEvents.subList(0, 1).forEach(serveEvent -> {
+                // Log request headers
+                System.out.println("TOMDAWAIT: Request Headers:");
+                logger.info("TOMDAWAIT5: {} ", serveEvent.getRequest().getHeaders().all() ) ; 
+        
+                // Log request body
                 if (!serveEvent.getRequest().getBodyAsString().isEmpty()) {
-                    logger.info(serveEvent.getRequest().getBodyAsString());
+                    System.out.println("TOMDAWAIT2: serveEvent.getRequest().getBodyAsString() " + serveEvent.getRequest().getBodyAsString());
+                    logger.info("TOMDAWAIT2 {} ", serveEvent.getRequest().getBodyAsString());
+                } else {
+                    System.out.println("TOMDAWAIT3: serveEvent.getRequest().getBodyAsString() is empty");
+                    logger.info("TOMDAWAIT3: serveEvent.getRequest().getBodyAsString() is empty");
                 }
+    
+                // Log entire request
+                System.out.println("TOMDAWAIT: Entire Request:");
+                System.out.println("TOMDAWAIT: Method: " + serveEvent.getRequest().getMethod());
+                System.out.println("TOMDAWAIT: URL: " + serveEvent.getRequest().getUrl());
+                logger.info("TOMDAWAIT: Method: {}", serveEvent.getRequest().getMethod());
+                logger.info("TOMDAWAIT: URL: {}", serveEvent.getRequest().getUrl());
+    
+                // Parse JSON body
                 JsonObject jsonObject = JsonParser.parseString(serveEvent.getRequest().getBodyAsString()).getAsJsonObject();
+                System.out.println("TOMDAWAIT: JSON Body:");
+                System.out.println(jsonObject);
+                logger.info("TOMDAWAIT: JSON Body: {}", jsonObject);
+    
+                // Verify first name
                 String firstName = jsonObject.getAsJsonObject("party").getAsJsonObject("personalInfo").getAsJsonObject("complexName")
                         .get("firstName").getAsString();
                 assertThat(firstName).isNotNull();

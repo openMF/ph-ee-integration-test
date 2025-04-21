@@ -1,6 +1,22 @@
 Feature: Mojaloop test
 
   @tom
+  Scenario: Gazelle ML connector payee party lookup test
+    Given I have vNext switch running and configured 
+    Given I have Fineract-Platform-TenantId for "payee"
+    When I call the create client endpoint for "payee"
+    Then I call the create savings product endpoint for "payee"
+    When I call the create savings account endpoint for "payee"
+    Then I call the interop identifier endpoint for "payee"
+    Then I approve the account with command "approve" for "payee"
+    When I activate the account with command "activate" for "payee"
+    Then I associate the account to vNext Oracle for "payee" 
+    Then I call the get parties api in ml connector for "payee"
+
+
+# TOMD Questions: 
+# under what circumstances or what workflow does the MockServer endpoint 
+# get called ?  
   Scenario: ML connector partial payee party lookup test
     #Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -11,13 +27,13 @@ Feature: Mojaloop test
     Then I approve the account with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
     Then I associate the account to vNext Oracle for "payee" 
-    ## TOMD: what is the mockerver doing here should I register call back to ttk instances ? 
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of party lookup
     Then I call the get parties api in ml connector for "payee"
-#    Then I will sleep for 5000 millisecond
-    Then I should be able to verify the callback for lookup
+  #  Then I will sleep for 5000 millisecond
+    Then I should be able to DEBUG callback
+    #Then I should be able to verify the callback for lookup
     Then I can stop mock server
 
 

@@ -39,6 +39,7 @@ public class MockServerStepDef extends BaseStepDef {
 
     @Given("I can inject MockServer")
     public void checkIfMockServerIsInjected() {
+        logger.info ("MockServer: {}", mockServer);
         assertThat(mockServer).isNotNull();
     }
 
@@ -99,15 +100,22 @@ public class MockServerStepDef extends BaseStepDef {
         await().atMost(awaitMost, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
             switch (httpMethod) {
                 case GET -> {
+                    logger.info("Verifying GET request to endpoint: {}", endpoint);
+                    System.out.println("Verifying GET request to endpoint: " + endpoint);   
                     verify(numberOfRequest, getRequestedFor(urlEqualTo(endpoint)));
                 }
                 case POST -> {
+                    logger.info("Verifying POST request to endpoint: {}", endpoint);
+                    System.out.println("Verifying POST request to endpoint: " + endpoint);
                     verify(numberOfRequest, postRequestedFor(urlEqualTo(endpoint)));
                 }
                 case PUT -> {
+                    logger.info("Verifying PUT request to endpoint: {}", endpoint);
+                    System.out.println("Verifying PUT request to endpoint: " + endpoint);   
                     verify(numberOfRequest, putRequestedFor(urlEqualTo(endpoint)));
                 }
                 case DELETE -> {
+                    logger.info("Verifying DELETE request to endpoint: {}", endpoint);
                     verify(numberOfRequest, deleteRequestedFor(urlEqualTo(endpoint)));
                 }
             }
@@ -117,7 +125,7 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can start mock server")
     public void startMockServer() {
         mockServer.getMockServer().start();
-        configureFor("localhost", mockServer.getMockServer().port());
+        configureFor("0.0.0.0", mockServer.getMockServer().port());
     }
 
     @And("I can stop mock server")
