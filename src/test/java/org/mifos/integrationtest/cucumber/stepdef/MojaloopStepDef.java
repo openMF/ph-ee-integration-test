@@ -66,7 +66,7 @@ public class MojaloopStepDef extends BaseStepDef {
 
     @Given("I have vNext switch running and configured")
     public void vNextConfigured() throws JsonProcessingException {
-        //Note that looking up 
+        //Note that looking up
         String payeeFsp = mojaloopConfig.payeeFspId;
         String payerFsp = mojaloopConfig.payerFspId;
 
@@ -102,10 +102,11 @@ public class MojaloopStepDef extends BaseStepDef {
         // }
    }
 
-    @Then("I associate the account to vNext Oracle for {string}")
+    @Then("I associate the account to vNext built in Oracle for {string}")
     public void associateAccountToOracle(String client) throws JsonProcessingException {
          String clientIdentifierId;
          String fspId;
+         logger.info("TOMD-associate-1 ");
          if (client.equals("payer")) {
               clientIdentifierId = scenarioScopeState.payerIdentifier;
               fspId = mojaloopConfig.payerFspId;
@@ -113,11 +114,12 @@ public class MojaloopStepDef extends BaseStepDef {
               clientIdentifierId = scenarioScopeState.payeeIdentifier;
               fspId = mojaloopConfig.payeeFspId;
          }
-    
+         logger.info("TOMD-associate-2 fspId: {}", fspId);
+
          RequestSpecification requestSpec = Utils.getDefaultSpec();
          requestSpec.header("fspiop-source", fspId);
          requestSpec.header("Date", getCurrentDateInFormat());
-         requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1");
+         requestSpec.header("Accept", "application/vnd.interoperability.participants+json;version=1.1");
          // requestSpec.header("Content-Type", "application/vnd.interoperability.participants+json;version=1.0");
     
          String endpoint = mojaloopConfig.addUserToAlsEndpoint;
@@ -137,8 +139,8 @@ public class MojaloopStepDef extends BaseStepDef {
                 .body(requestBody).contentType("application/vnd.interoperability.participants+json;version=1.0").expect()
                 .spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when().post(endpoint).andReturn().asString();
     
-         logger.info("TOMD8B response from associating {}:", clientIdentifierId);
-         assertThat(response).isNotNull();
+         logger.info("TOMD8B response from associating : {}", response);
+         assertThat(response).isNotNull();  // BUT response is null so why is this not failing? 
     }
 
 

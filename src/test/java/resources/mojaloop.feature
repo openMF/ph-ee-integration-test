@@ -1,6 +1,10 @@
 Feature: Mojaloop test
 
-  @tom
+  @fred
+  Scenario: Gazelle Payer Fund Transfer Flow test
+    Given I have vNext switch running and configured 
+  
+  @fred
   Scenario: Gazelle ML connector payee party lookup test
     Given I have vNext switch running and configured 
     Given I have Fineract-Platform-TenantId for "payee"
@@ -10,13 +14,62 @@ Feature: Mojaloop test
     Then I call the interop identifier endpoint for "payee"
     Then I approve the account with command "approve" for "payee"
     When I activate the account with command "activate" for "payee"
-    Then I associate the account to vNext Oracle for "payee" 
+    Then I associate the account to vNext built in Oracle for "payee" 
     Then I call the get parties api in ml connector for "payee"
 
+  @tom
+  Scenario: Gazelle Payer Fund Transfer Flow test
+    Given I have vNext switch running and configured 
+    Given I have Fineract-Platform-TenantId for "payer"
+    When I call the create client endpoint for "payer"
+    Then I call the create savings product endpoint for "payer"
+    When I call the create savings account endpoint for "payer"
+    Then I call the interop identifier endpoint for "payer"
+    Then I approve the account with command "approve" for "payer"
+    When I activate the account with command "activate" for "payer"
+    Then I call the deposit account endpoint with command "deposit" for amount 12 for "payer"
 
+    Given I have Fineract-Platform-TenantId for "payee"
+    When I call the create client endpoint for "payee"
+    Then I call the create savings product endpoint for "payee"
+    When I call the create savings account endpoint for "payee"
+    Then I call the interop identifier endpoint for "payee"
+    Then I approve the account with command "approve" for "payee"
+    When I activate the account with command "activate" for "payee"
+    Then I call the deposit account endpoint with command "deposit" for amount 10 for "payee"
+
+    #Then I associate the account to vNext built in Oracle for "payee"
+    Then I associate the account to vNext built in Oracle for "payer" 
+
+    #Then I call the payer fund transfer api to transfer amount "1" from payer to payee
+    Then I call the gazelle payer fund transfer api to transfer amount "11" from payer to payee 
+
+    #Then I should get transaction id in response
+    
+    #When I call the transfer API in ops app with transactionId as parameter
+
+    #Then I check for error related to lookup
+    #And I assert the partyLookupFailed is false
+    #And I assert the partyLookupRetryCount is 0
+
+    #Then I check for error related to quote
+    #And I assert the quoteFailed is false
+    #And I assert the quoteRetryCount is 0
+
+    #Then I check for error related to transfer
+    #And I assert the transferFailed is false
+    #And I assert the transferRetryCount is 0
+
+    #Then I assert "payer" balance to be 11
+    #Then I assert "payee" balance to be 11
+
+
+###########################################################################################
+# Newer tests above and older tests below this line 
 # TOMD Questions: 
 # under what circumstances or what workflow does the MockServer endpoint 
 # get called ?  
+##############################################################################################
   Scenario: ML connector partial payee party lookup test
     #Given I am setting up Mojaloop
     Given I have Fineract-Platform-TenantId for "payee"
@@ -49,7 +102,7 @@ Feature: Mojaloop test
     When I can inject MockServer
     Then I can start mock server
     Then I can register the stub for callback endpoint of quotation
-    Then I call the get quotation api in ml connector for "payee"
+    Then I call the get quotation api in ml connector for "payee"  # Note this needs an existing quote and uses PayeeQuoteTransfer.bpmn  
 #    Then I will sleep for 5000 millisecond
     Then I should be able to verify the callback for quotation
     Then I can stop mock server

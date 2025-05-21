@@ -10,9 +10,9 @@ public final class TransferHelper {
     public static JSONObject getTransferRequestBody() throws JSONException {
 
         JSONObject body = new JSONObject();
-        body.put("payer", getPartyObject("27710101999"));
-        body.put("payee", getPartyObject("27710102999"));
-        body.put("amount", getAmountObject("1"));
+        body.put("payer", getPartyObject("0487959491")); //greenbank 
+        body.put("payee", getPartyObject("0437113124")); //bluebank
+        body.put("amount", getAmountObject("11"));
         return body;
     }
 

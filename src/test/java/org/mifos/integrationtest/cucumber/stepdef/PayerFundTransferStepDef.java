@@ -114,6 +114,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         fundTransferDef.savingsProductBody = fundTransferDef.setBodySavingsProduct();
         // Calling savings product endpoint
+        logger.info("TOMD: {}", requestSpec.log().all() );
         fundTransferDef.responseSavingsProduct = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
                 .body(fundTransferDef.savingsProductBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(transferConfig.savingsProductEndpoint).andReturn().asString();
@@ -224,13 +225,15 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         requestSpec = fundTransferDef.setHeaders(requestSpec);
         requestSpec.queryParam("command", command);
         fundTransferDef.savingsActivateBody = fundTransferDef.setBodySavingsActivate();
-
+        System.out.println("TOMD-DEBUG: activation rest call " + requestSpec.log().all() );
         String endpoint = transferConfig.savingsActivateEndpoint;
         if (client.equals("payer")) {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payer_identifier);
         } else {
             endpoint = endpoint.replaceAll("\\{\\{savingsAccId\\}\\}", payee_identifier);
         }
+    
+        logger.info("TOMD request for activate account {} ", endpoint );
         // Calling create loan account endpoint
         fundTransferDef.responseSavingsActivate = RestAssured.given(requestSpec).baseUri(transferConfig.savingsBaseUrl)
                 .body(fundTransferDef.savingsActivateBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
@@ -254,7 +257,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         } else {
             savingsAccountResponse = objectMapper.readValue(fundTransferDef.responseSavingsAccountPayee, PostSavingsAccountsResponse.class);
         }
-
+        System.out.println("TOMD-DEBUG: deposit rest call " + requestSpec.log().all() );
         String endpoint = transferConfig.savingsDepositAccountEndpoint.replaceAll("\\{\\{savingsAccId\\}\\}",
                 savingsAccountResponse.getSavingsId().toString());
 
@@ -340,12 +343,13 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         String quoteRequestBody;
         if (client.equals("payer")) {
-            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest(scenarioScopeState.payerIdentifier, "1234", "1", quoteId);
+            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest(scenarioScopeState.payerIdentifier, "1", "6", quoteId);
         } else {
-            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest("1234", scenarioScopeState.payeeIdentifier, "1", quoteId);
+            quoteRequestBody = fundTransferDef.setBodyPayeeQuoteRequest("1", scenarioScopeState.payeeIdentifier, "7", quoteId);
         }
-
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
+        logger.info("TOMD-quote requestBody: {} ", quoteRequestBody);
+        logger.info("TOMD-quote header {} ", requestSpec.log().all() );
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("http://" + transferConfig.callbackURL)
                 .body(quoteRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
                 .post(mojaloopConfig.mlConnectorGetQuoteEndpoint).andReturn().asString();
 
@@ -363,7 +367,7 @@ public class PayerFundTransferStepDef extends BaseStepDef {
         String condition = jsonObject.get("condition").getAsString();
         String transferRequestBody = fundTransferDef.setBodyPayeeTransferRequest("1", ilpPacket, condition);
 
-        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("https://" + mojaloopConfig.mlConnectorHost)
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri("http://" + transferConfig.callbackURL)
                 .body(transferRequestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(202).build()).when()
                 .post(mojaloopConfig.mlConnectorTransferEndpoint).andReturn().asString();
 
@@ -458,11 +462,29 @@ public class PayerFundTransferStepDef extends BaseStepDef {
 
         String requestBody = TransferHelper
                 .getTransferRequestBody(scenarioScopeState.payerIdentifier, scenarioScopeState.payeeIdentifier, amount).toString();
+        logger.info("TOMD payerfund.transfer URI: {} ", requestSpec.log().all() );
         scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
                 .body(requestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
                 .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
 
     }
+
+    @Then("I call the gazelle payer fund transfer api to transfer amount {string} from payer to payee")
+    public void gazellePayerFundTransfer(String amount) throws JSONException {
+
+        RequestSpecification requestSpec = Utils.getDefaultSpec(transferConfig.payerTenant);
+        requestSpec.header(Utils.X_CORRELATIONID, UUID.randomUUID());
+        // requestSpec.header("Platform-TenantId", transferConfig.payerTenant);
+
+        String requestBody = TransferHelper
+                .getTransferRequestBody().toString();
+        logger.info("TOMD payerfund.transfer URI: {} ", requestSpec.log().all() );
+        scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(channelConnectorConfig.channelConnectorContactPoint)
+                .body(requestBody).expect().spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when()
+                .post(channelConnectorConfig.transferEndpoint).andReturn().asString();
+
+    }
+
 
     @When("I call the transfer API in ops app with transactionId as parameter")
     public void iCallTheTransferAPIWithTransactionId() throws InterruptedException {
@@ -472,7 +494,8 @@ public class PayerFundTransferStepDef extends BaseStepDef {
                 requestSpec.header("Authorization", "Bearer " + scenarioScopeState.accessToken);
             }
             requestSpec.queryParam("transactionId", scenarioScopeState.transactionId);
-
+            logger.info("TOMD7 about to call transfer API ");
+            requestSpec.log().all();
             scenarioScopeState.response = RestAssured.given(requestSpec).baseUri(operationsAppConfig.operationAppContactPoint).expect()
                     .spec(new ResponseSpecBuilder().expectStatusCode(200).build()).when().get(operationsAppConfig.transfersEndpoint)
                     .andReturn().asString();
