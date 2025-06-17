@@ -1,78 +1,150 @@
 version: 2.1
-
 orbs:
-  slack: circleci/slack@4.12.5
-  helm: circleci/helm@2.0.1
-  kubernetes: circleci/kubernetes@1.3
-  mifos-orb: mifos/docker-image-availability-check-and-upgrade@1.0.2
-
+  docker-buildx: devarsh/docker-buildx-orb@0.1.1
 executors:
   docker-executor:
     docker:
-      - image: cimg/openjdk:17.0.0-node
-
+      - image: circleci/openjdk:17-buster-node-browsers-legacy
 jobs:
-  build_and_publish:
+  build_and_push_tag_image:
     executor: docker-executor
     environment:
       JVM_OPTS: -Xmx512m
       TERM: dumb
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.24
       - run:
-          name: Build and Tag Docker Image
+          name: Set Lowercase Docker Image Vars
+          # Using tr for POSIX compatibility, could use ${VAR,,} with Bash 4+
           command: |
-            TAG_NAME=${CIRCLE_BRANCH}
-            ./gradlew bootJar
-            docker build -t "openmf/ph-ee-integration-test:$TAG_NAME" .
+            echo "export DOCKER_ORG_LOWER=$(echo $CIRCLE_PROJECT_USERNAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "export DOCKER_REPO_LOWER=$(echo $CIRCLE_PROJECT_REPONAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "Using Docker Namespace: $DOCKER_ORG_LOWER"
+            echo "Using Docker Repository: $DOCKER_REPO_LOWER"
+      - docker-buildx/install
       - run:
-          name: Login to Docker Hub
-          command: echo "$MIFOS_DOCKER_TOKEN" | docker login -u "$MIFOS_DOCKER_USER" --password-stdin
-      - run:
-          name: Push Docker Image
+          name: Check if Docker image tag exists
           command: |
-            docker push "openmf/ph-ee-integration-test:$CIRCLE_BRANCH"
-
-  test_chart_gov:
-    docker:
-      - image: cimg/openjdk:17.0.0-node
+            IMAGE_TAG=$CIRCLE_TAG
+            # Using lowercase variables defined above
+            IMAGE_NAME="$DOCKER_ORG_LOWER/$DOCKER_REPO_LOWER"
+            echo "Checking for Docker image: $IMAGE_NAME:$IMAGE_TAG"
+            # Ensure DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD are set in your CircleCI Context or Project Environment Variables
+            if curl -s -f -u "$DOCKERHUB_USERNAME":"$DOCKERHUB_PASSWORD" "https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/$IMAGE_TAG" > /dev/null; then
+              echo "Skipping the build and push as the tag $IMAGE_TAG already exists in Docker Hub for image $IMAGE_NAME."
+              circleci-agent step halt
+            else
+              echo "Tag $IMAGE_TAG does not exist for image $IMAGE_NAME. Proceeding with build."
+            fi
+      - run:
+          name: Build Application
+          command: ./gradlew bootJar
+      - docker-buildx/build-and-push:
+          # Using lowercase variables defined above
+          image-name: "$DOCKER_ORG_LOWER/$DOCKER_REPO_LOWER"
+          tag: "$CIRCLE_TAG"
+          # Add dockerhub credentials if needed
+          # dockerhub-username: "$DOCKERHUB_USERNAME"
+          # dockerhub-password: "$DOCKERHUB_PASSWORD"
+  build_and_push_branch_image:
+    executor: docker-executor
+    environment:
+      JVM_OPTS: -Xmx512m
+      TERM: dumb
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.24
       - run:
-          name: Ngrok Setup
+          name: Set Lowercase Docker Image Vars
           command: |
-            curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
+            echo "export DOCKER_ORG_LOWER=$(echo $CIRCLE_PROJECT_USERNAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "export DOCKER_REPO_LOWER=$(echo $CIRCLE_PROJECT_REPONAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "Using Docker Namespace: $DOCKER_ORG_LOWER"
+            echo "Using Docker Repository: $DOCKER_REPO_LOWER"
+      - docker-buildx/install
       - run:
-          name: Test Execution
-          no_output_timeout: 30m
+          name: Build Application
           command: |
-            ngrok config add-authtoken $AUTH_TOKEN
-            echo "web_addr: $LOCAL_PORT" >> /home/circleci/.config/ngrok/ngrok.yml
-            ngrok http 53013 > /dev/null &
-            echo -n "Extracting ngrok public url..."
-            while [ -z "$NGROK_PUBLIC_URL" ]; do
-              export NGROK_PUBLIC_URL=$(curl --silent --max-time 10 --connect-timeout 5 --show-error http://127.0.0.1:$LOCAL_PORT/api/tunnels | sed -nE 's/.*public_url":"https:..([^"]*).*/\1/p')
-              sleep 1
-            done
-            export CALLBACK_URL="https://$NGROK_PUBLIC_URL"
-            ./gradlew test -Dcucumber.filter.tags="@gov"
-            pkill ngrok
-      - store_test_results:
-          path: build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
-      - store_artifacts:
-          path: build/test-results
-
+            ./gradlew checkstyleMain
+            ./gradlew clean bootJar
+      - run:
+          name: Sanitize Branch Name
+          command: |
+            echo "export SANITIZED_BRANCH=$(echo $CIRCLE_BRANCH | sed 's/[^a-zA-Z0-9.-]/-/g' | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV # Also ensure branch tag is lowercase
+      # First build and push with branch-latest tag
+      - docker-buildx/build-and-push:
+          image-name: "$DOCKER_ORG_LOWER/$DOCKER_REPO_LOWER"
+          tag: "${SANITIZED_BRANCH}-latest"
+      # Then build and push with branch-version tag
+      - docker-buildx/build-and-push:
+          image-name: "$DOCKER_ORG_LOWER/$DOCKER_REPO_LOWER"
+          tag: "${SANITIZED_BRANCH}-${CIRCLE_TAG}"
+          # Add dockerhub credentials if needed
+          # dockerhub-username: "$DOCKERHUB_USERNAME"
+          # dockerhub-password: "$DOCKERHUB_PASSWORD"
+  build_and_push_latest_image:
+    executor: docker-executor
+    environment:
+      JVM_OPTS: -Xmx512m
+      TERM: dumb
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.24
+      - run:
+          name: Set Lowercase Docker Image Vars
+          command: |
+            echo "export DOCKER_ORG_LOWER=$(echo $CIRCLE_PROJECT_USERNAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "export DOCKER_REPO_LOWER=$(echo $CIRCLE_PROJECT_REPONAME | tr '[:upper:]' '[:lower:]')" >> $BASH_ENV
+            echo "Using Docker Namespace: $DOCKER_ORG_LOWER"
+            echo "Using Docker Repository: $DOCKER_REPO_LOWER"
+      - docker-buildx/install
+      - run:
+          name: Build Application
+          command: |
+            ./gradlew checkstyleMain
+            ./gradlew clean bootJar
+      - docker-buildx/build-and-push:
+          # Using lowercase variables defined above
+          image-name: "$DOCKER_ORG_LOWER/$DOCKER_REPO_LOWER"
+          tag: "latest"
+          # Add dockerhub credentials if needed
+          # dockerhub-username: "$DOCKERHUB_USERNAME"
+          # dockerhub-password: "$DOCKERHUB_PASSWORD"
 workflows:
   version: 2
-  build_and_deploy:
+  build-and-push-pipeline:
     jobs:
-      - build_and_publish
-      # - push_docker_image:
-      #     requires:
-      #       - build
-      # - test_chart_gov:
-      #     requires:
-      #       - push_docker_image
-
-
+      # Build tags matching vX.Y.Z format
+      - build_and_push_tag_image:
+          filters:
+            tags:
+              only: /^v\d+\.\d+\.\d+$/
+            branches:
+              ignore: /.*/
+          context:
+            - DOCKER
+      # Build any branch commit (except tags)
+      - build_and_push_branch_image:
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: /.*/
+          context:
+            - DOCKER
+      # Build 'latest' only when the branch image succeeds AND it's the main/master branch
+      - build_and_push_latest_image:
+          requires:
+            - build_and_push_branch_image
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only:
+                - main # Or your primary branch name like 'master'
+          context:
+            - DOCKER
