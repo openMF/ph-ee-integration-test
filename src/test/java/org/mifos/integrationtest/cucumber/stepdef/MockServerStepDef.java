@@ -125,6 +125,7 @@ public class MockServerStepDef extends BaseStepDef {
     @And("I can start mock server")
     public void startMockServer() {
         mockServer.getMockServer().start();
+        logger.info("mock server port is " + mockServer.getMockServer().port() );
         configureFor("0.0.0.0", mockServer.getMockServer().port());
     }
 

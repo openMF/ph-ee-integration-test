@@ -6,6 +6,15 @@ import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.findAll;
+// import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+import com.github.tomakehurst.wiremock.verification.LoggedRequest;
+//import com.github.tomakehurst.wiremock.verification.VerificationException;
+import com.github.tomakehurst.wiremock.client.VerificationException;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
+
+// You might also need:
+//import com.github.tomakehurst.wiremock.WireMockServer;
 import static com.google.common.truth.Truth.assertThat;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -79,12 +88,13 @@ public class IdentityMapperStepDef extends BaseStepDef {
         // Initialize the request specification with default settings
         System.out.println("TDDEBUG-1");
         System.out.println("URI: " + identityMapperConfig.identityMapperContactPoint);
-        System.out.println("X CallBackURL: " + identityMapperConfig.callbackURL + stub);
+        System.out.println("X CallBackURL: http://" + identityMapperConfig.callbackURL + stub);
         System.out.println("stub: " + stub ); 
         RequestSpecification requestSpec = Utils.getDefaultSpec()
             .header("Content-Type", "application/json")
             .header("X-Registering-Institution-ID", sourceBBID)
             .header("X-CallbackURL", "http://" +identityMapperConfig.callbackURL + stub)
+            // .header("X-CallbackURL", "http://localhost" + stub)
             .baseUri(identityMapperConfig.identityMapperContactPoint);
         System.out.println("DEBUG-2 Identify mapper Request Headers:");
         requestSpec.log().all();
@@ -205,15 +215,58 @@ public class IdentityMapperStepDef extends BaseStepDef {
         }
     }
 
+    // @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
+    // public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
+
+    //     await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
+    //         try {
+    //             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
+    //             verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
+    //             assertTrue(true);
+    //         } catch (VerificationException e) {
+    //             assertTrue(false);// failure
+    //         }
+    //     });
+    // }
+
     @Then("I should be able to verify that the {string} method to {string} endpoint received a request with required parameter in body")
     public void iShouldBeAbleToVerifyThatTheMethodToEndpointReceivedRequestWithASpecificBody(String httpmethod, String endpoint) {
+        
+        // Log the target endpoint being verified (once)
+        logger.info("TDEBUG-1a Target URL for verification: {}", endpoint);
+        
         await().atMost(awaitMost, SECONDS).untilAsserted(() -> {
             try {
+                // These verifications will throw VerificationException if no matching request is found
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.registerRequestID", equalTo(requestId))));
                 verify(putRequestedFor(urlEqualTo(endpoint)).withRequestBody(matchingJsonPath("$.numberFailedCases", equalTo("0"))));
-                assertTrue(true);
+                assertTrue(true); // Success
+                
             } catch (VerificationException e) {
-                assertTrue(false);// failure
+                
+                // Log the request history on failure (during polling)
+                logger.warn("Verification failed for {}. Logging received requests:", endpoint);
+                
+                // You need access to the WireMock server instance to get its request journal.
+                // Assuming you have access to the WireMock instance (e.g., 'wireMockServer')
+                List<LoggedRequest> receivedRequests = findAll(putRequestedFor(urlEqualTo(endpoint)));
+                
+                if (receivedRequests.isEmpty()) {
+                    logger.warn("No requests have been received by the mock server yet.");
+                } else {
+                    for (LoggedRequest request : receivedRequests) {
+                        // Print the URL and method of every request received so far
+                        logger.warn("--> Received: {} {}", request.getMethod(), request.getUrl());
+                        // Optionally log the body too:
+                        // logger.debug("--> Body: {}", request.getBodyAsString());
+                    }
+                }
+                
+                // Re-throw the exception or let the Awaitility fail naturally
+                // If you use assertTrue(false), the Awaitility loop continues until timeout.
+                // The polling mechanism relies on the verification throwing an exception until it passes.
+                // If you keep the `try-catch`, the log will appear every time the verification fails.
+                throw e; // Re-throw the exception to allow Awaitility to continue polling
             }
         });
     }

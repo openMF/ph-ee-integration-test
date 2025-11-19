@@ -326,46 +326,101 @@ public class BatchApiStepDef extends BaseStepDef {
     // }
 
     //fred 
+    // @When("I call the batch transactions endpoint with expected status of {int}")
+    // public void callBatchTransactionsEndpoint(int expectedStatus) {
+    //     await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
+    //         RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
+    //         requestSpec.header(HEADER_PURPOSE, "Integration test");
+    //         requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
+    //         requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
+    //         requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
+    //         requestSpec.header(QUERY_PARAM_TYPE, "CSV");
+    //         if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {
+    //             requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeState.signature);
+    //         }
+    //         if (StringUtils.isNotBlank(scenarioScopeState.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeState.programId)) {
+    //             requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeState.registeringInstituteId);
+    //             requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeState.programId);
+    //         }
+
+    //         // Print request headers and query parameters
+    //         logger.info("Request Details: : %s", requestSpec.log().all() );
+    //         // System.out.println("Request Details:");
+    //         // requestSpec.log().all();
+
+
+    //         File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
+    //         Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+    //                 .contentType("multipart/form-data").multiPart("data", f).expect()
+    //                 .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
+    //                 .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
+
+    //         scenarioScopeState.response = resp.andReturn().asString();
+    //         scenarioScopeState.restResponseObject = resp;
+
+    //         Headers allHeaders = resp.getHeaders();
+    //         for (Header header : allHeaders) {
+    //             logger.debug("{}", header.getName());
+    //             logger.debug("{}", header.getValue());
+    //         }
+    //         logger.info("Batch Transactions Response: {}", scenarioScopeState.response);
+    //     });
+    // }
+
     @When("I call the batch transactions endpoint with expected status of {int}")
     public void callBatchTransactionsEndpoint(int expectedStatus) {
+        
+        // --- 1. BUILD REQUEST SPECIFICATION ONCE ---
+        RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
+        requestSpec.header(HEADER_PURPOSE, "Integration test");
+        requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
+        requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
+        requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
+        requestSpec.header(QUERY_PARAM_TYPE, "CSV"); // Note: You have both query and header for type
+        
+        if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {
+            requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeState.signature);
+        }
+        if (StringUtils.isNotBlank(scenarioScopeState.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeState.programId)) {
+            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeState.registeringInstituteId);
+            requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeState.programId);
+        }
+
+        // --- 2. LOG REQUEST DETAILS ONCE (to stdout/stderr) ---
+        logger.info("Initial Request Details:");
+        requestSpec.log().all(); // This logs to the standard output/error stream (where Gradle captures it)
+
+        // Get the file reference
+        File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
+        
+        // --- 3. AWAITILITY POLLING LOOP ---
+        // The code inside untilAsserted will execute repeatedly until the status code matches expectedStatus.
         await().atMost(awaitMost, SECONDS).pollDelay(pollDelay, SECONDS).pollInterval(pollInterval, SECONDS).untilAsserted(() -> {
-            RequestSpecification requestSpec = Utils.getDefaultSpec(scenarioScopeState.tenant, scenarioScopeState.clientCorrelationId);
-            requestSpec.header(HEADER_PURPOSE, "Integration test");
-            requestSpec.header(HEADER_FILENAME, scenarioScopeState.filename);
-            requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, "SocialWelfare");
-            requestSpec.queryParam(QUERY_PARAM_TYPE, "CSV");
-            requestSpec.header(QUERY_PARAM_TYPE, "CSV");
-            if (scenarioScopeState.signature != null && !scenarioScopeState.signature.isEmpty()) {
-                requestSpec.header(HEADER_JWS_SIGNATURE, scenarioScopeState.signature);
-            }
-            if (StringUtils.isNotBlank(scenarioScopeState.registeringInstituteId) && StringUtils.isNotBlank(scenarioScopeState.programId)) {
-                requestSpec.header(HEADER_REGISTERING_INSTITUTE_ID, scenarioScopeState.registeringInstituteId);
-                requestSpec.header(HEADER_PROGRAM_ID, scenarioScopeState.programId);
-            }
+            
+            // --- 4. EXECUTE API CALL (POLLING) ---
+            Response resp = RestAssured.given(requestSpec)
+                    .baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
+                    .contentType("multipart/form-data")
+                    .multiPart("data", f)
+                    .expect()
+                    // THIS ASSERTION IS THE POLLING CONDITION
+                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()) 
+                    .when()
+                    .post(bulkProcessorConfig.bulkTransactionEndpoint)
+                    .then()
+                    .log().body() // Log the response body only on each attempt (less verbose than log().all())
+                    .extract().response();
 
-            // Print request headers and query parameters
-            logger.info("Request Details: : %s", requestSpec.log().all() );
-            // System.out.println("Request Details:");
-            // requestSpec.log().all();
-
-
-            File f = new File(Utils.getAbsoluteFilePathToResource(scenarioScopeState.filename));
-            Response resp = RestAssured.given(requestSpec).baseUri(bulkProcessorConfig.bulkProcessorContactPoint)
-                    .contentType("multipart/form-data").multiPart("data", f).expect()
-                    .spec(new ResponseSpecBuilder().expectStatusCode(expectedStatus).build()).when()
-                    .post(bulkProcessorConfig.bulkTransactionEndpoint).then().extract().response();
-
+            // --- 5. STORE RESPONSE AND LOG (for the successful attempt) ---
             scenarioScopeState.response = resp.andReturn().asString();
             scenarioScopeState.restResponseObject = resp;
-
-            Headers allHeaders = resp.getHeaders();
-            for (Header header : allHeaders) {
-                logger.debug("{}", header.getName());
-                logger.debug("{}", header.getValue());
-            }
-            logger.info("Batch Transactions Response: {}", scenarioScopeState.response);
+            
+            // Log the final status code and response body for the successful poll/attempt
+            logger.info("Successful Poll Response Status: {}", resp.getStatusCode());
+            logger.debug("Final Response Body: {}", scenarioScopeState.response);
         });
     }
+
 
     @And("I should have {string} and {string} in response")
     public void iShouldHaveAndInResponse(String pollingpath, String suggestedcallback) {

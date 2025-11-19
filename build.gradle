@@ -136,6 +136,7 @@ sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenLocal()
+    mavenCentral()
     maven {
         url = uri('https://repo.maven.apache.org/maven2')
     }
@@ -154,6 +155,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation "com.github.tomakehurst:wiremock-jre8:2.35.0"
+    //testImplementation 'com.github.tomakehurst.wiremock:wiremock:2.35.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.mifos:ph-ee-connector-common:1.8.1-gazelle'
     testImplementation "com.google.truth:truth:1.1.3"
@@ -187,6 +189,13 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+configurations.all {
+    resolutionStrategy {
+        // Force ALL subprojects and dependencies to use this specific WireMock version
+        force 'com.github.tomakehurst.wiremock:wiremock-jre8-standalone:2.35.0'
+        
+    }
+}
 
 configurations {
     cucumberRuntime {
@@ -203,6 +212,15 @@ configurations {
 test {
     systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
+    // --- this block ensures passing as well as failed and skipped tests are in the report ---
+    testLogging {
+        // Show test events like PASSED, FAILED, SKIPPED in the console
+        events "passed", "skipped", "failed" 
+        
+        // ensures standard output/error (like logger statements
+        // or print statements) are captured in the test reports for successful tests.
+        showStandardStreams = true 
+    }
 }
 task cucumberCli() {
     dependsOn assemble, testClasses
