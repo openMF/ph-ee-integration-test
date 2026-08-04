@@ -275,3 +275,11 @@ fspconfig:
     payerfsp2: "gorilla"
 
 totalvouchers: 30
+
+gazelle:
+  mifos-api: "http://mifos.mifos.gazelle.test/fineract-provider/api/v1"
+  channel-connector: "https://channel.mifos.gazelle.test"
+  transfer-endpoint: "/channel/transfer"
+  mifos-auth: "Basic bWlmb3M6cGFzc3dvcmQ="
+  payer-tenant: "greenbank"
+  payee-tenant: "bluebank"
