@@ -17,6 +17,10 @@ operations-app:
     variables: "/api/v1/variables"
     transactionRequests: "/api/v1/transactionRequests"
     actuator: "/actuator/health"
+    reportEndpoint: "/reports"
+    reportCreate : "/reports"
+    reportUpdate : "/reports/{id}"
+    reportSingleReport: "/reports/{id}"
 
 paybill:
   mpesa-connector:
