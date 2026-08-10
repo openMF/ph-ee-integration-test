@@ -172,6 +172,9 @@ dependencies {
     testImplementation 'org.apache.commons:commons-csv:1.5'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     implementation 'commons-validator:commons-validator:1.7'
+    testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 tasks.named('test') {
@@ -179,22 +182,25 @@ tasks.named('test') {
 }
 
 
+tasks.named('test') {
+    useJUnitPlatform()
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    forkEvery = 1 // Restart the forked JVM after each test
+    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+    systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
+}
+
 configurations {
     cucumberRuntime {
         extendsFrom testImplementation
     }
     testlogger {
-        // pick a theme - mocha, standard, plain, mocha-parallel, standard-parallel or plain-parallel
         theme 'mocha'
         showSkipped false
         showStackTraces true
     }
 }
 
-test {
-    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
-    systemProperty "cucumber.filter.name", System.getProperty("cucumber.filter.name")
-}
 task cucumberCli() {
     dependsOn assemble, testClasses
     doLast {
@@ -202,19 +208,13 @@ task cucumberCli() {
             main = "io.cucumber.core.cli.Main"
             classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
             args = [
-                '--plugin',
-                'html:cucumber-report',
-                '--plugin',
-                'json:cucumber.json',
-                '--plugin',
-                'pretty',
-                '--plugin',
-                'html:build/cucumber-report.html',
-                '--plugin',
-                'json:build/cucumber-report.json',
-                '--glue',
-                'org.mifos.integrationtest.cucumber',
-                'src/test/java/resources'
+                    '--plugin', 'html:cucumber-report',
+                    '--plugin', 'json:cucumber.json',
+                    '--plugin', 'pretty',
+                    '--plugin', 'html:build/cucumber-report.html',
+                    '--plugin', 'json:build/cucumber-report.json',
+                    '--glue', 'org.mifos.integrationtest.cucumber',
+                    'src/test/java/resources'
             ]
         }
     }
